@@ -1,0 +1,33 @@
+% libre-compendium
+%
+% Copyright (C) 2026 Richard Qin
+%
+% This document is dual-licensed under either:
+% - GNU Free Documentation License, Version 1.3 or any later version
+%   published by the Free Software Foundation; with no Invariant Sections,
+%   no Front-Cover Texts, and no Back-Cover Texts (see COPYING.DOC); or
+% - Creative Commons Attribution-ShareAlike 4.0 International License
+%   (see LICENSE-CC-BY-SA-4.0).
+\ProvidesFile{main.tex}[2026/11/15 v0.2.0 普通物理学讲义]
+\documentclass[
+  scope=course,
+  profile=standard,
+  style=boxed,
+  color=full,
+  figures=inline
+]{lc-lecture}
+\input{settings}
+\lcset{
+  title       = {普通物理学讲义},
+  short-title = {普通物理学},
+  date        = {2026 年版},
+}
+\begin{document}
+\maketitle
+\setcounter{tocdepth}{2}
+\tableofcontents
+\input{chapters/chapter01-electromagnetism}
+\input{chapters/chapter02-mechanical-vibration}
+\input{chapters/chapter03-mechanical-wave}
+\input{chapters/chapter04-optics}
+\end{document}

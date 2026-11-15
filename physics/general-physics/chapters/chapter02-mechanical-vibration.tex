@@ -1,0 +1,526 @@
+% libre-compendium
+%
+% Copyright (C) 2026 Richard Qin
+%
+% This document is dual-licensed under either:
+% - GNU Free Documentation License, Version 1.3 or any later version
+%   published by the Free Software Foundation; with no Invariant Sections,
+%   no Front-Cover Texts, and no Back-Cover Texts (see COPYING.DOC); or
+% - Creative Commons Attribution-ShareAlike 4.0 International License
+%   (see LICENSE-CC-BY-SA-4.0).
+
+\chapter{机械振动}
+
+\begin{summary}[本章内容概览]
+本章以简谐振动为主线，介绍动力学特征与固有圆频率、运动学方程、振幅周期相位初相、初始条件、旋转矢量、图像表示、能量转化和同方向同频率振动的合成；同时引入拍、李萨如图、阻尼振动、受迫振动和共振，说明这些模型与理想简谐振动之间的关系。
+\end{summary}
+
+\section{振动与简谐振动的判据}
+
+机械振动是物体在平衡位置附近的往复运动。分析一个系统时，可以先判断平衡位置附近的回复作用是否线性，再决定是否能化为简谐振动方程。
+
+\begin{definition}[简谐振动的动力学判据]\label{def:shm-dynamic-criterion}
+若某物理量 $q$ 相对稳定平衡位置的偏离满足
+\[
+  \frac{\dd^2 q}{\dd t^2}+\omega_0^2 q=0,
+\]
+则 $q$ 作简谐振动。$\omega_0$ 称为固有圆频率，由系统自身参数决定；周期为
+\[
+  T=\frac{2\pi}{\omega_0},\qquad \nu=\frac1T=\frac{\omega_0}{2\pi}.
+\]
+\end{definition}
+
+\begin{attention}[判据中的 $q$ 可以不是直线位移]
+$q$ 可以是位移 $x$，也可以是角位移 $\theta$、电荷量、电流等广义坐标。关键是相对平衡位置取坐标，并得到“二阶导数正比于负的自身”的形式。
+\end{attention}
+
+\begin{method}[判断一个系统是否为简谐振动]
+\begin{enumerate}
+  \item 找稳定平衡位置。平衡位置处合力或合力矩为零。
+  \item 取相对平衡位置的偏离量作为坐标，避免把常力项带进方程。
+  \item 写牛顿第二定律或转动定律。
+  \item 化成 $\ddot q+\omega_0^2q=0$。若能化成该形式，则是简谐振动，$\omega_0$ 由系数读出。
+\end{enumerate}
+\end{method}
+
+\subsection*{模型一：水平弹簧振子}
+
+质量 $m$ 的物体连接劲度系数 $k$ 的轻弹簧，在光滑水平面上运动。取弹簧自然长度位置为平衡位置，向右为 $x$ 正方向，则弹力
+\[
+  F_x=-kx.
+\]
+由牛顿第二定律
+\[
+  m\frac{\dd^2x}{\dd t^2}=-kx,
+\]
+即
+\[
+  \frac{\dd^2x}{\dd t^2}+\frac{k}{m}x=0.
+\]
+所以
+\[
+  \omega_0=\sqrt{\frac{k}{m}},\qquad
+  T=2\pi\sqrt{\frac{m}{k}}.
+\]
+
+\subsection*{模型二：竖直弹簧振子}
+
+很多错误来自没有把坐标原点取在平衡位置。设弹簧竖直悬挂，物体质量为 $m$，弹簧劲度系数为 $k$。若以弹簧原长位置为原点，向下为 $y'$ 正方向，则
+\[
+  m\ddot y'=mg-ky',
+\]
+整理为
+\[
+  \ddot y'+\frac{k}{m}y'=g.
+\]
+这不是标准形式，因为 $y'$ 不是相对平衡位置的坐标。平衡时 $ky'_0=mg$，故
+\[
+  y'_0=\frac{mg}{k}.
+\]
+令
+\[
+  y=y'-y'_0,
+\]
+则
+\[
+  \ddot y+\frac{k}{m}y=0.
+\]
+所以竖直弹簧振子的固有圆频率仍为
+\[
+  \omega_0=\sqrt{\frac{k}{m}}.
+\]
+重力只改变平衡位置，不改变小振动频率。
+
+\begin{pitfall}[竖直弹簧的常见错法]
+若直接把弹簧原长位置当成简谐振动的原点，会得到含 $g$ 的非齐次方程。学习中应先平移到平衡位置。简谐振动位移永远是相对平衡位置的位移，不一定是相对弹簧原长或悬点的位移。
+\end{pitfall}
+
+\subsection*{模型三：单摆的小角振动}
+
+长度为 $l$ 的单摆，摆角为 $\theta$。切向方向的动力学方程为
+\[
+  ml\frac{\dd^2\theta}{\dd t^2}=-mg\sin\theta,
+\]
+即
+\[
+  \frac{\dd^2\theta}{\dd t^2}+\frac{g}{l}\sin\theta=0.
+\]
+当摆角足够小时，$\sin\theta\approx\theta$，于是
+\[
+  \frac{\dd^2\theta}{\dd t^2}+\frac{g}{l}\theta=0.
+\]
+所以小角单摆作简谐振动，
+\[
+  \omega_0=\sqrt{\frac{g}{l}},\qquad
+  T=2\pi\sqrt{\frac{l}{g}}.
+\]
+
+\begin{attention}[单摆公式的适用条件]
+$T=2\pi\sqrt{l/g}$ 是小角近似结果。若摆角较大，$\sin\theta$ 不能近似为 $\theta$，运动仍可周期往复，但不再是严格简谐振动，周期也不再只由 $l$ 和 $g$ 按上式给出。
+\end{attention}
+
+\subsection*{扩展模型：复摆、扭摆与浮体振动}
+
+这几类模型的共同价值不在于记住公式，而在于训练“找平衡位置、写回复力或回复力矩、线性化”的方法。
+
+\begin{attention}[复摆与扭摆的判据形式]
+复摆是绕固定水平轴小角摆动的刚体。设转轴到质心距离为 $l_c$，绕转轴转动惯量为 $I_z$，小角度时
+\[
+  I_z\ddot\theta=-mgl_c\sin\theta\approx -mgl_c\theta,
+\]
+故
+\[
+  \ddot\theta+\frac{mgl_c}{I_z}\theta=0,\qquad
+  \omega_0=\sqrt{\frac{mgl_c}{I_z}}.
+\]
+扭摆中若金属丝回复力矩满足 $M_z=-D\theta$，则
+\[
+  I_z\ddot\theta=-D\theta,\qquad
+  \omega_0=\sqrt{\frac{D}{I_z}}.
+\]
+这些模型属于动力学判据的直接应用；这些模型用于展示同一线性化方法在不同系统中的应用。
+\end{attention}
+
+\begin{example}[title={比重计竖直振动}]\label{eg:hydrometer-shm}
+质量为 $m$ 的比重计浮在密度为 $\rho$ 的液体中，圆管直径为 $d$。证明其在平衡位置附近的竖直小振动为简谐振动，并求周期。
+
+\begin{solution}
+取平衡位置为原点，向下为 $x$ 正方向。平衡时
+\[
+  mg=\rho gV_0.
+\]
+若比重计向下偏离 $x$，排开液体体积增加
+\[
+  \Delta V=Sx=\frac{\pi d^2}{4}x.
+\]
+浮力增量向上，大小为 $\rho gSx$。因此相对平衡位置的合力为
+\[
+  F_x=-\rho gSx=-\rho g\frac{\pi d^2}{4}x.
+\]
+由牛顿第二定律
+\[
+  m\ddot x+\rho g\frac{\pi d^2}{4}x=0,
+\]
+所以
+\[
+  \omega_0=\sqrt{\frac{\pi\rho gd^2}{4m}},\qquad
+  T=2\pi\sqrt{\frac{4m}{\pi\rho gd^2}}.
+\]
+\end{solution}
+\end{example}
+
+\section{简谐振动的运动学方程}
+
+由
+\[
+  \ddot x+\omega_0^2x=0
+\]
+可得
+\[
+  x=A\cos(\omega_0t+\varphi_0),
+\]
+其中 $A\ge 0$ 为振幅，$\omega_0t+\varphi_0$ 为相位，$\varphi_0$ 为初相位。
+
+\begin{theorem}[位移、速度、加速度]\label{thm:xva-shm}
+\[
+  x=A\cos(\omega_0t+\varphi_0),
+\]
+\[
+  v=\dot x=-A\omega_0\sin(\omega_0t+\varphi_0)
+    =A\omega_0\cos\left(\omega_0t+\varphi_0+\frac{\pi}{2}\right),
+\]
+\[
+  a=\ddot x=-A\omega_0^2\cos(\omega_0t+\varphi_0)
+    =A\omega_0^2\cos(\omega_0t+\varphi_0+\pi).
+\]
+因此速度相位比位移超前 $\pi/2$，加速度与位移反相。
+\end{theorem}
+
+运动学方程中的几个量必须区分：
+\[
+  A=\max |x|,\qquad
+  T=\frac{2\pi}{\omega_0},\qquad
+  \nu=\frac1T,\qquad
+  \varphi=\omega_0t+\varphi_0.
+\]
+相位 $\varphi$ 描述振动状态。若 $A$ 和 $\omega_0$ 已定，则同一相位对应同一组 $(x,v)$。
+
+\begin{method}[由初始条件确定 $A$ 与 $\varphi_0$]
+已知 $t=0$ 时
+\[
+  x(0)=x_0,\qquad v(0)=v_0.
+\]
+代入
+\[
+  x_0=A\cos\varphi_0,\qquad
+  v_0=-A\omega_0\sin\varphi_0.
+\]
+平方相加得
+\[
+  A=\sqrt{x_0^2+\left(\frac{v_0}{\omega_0}\right)^2}.
+\]
+初相由
+\[
+  \cos\varphi_0=\frac{x_0}{A},\qquad
+  \sin\varphi_0=-\frac{v_0}{A\omega_0}
+\]
+共同确定。也可写
+\[
+  \tan\varphi_0=-\frac{v_0}{\omega_0x_0},
+\]
+但只用正切会丢失象限，必须结合 $\cos\varphi_0$ 和 $\sin\varphi_0$ 的符号判断。
+\end{method}
+
+\begin{example}[title={初始条件定振动方程}]\label{eg:ic-example}
+某质点作简谐振动，$\omega_0=10\,\mathrm{rad/s}$。已知 $t=0$ 时 $x_0=1\,\mathrm{m}$，$v_0=-10\sqrt3\,\mathrm{m/s}$，求振幅和初相位。
+
+\begin{solution}
+振幅
+\[
+  A=\sqrt{1^2+\left(\frac{-10\sqrt3}{10}\right)^2}=2\,\mathrm{m}.
+\]
+于是
+\[
+  \cos\varphi_0=\frac12,\qquad
+  \sin\varphi_0=-\frac{v_0}{A\omega_0}
+  =-\frac{-10\sqrt3}{2\cdot 10}=\frac{\sqrt3}{2}.
+\]
+故
+\[
+  \varphi_0=\frac{\pi}{3}.
+\]
+振动方程为
+\[
+  x=2\cos\left(10t+\frac{\pi}{3}\right).
+\]
+\end{solution}
+\end{example}
+
+\begin{pitfall}[初相位不等于“取一个反正切值”]
+若 $x_0<0$、$v_0>0$，则 $\cos\varphi_0<0$、$\sin\varphi_0<0$，$\varphi_0$ 在第三象限；反正切主值往往给出第一象限角，需要加 $\pi$。更稳妥的做法是先算 $A$，再用 $\cos$、$\sin$ 双条件定象限。
+\end{pitfall}
+
+\section{旋转矢量与图像表示}
+
+简谐振动可以用匀速圆周运动的投影来理解。设半径为 $A$ 的矢量以角速度 $\omega_0$ 逆时针转动，幅角为
+\[
+  \varphi=\omega_0t+\varphi_0.
+\]
+矢端在 $x$ 轴上的投影为
+\[
+  x=A\cos\varphi=A\cos(\omega_0t+\varphi_0),
+\]
+正是简谐振动。
+
+\lcfigure[caption={简谐振动与匀速圆周运动投影的关系},label={fig:shm-rotating-vector}]{shm-rotating-vector}
+
+\begin{attention}[旋转矢量只是描述方法]
+旋转矢量不是说弹簧振子真的在做圆周运动，而是把相位、振幅、速度方向和图像位置用一个几何图像统一起来。它特别适合判断初相位和比较相位差。
+\end{attention}
+
+\subsection*{常用相位状态}
+
+设 $x=A\cos\varphi$，$v=-A\omega_0\sin\varphi$。则
+\[
+\begin{array}{c|c|c|c}
+\varphi & x & v & \text{状态}\\
+\hline
+0 & A & 0 & \text{正向最大位移，准备向负方向返回}\\
+\pi/2 & 0 & -A\omega_0 & \text{过平衡位置，向负方向速度最大}\\
+\pi & -A & 0 & \text{负向最大位移，准备向正方向返回}\\
+3\pi/2 & 0 & A\omega_0 & \text{过平衡位置，向正方向速度最大}
+\end{array}
+\]
+
+\subsection*{$x-t$、$v-t$、$a-t$ 图像}
+
+位移图像的高度由 $A$ 决定，疏密由 $\omega_0$ 决定，左右平移由 $\varphi_0$ 决定。速度图像与位移图像同周期，但相位提前 $\pi/2$；加速度图像与位移图像反相，且
+\[
+  a=-\omega_0^2x.
+\]
+所以只要知道 $x-t$ 图像，就能立即判断 $a-t$ 图像：把 $x$ 图像上下翻转并放大 $\omega_0^2$ 倍。
+
+\begin{definition}[相轨迹]\label{def:phase-trajectory}
+以 $x$ 为横轴、$v$ 为纵轴，简谐振动满足
+\[
+  \frac{x^2}{A^2}+\frac{v^2}{A^2\omega_0^2}=1.
+\]
+这是相平面中的椭圆。它说明简谐振动的状态在 $(x,v)$ 平面中周期性闭合。
+\end{definition}
+
+\section{简谐振动的能量}
+
+以水平弹簧振子为例：
+\[
+  x=A\cos(\omega_0t+\varphi_0),\qquad
+  v=-A\omega_0\sin(\omega_0t+\varphi_0),
+\]
+且 $\omega_0^2=k/m$。
+
+动能为
+\[
+  E_k=\frac12mv^2
+  =\frac12mA^2\omega_0^2\sin^2(\omega_0t+\varphi_0)
+  =\frac12kA^2\sin^2(\omega_0t+\varphi_0).
+\]
+弹性势能为
+\[
+  E_p=\frac12kx^2
+  =\frac12kA^2\cos^2(\omega_0t+\varphi_0).
+\]
+总机械能
+\[
+  E=E_k+E_p=\frac12kA^2.
+\]
+
+\begin{theorem}[能量转化规律]\label{thm:energy-shm}
+无阻尼简谐振动中机械能守恒。位移最大处速度为零，能量全为势能；经过平衡位置时势能最小、速度最大，能量主要为动能。动能和势能随时间以 $\sin^2$、$\cos^2$ 变化，因此它们的变化周期为
+\[
+  \frac{T}{2},
+\]
+频率为振动频率的 $2$ 倍。
+\end{theorem}
+
+\begin{method}[用能量反求振幅或速度]
+若无阻尼，任意时刻有
+\[
+  \frac12mv^2+\frac12kx^2=\frac12kA^2.
+\]
+因此
+\[
+  v^2=\omega_0^2(A^2-x^2),\qquad
+  |v|=\omega_0\sqrt{A^2-x^2}.
+\]
+符号由运动方向决定。
+\end{method}
+
+\begin{example}[title={由某处速度求振幅}]\label{eg:energy-example}
+弹簧振子 $\omega_0=4\,\mathrm{rad/s}$，经过 $x=3\,\mathrm{cm}$ 处时速度大小为 $16\,\mathrm{cm/s}$。求振幅。
+
+\begin{solution}
+由
+\[
+  v^2=\omega_0^2(A^2-x^2)
+\]
+得
+\[
+  A=\sqrt{x^2+\left(\frac{v}{\omega_0}\right)^2}
+  =\sqrt{3^2+4^2}\,\mathrm{cm}=5\,\mathrm{cm}.
+\]
+\end{solution}
+\end{example}
+
+\section{同方向同频率简谐振动的合成}
+
+设同一质点同时参与两个同方向、同频率的简谐振动：
+\[
+  x_1=A_1\cos(\omega t+\alpha_1),\qquad
+  x_2=A_2\cos(\omega t+\alpha_2).
+\]
+合位移
+\[
+  x=x_1+x_2
+\]
+仍为频率 $\omega$ 的简谐振动：
+\[
+  x=A\cos(\omega t+\alpha).
+\]
+
+\begin{theorem}[同向同频合成公式]\label{thm:same-frequency-sum}
+合振幅为
+\[
+  A=\sqrt{A_1^2+A_2^2+2A_1A_2\cos(\alpha_1-\alpha_2)}.
+\]
+合初相满足
+\[
+  \tan\alpha=
+  \frac{A_1\sin\alpha_1+A_2\sin\alpha_2}
+       {A_1\cos\alpha_1+A_2\cos\alpha_2}.
+\]
+同样，$\alpha$ 的象限不能只由反正切主值决定，应由分子、分母符号共同判断。
+\end{theorem}
+
+\subsection*{公式推导}
+
+展开两分振动：
+\[
+\begin{aligned}
+x_1+x_2
+&=A_1(\cos\omega t\cos\alpha_1-\sin\omega t\sin\alpha_1)\\
+&\quad +A_2(\cos\omega t\cos\alpha_2-\sin\omega t\sin\alpha_2)\\
+&=(A_1\cos\alpha_1+A_2\cos\alpha_2)\cos\omega t\\
+&\quad -(A_1\sin\alpha_1+A_2\sin\alpha_2)\sin\omega t.
+\end{aligned}
+\]
+又
+\[
+  A\cos(\omega t+\alpha)=A\cos\alpha\cos\omega t-A\sin\alpha\sin\omega t.
+\]
+比较系数：
+\[
+  A\cos\alpha=A_1\cos\alpha_1+A_2\cos\alpha_2,
+\]
+\[
+  A\sin\alpha=A_1\sin\alpha_1+A_2\sin\alpha_2.
+\]
+两式平方相加得到合振幅公式；两式相除得到合初相公式。
+
+\begin{summary}[特殊相位差]
+\begin{enumerate}
+  \item 同相：$\alpha_1-\alpha_2=2n\pi$，则
+  \[
+    A=A_1+A_2.
+  \]
+  \item 反相：$\alpha_1-\alpha_2=(2n+1)\pi$，则
+  \[
+    A=|A_1-A_2|.
+  \]
+  \item 一般情形：
+  \[
+    |A_1-A_2|\le A\le A_1+A_2.
+  \]
+\end{enumerate}
+\end{summary}
+
+\begin{attention}[$n$ 个等振幅、等相位差的同向同频合成]
+还可以考虑 $n$ 个同方向、同频率、等振幅且初相依次相差 $\varepsilon$ 的合成：
+\[
+  x_j=a\cos\left[\omega t+(j-1)\varepsilon\right],
+  \qquad j=1,2,\cdots,n.
+\]
+用旋转矢量首尾相接可得合振动仍为简谐振动：
+\[
+  x=A\cos(\omega t+\alpha),
+\]
+其中
+\[
+  A=a\left|\frac{\sin(n\varepsilon/2)}{\sin(\varepsilon/2)}\right|,
+  \qquad
+  \alpha=\frac{(n-1)\varepsilon}{2}
+\]
+是最常用的相位表示；若前面的正弦比值为负而又坚持振幅 $A\ge0$，则应把相位再加 $\pi$。若 $\varepsilon=2k\pi$，则 $A=na$；若 $\sin(n\varepsilon/2)=0$ 而 $\sin(\varepsilon/2)\ne0$，则 $A=0$。这部分用于理解多束干涉或相量相加，本节重点是公式结构以及极大、极小条件。
+\end{attention}
+
+\begin{example}[title={两同频振动合成}]\label{eg:sum-example}
+\[
+  x_1=3\cos(\omega t),\qquad
+  x_2=4\cos\left(\omega t+\frac{\pi}{2}\right).
+\]
+求合振动的振幅和初相。
+
+\begin{solution}
+这里 $A_1=3,\alpha_1=0$，$A_2=4,\alpha_2=\pi/2$。合振幅
+\[
+  A=\sqrt{3^2+4^2+2\cdot3\cdot4\cos\frac{\pi}{2}}=5.
+\]
+合初相满足
+\[
+  A\cos\alpha=3,\qquad A\sin\alpha=4,
+\]
+故
+\[
+  \cos\alpha=\frac35,\qquad \sin\alpha=\frac45,
+\]
+\[
+  \alpha=\arctan\frac43.
+\]
+合振动为
+\[
+  x=5\cos\left(\omega t+\arctan\frac43\right).
+\]
+\end{solution}
+\end{example}
+
+\section{阻尼、受迫振动与共振}
+
+\begin{attention}[不同频率合成与拍]
+同方向不同频率的两个简谐振动相加后，一般不再是严格简谐振动。当两频率很接近、振幅相等且初相相同，
+\[
+  x=A\cos\omega_1t+A\cos\omega_2t
+  =2A\cos\frac{\omega_1-\omega_2}{2}t\,
+     \cos\frac{\omega_1+\omega_2}{2}t.
+\]
+振幅缓慢增强减弱的现象称为拍，拍频为
+\[
+  \nu_{\text{拍}}=|\nu_1-\nu_2|.
+\]
+这些现象把理想简谐振动推广到有耗散或外部驱动的系统。
+\end{attention}
+
+\begin{attention}[阻尼、受迫、共振]
+阻尼振动因阻力耗散能量，振幅随时间减小；受迫振动是在周期外力作用下的振动，稳定后频率等于驱动力频率；当驱动力频率接近系统固有频率时振幅显著增大，称为共振。这些现象说明理想简谐振动如何受到耗散和外部驱动的影响。
+\end{attention}
+
+\section*{本章常见概念误区}
+
+\begin{pitfall}[机械振动常见错误]
+\begin{enumerate}
+  \item 把“周期运动”都当成简谐振动。简谐振动必须满足 $\ddot x+\omega_0^2x=0$。
+  \item 竖直弹簧没有把坐标原点平移到平衡位置，导致方程中多出常量 $g$。
+  \item 把 $\omega$ 和 $\nu$ 混用。$\omega=2\pi\nu$，单位分别为 $\mathrm{rad/s}$ 和 $\mathrm{Hz}$。
+  \item 用 $\tan\varphi_0$ 定初相却不判断象限。
+  \item 认为速度最大时位移也最大。实际速度最大在平衡位置，位移最大处速度为零。
+  \item 忽略速度方向。由能量只能求 $|v|$，符号要由运动方向或相位判断。
+  \item 认为合振幅总是 $A_1+A_2$。只有同相时才如此；反相时为 $|A_1-A_2|$。
+\end{enumerate}
+\end{pitfall}

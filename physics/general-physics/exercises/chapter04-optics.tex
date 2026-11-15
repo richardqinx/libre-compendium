@@ -1,0 +1,354 @@
+% libre-compendium
+%
+% Copyright (C) 2026 Richard Qin
+%
+% This document is dual-licensed under either:
+% - GNU Free Documentation License, Version 1.3 or any later version
+%   published by the Free Software Foundation; with no Invariant Sections,
+%   no Front-Cover Texts, and no Back-Cover Texts (see COPYING.DOC); or
+% - Creative Commons Attribution-ShareAlike 4.0 International License
+%   (see LICENSE-CC-BY-SA-4.0).
+
+% Extracted from chapter04-optics.tex.
+\begin{exercise}[level=basic]
+说明光在介质中传播时频率、速度、波长分别如何变化。
+\begin{solution}
+频率不变，速度变为 $v=c/n$，波长变为 $\lambda=\lambda_0/n$。
+\end{solution}
+\end{exercise}
+
+\begin{exercise}[level=basic]
+写出光程定义，并说明为什么相位差可由光程差计算。
+\begin{solution}
+光程
+\[
+  L=\int n\,\dd s.
+\]
+介质中传播距离 $s$ 的相位变化为
+\[
+  \frac{2\pi}{\lambda}s=\frac{2\pi}{\lambda_0}ns,
+\]
+所以可把不同介质中的传播统一折算为光程，用
+\[
+  \Delta\varphi=\frac{2\pi}{\lambda_0}\Delta L
+\]
+计算相位差。
+\end{solution}
+\end{exercise}
+
+\begin{exercise}[level=basic]
+写出反射定律、折射定律和全反射临界角公式。
+\begin{solution}
+\[
+  \theta_i=\theta_r,\qquad n_1\sin\theta_1=n_2\sin\theta_2.
+\]
+若 $n_1>n_2$，
+\[
+  \theta_c=\arcsin\frac{n_2}{n_1}.
+\]
+\end{solution}
+\end{exercise}
+
+\begin{exercise}[level=standard]
+光从水中射向空气，水的折射率为 $4/3$。求全反射临界角。
+\begin{solution}
+\[
+  \theta_c=\arcsin\frac{1}{4/3}=\arcsin\frac34\approx48.6^\circ.
+\]
+\end{solution}
+\end{exercise}
+
+\begin{exercise}[level=basic]
+两束相干光形成稳定干涉需要满足哪些条件？
+\begin{solution}
+频率相同或近似相同，相位差恒定，振动方向相同或有同向分量。实验上通常从同一束光中分出两束，以保证初相差稳定。
+\end{solution}
+\end{exercise}
+
+\begin{exercise}[level=basic]
+写出条纹可见度定义，并说明为什么普通独立光源难以形成稳定干涉条纹。
+\begin{solution}
+条纹可见度
+\[
+  K=\frac{I_{\max}-I_{\min}}{I_{\max}+I_{\min}}.
+\]
+普通独立光源由大量原子随机发出有限波列，不同波列初相和振动方向随机，探测器响应时间内干涉项平均为零，所以难以形成稳定条纹。
+\end{solution}
+\end{exercise}
+
+\begin{exercise}[level=standard]
+两相干光在点 $P$ 光强相等、光程差为 $3\lambda$，求合光强相对单束光强的倍数。
+\begin{solution}
+光程差 $3\lambda$ 对应相位差 $6\pi$，加强。若单束光强为 $I_0$，合光强
+\[
+  I=4I_0.
+\]
+\end{solution}
+\end{exercise}
+
+\begin{exercise}[level=standard]
+双缝间距 $0.50\,\mathrm{mm}$，屏距 $1.0\,\mathrm{m}$，波长 $500\,\mathrm{nm}$。求相邻明纹间距。
+\begin{solution}
+\[
+  \Delta x=\frac{D\lambda}{d}
+  =\frac{1.0\times500\times10^{-9}}{0.50\times10^{-3}}
+  =1.0\times10^{-3}\,\mathrm{m}=1.0\,\mathrm{mm}.
+\]
+\end{solution}
+\end{exercise}
+
+\begin{exercise}[level=standard]
+双缝干涉中第 $5$ 级明纹距中央明纹 $4.0\,\mathrm{mm}$，屏距 $2.0\,\mathrm{m}$，缝距 $1.0\,\mathrm{mm}$。求波长。
+\begin{solution}
+第 $5$ 级明纹
+\[
+  x_5=5\frac{D\lambda}{d}.
+\]
+故
+\[
+  \lambda=\frac{x_5d}{5D}
+  =\frac{4.0\times10^{-3}\times1.0\times10^{-3}}{5\times2.0}
+  =4.0\times10^{-7}\,\mathrm{m}=400\,\mathrm{nm}.
+\]
+\end{solution}
+\end{exercise}
+
+\begin{exercise}[level=standard]
+双缝一缝覆盖折射率 $1.50$ 的薄片，条纹移动 $6$ 条，波长 $600\,\mathrm{nm}$。求薄片厚度。
+\begin{solution}
+\[
+  (n-1)a=N\lambda.
+\]
+故
+\[
+  a=\frac{6\times600\,\mathrm{nm}}{1.50-1}
+  =7200\,\mathrm{nm}=7.2\,\mu\mathrm{m}.
+\]
+\end{solution}
+\end{exercise}
+
+\begin{exercise}[level=basic]
+什么是半波损失？在哪种反射情况下发生？
+\begin{solution}
+光从光疏介质射向光密介质并反射时，相位突变 $\pi$，等效附加 $\lambda_0/2$ 光程差，称半波损失。
+\end{solution}
+\end{exercise}
+
+\begin{exercise}[level=standard]
+空气中一层折射率 $1.33$ 的薄膜，垂直入射。若反射光有一次半波损失，求反射光最小加强膜厚。
+\begin{solution}
+一次半波损失时反射加强条件
+\[
+  2ne=\left(k+\frac12\right)\lambda.
+\]
+最小非零厚度取 $k=0$：
+\[
+  e_{\min}=\frac{\lambda}{4n}.
+\]
+若题中未给具体波长，只能写此表达式；代入 $n=1.33$ 得
+\[
+  e_{\min}=\frac{\lambda}{5.32}.
+\]
+\end{solution}
+\end{exercise}
+
+\begin{exercise}[level=standard]
+增透膜折射率 $1.38$，对 $550\,\mathrm{nm}$ 光反射最小。若两束反射光没有相对半波差，求最小膜厚。
+\begin{solution}
+反射最小：
+\[
+  2nd=\frac{\lambda}{2}.
+\]
+故
+\[
+  d_{\min}=\frac{\lambda}{4n}
+  =\frac{550\,\mathrm{nm}}{4\times1.38}
+  \approx99.6\,\mathrm{nm}.
+\]
+\end{solution}
+\end{exercise}
+
+\begin{exercise}[level=basic]
+区分薄膜等倾干涉和等厚干涉，并各举一个典型装置。
+\begin{solution}
+等倾干涉中膜厚固定、入射角改变，同一入射角对应同一级条纹，典型例子是平行平面薄膜形成的同心圆环。等厚干涉中入射角固定、膜厚随位置改变，同一厚度对应同一级条纹，典型例子是劈尖和牛顿环。
+\end{solution}
+\end{exercise}
+
+\begin{exercise}[level=standard]
+空气劈尖用波长 $600\,\mathrm{nm}$ 单色光垂直照射，劈尖角 $1.0\times10^{-4}\,\mathrm{rad}$。求相邻暗纹间距。
+\begin{solution}
+\[
+  b=\frac{\lambda}{2\theta}
+  =\frac{600\times10^{-9}}{2\times10^{-4}}
+  =3.0\times10^{-3}\,\mathrm{m}=3.0\,\mathrm{mm}.
+\]
+\end{solution}
+\end{exercise}
+
+\begin{exercise}[level=standard]
+牛顿环装置中透镜曲率半径 $R=1.0\,\mathrm{m}$，波长 $500\,\mathrm{nm}$。求第 $4$ 个暗环半径。
+\begin{solution}
+暗环
+\[
+  r_k^2=kR\lambda.
+\]
+第 $4$ 个暗环：
+\[
+  r_4=\sqrt{4\times1.0\times500\times10^{-9}}
+  =1.41\times10^{-3}\,\mathrm{m}.
+\]
+\end{solution}
+\end{exercise}
+
+\begin{exercise}[level=standard]
+迈克耳逊干涉仪中镜子移动 $0.25\,\mathrm{mm}$，条纹移过 $790$ 条，求光波波长。
+\begin{solution}
+\[
+  2\Delta d=N\lambda.
+\]
+故
+\[
+  \lambda=\frac{2\Delta d}{N}
+  =\frac{2\times0.25\times10^{-3}}{790}
+  =6.33\times10^{-7}\,\mathrm{m}=633\,\mathrm{nm}.
+\]
+\end{solution}
+\end{exercise}
+
+\begin{exercise}[level=basic]
+区分菲涅耳衍射和夫琅禾费衍射。
+\begin{solution}
+菲涅耳衍射为近场衍射，光源或屏距孔有限；夫琅禾费衍射为远场衍射，可用平行光和焦平面观察处理。
+\end{solution}
+\end{exercise}
+
+\begin{exercise}[level=basic]
+用半波带思想说明单缝暗纹条件 $a\sin\theta=m\lambda$。
+\begin{solution}
+若 $a\sin\theta=m\lambda$，可把缝分成 $2m$ 个半波带，相邻半波带到观察点光程差为 $\lambda/2$，两两相消，因此形成暗纹。
+\end{solution}
+\end{exercise}
+
+\begin{exercise}[level=basic]
+说明实际双缝干涉为什么会受到单缝衍射包络调制。
+\begin{solution}
+实际双缝的每条缝都有有限宽度，所以每条缝自身产生单缝衍射。两个缝的光再相干叠加形成双缝干涉，因此亮纹位置主要由缝距 $d$ 决定，整体强弱包络由缝宽 $a$ 决定。
+\end{solution}
+\end{exercise}
+
+\begin{exercise}[level=standard]
+单缝宽 $0.10\,\mathrm{mm}$，波长 $500\,\mathrm{nm}$。求第一暗纹衍射角的小角近似值。
+\begin{solution}
+第一暗纹
+\[
+  a\sin\theta=\lambda.
+\]
+小角度下
+\[
+  \theta\simeq\frac{\lambda}{a}
+  =\frac{500\times10^{-9}}{0.10\times10^{-3}}
+  =5.0\times10^{-3}\,\mathrm{rad}.
+\]
+\end{solution}
+\end{exercise}
+
+\begin{exercise}[level=standard]
+焦距 $0.50\,\mathrm{m}$ 的透镜观察单缝衍射，缝宽 $0.20\,\mathrm{mm}$，波长 $600\,\mathrm{nm}$。求中央明纹线宽。
+\begin{solution}
+\[
+  \Delta x_0=\frac{2f\lambda}{a}
+  =\frac{2\times0.50\times600\times10^{-9}}{0.20\times10^{-3}}
+  =3.0\times10^{-3}\,\mathrm{m}=3.0\,\mathrm{mm}.
+\]
+\end{solution}
+\end{exercise}
+
+\begin{exercise}[level=standard]
+望远镜口径 $5.0\,\mathrm{cm}$，波长 $550\,\mathrm{nm}$。求最小分辨角。
+\begin{solution}
+\[
+  \theta_0=1.22\frac{\lambda}{D}
+  =1.22\frac{550\times10^{-9}}{5.0\times10^{-2}}
+  =1.34\times10^{-5}\,\mathrm{rad}.
+\]
+\end{solution}
+\end{exercise}
+
+\begin{exercise}[level=standard]
+汽车两前灯间距 $1.2\,\mathrm{m}$，人眼瞳孔直径 $5.0\,\mathrm{mm}$，波长 $550\,\mathrm{nm}$。估算恰能分辨的最远距离。
+\begin{solution}
+恰能分辨时
+\[
+  \theta_0\simeq\frac{d}{s}=1.22\frac{\lambda}{D}.
+\]
+故
+\[
+  s=\frac{dD}{1.22\lambda}
+  =\frac{1.2\times5.0\times10^{-3}}{1.22\times550\times10^{-9}}
+  \approx8.9\times10^3\,\mathrm{m}.
+\]
+\end{solution}
+\end{exercise}
+
+\begin{exercise}[level=basic]
+为什么偏振现象说明光是横波？
+\begin{solution}
+只有横波才有垂直于传播方向的不同振动方向；纵波的振动方向沿传播方向，不存在这种方向选择性。
+\end{solution}
+\end{exercise}
+
+\begin{exercise}[level=standard]
+自然光依次通过两个夹角为 $60^\circ$ 的理想偏振片，求出射光强。
+\begin{solution}
+第一个偏振片后
+\[
+  I_1=\frac{I_0}{2}.
+\]
+第二个偏振片后
+\[
+  I_2=I_1\cos^260^\circ=\frac{I_0}{2}\cdot\frac14=\frac{I_0}{8}.
+\]
+\end{solution}
+\end{exercise}
+
+\begin{exercise}[level=standard]
+空气入射玻璃，玻璃折射率 $1.50$。求布儒斯特角。
+\begin{solution}
+\[
+  \tan i_B=\frac{n_2}{n_1}=1.50.
+\]
+故
+\[
+  i_B=\arctan1.50\approx56.3^\circ.
+\]
+\end{solution}
+\end{exercise}
+
+\begin{exercise}[level=standard]
+一束自然光和线偏振光的混合光通过旋转检偏器，测得最大透射光强是最小透射光强的 $5$ 倍。求自然光强与线偏振光强之比。
+\begin{solution}
+设自然光强为 $I_{\rm n}$，线偏振光强为 $I_{\rm p}$。旋转检偏器时
+\[
+  I_{\max}=\frac12 I_{\rm n}+I_{\rm p},\qquad
+  I_{\min}=\frac12 I_{\rm n}.
+\]
+由
+\[
+  \frac{I_{\max}}{I_{\min}}=5
+\]
+得
+\[
+  \frac{\frac12 I_{\rm n}+I_{\rm p}}{\frac12 I_{\rm n}}=5,
+\]
+即
+\[
+  1+\frac{2I_{\rm p}}{I_{\rm n}}=5.
+\]
+所以
+\[
+  \frac{I_{\rm n}}{I_{\rm p}}=\frac12.
+\]
+\end{solution}
+\end{exercise}
+

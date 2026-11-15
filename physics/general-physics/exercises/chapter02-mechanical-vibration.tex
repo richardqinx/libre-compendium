@@ -1,0 +1,305 @@
+% libre-compendium
+%
+% Copyright (C) 2026 Richard Qin
+%
+% This document is dual-licensed under either:
+% - GNU Free Documentation License, Version 1.3 or any later version
+%   published by the Free Software Foundation; with no Invariant Sections,
+%   no Front-Cover Texts, and no Back-Cover Texts (see COPYING.DOC); or
+% - Creative Commons Attribution-ShareAlike 4.0 International License
+%   (see LICENSE-CC-BY-SA-4.0).
+
+% Extracted from chapter02-mechanical-vibration.tex.
+\begin{exercise}[level=basic]
+质量为 $m$ 的水平弹簧振子，弹簧劲度系数为 $k$。推导动力学方程、固有圆频率和周期。
+\begin{solution}
+弹力 $F=-kx$，牛顿第二定律给出
+\[
+  m\ddot x=-kx,\qquad \ddot x+\frac{k}{m}x=0.
+\]
+故
+\[
+  \omega_0=\sqrt{\frac{k}{m}},\qquad T=2\pi\sqrt{\frac{m}{k}}.
+\]
+\end{solution}
+\end{exercise}
+
+\begin{exercise}[level=basic]
+竖直弹簧振子以弹簧原长位置为坐标原点时方程含有 $g$。通过坐标平移说明其仍作简谐振动，并求频率。
+\begin{solution}
+以原长位置为原点，向下为正：
+\[
+  m\ddot y'=mg-ky'.
+\]
+平衡位置 $y'_0=mg/k$。令 $y=y'-y'_0$，得
+\[
+  \ddot y+\frac{k}{m}y=0.
+\]
+故仍为简谐振动，$\omega_0=\sqrt{k/m}$，频率与 $g$ 无关。
+\end{solution}
+\end{exercise}
+
+\begin{exercise}[level=basic]
+单摆长为 $l$，小角摆动。推导其固有圆频率和周期，并说明近似条件。
+\begin{solution}
+切向方程
+\[
+  ml\ddot\theta=-mg\sin\theta.
+\]
+小角时 $\sin\theta\approx\theta$，所以
+\[
+  \ddot\theta+\frac{g}{l}\theta=0,\qquad
+  \omega_0=\sqrt{\frac{g}{l}},\qquad
+  T=2\pi\sqrt{\frac{l}{g}}.
+\]
+近似条件是摆角足够小。
+\end{solution}
+\end{exercise}
+
+\begin{exercise}[level=basic]
+已知 $x=A\cos(\omega t+\varphi_0)$，写出 $v(t)$、$a(t)$，并说明三者相位关系。
+\begin{solution}
+\[
+  v=-A\omega\sin(\omega t+\varphi_0),\qquad
+  a=-A\omega^2\cos(\omega t+\varphi_0).
+\]
+速度比位移超前 $\pi/2$，加速度与位移反相。
+\end{solution}
+\end{exercise}
+
+\begin{exercise}[level=basic]
+某简谐振动 $A=6\,\mathrm{cm}$、$T=2\,\mathrm{s}$、$\varphi_0=\pi/3$。写出 $x(t)$、$v(t)$。
+\begin{solution}
+$\omega=2\pi/T=\pi\,\mathrm{rad/s}$，若 $x$ 用 $\mathrm{cm}$：
+\[
+  x=6\cos\left(\pi t+\frac{\pi}{3}\right)\,\mathrm{cm},
+\]
+\[
+  v=-6\pi\sin\left(\pi t+\frac{\pi}{3}\right)\,\mathrm{cm/s}.
+\]
+\end{solution}
+\end{exercise}
+
+\begin{exercise}[level=standard]
+已知 $\omega=5\,\mathrm{rad/s}$，$x_0=4\,\mathrm{cm}$，$v_0=0$。求 $A$、$\varphi_0$ 和振动方程。
+\begin{solution}
+\[
+  A=\sqrt{4^2+0}=4\,\mathrm{cm}.
+\]
+由 $\cos\varphi_0=1$、$\sin\varphi_0=0$，取 $\varphi_0=0$。振动方程
+\[
+  x=4\cos(5t)\,\mathrm{cm}.
+\]
+\end{solution}
+\end{exercise}
+
+\begin{exercise}[level=standard]
+已知 $\omega=3\,\mathrm{rad/s}$，$x_0=0$，$v_0=-12\,\mathrm{cm/s}$。求 $A$、$\varphi_0$。
+\begin{solution}
+\[
+  A=\sqrt{0^2+\left(\frac{-12}{3}\right)^2}=4\,\mathrm{cm}.
+\]
+由 $\cos\varphi_0=0$，
+\[
+  \sin\varphi_0=-\frac{v_0}{A\omega}
+  =-\frac{-12}{4\cdot3}=1,
+\]
+故 $\varphi_0=\pi/2$。
+\end{solution}
+\end{exercise}
+
+\begin{exercise}[level=standard]
+已知 $\omega=2\,\mathrm{rad/s}$，$x_0=-3\,\mathrm{cm}$，$v_0=6\,\mathrm{cm/s}$。求 $A$，并判断 $\varphi_0$ 所在象限。
+\begin{solution}
+\[
+  A=\sqrt{(-3)^2+\left(\frac{6}{2}\right)^2}=3\sqrt2\,\mathrm{cm}.
+\]
+\[
+  \cos\varphi_0=\frac{-3}{3\sqrt2}<0,\qquad
+  \sin\varphi_0=-\frac{6}{(3\sqrt2)\cdot2}<0.
+\]
+所以 $\varphi_0$ 在第三象限。
+\end{solution}
+\end{exercise}
+
+\begin{exercise}[level=standard]
+简谐振动在某时刻相位为 $0,\pi/2,\pi,3\pi/2$。分别写出 $x$ 和 $v$。
+\begin{solution}
+由 $x=A\cos\varphi$、$v=-A\omega\sin\varphi$：
+\[
+\begin{array}{c|c|c}
+\varphi & x & v\\
+\hline
+0&A&0\\
+\pi/2&0&-A\omega\\
+\pi&-A&0\\
+3\pi/2&0&A\omega
+\end{array}
+\]
+\end{solution}
+\end{exercise}
+
+\begin{exercise}[level=standard]
+一个弹簧振子的振幅为 $A$。求 $x=A/2$ 处的速度大小。
+\begin{solution}
+\[
+  |v|=\omega\sqrt{A^2-\left(\frac{A}{2}\right)^2}
+  =\frac{\sqrt3}{2}\omega A.
+\]
+\end{solution}
+\end{exercise}
+
+\begin{exercise}[level=standard]
+弹簧振子经过 $x=2\,\mathrm{cm}$ 处速度大小为 $10\,\mathrm{cm/s}$，$\omega=5\,\mathrm{rad/s}$。求振幅。
+\begin{solution}
+\[
+  A=\sqrt{x^2+\left(\frac{v}{\omega}\right)^2}
+  =\sqrt{2^2+\left(\frac{10}{5}\right)^2}\,\mathrm{cm}
+  =2\sqrt2\,\mathrm{cm}.
+\]
+\end{solution}
+\end{exercise}
+
+\begin{exercise}[level=standard]
+若弹簧振子的振幅变为原来的 $2$ 倍，周期、最大速度、总机械能分别如何变化？
+\begin{solution}
+周期不变，因为 $T=2\pi/\omega_0$ 与振幅无关。最大速度 $v_{\max}=A\omega_0$ 变为 $2$ 倍。总能量 $E=\frac12kA^2$ 变为 $4$ 倍。
+\end{solution}
+\end{exercise}
+
+\begin{exercise}[level=standard]
+两同方向同频振动 $x_1=5\cos\omega t$、$x_2=5\cos(\omega t+\pi)$。求合振动。
+\begin{solution}
+\[
+  x=5\cos\omega t+5\cos(\omega t+\pi)=0.
+\]
+两个等振幅反相振动完全抵消。
+\end{solution}
+\end{exercise}
+
+\begin{exercise}[level=standard]
+两同方向同频振动 $x_1=3\cos\omega t$、$x_2=4\cos(\omega t+\pi/2)$。求合振幅。
+\begin{solution}
+\[
+  A=\sqrt{3^2+4^2+2\cdot3\cdot4\cos\frac{\pi}{2}}=5.
+\]
+\end{solution}
+\end{exercise}
+
+\begin{exercise}[level=standard]
+两同方向同频振动振幅分别为 $A_1,A_2$，相位差为 $\Delta\alpha$。推导合振幅公式。
+\begin{solution}
+设
+\[
+  x=A\cos(\omega t+\alpha).
+\]
+比较 $\cos\omega t$ 和 $\sin\omega t$ 的系数：
+\[
+  A\cos\alpha=A_1\cos\alpha_1+A_2\cos\alpha_2,
+\]
+\[
+  A\sin\alpha=A_1\sin\alpha_1+A_2\sin\alpha_2.
+\]
+平方相加：
+\[
+  A^2=A_1^2+A_2^2+2A_1A_2\cos(\alpha_1-\alpha_2).
+\]
+\end{solution}
+\end{exercise}
+
+\begin{exercise}[level=advanced]
+已知 $x=A\cos(\omega t+\varphi_0)$ 的 $x-t$ 图像在 $t=0$ 处过平衡位置且向 $x$ 正方向运动。求可取的 $\varphi_0$。
+\begin{solution}
+$t=0$ 过平衡位置说明 $x_0=0$，向正方向运动说明 $v_0>0$。因此
+\[
+  \cos\varphi_0=0,\qquad
+  \sin\varphi_0=-\frac{v_0}{A\omega}<0.
+\]
+可取
+\[
+  \varphi_0=-\frac{\pi}{2}
+\]
+或等价的 $3\pi/2$。
+\end{solution}
+\end{exercise}
+
+\begin{exercise}[level=advanced]
+已知相轨迹为 $\frac{x^2}{9}+\frac{v^2}{36}=1$，单位采用 $\mathrm{cm}$ 和 $\mathrm{cm/s}$。求 $A$ 和 $\omega$。
+\begin{solution}
+标准相轨迹
+\[
+  \frac{x^2}{A^2}+\frac{v^2}{A^2\omega^2}=1.
+\]
+所以 $A=3\,\mathrm{cm}$，$A\omega=6\,\mathrm{cm/s}$，故
+\[
+  \omega=2\,\mathrm{rad/s}.
+\]
+\end{solution}
+\end{exercise}
+
+\begin{exercise}[level=advanced]
+两同方向同频振动的合振幅等于零，需要满足什么条件？
+\begin{solution}
+合振幅为零要求
+\[
+  A=\sqrt{A_1^2+A_2^2+2A_1A_2\cos\Delta\alpha}=0.
+\]
+因此必须 $A_1=A_2$ 且 $\Delta\alpha=(2n+1)\pi$，即等振幅反相。
+\end{solution}
+\end{exercise}
+
+\begin{exercise}[level=standard]
+两个频率为 $440\,\mathrm{Hz}$ 和 $444\,\mathrm{Hz}$ 的同方向近频振动合成，拍频是多少？
+\begin{solution}
+拍频为两频率之差：
+\[
+  \nu_{\text{拍}}=|444-440|=4\,\mathrm{Hz}.
+\]
+\end{solution}
+\end{exercise}
+
+\begin{exercise}[level=standard]
+用一句话区分固有频率和受迫振动稳定后的频率。
+\begin{solution}
+固有频率由系统自身参数决定；受迫振动稳定后的频率等于驱动力频率，不一定等于固有频率。
+\end{solution}
+\end{exercise}
+
+\begin{exercise}[level=advanced]
+质量为 $m$ 的比重计浮在密度为 $\rho$ 的液体中，圆管直径为 $d$。取平衡位置为原点，证明小位移竖直振动为简谐振动并求周期。
+\begin{solution}
+平衡时 $mg=\rho gV_0$。向下偏离 $x$ 后排开体积增加
+\[
+  \Delta V=\frac{\pi d^2}{4}x.
+\]
+浮力增量向上，故相对平衡位置的回复力为
+\[
+  F_x=-\rho g\frac{\pi d^2}{4}x.
+\]
+于是
+\[
+  m\ddot x+\rho g\frac{\pi d^2}{4}x=0,
+\]
+为简谐振动，且
+\[
+  \omega_0=\sqrt{\frac{\pi\rho gd^2}{4m}},\qquad
+  T=2\pi\sqrt{\frac{4m}{\pi\rho gd^2}}.
+\]
+\end{solution}
+\end{exercise}
+
+\begin{exercise}[level=standard]
+$n$ 个同方向同频简谐振动振幅均为 $a$，初相依次相差 $\varepsilon$。写出合振幅，并说明何时取最大值。
+\begin{solution}
+旋转矢量首尾相接得
+\[
+  A=a\left|\frac{\sin(n\varepsilon/2)}{\sin(\varepsilon/2)}\right|.
+\]
+当 $\varepsilon=2k\pi$ 时，各分振动同相，合振幅最大：
+\[
+  A_{\max}=na.
+\]
+若 $\sin(n\varepsilon/2)=0$ 且 $\sin(\varepsilon/2)\ne0$，合振幅为零。
+\end{solution}
+\end{exercise}
+

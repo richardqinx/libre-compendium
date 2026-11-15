@@ -1,0 +1,449 @@
+% libre-compendium
+%
+% Copyright (C) 2026 Richard Qin
+%
+% This document is dual-licensed under either:
+% - GNU Free Documentation License, Version 1.3 or any later version
+%   published by the Free Software Foundation; with no Invariant Sections,
+%   no Front-Cover Texts, and no Back-Cover Texts (see COPYING.DOC); or
+% - Creative Commons Attribution-ShareAlike 4.0 International License
+%   (see LICENSE-CC-BY-SA-4.0).
+
+\chapter{机械波}
+
+\begin{summary}[本章内容概览]
+本章介绍机械波的基本概念和分类、平面简谐波的波函数、波速与波长频率的关系、横波波形图、波动方程、波的叠加与干涉以及多普勒效应，并进一步讨论波能量、反射透射、驻波和群速度等主题。
+\end{summary}
+
+\section{机械波的基本概念与分类}
+
+机械波是机械振动在弹性介质中的传播。波传播时，介质中各质元只在各自平衡位置附近振动；真正传播的是振动状态、相位、能量和动量，而不是介质本身的永久迁移。
+
+\begin{definition}[机械波的产生条件]\label{def:mechanical-wave-condition}
+形成机械波需要两个条件：
+\begin{enumerate}
+  \item 波源：提供周期性或扰动性振动；
+  \item 弹性介质：相邻质元之间存在相互作用，能把振动状态由近及远传递。
+\end{enumerate}
+机械波的频率由波源决定，波速由介质的性质决定。
+\end{definition}
+
+\begin{attention}[质元速度和波速不是一回事]
+波速 $u$ 是振动状态传播的速度，也称相速度；质元速度 $v_y=\partial y/\partial t$ 是某个质元在平衡位置附近振动的速度。波向右传播并不表示每个质元向右运动。
+\end{attention}
+
+\subsection*{几何分类}
+
+\begin{itemize}
+  \item 波线：表示波传播方向的射线。
+  \item 波面：相位相同的点组成的面，也称同相面。
+  \item 波阵面：最前面的波面。
+  \item 平面波：波面为平面；球面波：波面为球面；柱面波：波面为柱面。
+\end{itemize}
+
+\subsection*{其他常见分类}
+
+还可以从不同角度对机械波进行分类。这些分类帮助区分波的传播机制、几何特征和观测方式。
+\[
+\begin{array}{c|c|c}
+\text{分类角度} & \text{类型} & \text{判据}\\
+\hline
+\text{是否依赖弹性介质} & \text{机械波/非机械波} & \text{机械波必须在介质中传播；电磁波可在真空中传播}\\
+\text{扰动是否持续} & \text{脉冲波/连续波} & \text{单个扰动形成脉冲波；周期扰动形成连续波}\\
+\text{传播区域} & \text{体波/表面波} & \text{体波在介质内部传播；表面波沿界面传播}\\
+\text{振动轨迹} & \text{线偏振/圆偏振} & \text{质元振动轨迹为直线或圆}
+\end{array}
+\]
+水波常作为表面波例子，其质元运动一般不能简单归为纯横波或纯纵波。
+
+\subsection*{横波与纵波}
+
+\begin{definition}[横波与纵波]\label{def:transverse-longitudinal}
+若介质质元振动方向与波传播方向垂直，称为横波；若质元振动方向与波传播方向平行，称为纵波。绳上的波通常是横波，空气中的声波通常是纵波。
+\end{definition}
+
+液体和气体内部不能传播横波，因为它们不能支持静态剪切形变；固体既能传播纵波，也能传播横波。水面波不是单纯横波或纵波，表面质元常作近似圆或椭圆运动。
+
+\section{平面简谐波的波函数}
+
+沿 $x$ 轴传播的平面波中，同一 $x$ 坐标处的质元具有相同位移；若振动方向已取为 $y$ 方向，则用
+\[
+  y=y(x,t)
+\]
+描述波线上各质元的位移。
+
+\begin{definition}[平面简谐波]\label{def:plane-harmonic-wave}
+若平面波中各质元均作同频简谐振动，则称为平面简谐波。沿 $x$ 轴正向传播时，常用形式为
+\[
+  y(x,t)=A\cos(\omega t-kx+\varphi_0),
+\]
+其中
+\[
+  k=\frac{2\pi}{\lambda},\qquad
+  \omega=\frac{2\pi}{T}=2\pi\nu,\qquad
+  u=\frac{\omega}{k}=\lambda\nu.
+\]
+\end{definition}
+
+\subsection*{由振源方程推出波函数}
+
+设原点 $O$ 的振动方程为
+\[
+  y_O(t)=A\cos(\omega t+\varphi_0).
+\]
+若波沿 $x$ 轴正向以速度 $u$ 传播，则 $x$ 处质元比原点晚
+\[
+  \Delta t=\frac{x}{u}
+\]
+接收到同一振动状态。因此 $x$ 处在时刻 $t$ 的位移等于原点在较早时刻 $t-x/u$ 的位移：
+\[
+  y(x,t)=A\cos\left[\omega\left(t-\frac{x}{u}\right)+\varphi_0\right].
+\]
+由于 $k=\omega/u$，得
+\[
+  y(x,t)=A\cos(\omega t-kx+\varphi_0).
+\]
+若波沿 $x$ 轴负向传播，则
+\[
+  y(x,t)=A\cos(\omega t+kx+\varphi_0).
+\]
+
+\begin{method}[判断波函数中的正负号]
+\[
+  y=A\cos(\omega t-kx+\varphi_0)
+\]
+表示波形沿 $x$ 正向传播；
+\[
+  y=A\cos(\omega t+kx+\varphi_0)
+\]
+表示波形沿 $x$ 负向传播。理由是取相位为常数，$\omega t-kx+\varphi_0=C$ 给出 $x=(\omega/k)t+\text{常数}$，同一相位随时间向 $+x$ 移动。
+\end{method}
+
+\begin{method}[相位差的直接计算]
+对沿 $x$ 正向传播的平面简谐波
+\[
+  y=A\cos(\omega t-kx+\varphi_0),
+\]
+两事件 $(x_1,t_1)$、$(x_2,t_2)$ 的相位差为
+\[
+  \Delta\varphi
+  =\varphi_2-\varphi_1
+  =\omega(t_2-t_1)-k(x_2-x_1).
+\]
+同一时刻比较两点：
+\[
+  \Delta\varphi=-k\Delta x=-\frac{2\pi}{\lambda}\Delta x.
+\]
+这表示沿传播方向更远的点相位落后。若只问相位差大小，常写
+\[
+  |\Delta\varphi|=\frac{2\pi}{\lambda}|\Delta x|.
+\]
+同一位置比较两个时刻：
+\[
+  \Delta\varphi=\omega\Delta t.
+\]
+\end{method}
+
+\section{波长、频率、波速与图形表示}
+
+\begin{definition}[波长、周期、频率和角波数]\label{def:wave-parameters}
+\begin{itemize}
+  \item 波长 $\lambda$：同一波线上相位差为 $2\pi$ 的相邻两点之间的距离。
+  \item 周期 $T$：某一质元完成一次全振动所需时间，也是一个完整波形通过空间固定点所需时间。
+  \item 频率 $\nu$：单位时间内通过固定点的完整波数，也等于质元振动频率。
+  \item 角波数 $k=2\pi/\lambda$：单位长度对应的相位变化率。
+\end{itemize}
+\[
+  u=\frac{\lambda}{T}=\lambda\nu=\frac{\omega}{k}.
+\]
+\end{definition}
+
+\lcfigure[caption={横波在某一时刻的波形图。相邻同相点间距为 $\lambda$，最大位移为 $A$。},label={fig:transverse-wave-snapshot}]{transverse-wave-snapshot}
+
+\subsection*{波函数的三种读法}
+
+对
+\[
+  y(x,t)=A\cos(\omega t-kx+\varphi_0),
+\]
+有三种常见读法：
+\begin{enumerate}
+  \item 固定 $x=x_0$：得到 $x_0$ 处质元的振动方程
+  \[
+    y(x_0,t)=A\cos(\omega t-kx_0+\varphi_0).
+  \]
+  \item 固定 $t=t_0$：得到该时刻的波形图
+  \[
+    y(x,t_0)=A\cos(\omega t_0-kx+\varphi_0).
+  \]
+  \item $x,t$ 同时变化：描述整条波线上所有质元随时间的运动。
+\end{enumerate}
+
+\begin{pitfall}[波形图不是质元运动轨迹]
+横波的 $y-x$ 图在某一时刻看起来像一条曲线，但一个质元不会沿这条曲线滑动。位于 $x_0$ 的质元只沿振动方向上下运动；波形曲线本身以速度 $u$ 平移。
+\end{pitfall}
+
+\begin{method}[由波形图判断质元瞬时运动方向]
+若波形沿 $+x$ 方向传播，则经过很短时间后，整条波形向右平移。要判断某点质元的速度方向，可把该点稍左侧的波形“搬到”该点：若左侧波形高度更大，该点将向上运动；若左侧波形高度更小，该点将向下运动。等价地，对 $y=f(x-ut)$，
+\[
+  \frac{\partial y}{\partial t}=-u\frac{\partial y}{\partial x}.
+\]
+沿 $+x$ 传播时，斜率为正的点向下运动，斜率为负的点向上运动。
+\end{method}
+
+\begin{example}[title={由波形信息写波函数}]\label{eg:wavefunction-example}
+一列横波沿 $x$ 正向传播，波速 $u=0.08\,\mathrm{m/s}$，振幅 $A=0.04\,\mathrm{m}$，波长 $\lambda=0.40\,\mathrm{m}$。$t=0$ 时原点位移为 $0$ 且向 $y$ 轴负向运动。求波函数。
+
+\begin{solution}
+\[
+  T=\frac{\lambda}{u}=\frac{0.40}{0.08}=5\,\mathrm{s},\qquad
+  \omega=\frac{2\pi}{T}=\frac{2\pi}{5}\,\mathrm{rad/s},
+\]
+\[
+  k=\frac{2\pi}{\lambda}=5\pi\,\mathrm{rad/m}.
+\]
+设
+\[
+  y(0,t)=A\cos(\omega t+\varphi_0).
+\]
+$t=0$ 时 $y=0$，且
+\[
+  v_y(0,0)=-A\omega\sin\varphi_0<0.
+\]
+因此 $\sin\varphi_0>0$ 且 $\cos\varphi_0=0$，取
+\[
+  \varphi_0=\frac{\pi}{2}.
+\]
+波沿 $+x$ 方向传播，故
+\[
+  y(x,t)=0.04\cos\left(\frac{2\pi}{5}t-5\pi x+\frac{\pi}{2}\right)\,\mathrm{m}.
+\]
+\end{solution}
+\end{example}
+
+\section{波动方程}
+
+本讲义先给出波动方程的形式和意义，推导可以结合连续介质力学进一步展开。
+
+\begin{definition}[一维波动方程]\label{def:one-dimensional-wave-equation}
+一维非色散介质中的波动方程为
+\[
+  \frac{\partial^2 \xi}{\partial x^2}
+  =\frac{1}{u^2}\frac{\partial^2 \xi}{\partial t^2},
+\]
+或等价地
+\[
+  \frac{\partial^2 \xi}{\partial t^2}
+  =u^2\frac{\partial^2 \xi}{\partial x^2}.
+\]
+其中 $u$ 是由介质性质决定的波速。
+\end{definition}
+
+\begin{attention}[“波函数”和“波动方程”不同]
+波函数如 $y=A\cos(\omega t-kx+\varphi_0)$，是某个具体波的解；波动方程是介质允许的波动所满足的动力学方程。给定初始条件和边界条件后，求解波动方程才能得到具体波函数。
+\end{attention}
+
+任意形状的行波
+\[
+  \xi=f(x-ut)
+\]
+沿 $x$ 正向传播；
+\[
+  \xi=f(x+ut)
+\]
+沿 $x$ 负向传播。平面简谐波是行波解的一个特例。
+
+\section{波的叠加与干涉}
+
+\begin{definition}[波的叠加原理]\label{def:wave-superposition}
+在线性介质中，几列波相遇时，各波能保持自身传播特征；相遇处介质质元的位移等于各列波在该处引起位移的矢量和。
+\end{definition}
+
+叠加原理不是无限制成立的。若振幅过大、介质响应不再近似线性，波动方程不再是线性的，简单叠加就可能失效。
+
+\begin{definition}[干涉条件]\label{def:interference-condition}
+两列波发生稳定干涉需要满足：
+\begin{enumerate}
+  \item 频率相同；
+  \item 振动方向相同或有固定投影方向；
+  \item 相位差恒定。
+\end{enumerate}
+满足这些条件的波称为相干波。
+\end{definition}
+
+\subsection*{两相干波的合振幅}
+
+设两相干波在点 $P$ 处引起的振动为
+\[
+  y_1=A_1\cos(\omega t+\varphi_1),\qquad
+  y_2=A_2\cos(\omega t+\varphi_2).
+\]
+合振动仍为同频简谐振动，振幅
+\[
+  A=\sqrt{A_1^2+A_2^2+2A_1A_2\cos\Delta\varphi},
+  \qquad
+  \Delta\varphi=\varphi_2-\varphi_1.
+\]
+
+若两波源初相差为 $\Delta\varphi_0$，到 $P$ 点的路程分别为 $r_1,r_2$，则
+\[
+  \Delta\varphi=\Delta\varphi_0-k(r_2-r_1)
+\]
+的一种常用写法。只要整体符号约定一致，判断加强/减弱的结论不变。
+
+\begin{summary}[干涉加强与减弱]
+若
+\[
+  \Delta\varphi=2m\pi,\qquad m\in\mathbb Z,
+\]
+则干涉加强，合振幅最大：
+\[
+  A=A_1+A_2.
+\]
+若
+\[
+  \Delta\varphi=(2m+1)\pi,
+\]
+则干涉减弱，合振幅最小：
+\[
+  A=|A_1-A_2|.
+\]
+若两波源同相，则可用路程差 $\Delta r=|r_2-r_1|$ 判断：
+\[
+  \Delta r=m\lambda \quad \text{加强},\qquad
+  \Delta r=\left(m+\frac12\right)\lambda \quad \text{减弱}.
+\]
+\end{summary}
+
+\begin{example}[title={相干波干涉判断}]\label{eg:interference-example}
+两同相相干波源发出频率 $\nu=100\,\mathrm{Hz}$ 的波，波速 $u=20\,\mathrm{m/s}$。某点到两波源距离分别为 $r_1=3.0\,\mathrm{m}$、$r_2=3.5\,\mathrm{m}$。判断该点干涉加强还是减弱。
+
+\begin{solution}
+\[
+  \lambda=\frac{u}{\nu}=\frac{20}{100}=0.20\,\mathrm{m}.
+\]
+路程差
+\[
+  \Delta r=|r_2-r_1|=0.5\,\mathrm{m}=2.5\lambda.
+\]
+这是半整数倍波长，故该点干涉减弱。
+\end{solution}
+\end{example}
+
+\section{多普勒效应}
+
+多普勒效应是由于波源或观察者相对介质运动，使观察者接收到的频率不同于波源频率的现象。机械波的多普勒效应必须区分三个速度对象：波相对介质的速度 $u$、观察者相对介质的速度、波源相对介质的速度。
+
+\begin{method}[一维声波多普勒公式]
+设波速为 $u$，波源频率为 $\nu_s$。令 $v_R$ 为观察者“朝向波源”运动的速度，$v_S$ 为波源“朝向观察者”运动的速度；若背离，则取负值。接收频率为
+\[
+  \nu_R=\nu_s\frac{u+v_R}{u-v_S}.
+\]
+该式只适用于波、波源和观察者均相对同一介质作一维运动的情形；机械波中 $u$ 必须取相对介质的波速，不能把两个物体的相对速度直接代入。
+\end{method}
+
+\textbf{公式的推导}
+
+先令观察者静止，波源朝向观察者运动。一个周期 $T_s=1/\nu_s$ 内，前一波峰向前传播距离为 $uT_s$，而波源也向观察者前进距离 $v_ST_s$，故观察者前方的实际波长为
+\[
+  \lambda'=uT_s-v_ST_s=\frac{u-v_S}{\nu_s}.
+\]
+观察者若再以速度 $v_R$ 朝向波源运动，则它与迎面波峰的相对接近速度为 $u+v_R$。单位时间内遇到的波峰数即接收频率：
+\[
+  \nu_R=\frac{u+v_R}{\lambda'}
+  =\nu_s\frac{u+v_R}{u-v_S}.
+\]
+由此可见，观察者运动不改变介质中已有的波长，故其速度出现在分子；波源运动先改变前方的波长，故其速度出现在分母。若波源或观察者远离，只需按定义令相应速度取负值。
+
+\begin{attention}[多普勒效应的判号检查]
+相向接近时应有 $\nu_R>\nu_s$，相互远离时应有 $\nu_R<\nu_s$；代入结果不满足这一单调性，通常是分子、分母或速度正负写反。声源从观察者旁通过时，接收频率会从靠近阶段的较高值突变为远离阶段的较低值；这一跳变来自波源运动方向相对于观察者的改变，不是声源频率突然改变。
+\end{attention}
+
+\begin{example}[title={火车鸣笛的多普勒效应}]\label{eg:doppler-example}
+火车以 $20\,\mathrm{m/s}$ 速度接近静止观察者，汽笛频率为 $500\,\mathrm{Hz}$，空气中声速取 $340\,\mathrm{m/s}$。求观察者听到的频率；若火车远离观察者，又是多少？
+
+\begin{solution}
+观察者静止，$v_R=0$。接近时 $v_S=20\,\mathrm{m/s}$：
+\[
+  \nu_R=500\frac{340}{340-20}
+  =531.25\,\mathrm{Hz}.
+\]
+远离时 $v_S=-20\,\mathrm{m/s}$：
+\[
+  \nu_R=500\frac{340}{340+20}
+  \approx472.2\,\mathrm{Hz}.
+\]
+\end{solution}
+\end{example}
+
+\section{波能量、反射、透射与驻波}
+
+\begin{definition}[波的能量与平均能流密度]\label{def:wave-energy-note}
+机械波传播时，介质质元只在平衡位置附近振动，但能量随波向前传递。对平面简谐波，若介质质量密度为 $\rho$，质元振动振幅为 $A$、角频率为 $\omega$，平均能量密度可写成
+\[
+  \overline w=\frac12\rho A^2\omega^2.
+\]
+平均能流密度表示单位时间通过垂直传播方向单位面积的平均能量，记为
+\[
+  \overline I=\overline w\,u.
+\]
+因此在同一介质中，波强与振幅平方成正比：
+\[
+  \overline I\propto A^2.
+\]
+波能量是理解能量传递的重要组成部分，也是区分波动传播与介质质元运动的关键。
+\end{definition}
+
+\begin{theorem}[驻波的形成]\label{thm:standing-wave-note}
+两列等振幅、同频、反向传播的相干波叠加可形成驻波。设
+\[
+  y_1=A\cos(\omega t-kx),\qquad
+  y_2=A\cos(\omega t+kx),
+\]
+则由三角恒等式
+\[
+  \cos\alpha+\cos\beta
+  =2\cos\frac{\alpha+\beta}{2}\cos\frac{\alpha-\beta}{2}
+\]
+得
+\[
+  y=2A\cos kx\cos\omega t.
+\]
+此式不是沿 $x$ 方向平移的行波，而是各位置以不同振幅作简谐振动，位置因子为 $2A|\cos kx|$。
+\end{theorem}
+
+由
+\[
+  \cos kx=0
+\]
+得到波节位置
+\[
+  x=\frac{(2m+1)\lambda}{4},\qquad m\in\mathbb Z,
+\]
+波节处振幅恒为零。由
+\[
+  |\cos kx|=1
+\]
+得到波腹位置
+\[
+  x=\frac{m\lambda}{2},\qquad m\in\mathbb Z,
+\]
+波腹处振幅最大，为 $2A$。相邻波节或相邻波腹间距均为 $\lambda/2$，相邻波节和波腹间距为 $\lambda/4$。若驻波写成 $y=2A\sin kx\cos\omega t$，只是坐标原点选取不同，波节和波腹的相对间距不变。
+
+\begin{attention}[反射与半波损失]
+固定端反射常发生相位突变 $\pi$，称为半波损失；自由端反射无半波损失。驻波中没有能量的定向传播，这一点区别于行波。反射相位、驻波结构和能量传递之间由边界条件和能流关系联系起来。
+\end{attention}
+
+\section*{本章常见概念误区}
+
+\begin{pitfall}[机械波常见错误]
+\begin{enumerate}
+  \item 认为介质质元随波前进。实际质元只在平衡位置附近振动。
+  \item 把波速 $u$ 和质元振动速度 $\partial y/\partial t$ 混为一谈。
+  \item 写波函数时把传播方向的正负号弄反。
+  \item 只看 $y-x$ 波形图却忘记它是固定时刻的图像，不是某个质元的运动轨迹。
+  \item 判断质元瞬时运动方向时没有结合波传播方向。
+  \item 干涉题只看路程差，忘记波源初相差也会贡献相位差。
+  \item 多普勒效应中没有先判断靠近还是远离，导致分子分母符号写反。
+\end{enumerate}
+\end{pitfall}

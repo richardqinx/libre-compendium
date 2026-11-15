@@ -1,0 +1,676 @@
+% libre-compendium
+%
+% Copyright (C) 2026 Richard Qin
+%
+% This document is dual-licensed under either:
+% - GNU Free Documentation License, Version 1.3 or any later version
+%   published by the Free Software Foundation; with no Invariant Sections,
+%   no Front-Cover Texts, and no Back-Cover Texts (see COPYING.DOC); or
+% - Creative Commons Attribution-ShareAlike 4.0 International License
+%   (see LICENSE-CC-BY-SA-4.0).
+
+\chapter{光学}
+
+\begin{summary}[本章内容概览]
+本章从光波基础和必要的几何光学出发，系统介绍光程、干涉、薄膜干涉、衍射、光学分辨率和偏振。几何光学为光程差和仪器成像提供背景，波动光学则解释干涉、衍射与偏振现象。
+\end{summary}
+
+\section{光波基础与几何光学必要结论}
+
+光在传播中主要表现为电磁波；在与物质微观相互作用时又表现出粒子性。普通物理学习中的光学主要使用波动模型：光是横向电磁波，光矢量通常指电场强度 $\bm E$，干涉、衍射和偏振都直接反映其波动性。
+
+在真空中的平面电磁波满足
+\[
+  \bm E\perp \bm B,\qquad \bm E\perp \bm v,\qquad \bm B\perp \bm v,
+\]
+且 $\bm E\times\bm B$ 指向光的传播方向。电场和磁场同相振动，振幅满足
+\[
+  \frac{E_0}{B_0}=c.
+\]
+可见光大致位于 $400\,\mathrm{nm}$ 到 $760\,\mathrm{nm}$，频率、波长和光速满足
+\[
+  c=\lambda_0\nu.
+\]
+这些关系说明光的传播方向、光矢量方向和磁场方向构成右手正交关系；偏振问题讨论的就是光矢量 $\bm E$ 的方向分布。
+
+\begin{definition}[光速、折射率和波长]\label{def:refractive-index}
+真空中光速
+\[
+  c=\frac1{\sqrt{\varepsilon_0\mu_0}}\approx3.0\times10^8\,\mathrm{m/s}.
+\]
+介质折射率定义为
+\[
+  n=\frac{c}{v}.
+\]
+光从一种介质进入另一种介质时，频率 $\nu$ 由光源决定而保持不变，传播速度和波长改变：
+\[
+  v=\frac{c}{n},\qquad \lambda=\frac{v}{\nu}=\frac{\lambda_0}{n},
+\]
+其中 $\lambda_0$ 是真空波长。
+\end{definition}
+
+\begin{attention}[光学公式中的波长约定]
+干涉和衍射题最容易混淆的是 $\lambda$ 的含义。若用光程 $L=nl$，相位差写成
+\[
+  \Delta\varphi=\frac{2\pi}{\lambda_0}\Delta L,
+\]
+则 $\lambda_0$ 是真空波长。若只在同一种介质内用几何路程差 $\Delta r$，也可写
+\[
+  \Delta\varphi=\frac{2\pi}{\lambda}\Delta r,
+\]
+此时 $\lambda=\lambda_0/n$ 是该介质中的波长。整道题必须保持同一约定。
+\end{attention}
+
+\subsection*{几何光学的适用条件}
+
+几何光学把光看作沿光线传播，适用于光学元件或障碍物线度 $D$ 远大于波长 $\lambda$ 的情形：
+\[
+  \frac{D}{\lambda}\gg1.
+\]
+当孔径、狭缝或障碍物线度与波长同量级时，衍射不能忽略，几何光学近似失效。
+
+\subsection*{反射、折射与全反射}
+
+反射定律：
+\[
+  \theta_i=\theta_r.
+\]
+折射定律（Snell 定律）：
+\[
+  n_1\sin\theta_1=n_2\sin\theta_2.
+\]
+若光从光密介质进入光疏介质，即 $n_1>n_2$，折射角随入射角增大。当 $\theta_2=90^\circ$ 时得到临界角
+\[
+  \theta_c=\arcsin\frac{n_2}{n_1}.
+\]
+入射角大于 $\theta_c$ 时发生全反射。光纤通讯就是利用纤芯折射率大于包层折射率，使光在纤芯内反复全反射传播。
+
+\begin{method}[用费马原理理解反射和折射]
+光程定义为
+\[
+  L=\int_A^B n\,\dd s.
+\]
+费马原理说，实际光线使光程取驻值：
+\[
+  \delta\int_A^B n\,\dd s=0.
+\]
+在同一均匀介质中 $n$ 为常量，光线为直线；在平面镜反射问题中，使总路程驻值可推出 $\theta_i=\theta_r$；在两介质界面折射问题中，使
+\[
+  t=\frac{s_1}{v_1}+\frac{s_2}{v_2}
+\]
+驻值，可推出
+\[
+  \frac{\sin\theta_1}{v_1}=\frac{\sin\theta_2}{v_2},
+\]
+即 $n_1\sin\theta_1=n_2\sin\theta_2$。
+\end{method}
+
+\subsection*{成像和仪器结论}
+
+平面镜、凹面镜、透镜和仪器成像为光程和光学仪器分析提供必要工具。本节先建立几何成像关系；对空气中的薄透镜，取实物距 $u>0$、实像距 $v>0$、焦距 $f$，近轴成像满足
+\[
+  \frac1u+\frac1v=\frac1f.
+\]
+横向放大率为
+\[
+  \beta=\frac{y'}{y}=-\frac vu.
+\]
+负号表示实像相对物体倒立；若计算得到 $v<0$，表示像在物体同侧，为虚像。凹透镜可取 $f<0$，按同一公式处理。
+
+几何成像与波动光学的联系集中在三点：
+\begin{enumerate}
+  \item 薄透镜改变光线方向，但对焦点成像的各条实际光路具有相同光程，因此薄透镜本身不额外破坏相干条件。
+  \item 透镜、物镜等有限孔径会造成圆孔衍射，因此真实像点不是几何点，而是艾里斑。
+  \item 光学仪器的分辨率由几何成像和衍射共同限制，最终要用瑞利判据处理。
+\end{enumerate}
+
+\section{光的相干叠加与光程差}
+
+\begin{definition}[相干光的条件]\label{def:coherent-light}
+两束光能形成稳定干涉条纹，需要满足：
+\begin{enumerate}
+  \item 频率相同或近似相同；
+  \item 相位差恒定；
+  \item 光矢量振动方向相同，或至少有同方向分量。
+\end{enumerate}
+普通独立光源的初相随机，不能直接形成稳定干涉；实验中常用分波面法或分振幅法从同一束光中取得相干光。
+\end{definition}
+
+设两相干光在点 $P$ 处的光强分别为 $I_1,I_2$，相位差为 $\Delta\varphi$。合光强为
+\[
+  I=I_1+I_2+2\sqrt{I_1I_2}\cos\Delta\varphi.
+\]
+若 $I_1=I_2=I_0$，则
+\[
+  I=4I_0\cos^2\frac{\Delta\varphi}{2}.
+\]
+相位差由光程差决定：
+\[
+  \Delta\varphi=\Delta\varphi_0+\frac{2\pi}{\lambda_0}\Delta,
+\]
+其中 $\Delta$ 是两束光的光程差，$\Delta\varphi_0$ 包括初相差和反射相位突变。
+
+\begin{definition}[光程和光程差]\label{def:optical-path}
+在均匀介质中传播几何路程 $r$，对应光程为 $nr$。多段介质中
+\[
+  L=\sum_i n_i r_i.
+\]
+两束光的光程差
+\[
+  \Delta=L_2-L_1.
+\]
+若两相干光源初相相同，且没有额外半波损失，则
+\[
+  \Delta=k\lambda_0\quad(k=0,\pm1,\pm2,\ldots)
+\]
+为干涉加强，
+\[
+  \Delta=\left(k+\frac12\right)\lambda_0
+\]
+为干涉减弱。
+\end{definition}
+
+\begin{attention}[时间相干性与相干长度]
+实际光源不是严格单色光，波列长度有限。能观察到干涉的必要条件之一是两束光的光程差不能超过相干长度的量级：
+\[
+  |\Delta|\lesssim L_c,\qquad L_c\simeq\frac{\lambda_0^2}{\Delta\lambda}.
+\]
+谱线宽度 $\Delta\lambda$ 越小，单色性越好，相干长度越长。激光比白炽灯更容易形成清晰干涉条纹。
+\end{attention}
+
+\subsection*{条纹可见度和相干性的两个方向}
+
+干涉条纹是否“清楚”，不仅取决于是否满足明暗条件，还取决于明暗光强差别。条纹可见度常写为
+\[
+  K=\frac{I_{\max}-I_{\min}}{I_{\max}+I_{\min}}.
+\]
+完全相干且两束光强相等时 $K=1$，暗纹可达到零光强；若两束光不相干，干涉项在探测器响应时间内平均为零，只有
+\[
+  \overline I=I_1+I_2,
+\]
+于是 $K=0$，看不到稳定条纹。
+
+相干性可以从两个方向理解：
+\begin{itemize}
+  \item 时间相干性：同一光源点在不同时刻发出的波列之间是否还能保持固定相位关系，主要由谱线宽度控制；
+  \item 空间相干性：光源不同点在同一时刻发出的光之间是否还能保持固定相位关系，主要由光源横向尺寸控制。
+\end{itemize}
+双缝实验中要求单缝足够窄、双缝间距不太大，本质上是在保证空间相干性；光程差不能太大，本质上是在保证时间相干性。
+
+\subsection*{获得相干光的两类方法}
+
+从普通独立光源直接取两束光通常不能干涉。实验上常用：
+\begin{enumerate}
+  \item 分波面法：把同一波阵面的不同部分分成两束，如杨氏双缝、菲涅耳双棱镜、菲涅耳双面镜和劳埃德镜；
+  \item 分振幅法：用反射和透射把同一束光分成两束，如薄膜干涉和迈克耳逊干涉仪。
+\end{enumerate}
+若题目问“为什么这两束光相干”，标准回答不是“因为频率相同”一句，而是说明它们来自同一束光或同一波列的两部分，因此初相差稳定。
+
+\section{杨氏双缝干涉}
+
+杨氏双缝是分波面法。单缝 $S$ 照亮两个狭缝 $S_1,S_2$，两个狭缝可看作同相相干线光源。
+
+\lcfigure[caption={杨氏双缝干涉几何关系。远场近似下 $\Delta\approx d\sin\theta\approx dx/D$。},label={fig:double-slit-geometry}]{double-slit-geometry}
+
+设双缝间距为 $d$，屏到双缝距离为 $D$，且 $D\gg d$。屏上点 $P$ 离中央点 $O$ 的距离为 $x$。由几何关系
+\[
+  \tan\theta\simeq\sin\theta\simeq\frac{x}{D},
+\]
+两束光的路程差为
+\[
+  \Delta=r_2-r_1\simeq d\sin\theta\simeq\frac{dx}{D}.
+\]
+若在空气中且不考虑额外相位差，则明纹条件为
+\[
+  \Delta=k\lambda,\qquad k=0,\pm1,\pm2,\ldots
+\]
+对应位置
+\[
+  x_k=k\frac{D\lambda}{d}.
+\]
+暗纹条件为
+\[
+  \Delta=\left(k+\frac12\right)\lambda,
+\]
+对应
+\[
+  x_k'=\left(k+\frac12\right)\frac{D\lambda}{d}.
+\]
+相邻明纹或相邻暗纹的间距相同：
+\[
+  \Delta x=\frac{D\lambda}{d}.
+\]
+
+\begin{method}[双缝干涉题的标准入口]
+双缝题通常先写
+\[
+  \Delta=\frac{dx}{D}.
+\]
+再根据“明纹、暗纹、移动、覆盖薄片”选择条件：
+\[
+  \Delta=k\lambda,\qquad
+  \Delta=\left(k+\frac12\right)\lambda.
+\]
+若某一缝覆盖折射率为 $n$、厚度为 $a$ 的透明薄片，该路额外光程为
+\[
+  \Delta_{\rm add}=(n-1)a.
+\]
+条纹移动的条数
+\[
+  N=\frac{\Delta_{\rm add}}{\lambda}.
+\]
+\end{method}
+
+\begin{example}[title={双缝明纹间距}]\label{eg:young-example}
+波长 $\lambda=632.8\,\mathrm{nm}$ 的激光垂直照射间距 $d=1.2\,\mathrm{mm}$ 的双缝，屏距 $D=0.50\,\mathrm{m}$。求相邻明纹间距和两条第 $4$ 级明纹间距。
+
+\begin{solution}
+相邻明纹间距
+\[
+  \Delta x=\frac{D\lambda}{d}
+  =\frac{0.50\times632.8\times10^{-9}}{1.2\times10^{-3}}
+  =2.64\times10^{-4}\,\mathrm{m}.
+\]
+第 $4$ 级明纹位于
+\[
+  x_4=4\Delta x=1.05\times10^{-3}\,\mathrm{m}.
+\]
+正负两条第 $4$ 级明纹间距为
+\[
+  2x_4=2.11\times10^{-3}\,\mathrm{m}.
+\]
+\end{solution}
+\end{example}
+
+\section{薄膜干涉与半波损失}
+
+薄膜干涉是分振幅法：同一束入射光在薄膜上、下表面反射或透射后形成两束相干光。肥皂泡、油膜颜色、增透膜、劈尖和牛顿环都属于薄膜干涉模型。
+
+\lcfigure[caption={薄膜反射干涉。两束反射光的相位差来自膜内往返光程和界面反射相位突变。},label={fig:thin-film-interference}]{thin-film-interference}
+
+\begin{definition}[半波损失]\label{def:half-wave-loss}
+光从光疏介质射向光密介质并发生反射时，反射光相位突变 $\pi$，等效为附加半个真空波长的光程差：
+\[
+  \frac{\lambda_0}{2}.
+\]
+从光密介质射向光疏介质反射时没有半波损失。
+\end{definition}
+
+设薄膜折射率为 $n_2$，厚度为 $e$，外侧介质折射率为 $n_1$。光在膜内折射角为 $\gamma$。两束反射光由膜内往返引入的光程差为
+\[
+  \Delta'=2n_2e\cos\gamma.
+\]
+若用入射角 $i$ 表示，由 Snell 定律
+\[
+  n_1\sin i=n_2\sin\gamma
+\]
+可得等价形式
+\[
+  \Delta'=2e\sqrt{n_2^2-n_1^2\sin^2 i}.
+\]
+垂直入射时 $i=0$，退化为
+\[
+  \Delta'=2n_2e.
+\]
+若两束反射光中恰有一束发生半波损失，则反射光的有效光程差可写为
+\[
+  \Delta_{\rm eff}=2n_2e\cos\gamma+\frac{\lambda_0}{2}.
+\]
+反射光明纹条件：
+\[
+  \Delta_{\rm eff}=k\lambda_0.
+\]
+反射光暗纹条件：
+\[
+  \Delta_{\rm eff}=\left(k+\frac12\right)\lambda_0.
+\]
+等价地，在“一次半波损失”的反射薄膜中：
+\[
+  \text{反射加强：}\quad 2n_2e\cos\gamma=\left(k+\frac12\right)\lambda_0,
+\]
+\[
+  \text{反射减弱：}\quad 2n_2e\cos\gamma=k\lambda_0.
+\]
+
+\begin{pitfall}[薄膜明暗条件会因半波损失反转]
+不要只背“$2ne=k\lambda$ 是明纹”。薄膜反射问题必须先判断两束反射光的半波损失次数。若两束反射光半波损失次数相同或都没有，则 $2ne\cos\gamma=k\lambda_0$ 对应反射加强；若只有一束有半波损失，则 $2ne\cos\gamma=k\lambda_0$ 对应反射减弱。
+\end{pitfall}
+
+\subsection*{等倾干涉和等厚干涉}
+
+薄膜干涉条纹由光程差
+\[
+  \Delta=2n_2e\cos\gamma+\Delta_{\rm refl}
+\]
+决定，其中 $\Delta_{\rm refl}$ 表示反射相位突变的等效光程项。若膜厚 $e$ 固定而入射角 $\gamma$ 改变，同一入射角对应同一级条纹，称为等倾干涉；平行平面薄膜形成的等倾条纹常为同心圆环。若入射角固定而膜厚 $e$ 随位置改变，同一厚度处对应同一级条纹，称为等厚干涉；劈尖和牛顿环都是等厚干涉。
+
+反射光和透射光的明暗通常互补：反射方向加强时，透射方向相应减弱；反射方向减弱时，透射方向相应加强。这是能量重新分布的结果，干涉本身不创造也不消灭能量。
+
+\subsection*{劈尖干涉}
+
+空气劈尖中 $n=1$，厚度随位置近似线性变化：
+\[
+  e=x\theta\qquad(\theta\ll1).
+\]
+垂直入射、反射观察且有一次半波损失时
+\[
+  \Delta_{\rm eff}=2e+\frac{\lambda}{2}.
+\]
+棱边处 $e=0$，两束反射光因半波损失相消，故棱边为暗纹。相邻同类条纹对应的厚度差为
+\[
+  \Delta e=\frac{\lambda}{2n}.
+\]
+若劈尖角为 $\theta$，相邻条纹间距
+\[
+  b=\frac{\Delta e}{\theta}=\frac{\lambda}{2n\theta}.
+\]
+条纹平行于棱边；工件表面不平整时，等厚线弯曲，条纹也随之弯曲。
+
+\subsection*{牛顿环}
+
+平凸透镜放在平板玻璃上，中间形成空气薄膜。离接触点距离为 $r$ 处膜厚近似为
+\[
+  e=\frac{r^2}{2R},
+\]
+其中 $R$ 为透镜曲率半径。反射观察、一次半波损失时中心为暗斑。暗环满足
+\[
+  2e=k\lambda,
+\]
+所以
+\[
+  r_k^2=kR\lambda.
+\]
+
+\subsection*{增透膜}
+
+照相机镜头上的增透膜要让上下表面的反射光相消。若空气、膜、玻璃满足
+\[
+  n_1<n_2<n_3,
+\]
+两束反射光都发生半波损失，彼此没有额外半波差，垂直入射时反射相消条件为
+\[
+  2n_2d=\left(k+\frac12\right)\lambda_0.
+\]
+最小膜厚
+\[
+  d_{\min}=\frac{\lambda_0}{4n_2}.
+\]
+
+\subsection*{迈克耳逊干涉仪}
+
+迈克耳逊干涉仪用分振幅法产生两束相干光。若等效两臂光程差为
+\[
+  \Delta=2d,
+\]
+移动一面镜子 $\Delta d$ 会使光程差改变 $2\Delta d$。若条纹移过 $N$ 条，则
+\[
+  2\Delta d=N\lambda,\qquad \Delta d=\frac{N\lambda}{2}.
+\]
+这是干涉测长、测波长和精密位移测量的基本公式。
+
+\section{光的衍射}
+
+\begin{definition}[衍射]\label{def:diffraction}
+光在传播过程中遇到孔、缝或障碍物边缘时偏离直线传播，并在屏上形成强弱分布的现象称为衍射。衍射本质上是同一波阵面上无穷多个子波的相干叠加。
+\end{definition}
+
+衍射是否明显取决于障碍物线度和波长之比。孔径越小、波长越长，衍射越显著。
+
+\begin{definition}[菲涅耳衍射与夫琅禾费衍射]\label{def:fresnel-fraunhofer}
+\begin{itemize}
+  \item 菲涅耳衍射：光源或观察屏到障碍物距离有限，入射或出射波面不能近似为平面，属于近场衍射。
+  \item 夫琅禾费衍射：光源和观察屏相当于在无限远，入射和观察方向可用平行光处理，属于远场衍射。实验中常用透镜把光源和屏等效放到焦平面实现。
+\end{itemize}
+\end{definition}
+
+\begin{attention}[惠更斯--菲涅耳原理]
+波阵面上每一点都可看作相干子波源，空间某点的光振动由所有子波在该点的相干叠加决定。惠更斯原理给出波面传播方向，菲涅耳补入相干叠加，才能解释衍射强弱分布。
+\end{attention}
+
+\section{夫琅禾费单缝衍射}
+
+设单缝宽度为 $a$，单色平行光垂直入射，观察方向与缝面法线夹角为 $\theta$。来自缝上下边缘的光程差为
+\[
+  \Delta=a\sin\theta.
+\]
+
+\lcfigure[caption={夫琅禾费单缝衍射。缝宽 $a$ 决定边缘光线的最大光程差 $a\sin\theta$。},label={fig:single-slit-diffraction}]{single-slit-diffraction}
+
+\subsection*{暗纹条件的半波带推导}
+
+若
+\[
+  a\sin\theta=m\lambda,\qquad m=1,2,3,\ldots,
+\]
+可把缝宽分成 $2m$ 个半波带。相邻半波带到观察点的光程差为 $\lambda/2$，振动相消，因此该方向形成暗纹。于是单缝暗纹条件为
+\[
+  a\sin\theta=\pm m\lambda,\qquad m=1,2,3,\ldots
+\]
+中央方向 $\theta=0$ 时所有子波同相叠加，形成中央明纹。
+
+严格振幅矢量或积分法给出光强分布
+\[
+  I=I_0\left(\frac{\sin\alpha}{\alpha}\right)^2,\qquad
+  \alpha=\frac{\pi a\sin\theta}{\lambda}.
+\]
+暗纹由 $\sin\alpha=0$ 且 $\alpha\ne0$ 得到，仍为 $a\sin\theta=m\lambda$。
+
+\subsection*{中央明纹宽度}
+
+中央明纹两侧第一暗纹满足
+\[
+  a\sin\theta_1=\lambda.
+\]
+小角度下
+\[
+  \theta_1\simeq\frac{\lambda}{a}.
+\]
+因此中央明纹角宽度
+\[
+  \Delta\theta_0\simeq\frac{2\lambda}{a}.
+\]
+若用焦距 $f$ 的透镜把图样成在焦平面上，则中央明纹线宽
+\[
+  \Delta x_0\simeq\frac{2f\lambda}{a}.
+\]
+其他明纹宽度约为
+\[
+  \Delta x\simeq\frac{f\lambda}{a}.
+\]
+所以中央明纹约为其他明纹宽度的两倍。
+
+单缝衍射图样有三个必须会描述的特征：
+\begin{enumerate}
+  \item 明暗条纹关于中央明纹对称；
+  \item 中央明纹最亮且宽度最大，约为其他明纹宽度的两倍；
+  \item 级次越高，明纹光强越弱。
+\end{enumerate}
+由
+\[
+  \theta_1\simeq\frac{\lambda}{a}
+\]
+可知，缝越窄、波长越长，中央明纹越宽，衍射越明显；当 $a\gg\lambda$ 时，各级衍射条纹挤到中央附近，几何光学近似才重新成立。
+
+\subsection*{实际双缝条纹的衍射包络}
+
+理想双缝干涉只考虑两个点状相干光源，得到等间距、强度近似相同的干涉条纹。实际双缝的每一条缝都有有限宽度 $a$，每条缝自身会发生单缝衍射，因此实际图样是“双缝干涉条纹被单缝衍射包络调制”：
+\[
+  \text{亮纹位置主要由缝距 }d\text{ 决定，整体强弱包络主要由缝宽 }a\text{ 决定。}
+\]
+这正是干涉和衍射“总是同时存在”的典型例子。
+
+\begin{pitfall}[单缝衍射的暗纹条件]
+单缝衍射中最常用的公式是暗纹条件
+\[
+  a\sin\theta=m\lambda.
+\]
+明纹位置不是简单的 $a\sin\theta=(m+1/2)\lambda$ 精确式；半波带法只给近似判断。若题目没有特别要求，通常只用暗纹位置和中央明纹宽度。
+\end{pitfall}
+
+\section{圆孔衍射与光学仪器分辨率}
+
+圆孔夫琅禾费衍射的中央亮斑称为艾里斑。设圆孔或透镜口径为 $D$，第一暗环角半径为
+\[
+  \theta_1\simeq1.22\frac{\lambda}{D}.
+\]
+若透镜焦距为 $f$，焦平面上艾里斑半径为
+\[
+  r\simeq f\theta_1=1.22\frac{f\lambda}{D}.
+\]
+
+\begin{definition}[瑞利判据]\label{def:rayleigh-criterion}
+两个点光源的衍射像恰能分辨的标准是：一个艾里斑中心落在另一个艾里斑第一暗环上。最小分辨角为
+\[
+  \theta_0=1.22\frac{\lambda}{D}.
+\]
+分辨本领常用其倒数表示：
+\[
+  R=\frac1{\theta_0}=\frac{D}{1.22\lambda}.
+\]
+\end{definition}
+
+提高光学仪器分辨率的方法：
+\begin{enumerate}
+  \item 增大口径 $D$；
+  \item 减小波长 $\lambda$；
+  \item 对显微镜，还要考虑介质折射率和数值孔径，使用油浸物镜可提高分辨率。
+\end{enumerate}
+
+\begin{example}[title={望远镜口径}]\label{eg:telescope-resolution}
+两颗星对望远镜张角为 $4.84\times10^{-6}\,\mathrm{rad}$，光波波长为 $550\,\mathrm{nm}$。问望远镜物镜口径至少多大才能分辨。
+
+\begin{solution}
+恰能分辨时
+\[
+  \theta_0=1.22\frac{\lambda}{D}.
+\]
+因此
+\[
+  D=\frac{1.22\lambda}{\theta_0}
+  =\frac{1.22\times550\times10^{-9}}{4.84\times10^{-6}}
+  \approx0.14\,\mathrm{m}.
+\]
+\end{solution}
+\end{example}
+
+\section{干涉与衍射的联系和区别}
+
+干涉和衍射本质上都是相干叠加，都要处理相位差和光程差。区别在于：
+\[
+\begin{array}{c|c|c}
+ & \text{干涉} & \text{衍射}\\
+\hline
+\text{典型模型} & \text{有限束相干光叠加} & \text{同一波阵面无穷多子波叠加}\\
+\text{条纹特点} & \text{理想双缝条纹等间距、强度较均匀} & \text{中央明纹最强最宽，旁瓣迅速变弱}\\
+\text{数学处理} & \text{有限项相干求和} & \text{积分或半波带叠加}\\
+\text{实际关系} & \text{实际双缝也受单缝衍射包络调制} & \text{可看成更精细的干涉}
+\end{array}
+\]
+
+\section{光的偏振}
+
+\begin{definition}[偏振现象]\label{def:polarization}
+光矢量 $\bm E$ 的振动方向相对于传播方向不再具有轴对称性，称为偏振。只有横波才有偏振现象，因此光的偏振证明光是横波。
+\end{definition}
+
+\subsection*{偏振态}
+
+\begin{itemize}
+  \item 自然光：光矢量在垂直传播方向的平面内各方向随机分布，整体具有轴对称性。可分解为两束互相垂直、等强度、互不相干的线偏振光。
+  \item 线偏振光：光矢量始终沿某一固定方向振动。
+  \item 圆偏振光和椭圆偏振光：可分解为两束互相垂直、同频率、相位差固定的线偏振光。
+  \item 部分偏振光：自然光和偏振光的混合。
+\end{itemize}
+
+\subsection*{偏振片和马吕斯定律}
+
+理想偏振片只允许沿透光轴方向的光矢量分量通过。自然光强度为 $I_0$，通过一个理想偏振片后
+\[
+  I=\frac{I_0}{2}.
+\]
+线偏振光强度为 $I_0$，其振动方向与偏振片透光轴夹角为 $\theta$，透射光强为
+\[
+  I=I_0\cos^2\theta.
+\]
+这就是马吕斯定律。
+
+\begin{example}[title={两个偏振片}]\label{eg:malus-example}
+强度为 $I_0$ 的自然光依次通过两个理想偏振片。第二个偏振片透光轴与第一个夹角为 $30^\circ$。求出射光强。
+
+\begin{solution}
+自然光通过第一个偏振片后：
+\[
+  I_1=\frac{I_0}{2}.
+\]
+再由马吕斯定律：
+\[
+  I_2=I_1\cos^230^\circ
+  =\frac{I_0}{2}\cdot\frac34
+  =\frac{3I_0}{8}.
+\]
+\end{solution}
+\end{example}
+
+\subsection*{反射和折射光的偏振}
+
+自然光在介质界面反射和折射时，反射光和折射光一般会部分偏振。当入射角等于布儒斯特角 $i_B$ 时，反射光为线偏振光，且反射光与折射光互相垂直。布儒斯特定律为
+\[
+  \tan i_B=\frac{n_2}{n_1}.
+\]
+此时反射光的光矢量垂直于入射面。太阳镜、摄影偏振镜和消除水面反光都利用了反射光的偏振特性。
+
+布儒斯特定律可由几何关系直接推出。起偏振角入射时，反射光与折射光互相垂直，故
+\[
+  i_B+r=90^\circ.
+\]
+代入折射定律
+\[
+  n_1\sin i_B=n_2\sin r=n_2\cos i_B,
+\]
+得到
+\[
+  \tan i_B=\frac{n_2}{n_1}.
+\]
+反射光中平行于入射面的光振动消失，剩余光矢量垂直于入射面；折射光只是部分偏振，不是完全线偏振光。
+
+\subsection*{部分偏振光的检偏判据}
+
+若入射光是自然光和线偏振光的混合，旋转检偏器时透射光强会有最大值和最小值。设自然光强为 $I_{\rm n}$，线偏振光强为 $I_{\rm p}$，则
+\[
+  I_{\max}=\frac12 I_{\rm n}+I_{\rm p},\qquad
+  I_{\min}=\frac12 I_{\rm n}.
+\]
+因此若测得
+\[
+  \frac{I_{\max}}{I_{\min}}=R,
+\]
+则
+\[
+  \frac{I_{\rm n}}{I_{\rm p}}=\frac{2}{R-1}.
+\]
+这类题的关键是自然光通过任意方向理想偏振片后总剩一半，而线偏振光要按马吕斯定律投影。
+
+\begin{attention}[双折射]
+各向异性晶体中，一束入射光可能分成寻常光和非常光两束折射光，二者通常都是线偏振光。寻常光简称 $o$ 光，在晶体中各方向折射率相同，遵守通常的折射定律；非常光简称 $e$ 光，折射率随传播方向改变，一般不按通常折射定律确定方向。晶体中存在特殊方向称为光轴，光沿光轴传播时不发生双折射。本节建立双折射的现象、$o/e$ 光差别和偏振检验的基本认识。
+\end{attention}
+
+\section*{本章核心公式清单}
+
+\[
+\begin{array}{c|c}
+\text{主题} & \text{公式}\\
+\hline
+\text{折射率} & n=c/v,\quad \lambda=\lambda_0/n\\
+\text{光程} & L=\int n\,\dd s,\quad \Delta\varphi=2\pi\Delta/\lambda_0\\
+\text{可见度} & K=(I_{\max}-I_{\min})/(I_{\max}+I_{\min})\\
+\text{双缝} & \Delta=dx/D,\quad x_k=kD\lambda/d,\quad \Delta x=D\lambda/d\\
+\text{薄膜} & \Delta'=2ne\cos\gamma=2e\sqrt{n^2-n_1^2\sin^2 i},\quad \text{反射时另判半波损失}\\
+\text{劈尖} & b=\lambda/(2n\theta)\\
+\text{迈克耳逊} & 2\Delta d=N\lambda\\
+\text{单缝暗纹} & a\sin\theta=m\lambda\\
+\text{单缝中央宽度} & \Delta\theta_0\simeq2\lambda/a,\quad \Delta x_0\simeq2f\lambda/a\\
+\text{圆孔分辨} & \theta_0=1.22\lambda/D\\
+\text{马吕斯定律} & I=I_0\cos^2\theta\\
+\text{布儒斯特定律} & \tan i_B=n_2/n_1
+\end{array}
+\]

@@ -1,0 +1,26 @@
+% libre-compendium
+%
+% Copyright (C) 2026 Richard Qin
+%
+% This document is dual-licensed under either:
+% - GNU Free Documentation License, Version 1.3 or any later version
+%   published by the Free Software Foundation; with no Invariant Sections,
+%   no Front-Cover Texts, and no Back-Cover Texts (see COPYING.DOC); or
+% - Creative Commons Attribution-ShareAlike 4.0 International License
+%   (see LICENSE-CC-BY-SA-4.0).
+
+\begin{tikzpicture}[ >=Latex]
+  \foreach \x in {-2.2,-1.4,-0.6,0.2,1.0,1.8,2.6} {
+    \foreach \y in {-1.25,-0.45,0.35,1.15} {
+      \node[lc-note] at (\x,\y) {$\times$};
+    }
+  }
+  \draw[line width=4pt, lc-note] (0,-1.45) -- (0,1.45);
+  \draw[line width=1pt] (0,-1.45) -- (0,1.45);
+  \node[lc-force] at (0,1.75) {$+$};
+  \node[lc-vector] at (0,-1.75) {$-$};
+  \draw[->, lc-exam, very thick] (0.45,0) -- (1.8,0) node[right] {$\bm v$};
+  \draw[->, lc-force, very thick] (0,0) -- (0,1.25) node[midway, left] {$\bm v\times\bm B$};
+  \node[lc-note] at (-2.15,1.65) {$\bm B$ 向里};
+  \node at (0.35,-0.05) [right] {$l$};
+\end{tikzpicture}

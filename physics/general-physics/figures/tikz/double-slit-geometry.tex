@@ -1,0 +1,39 @@
+% libre-compendium
+%
+% Copyright (C) 2026 Richard Qin
+%
+% This document is dual-licensed under either:
+% - GNU Free Documentation License, Version 1.3 or any later version
+%   published by the Free Software Foundation; with no Invariant Sections,
+%   no Front-Cover Texts, and no Back-Cover Texts (see COPYING.DOC); or
+% - Creative Commons Attribution-ShareAlike 4.0 International License
+%   (see LICENSE-CC-BY-SA-4.0).
+
+\begin{tikzpicture}[ >=Latex]
+  \draw[thick] (0,-2.0) -- (0,-0.55);
+  \draw[thick] (0,-0.25) -- (0,0.25);
+  \draw[thick] (0,0.55) -- (0,2.0);
+  \node[left] at (0,0.40) {$S_1$};
+  \node[left] at (0,-0.40) {$S_2$};
+  \fill (0,0.40) circle (1.5pt);
+  \fill (0,-0.40) circle (1.5pt);
+
+  \draw[thick] (5.2,-2.0) -- (5.2,2.0);
+  \node[right] at (5.2,1.85) {屏};
+  \coordinate (P) at (5.2,1.15);
+  \coordinate (O) at (5.2,0);
+  \fill (P) circle (1.5pt) node[right] {$P$};
+  \fill (O) circle (1.2pt) node[right] {$O$};
+
+  \draw[lc-vector, thick] (0,0.40) -- (P) node[midway, above] {$r_1$};
+  \draw[lc-vector, thick] (0,-0.40) -- (P) node[midway, below] {$r_2$};
+  \draw[dashed] (0,0) -- (O);
+  \draw[->] (1.0,0) arc (0:12.5:1.0);
+  \node at (1.25,0.16) {$\theta$};
+
+  \draw[<->] (-0.45,-0.40) -- (-0.45,0.40) node[midway,left] {$d$};
+  \draw[<->] (0,-2.25) -- (5.2,-2.25) node[midway,below] {$D$};
+  \draw[<->] (5.55,0) -- (5.55,1.15) node[midway,right] {$x$};
+
+  \node[align=center] at (2.85,1.72) {$\Delta=r_2-r_1$\\[-1mm]$\approx d\sin\theta\approx dx/D$};
+\end{tikzpicture}

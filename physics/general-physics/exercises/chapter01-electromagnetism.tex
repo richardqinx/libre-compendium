@@ -1,0 +1,472 @@
+% libre-compendium
+%
+% Copyright (C) 2026 Richard Qin
+%
+% This document is dual-licensed under either:
+% - GNU Free Documentation License, Version 1.3 or any later version
+%   published by the Free Software Foundation; with no Invariant Sections,
+%   no Front-Cover Texts, and no Back-Cover Texts (see COPYING.DOC); or
+% - Creative Commons Attribution-ShareAlike 4.0 International License
+%   (see LICENSE-CC-BY-SA-4.0).
+
+% Extracted from chapter01-electromagnetism.tex.
+\begin{exercise}[level=basic]
+两个点电荷 $+q$ 与 $-q$ 相距 $2a$，求二者相互作用力大小，并求连线中点处电场方向和大小。
+\begin{solution}
+两电荷间库仑力大小为
+\[
+  F=\frac{1}{4\pi\varepsilon_0}\frac{q^2}{(2a)^2}
+  =\frac{1}{4\pi\varepsilon_0}\frac{q^2}{4a^2},
+\]
+方向沿两电荷连线，异号电荷相互吸引。中点到两电荷距离均为 $a$。正电荷在中点的场指向负电荷，负电荷在中点的场也指向负电荷，故
+\[
+  E=2\frac{1}{4\pi\varepsilon_0}\frac{q}{a^2},
+\]
+方向由 $+q$ 指向 $-q$。
+\end{solution}
+\end{exercise}
+
+\begin{exercise}[level=basic]
+半径为 $R$ 的均匀带电圆环总电荷为 $q$，求圆心处电势和场强。
+\begin{solution}
+圆心到各电荷元距离均为 $R$，电势标量叠加：
+\[
+  V=\frac{1}{4\pi\varepsilon_0}\frac{q}{R}.
+\]
+场强矢量因对称性完全抵消，$E=0$。
+\end{solution}
+\end{exercise}
+
+\begin{exercise}[level=basic]
+无限长均匀带电直线线电荷密度为 $\lambda$，用高斯定理求距直线 $r$ 处电场。
+\begin{solution}
+取半径 $r$、长度 $L$ 的同轴圆柱面，侧面通量为 $E2\pi rL$，包围电荷为 $\lambda L$，得
+\[
+  E=\frac{\lambda}{2\pi\varepsilon_0r}.
+\]
+\end{solution}
+\end{exercise}
+
+\begin{exercise}[level=basic]
+无限大带电平面面电荷密度为 $\sigma$，求两侧电场，并写出两块等量异号无限大平行板间的电场。
+\begin{solution}
+单个无限大平面两侧场强为 $E=\sigma/(2\varepsilon_0)$。两块等量异号平行板之间场强叠加为
+\[
+  E=\frac{\sigma}{\varepsilon_0},
+\]
+方向由正板指向负板；板外两侧抵消为零。
+\end{solution}
+\end{exercise}
+
+\begin{exercise}[level=basic]
+半径为 $R$ 的均匀带电球面总电荷为 $q$，求 $E(r)$ 与 $V(r)$。
+\begin{solution}
+球面内 $E=0$，球面外
+\[
+  E=\frac{1}{4\pi\varepsilon_0}\frac{q}{r^2}.
+\]
+取无穷远为零势点，
+\[
+  V(r)=\frac{1}{4\pi\varepsilon_0}\frac{q}{R}\quad(r<R),\qquad
+  V(r)=\frac{1}{4\pi\varepsilon_0}\frac{q}{r}\quad(r\ge R).
+\]
+\end{solution}
+\end{exercise}
+
+\begin{exercise}[level=basic]
+带电粒子垂直进入匀强磁场，推导圆周运动半径和周期。
+\begin{solution}
+洛伦兹力提供向心力：
+\[
+  |q|vB=\frac{mv^2}{R},
+  \qquad R=\frac{mv}{|q|B}.
+\]
+周期
+\[
+  T=\frac{2\pi R}{v}=\frac{2\pi m}{|q|B}.
+\]
+\end{solution}
+\end{exercise}
+
+\begin{exercise}[level=basic]
+无限长直导线通电流 $I$，用安培环路定理求磁场。
+\begin{solution}
+取同心圆安培环路，
+\[
+  B2\pi r=\mu_0I,\qquad B=\frac{\mu_0I}{2\pi r}.
+\]
+\end{solution}
+\end{exercise}
+
+\begin{exercise}[level=basic]
+长直螺线管单位长度匝数为 $n$，通电流 $I$，求管内磁场。
+\begin{solution}
+取矩形安培环路，一条长边在管内，外部长边近似无场：
+\[
+  Bl=\mu_0(nl)I,\qquad B=\mu_0nI.
+\]
+\end{solution}
+\end{exercise}
+
+\begin{exercise}[level=standard]
+长为 $2a$ 的均匀带电细棒总电荷为 $Q$，求其中垂线上距中心 $b$ 处电场。
+\begin{solution}
+线密度 $\lambda=Q/(2a)$。由正文有限棒公式
+\[
+  E=\frac{1}{4\pi\varepsilon_0}\frac{2\lambda a}{b\sqrt{a^2+b^2}}
+  =\frac{1}{4\pi\varepsilon_0}\frac{Q}{b\sqrt{a^2+b^2}}.
+\]
+方向沿中垂线，正电荷时背离细棒。
+\end{solution}
+\end{exercise}
+
+\begin{exercise}[level=standard]
+半径为 $R$ 的均匀带电圆盘面电荷密度为 $\sigma$，求轴线上距圆心 $x$ 处场强。
+\begin{solution}
+分解为圆环积分：
+\[
+  E_x=\frac{\sigma}{2\varepsilon_0}\left(1-\frac{x}{\sqrt{x^2+R^2}}\right)
+  \quad (x>0).
+\]
+\end{solution}
+\end{exercise}
+
+\begin{exercise}[level=standard]
+半径为 $R$ 的均匀带电实心球体总电荷为 $q$，求 $E(r)$，并说明 $r=R$ 处连续性。
+\begin{solution}
+体电荷密度 $\rho=3q/(4\pi R^3)$。由高斯定理
+\[
+  E=\frac{1}{4\pi\varepsilon_0}\frac{qr}{R^3}\quad(r<R),\qquad
+  E=\frac{1}{4\pi\varepsilon_0}\frac{q}{r^2}\quad(r\ge R).
+\]
+在 $r=R$ 两式均为 $q/(4\pi\varepsilon_0R^2)$。
+\end{solution}
+\end{exercise}
+
+\begin{exercise}[level=standard]
+内外半径为 $R_1,R_2$ 的中性导体球壳中心放一点电荷 $q$，求各表面电荷量和各区域电场。
+\begin{solution}
+内表面电荷 $-q$，外表面电荷 $+q$。$r<R_1$ 区域场为中心点电荷场；$R_1<r<R_2$ 导体材料内 $E=0$；$r>R_2$ 等效为中心电荷 $q$ 的场。
+\end{solution}
+\end{exercise}
+
+\begin{exercise}[level=standard]
+上题中导体球壳接地，求外表面电荷量和壳外电场。
+\begin{solution}
+内表面仍为 $-q$。接地后外表面电荷为 $0$，壳外电场为零。
+\end{solution}
+\end{exercise}
+
+\begin{exercise}[level=standard]
+孤立导体球半径 $R$，带电量 $Q$，求表面电荷密度、表面外侧场强和电势。
+\begin{solution}
+$\sigma=Q/(4\pi R^2)$，
+\[
+  E(R^+)=\frac{1}{4\pi\varepsilon_0}\frac{Q}{R^2}=\frac{\sigma}{\varepsilon_0},
+  \qquad
+  V(R)=\frac{1}{4\pi\varepsilon_0}\frac{Q}{R}.
+\]
+\end{solution}
+\end{exercise}
+
+\begin{exercise}[level=standard]
+有限长直导线通电流 $I$，场点到导线垂距为 $a$，两端张角为 $\theta_1,\theta_2$，求磁场。
+\begin{solution}
+由毕奥--萨伐尔积分
+\[
+  B=\frac{\mu_0I}{4\pi a}(\sin\theta_1+\sin\theta_2).
+\]
+方向由右手定则确定。
+\end{solution}
+\end{exercise}
+
+\begin{exercise}[level=standard]
+半径为 $R$ 的圆电流通电流 $I$，求圆心处和轴线上距圆心 $x$ 处磁场。
+\begin{solution}
+圆心处
+\[
+  B_0=\frac{\mu_0I}{2R}.
+\]
+轴线上
+\[
+  B_x=\frac{\mu_0IR^2}{2(R^2+x^2)^{3/2}}.
+\]
+\end{solution}
+\end{exercise}
+
+\begin{exercise}[level=standard]
+半径为 $R$ 的无限长圆柱导体通均匀电流 $I$，求柱内外磁场。
+\begin{solution}
+柱内包围电流 $I r^2/R^2$，柱外包围电流 $I$：
+\[
+  B=\frac{\mu_0Ir}{2\pi R^2}\quad(r<R),\qquad
+  B=\frac{\mu_0I}{2\pi r}\quad(r\ge R).
+\]
+\end{solution}
+\end{exercise}
+
+\begin{exercise}[level=standard]
+螺绕环总匝数 $N$，电流 $I$，内外半径 $R_1,R_2$，求磁场分布。
+\begin{solution}
+在 $R_1<r<R_2$ 内
+\[
+  B=\frac{\mu_0NI}{2\pi r}.
+\]
+理想螺绕环在 $r<R_1$ 和 $r>R_2$ 处磁场近似为零。
+\end{solution}
+\end{exercise}
+
+\begin{exercise}[level=standard]
+两根相距 $d$ 的无限长平行导线通电流 $I_1,I_2$，求单位长度作用力，并判断同向与反向情形。
+\begin{solution}
+一根导线在另一根处产生 $B=\mu_0I_1/(2\pi d)$，故
+\[
+  \frac{F}{l}=I_2B=\frac{\mu_0I_1I_2}{2\pi d}.
+\]
+同向相吸，反向相斥。
+\end{solution}
+\end{exercise}
+
+\begin{exercise}[level=standard]
+矩形线圈面积为 $S$、匝数 $N$，在匀强磁场中以角速度 $\omega$ 转动，求感应电动势。
+\begin{solution}
+磁通量 $\Phi=NBS\cos(\omega t+\theta_0)$，故
+\[
+  \mathcal E=NBS\omega\sin(\omega t+\theta_0).
+\]
+\end{solution}
+\end{exercise}
+
+\begin{exercise}[level=standard]
+长为 $l$ 的导体棒在匀强磁场 $B$ 中以速度 $v$ 切割磁感线，接入总电阻 $R$ 的闭合回路，求电流、磁阻力和外力功率。
+\begin{solution}
+$\mathcal E=Blv$，$I=Blv/R$。棒受磁阻力
+\[
+  F=BIl=\frac{B^2l^2v}{R},
+\]
+外力功率
+\[
+  P=Fv=\frac{B^2l^2v^2}{R}=I^2R.
+\]
+\end{solution}
+\end{exercise}
+
+\begin{exercise}[level=standard]
+半径为 $R$ 的圆柱区域内磁场均匀且 $\dd B/\dd t$ 为常量，求区域内外感生电场大小。
+\begin{solution}
+由法拉第定律和圆对称性：
+\[
+  |E_{\mathrm{ind}}|=\frac{r}{2}\left|\frac{\dd B}{\dd t}\right|\quad(r<R),
+  \qquad
+  |E_{\mathrm{ind}}|=\frac{R^2}{2r}\left|\frac{\dd B}{\dd t}\right|\quad(r>R).
+\]
+\end{solution}
+\end{exercise}
+
+\begin{exercise}[level=standard]
+平行板电容器充电，极板半径为 $R$，导线电流为 $I$，求极板间距中心 $r<R$ 处磁场。
+\begin{solution}
+半径 $r$ 内位移电流为 $I r^2/R^2$，由全电流安培环路定理
+\[
+  B2\pi r=\mu_0I\frac{r^2}{R^2},\qquad
+  B=\frac{\mu_0Ir}{2\pi R^2}.
+\]
+\end{solution}
+\end{exercise}
+
+\begin{exercise}[level=advanced]
+长直导线电流为 $I$，旁边有一根与其平行的金属棒，近远端距导线分别为 $a,a+l$，金属棒以速度 $v$ 远离导线。求棒两端动生电动势。
+\begin{solution}
+长直导线场为 $B(r)=\mu_0I/(2\pi r)$。沿棒积分：
+\[
+  \mathcal E=\int_a^{a+l}vB(r)\dd r
+  =\frac{\mu_0Iv}{2\pi}\ln\frac{a+l}{a}.
+\]
+\end{solution}
+\end{exercise}
+
+\begin{exercise}[level=advanced]
+宽度为 $b$ 的无限长薄板通总电流 $I$，电流沿长边均匀分布。求薄板中垂线上距板距离 $a$ 处磁场。
+\begin{solution}
+分解为无限长电流线并保留对称合分量：
+\[
+  B=\frac{\mu_0I}{\pi b}\arctan\frac{b}{2a}.
+\]
+\end{solution}
+\end{exercise}
+
+\begin{exercise}[level=advanced]
+一个半径为 $R$ 的圆形回路处于垂直纸面向里的均匀磁场中，磁场随时间增大。判断感应电流方向，并求电阻为 $R_e$ 时电流大小。
+\begin{solution}
+向里磁通量增大，感应磁场应向外，故感应电流为逆时针。大小为
+\[
+  I_{\mathrm{ind}}=\frac{|\mathcal E|}{R_e}
+  =\frac{\pi R^2}{R_e}\left|\frac{\dd B}{\dd t}\right|.
+\]
+\end{solution}
+\end{exercise}
+
+\begin{exercise}[level=advanced]
+真空中同时存在静电场和感生电场。说明总电场的高斯定理和环路定理分别由哪部分贡献。
+\begin{solution}
+总电场 $\bm E=\bm E_C+\bm E_{\mathrm{ind}}$。高斯定理中
+\[
+  \oint\bm E_C\cdot\dd\bm S=q_{\mathrm{in}}/\varepsilon_0,\qquad
+  \oint\bm E_{\mathrm{ind}}\cdot\dd\bm S=0.
+\]
+环路定理中
+\[
+  \oint\bm E_C\cdot\dd\bm l=0,\qquad
+  \oint\bm E_{\mathrm{ind}}\cdot\dd\bm l=-\frac{\dd\Phi_B}{\dd t}.
+\]
+\end{solution}
+\end{exercise}
+
+\begin{exercise}[level=advanced]
+写出真空中麦克斯韦方程组积分形式，并分别说明四个方程对应的物理意义。
+\begin{solution}
+真空中积分形式为
+\[
+\begin{aligned}
+  \oint_S\bm E\cdot\dd\bm S&=q_{\mathrm{in}}/\varepsilon_0,\\
+  \oint_S\bm B\cdot\dd\bm S&=0,\\
+  \oint_L\bm E\cdot\dd\bm l&=-\dd\Phi_B/\dd t,\\
+  \oint_L\bm B\cdot\dd\bm l&=\mu_0I_{\mathrm{c,in}}+\mu_0\varepsilon_0\dd\Phi_E/\dd t.
+\end{aligned}
+\]
+其意义依次为：电荷产生有源电场；不存在磁单极子；变化磁场激发涡旋电场；传导电流和变化电场共同激发磁场。
+\end{solution}
+\end{exercise}
+
+\begin{exercise}[level=standard]
+电偶极矩为 $\bm p$ 的电偶极子处在匀强电场 $\bm E$ 中，求力矩和势能，并判断稳定平衡取向。
+\begin{solution}
+电偶极子所受力矩
+\[
+  \bm M=\bm p\times\bm E,\qquad M=pE\sin\theta.
+\]
+势能为
+\[
+  W=-\bm p\cdot\bm E=-pE\cos\theta.
+\]
+$\bm p$ 与 $\bm E$ 平行时势能最小，为稳定平衡；反平行时势能最大，为不稳定平衡。
+\end{solution}
+\end{exercise}
+
+\begin{exercise}[level=standard]
+两同轴圆柱面半径为 $R_1,R_2$，单位长度带电量分别为 $\lambda,-\lambda$，求两柱面电势差和单位长度电容。
+\begin{solution}
+两柱面间电场为
+\[
+  E(r)=\frac{\lambda}{2\pi\varepsilon_0r}.
+\]
+内柱面相对外柱面的电势差
+\[
+  U=V(R_1)-V(R_2)=\frac{\lambda}{2\pi\varepsilon_0}\ln\frac{R_2}{R_1}.
+\]
+单位长度电容为
+\[
+  C'=\frac{\lambda}{U}=\frac{2\pi\varepsilon_0}{\ln(R_2/R_1)}.
+\]
+\end{solution}
+\end{exercise}
+
+\begin{exercise}[level=standard]
+真空平行板电容器极板面积为 $S$、间距为 $d$，求电容、板间场强和储能。
+\begin{solution}
+平行板间场强
+\[
+  E=\frac{Q}{\varepsilon_0S}.
+\]
+电势差 $U=Ed=Qd/(\varepsilon_0S)$，故
+\[
+  C=\frac{Q}{U}=\frac{\varepsilon_0S}{d}.
+\]
+储能
+\[
+  W=\frac12CU^2=\frac{Q^2}{2C}=\frac12\varepsilon_0E^2Sd.
+\]
+\end{solution}
+\end{exercise}
+
+\begin{exercise}[level=standard]
+$N$ 匝载流线圈面积为 $S$，电流为 $I$，置于匀强磁场中，线圈法线与磁场夹角为 $\theta$，求磁矩和磁力矩。
+\begin{solution}
+线圈磁矩
+\[
+  \bm m=NIS\bm e_n.
+\]
+磁力矩
+\[
+  \bm M=\bm m\times\bm B,\qquad M=NISB\sin\theta.
+\]
+磁矩平行磁场时稳定，反平行时不稳定。
+\end{solution}
+\end{exercise}
+
+\begin{exercise}[level=standard]
+霍尔元件中电流、磁场和载流子数密度已知，说明霍尔电压大小依赖哪些量，并说明如何用极性判断载流子正负。
+\begin{solution}
+霍尔电压来自横向电荷分离，稳定时 $|q|E_H=|q|v_dB$。常见几何下
+\[
+  U_H=\frac{IB}{n|q|t},
+\]
+其中 $t$ 是沿磁场方向的厚度。霍尔电压与 $I$、$B$ 成正比，与载流子数密度和厚度成反比。极性判断时比较正载流子受力方向与实际电荷堆积方向；若负电荷堆积在正载流子应到达的一侧，载流子为电子。
+\end{solution}
+\end{exercise}
+
+\begin{exercise}[level=basic]
+说明涡电流产生的条件、主要热效应，以及变压器铁芯为什么常用绝缘薄片叠成。
+\begin{solution}
+涡电流产生于大块导体内部的磁通量变化：导体在磁场中运动，或导体不动而磁场随时间变化。涡电流在良导体中可能很大，会产生焦耳热。变压器铁芯用相互绝缘薄片叠合，是为了减小涡流回路面积、增大涡流路径电阻，从而减小热损耗。
+\end{solution}
+\end{exercise}
+
+\begin{exercise}[level=basic]
+说明趋肤效应和电磁阻尼的物理原因。
+\begin{solution}
+趋肤效应是高频交流下导体内部涡流使电流主要集中在表面附近的现象，频率越高越明显。电磁阻尼来自涡电流在外磁场中受到的安培力；由楞次定律，其合力总是阻碍引起磁通量变化的相对运动。
+\end{solution}
+\end{exercise}
+
+\begin{exercise}[level=advanced]
+已知某空间中磁场大小为 $B$，求真空磁场能量密度；并与电场能量密度公式作类比。
+\begin{solution}
+真空磁场能量密度为
+\[
+  w_m=\frac{B^2}{2\mu_0}.
+\]
+它与真空电场能量密度
+\[
+  w_e=\frac12\varepsilon_0E^2
+\]
+形式对应，均表示单位体积场能。
+\end{solution}
+\end{exercise}
+
+\begin{exercise}[level=basic]
+自感为 $L$ 的线圈中电流 $I(t)=I_0+\alpha t$。求自感电动势，并说明 $\alpha>0$ 与 $\alpha<0$ 时它的物理方向含义。
+\begin{solution}
+自感电动势为
+\[
+  \mathcal E_L=-L\frac{\dd I}{\dd t}=-L\alpha.
+\]
+负号表示自感电动势总是阻碍电流变化：若 $\alpha>0$，电流正在增大，自感电动势方向与原电流参考方向相反；若 $\alpha<0$，电流正在减小，自感电动势方向与原电流参考方向相同，试图维持原电流。
+\end{solution}
+\end{exercise}
+
+\begin{exercise}[level=standard]
+两线圈互感为 $M$，线圈 1 的电流在时间 $\Delta t$ 内由 $I_1$ 均匀变为 $I_2$。求线圈 2 中互感电动势大小；若自感为 $L$ 的线圈通电流 $I$，求其磁场能量。
+\begin{solution}
+因电流均匀变化，
+\[
+  |\mathcal E_2|=M\left|\frac{\Delta I}{\Delta t}\right|
+  =M\left|\frac{I_2-I_1}{\Delta t}\right|.
+\]
+方向由楞次定律判断：线圈 2 的感应电流所产生的磁通量要阻碍由线圈 1 电流变化引起的互感磁通量变化。自感线圈的磁场能量为
+\[
+  W_m=\frac12LI^2.
+\]
+\end{solution}
+\end{exercise}
+

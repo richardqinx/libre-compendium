@@ -1,0 +1,26 @@
+% libre-compendium
+%
+% Copyright (C) 2026 Richard Qin
+%
+% This document is dual-licensed under either:
+% - GNU Free Documentation License, Version 1.3 or any later version
+%   published by the Free Software Foundation; with no Invariant Sections,
+%   no Front-Cover Texts, and no Back-Cover Texts (see COPYING.DOC); or
+% - Creative Commons Attribution-ShareAlike 4.0 International License
+%   (see LICENSE-CC-BY-SA-4.0).
+
+\begin{tikzpicture}[ >=Latex]
+  \draw[->, thick] (-0.35,0) -- (7.1,0) node[right] {$x$};
+  \draw[->, thick] (0,-1.55) -- (0,1.75) node[above] {$y$};
+  \draw[lc-vector, very thick, domain=0:6.28, samples=160]
+    plot (\x,{1.05*sin(180*\x/pi)});
+  \draw[->, lc-force, thick] (5.25,1.35) -- (6.45,1.35) node[right] {$u$};
+  \draw[dashed] (1.57,0) -- (1.57,1.05);
+  \draw[dashed] (4.71,0) -- (4.71,-1.05);
+  \draw[<->, lc-field] (1.57,1.28) -- (7.85,1.28)
+    node[midway, above] {$\lambda$};
+  \draw[<->, lc-exam] (-0.25,0) -- (-0.25,1.05)
+    node[midway, left] {$A$};
+  \node[font=\small] at (1.57,-0.3) {$x_1$};
+  \node[font=\small] at (7.85,-0.3) {$x_1+\lambda$};
+\end{tikzpicture}

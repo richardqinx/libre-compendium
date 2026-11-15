@@ -1,0 +1,1416 @@
+% libre-compendium
+%
+% Copyright (C) 2026 Richard Qin
+%
+% This document is dual-licensed under either:
+% - GNU Free Documentation License, Version 1.3 or any later version
+%   published by the Free Software Foundation; with no Invariant Sections,
+%   no Front-Cover Texts, and no Back-Cover Texts (see COPYING.DOC); or
+% - Creative Commons Attribution-ShareAlike 4.0 International License
+%   (see LICENSE-CC-BY-SA-4.0).
+
+\chapter{电磁学}
+
+\section*{内容概览与知识主线}
+
+本章围绕静电场、稳恒电流的磁场、电磁感应与麦克斯韦方程组展开。学习时应把公式归入“源产生场、场对电荷或电流施力、通量与环流刻画场的性质、对称性给出计算捷径”四类问题，而不是孤立记忆各个表达式。
+
+\begin{summary}[本章内容概览]
+静电场部分介绍库仑定律、电场强度叠加、高斯定理及高斯面选取、静电环路定理、电势和等势面、导体静电平衡。磁场部分介绍毕奥--萨伐尔定律、磁通量、磁场高斯定理、安培环路定理及其应用、洛伦兹力和安培力。电磁感应部分介绍楞次定律、法拉第电磁感应定律、动生电动势、感生电场、位移电流以及麦克斯韦方程组积分形式的物理意义。
+\end{summary}
+
+\begin{attention}[背景与拓展内容]
+电介质极化、静电能密度、涡流应用、电磁阻尼、电磁驱动以及电场和磁场的相对性，分别展示了电磁学与介质、能量、材料和相对论之间的联系。它们共同构成电磁学从基本定律走向更广泛物理现象的联系网络。
+\end{attention}
+
+\section{静电场}
+
+\subsection{电荷、库仑定律与电场强度}
+
+\begin{theorem}[库仑定律]\label{thm:coulomb-law}
+真空中两个静止点电荷 $q_1,q_2$ 相距 $r$ 时，它们之间的相互作用力沿两电荷连线，大小为
+\[
+  F=\frac{1}{4\pi\varepsilon_0}\frac{|q_1q_2|}{r^2}.
+\]
+若 $\bm r_1,\bm r_2$ 分别为 $q_1,q_2$ 的位置矢量，记
+\[
+  \bm r_{12}=\bm r_1-\bm r_2,\qquad
+  r_{12}=|\bm r_{12}|,\qquad
+  \bm e_{21}=\frac{\bm r_1-\bm r_2}{|\bm r_1-\bm r_2|},
+\]
+则 $q_2$ 对 $q_1$ 的作用力可写成矢量形式
+\[
+  \bm F_{21}=\frac{1}{4\pi\varepsilon_0}\frac{q_1q_2}{r_{12}^2}\bm e_{21}
+  =\frac{1}{4\pi\varepsilon_0}q_1q_2\frac{\bm r_1-\bm r_2}{|\bm r_1-\bm r_2|^3}.
+\]
+同号电荷相斥，异号电荷相吸；两力满足 $\bm F_{12}=-\bm F_{21}$。
+\end{theorem}
+
+库仑定律的适用对象是可视为点电荷的静止电荷。若带电体尺寸远小于相互距离，常可先近似为点电荷；若尺寸不能忽略，则需把带电体分割为电荷元，再对每个电荷元的库仑作用求矢量和。公式中的 $r^2$ 只给出大小随距离的衰减，方向必须由电荷符号和连线方向共同决定，不能把大小公式直接当作矢量公式使用。
+
+\begin{definition}[电场强度]\label{def:electric-field}
+设试探电荷 $q_0$ 足够小，不显著改变原有场源分布。电场中某点的电场强度定义为
+\[
+  \bm E=\lim_{q_0\to 0}\frac{\bm F}{q_0}.
+\]
+点电荷 $q$ 在真空中产生的电场为
+\[
+  \bm E(\bm r)=\frac{1}{4\pi\varepsilon_0}\frac{q}{r^2}\bm e_r,
+\]
+其中 $\bm e_r$ 从点电荷指向场点；若 $q<0$，场强方向与 $\bm e_r$ 相反。
+\end{definition}
+
+由库仑定律可直接得到点电荷场强。把场点处的试探电荷记为 $q_0$，源电荷为 $q$，源电荷到场点的距离为 $r$。库仑力为
+\[
+  \bm F=\frac{1}{4\pi\varepsilon_0}\frac{qq_0}{r^2}\bm e_r,
+\]
+其中 $\bm e_r$ 从源电荷指向场点。用 $\bm E=\bm F/q_0$ 得
+\[
+  \bm E=\frac{1}{4\pi\varepsilon_0}\frac{q}{r^2}\bm e_r.
+\]
+这一步也说明电场是把“源电荷对任意试探电荷的库仑力”中与试探电荷无关的部分抽取出来。试探电荷取正电荷是为了固定场强方向的约定。定义式中的极限不是数学装饰，而是排除试探电荷对场源的反作用；若试探电荷过大，测得的是被扰动后的场。
+
+\begin{example}[title={两点电荷的库仑力与场强}]\label{eg:two-charge-coulomb}
+两个点电荷 $q_1=+2q$、$q_2=-q$ 分别位于 $x=0$ 与 $x=a$。求 $q_2$ 受到的库仑力，并求 $x=2a$ 处的电场强度。
+\begin{solution}
+$q_1$ 与 $q_2$ 异号相吸，$q_2$ 受到的力指向 $q_1$，即沿 $-x$ 方向。其大小为
+\[
+  F=\frac{1}{4\pi\varepsilon_0}\frac{|(2q)(-q)|}{a^2}
+  =\frac{1}{4\pi\varepsilon_0}\frac{2q^2}{a^2},
+\]
+故
+\[
+  \bm F_2=-\frac{1}{4\pi\varepsilon_0}\frac{2q^2}{a^2}\bm i.
+\]
+在 $x=2a$ 处，$q_1$ 产生的场沿 $+x$ 方向，距离为 $2a$；$q_2$ 为负电荷，场点在其右侧，场强指向 $q_2$，即沿 $-x$ 方向，距离为 $a$。因此
+\[
+  \bm E=\frac{1}{4\pi\varepsilon_0}\frac{2q}{(2a)^2}\bm i
+  -\frac{1}{4\pi\varepsilon_0}\frac{q}{a^2}\bm i
+  =-\frac{1}{4\pi\varepsilon_0}\frac{q}{2a^2}\bm i.
+\]
+本题中力的对象是某个具体电荷，场强的对象是空间点；前者与受力电荷电量有关，后者只由场源和场点决定。
+\end{solution}
+\end{example}
+
+\begin{theorem}[叠加原理]\label{thm:superposition}
+点电荷系 $\{q_i\}$ 在场点 $P$ 处产生的总场强等于各点电荷单独存在时场强的矢量和：
+\[
+  \bm E(P)=\sum_i \frac{1}{4\pi\varepsilon_0}\frac{q_i}{r_i^2}\bm e_{r_i}.
+\]
+连续带电体的场强可写为
+\[
+  \bm E(P)=\frac{1}{4\pi\varepsilon_0}\int \frac{\dd q}{r^2}\bm e_r,
+\]
+其中线、面、体分布分别取 $\dd q=\lambda\dd l,\ \sigma\dd S,\ \rho\dd V$。
+\end{theorem}
+
+\begin{method}[连续带电体场强积分]
+连续分布求场强的入口是电荷元。先选能表示场点到电荷元位置关系的坐标，再写出 $\dd \bm E$ 的大小与方向，最后利用对称性抵消分量。若场点在轴线上，横向分量通常两两抵消，只保留轴向分量；若没有足够对称性，直接计算矢量积分。
+\end{method}
+
+\begin{example}[title={均匀带电圆环轴线上的电场}]\label{eg:ring-field}
+半径为 $R$ 的均匀带电圆环总电荷量为 $q$。求轴线上距圆心 $x$ 处的场强。
+\begin{solution}
+圆环上任一电荷元到场点距离相同，$r=\sqrt{R^2+x^2}$。对称电荷元的垂直轴向分量相互抵消，只需累加轴向分量：
+\[
+  \dd E_x=\frac{1}{4\pi\varepsilon_0}\frac{\dd q}{r^2}\cos\theta
+  =\frac{1}{4\pi\varepsilon_0}\frac{x\,\dd q}{(R^2+x^2)^{3/2}}.
+\]
+故
+\[
+  E_x=\frac{1}{4\pi\varepsilon_0}\frac{qx}{(R^2+x^2)^{3/2}}.
+\]
+当 $x\gg R$ 时，$E_x\approx (4\pi\varepsilon_0)^{-1}q/x^2$，远处表现为点电荷场；当 $x=0$ 时，圆心处场强为零。
+\end{solution}
+\end{example}
+
+\begin{example}[title={有限长均匀带电直棒轴垂线上的场强}]\label{eg:finite-rod-field}
+长为 $2a$ 的均匀带电细棒沿 $x$ 轴放置，中心在原点，线电荷密度为 $\lambda$。求 $y$ 轴上点 $P(0,b)$ 的电场强度。
+\begin{solution}
+取电荷元 $\dd q=\lambda\dd x$，位于 $(x,0)$。到 $P$ 的距离为 $r=\sqrt{x^2+b^2}$，电荷元在 $P$ 处产生
+\[
+  \dd E=\frac{1}{4\pi\varepsilon_0}\frac{\lambda\dd x}{x^2+b^2}.
+\]
+关于 $y$ 轴对称的两个电荷元，其 $x$ 分量相互抵消，只保留 $y$ 分量：
+\[
+  \dd E_y=\dd E\frac{b}{\sqrt{x^2+b^2}}
+  =\frac{1}{4\pi\varepsilon_0}\frac{\lambda b\,\dd x}{(x^2+b^2)^{3/2}}.
+\]
+于是
+\[
+  E_y=\frac{1}{4\pi\varepsilon_0}\int_{-a}^{a}
+  \frac{\lambda b\,\dd x}{(x^2+b^2)^{3/2}}
+  =\frac{1}{4\pi\varepsilon_0}\frac{2\lambda a}{b\sqrt{a^2+b^2}}.
+\]
+方向沿 $+y$ 方向。若 $a\to\infty$，得到无限长直线电荷的结果 $E=\lambda/(2\pi\varepsilon_0 b)$。
+\end{solution}
+\end{example}
+
+\begin{example}[title={均匀带电圆盘轴线上的场强}]\label{eg:charged-disk-field}
+半径为 $R$ 的均匀带电圆盘面电荷密度为 $\sigma$。求轴线上距圆心 $x$ 处的场强，并讨论无限大平面极限。
+\begin{solution}
+把圆盘分解为半径 $r$、宽度 $\dd r$ 的同心圆环。圆环电荷量
+\[
+  \dd q=\sigma\,2\pi r\,\dd r.
+\]
+由圆环轴线场强公式，
+\[
+  \dd E_x=\frac{1}{4\pi\varepsilon_0}
+  \frac{x\,\dd q}{(x^2+r^2)^{3/2}}
+  =\frac{\sigma x}{2\varepsilon_0}\frac{r\,\dd r}{(x^2+r^2)^{3/2}}.
+\]
+积分得
+\[
+  E_x=\frac{\sigma}{2\varepsilon_0}\left(1-\frac{x}{\sqrt{x^2+R^2}}\right),
+  \qquad x>0.
+\]
+方向由 $\sigma$ 的符号决定。若 $R\to\infty$，括号中第二项趋于 $0$，得到无限大均匀带电平面单侧场强
+\[
+  E=\frac{\sigma}{2\varepsilon_0}.
+\]
+\end{solution}
+\end{example}
+
+\begin{method}[场强积分的检查方法]
+连续分布积分完成后应做三个检查：量纲是否为 $\mathrm{N/C}$；极限是否符合已知模型，如远处近似点电荷、无限长极限或无限大平面极限；方向是否与电荷符号和对称性一致。学习中这些检查常能发现漏掉 $\cos\theta$、积分上下限或 $2\pi$ 因子的错误。
+\end{method}
+
+\subsection{电通量与高斯定理}
+
+\begin{definition}[电通量]\label{def:electric-flux}
+电场通过有向曲面 $S$ 的电通量定义为
+\[
+  \Phi_E=\int_S \bm E\cdot \dd \bm S.
+\]
+闭合曲面约定外法线为正方向。穿出曲面的场线贡献为正，穿入曲面的场线贡献为负。
+\end{definition}
+
+\begin{theorem}[高斯定理]\label{thm:gauss-electric}
+真空中任意闭合曲面 $S$ 的电通量满足
+\[
+  \oint_S \bm E\cdot \dd \bm S=\frac{q_{\mathrm{in}}}{\varepsilon_0},
+\]
+其中 $q_{\mathrm{in}}$ 是闭合曲面所包围的净电荷。
+\end{theorem}
+
+\textbf{由库仑定律的推导}\quad 先考察位于 $O$ 点的单个点电荷 $q$。设闭合曲面上一个面积元为 $\dd S$，从 $O$ 指向该面元的距离为 $r$，$\bm e_r$ 与面元外法线 $\bm n$ 的夹角为 $\theta$。由库仑定律给出的点电荷场
+\[
+  \bm E=\frac{1}{4\pi\varepsilon_0}\frac{q}{r^2}\bm e_r
+\]
+知该面积元上的通量为
+\[
+  \dd\Phi_E=\bm E\cdot\dd\bm S
+  =\frac{q}{4\pi\varepsilon_0}\frac{\cos\theta\,\dd S}{r^2}.
+\]
+几何量
+\[
+  \dd\Omega=\frac{\cos\theta\,\dd S}{r^2}
+\]
+称为该面元在 $O$ 点张开的有向立体角。因此
+\[
+  \dd\Phi_E=\frac{q}{4\pi\varepsilon_0}\dd\Omega.
+\]
+若点电荷在闭合曲面内，曲面从 $O$ 点看覆盖整个方向空间，有向立体角总和为 $4\pi$，于是
+\[
+  \oint_S\bm E\cdot\dd\bm S
+  =\frac{q}{4\pi\varepsilon_0}\oint_S\dd\Omega
+  =\frac{q}{\varepsilon_0}.
+\]
+若点电荷在闭合曲面外，任一条从该电荷出发的射线穿入曲面和穿出曲面时贡献的有向立体角相消，总立体角为零，故总通量为零。多个点电荷的电场满足叠加原理，通量积分又是线性的，逐个相加便只留下曲面内部电荷的代数和：
+\[
+  \oint_S\bm E\cdot\dd\bm S
+  =\sum_{\text{内}}\frac{q_i}{\varepsilon_0}
+  =\frac{q_{\mathrm{in}}}{\varepsilon_0}.
+\]
+连续电荷分布可视为点电荷的极限，故定理对任意电荷分布成立。这个推导也解释了两件事：平方反比 $1/r^2$ 恰好抵消立体角中的 $r^2$，所以通量与曲面远近形状无关；而外部点电荷的总立体角为零，所以它会改变局部场强，却不改变闭合面总通量。
+
+高斯定理中容易混淆的是场强和通量的来源。曲面上一点的 $\bm E$ 由空间内外所有电荷共同产生；闭合曲面的总通量只由曲面内净电荷决定。外部电荷可以改变曲面上各处 $\bm E$ 的分布，却不会改变穿出与穿入的代数总数。
+
+\lcfigure[caption={高斯面是数学闭合面，外法线决定 $\dd\bm S$ 的正方向；只有包围的净电荷进入通量定理右端。},label={fig:gaussian-surface}]{gaussian-surface}
+
+\begin{method}[用高斯定理求场强]
+高斯定理能直接求 $\bm E$，必须满足较强对称性，使高斯面上 $\bm E$ 与 $\dd\bm S$ 的夹角和 $E$ 的大小可控。常见三类对称性为球对称、柱对称和平面对称。选面时应让待求场点位于高斯面上，并使通量积分化为 $E$ 乘以有效面积。
+\end{method}
+
+\begin{example}[title={无限长均匀带电直线的场强}]\label{eg:line-gauss}
+无限长直线电荷线密度为 $\lambda$。求距直线 $r$ 处的场强。
+\begin{solution}
+电荷分布具有绕直线的柱对称性，场强沿径向，大小只与 $r$ 有关。取半径 $r$、长度 $L$ 的同轴圆柱面为高斯面，两底面法线与场强垂直，通量只来自侧面：
+\[
+  \oint_S \bm E\cdot\dd\bm S=E(2\pi rL).
+\]
+包围电荷为 $\lambda L$，故
+\[
+  E=\frac{\lambda}{2\pi\varepsilon_0 r}.
+\]
+方向由 $\lambda$ 的符号决定；$\lambda>0$ 时沿径向向外。
+\end{solution}
+\end{example}
+
+\begin{example}[title={均匀带电球面与均匀带电球体}]\label{eg:sphere-gauss}
+半径为 $R$、总电荷为 $q$ 的均匀带电球面和均匀带电实心球体，分别求电场分布。
+\begin{solution}
+两种分布均为球对称，取半径 $r$ 的同心球面为高斯面。
+
+均匀带电球面：当 $r<R$ 时，高斯面内无电荷，
+\[
+  E\cdot 4\pi r^2=0,\qquad E=0.
+\]
+当 $r>R$ 时，高斯面包围全部电荷 $q$，
+\[
+  E\cdot4\pi r^2=\frac{q}{\varepsilon_0},\qquad
+  E=\frac{1}{4\pi\varepsilon_0}\frac{q}{r^2}.
+\]
+球面外场等效于电荷集中在球心，球面内场强为零。
+
+均匀带电实心球体：体电荷密度为
+\[
+  \rho=\frac{q}{(4/3)\pi R^3}.
+\]
+当 $r<R$ 时，高斯面包围电荷
+\[
+  q_{\mathrm{in}}=\rho\frac{4}{3}\pi r^3=q\frac{r^3}{R^3},
+\]
+故
+\[
+  E\cdot4\pi r^2=\frac{q r^3}{\varepsilon_0R^3},\qquad
+  E=\frac{1}{4\pi\varepsilon_0}\frac{q r}{R^3}.
+\]
+当 $r\ge R$ 时，仍有
+\[
+  E=\frac{1}{4\pi\varepsilon_0}\frac{q}{r^2}.
+\]
+实心球内部场强随 $r$ 线性增大，球面处与外部公式连续。
+\end{solution}
+\end{example}
+
+\begin{example}[title={无限大均匀带电平面}]\label{eg:infinite-plane-gauss}
+无限大平面带电，面电荷密度为 $\sigma$。求两侧电场。
+\begin{solution}
+平面具有平移对称和关于平面的镜面对称，场强必垂直于平面，且两侧等大反向。取跨过平面的薄柱形高斯面，两底面积为 $S$，侧面法线与场强垂直，侧面通量为零。两底面通量为 $2ES$，包围电荷为 $\sigma S$，由高斯定理
+\[
+  2ES=\frac{\sigma S}{\varepsilon_0},
+  \qquad
+  E=\frac{\sigma}{2\varepsilon_0}.
+\]
+若 $\sigma>0$，两侧场强均背离带电平面；若 $\sigma<0$，两侧均指向平面。
+\end{solution}
+\end{example}
+
+\begin{example}[title={无限长均匀带电圆柱体}]\label{eg:charged-cylinder-gauss}
+半径为 $R$ 的无限长实心圆柱体均匀带电，体电荷密度为 $\rho$。求距轴线 $r$ 处的电场。
+\begin{solution}
+由柱对称性，场强沿径向，大小只依赖 $r$。取半径 $r$、长度 $L$ 的同轴圆柱面为高斯面。
+当 $r<R$ 时，包围电荷为 $\rho\pi r^2L$，故
+\[
+  E(2\pi rL)=\frac{\rho\pi r^2L}{\varepsilon_0},
+  \qquad
+  E=\frac{\rho r}{2\varepsilon_0}.
+\]
+当 $r\ge R$ 时，包围电荷为 $\rho\pi R^2L$，故
+\[
+  E(2\pi rL)=\frac{\rho\pi R^2L}{\varepsilon_0},
+  \qquad
+  E=\frac{\rho R^2}{2\varepsilon_0 r}.
+\]
+内部场强随 $r$ 增大，外部按 $1/r$ 衰减。
+\end{solution}
+\end{example}
+
+\begin{pitfall}[“有高斯定理”不等于“能求出场强”]
+任意电荷分布都满足高斯定理，但只有在高斯面上场强大小相同或可分段常量、方向关系明确时，通量积分才能转化为待求 $E$ 的代数方程。若电荷分布缺少对称性，高斯定理通常只能给总通量，不能直接给某点场强。
+\end{pitfall}
+
+\subsection{静电场环路定理、电势与等势面}
+
+\begin{theorem}[静电场环路定理]\label{thm:electrostatic-circulation}
+静电场力是保守力，沿任意闭合路径的环流为零：
+\[
+  \oint_L \bm E\cdot \dd\bm l=0.
+\]
+因此静电场电场线不闭合，否则沿闭合电场线积分将为正，与环路定理矛盾。
+\end{theorem}
+
+\begin{definition}[电势与电势差]\label{def:potential}
+静电场中两点 $a,b$ 的电势差定义为
+\[
+  V_a-V_b=\int_a^b \bm E\cdot\dd\bm l.
+\]
+若选无穷远为零势点，则点电荷 $q$ 在距其 $r$ 处的电势为
+\[
+  V=\frac{1}{4\pi\varepsilon_0}\frac{q}{r}.
+\]
+\end{definition}
+
+电势是标量，叠加时作代数和；电场强度是矢量，叠加时必须分解方向。场强和电势的关系为
+\[
+  \bm E=-\nabla V,\qquad E_l=-\frac{\partial V}{\partial l}.
+\]
+负号说明电场方向指向电势降低最快的方向。等势面与电场线处处正交，等势面密集处电势变化快，场强较大。
+
+\begin{example}[title={由电势求点电荷场强}]\label{eg:potential-to-field}
+点电荷电势为 $V(r)=\dfrac{1}{4\pi\varepsilon_0}\dfrac{q}{r}$。求场强。
+\begin{solution}
+点电荷场具有球对称性，电势只依赖 $r$。径向场强为
+\[
+  E_r=-\frac{\dd V}{\dd r}
+  =-\frac{\dd}{\dd r}\left(\frac{1}{4\pi\varepsilon_0}\frac{q}{r}\right)
+  =\frac{1}{4\pi\varepsilon_0}\frac{q}{r^2}.
+\]
+因此 $\bm E=E_r\bm e_r$。若 $q<0$，$E_r<0$，场强方向指向电荷。
+\end{solution}
+\end{example}
+
+\begin{example}[title={均匀带电球面的电势分布}]\label{eg:sphere-potential}
+半径为 $R$、总电荷为 $q$ 的均匀带电球面，取无穷远处电势为零。求各区域电势。
+\begin{solution}
+由高斯定理，球面外
+\[
+  E(r)=\frac{1}{4\pi\varepsilon_0}\frac{q}{r^2},\qquad r\ge R,
+\]
+球面内 $E=0$。由于
+\[
+  V(r)-V(\infty)=\int_r^\infty \bm E\cdot\dd\bm l,
+\]
+外部电势为
+\[
+  V(r)=\int_r^\infty \frac{1}{4\pi\varepsilon_0}\frac{q}{r'^2}\dd r'
+  =\frac{1}{4\pi\varepsilon_0}\frac{q}{r},\qquad r\ge R.
+\]
+球面内场强为零，电势不随位置变化，且电势在表面连续：
+\[
+  V(r)=V(R)=\frac{1}{4\pi\varepsilon_0}\frac{q}{R},\qquad r<R.
+\]
+因此导体球壳或均匀带电球面内部可以有非零电势，但场强为零。
+\end{solution}
+\end{example}
+
+\begin{example}[title={由电势叠加求圆环轴线电势}]\label{eg:ring-potential}
+半径为 $R$、总电荷为 $q$ 的均匀带电圆环，求轴线上距圆心 $x$ 处的电势，并由此求场强。
+\begin{solution}
+圆环上各电荷元到轴线上场点距离相同，均为 $\sqrt{R^2+x^2}$。取无穷远为零势点，
+\[
+  V(x)=\frac{1}{4\pi\varepsilon_0}\int\frac{\dd q}{\sqrt{R^2+x^2}}
+  =\frac{1}{4\pi\varepsilon_0}\frac{q}{\sqrt{R^2+x^2}}.
+\]
+轴向场强由 $E_x=-\dd V/\dd x$ 得
+\[
+  E_x=\frac{1}{4\pi\varepsilon_0}\frac{qx}{(R^2+x^2)^{3/2}},
+\]
+与直接场强积分结果一致。对称性较强且求电势更简单时，先求 $V$ 再求 $\bm E$ 是有效路线。
+\end{solution}
+\end{example}
+
+\begin{pitfall}[电势、电势能和电场力做功的符号]
+电场力把正电荷从 $a$ 移到 $b$ 所做功为
+\[
+  A_{a\to b}=q(V_a-V_b).
+\]
+若 $V_a>V_b$，正电荷沿电场方向运动时电场力做正功，电势能减少。负电荷的电势能 $W=qV$ 与电势符号相乘，不能只凭电势高低判断其自发运动方向。
+\end{pitfall}
+
+\begin{example}[title={同轴圆柱面之间的电势差}]\label{eg:coaxial-potential-difference}
+两无限长同轴圆柱面半径分别为 $R_1,R_2$，内柱面单位长度带电量为 $\lambda$，外柱面单位长度带电量为 $-\lambda$。求两柱面之间电势差。
+\begin{solution}
+由高斯定理，$R_1<r<R_2$ 区域电场为
+\[
+  E(r)=\frac{\lambda}{2\pi\varepsilon_0 r},
+\]
+方向由内柱面指向外柱面。若求内柱面相对外柱面的电势差，
+\[
+  V(R_1)-V(R_2)=\int_{R_1}^{R_2}\bm E\cdot\dd\bm l
+  =\int_{R_1}^{R_2}\frac{\lambda}{2\pi\varepsilon_0 r}\dd r
+  =\frac{\lambda}{2\pi\varepsilon_0}\ln\frac{R_2}{R_1}.
+\]
+该题是“由场强积分求电势差”的标准模型，积分方向从高电势端指向低电势端时结果为正。
+\end{solution}
+\end{example}
+
+\subsection{电偶极子、电容器与静电能}
+
+\begin{definition}[电偶极矩]\label{def:electric-dipole}
+一对等量异号点电荷 $+q$ 与 $-q$ 相距很小，构成电偶极子。电偶极矩定义为
+\[
+  \bm p=q\bm l,
+\]
+其中 $\bm l$ 从负电荷指向正电荷。
+\end{definition}
+
+电偶极矩把“电荷大小”和“正负电荷分离方向”合成一个矢量。远离电偶极子的位置，电势和电场主要由 $\bm p$ 决定，而不是由总电荷决定；因为电偶极子的总电荷为零，其远场比点电荷场衰减更快。
+
+\begin{theorem}[电偶极子在均匀电场中的力矩和势能]\label{thm:dipole-torque}
+均匀外电场 $\bm E$ 中，电偶极子所受合力为零，但一般受到力矩
+\[
+  \bm M=\bm p\times\bm E.
+\]
+其势能可写为
+\[
+  W=-\bm p\cdot\bm E=-pE\cos\theta,
+\]
+其中 $\theta$ 是 $\bm p$ 与 $\bm E$ 的夹角。
+\end{theorem}
+
+力矩总是使电偶极矩转向电场方向。$\theta=0$ 时势能最小，为稳定平衡；$\theta=\pi$ 时势能最大，为不稳定平衡。电偶极子取向与外电场方向一致时电势能最低，这一结论正由此得到。
+
+\begin{example}[title={电偶极子在均匀电场中的转动趋势}]\label{eg:dipole-example}
+电偶极矩大小为 $p$ 的电偶极子处在匀强电场 $E$ 中，$\bm p$ 与 $\bm E$ 夹角为 $\theta$。求力矩大小和由 $\theta_1$ 缓慢转到 $\theta_2$ 时外力做功。
+\begin{solution}
+力矩大小为
+\[
+  M=pE\sin\theta.
+\]
+电偶极子势能为 $W=-pE\cos\theta$，缓慢转动时外力所做功等于势能增量：
+\[
+  A_{\mathrm{ext}}=\Delta W
+  =-pE\cos\theta_2+pE\cos\theta_1
+  =pE(\cos\theta_1-\cos\theta_2).
+\]
+若从 $\theta=\pi$ 转到 $\theta=0$，势能降低，电场力做正功；若外力缓慢反向转动，则外力需做正功。
+\end{solution}
+\end{example}
+
+\begin{definition}[电容和平行板电容器]\label{def:capacitance}
+孤立导体或导体组储存电荷的能力用电容描述。两导体构成电容器时，
+\[
+  C=\frac{Q}{U},
+\]
+其中 $Q$ 为一极板电荷量大小，$U$ 为两极板电势差。忽略边缘效应的真空平行板电容器满足
+\[
+  C=\varepsilon_0\frac{S}{d}.
+\]
+\end{definition}
+
+平行板电容器的推导来自两块等量异号无限大带电平面的叠加。板间场强
+\[
+  E=\frac{\sigma}{\varepsilon_0}=\frac{Q}{\varepsilon_0S},
+\]
+电势差 $U=Ed=Qd/(\varepsilon_0S)$，故 $C=Q/U=\varepsilon_0S/d$。
+
+\begin{definition}[静电能与电场能量密度]\label{def:electrostatic-energy}
+点电荷系的静电能可写为
+\[
+  W=\frac12\sum_i q_iV_i,
+\]
+其中 $V_i$ 是除 $q_i$ 之外其他电荷在 $q_i$ 处产生的电势。连续带电体对应
+\[
+  W=\frac12\int V\,\dd q.
+\]
+从场的观点，静电能储存在电场中，真空中电场能量密度为
+\[
+  w_e=\frac12\varepsilon_0E^2.
+\]
+\end{definition}
+
+\begin{example}[title={平行板电容器的储能}]\label{eg:parallel-plate-energy}
+真空平行板电容器电容为 $C$，带电量为 $Q$，两板电压为 $U$。求储能，并用能量密度验证。
+\begin{solution}
+充电过程中，电压从 $0$ 逐渐增至 $U$，电容器储能为
+\[
+  W=\int_0^Q \frac{q}{C}\dd q=\frac{Q^2}{2C}.
+\]
+利用 $Q=CU$，还可写为
+\[
+  W=\frac12QU=\frac12CU^2.
+\]
+对平行板电容器，板间 $E=U/d$，体积为 $Sd$，由能量密度得
+\[
+  W=w_eSd=\frac12\varepsilon_0E^2Sd
+  =\frac12\varepsilon_0\frac{U^2}{d^2}Sd
+  =\frac12\frac{\varepsilon_0S}{d}U^2
+  =\frac12CU^2.
+\]
+这说明电容器储能可等价看作储存在板间电场中。
+\end{solution}
+\end{example}
+
+\begin{attention}[电介质极化]
+电介质是缺少自由移动电荷的绝缘介质。外电场作用下，无极分子可发生位移极化，即正负电荷中心产生微小相对位移；有极分子可发生取向极化，即固有电偶极矩趋向沿外电场排列。极化会改变介质内部实际电场和电容器电容，这也是介质影响电场与电容器性质的基本机制。
+\end{attention}
+
+\subsection{导体的静电平衡}
+
+\begin{theorem}[导体静电平衡条件]\label{thm:conductor-equilibrium}
+导体达到静电平衡时：
+\begin{enumerate}
+  \item 导体内部场强处处为零；
+  \item 导体为等势体，表面为等势面；
+  \item 净电荷只分布在导体表面；
+  \item 导体外紧邻表面处场强垂直于表面，且 $E=\sigma/\varepsilon_0$。
+\end{enumerate}
+\end{theorem}
+
+\textbf{静电平衡条件的推导}\quad 静电平衡指导体内自由电荷已经停止宏观定向运动，电荷分布和电场分布不再随时间变化。导体中有可移动的自由电荷，若材料内部某处仍有 $\bm E\ne0$，自由电荷将受电场力
+\[
+  \bm F=q\bm E
+\]
+而继续定向移动；移动产生的电荷重新分布又会改变电场，直到内部电场被抵消。因此平衡时必须有
+\[
+  \bm E_{\mathrm{in}}=0.
+\]
+
+由静电场环路定理，导体内部任意两点 $a,b$ 的电势差为
+\[
+  V_a-V_b=\int_a^b\bm E\cdot\dd\bm l=0.
+\]
+故导体内部各点等势。电势在导体表面连续，故导体表面也是等势面。再取表面上一条微小切向位移 $\dd\bm l_t$，因为两端都在同一等势面上，
+\[
+  \dd V=-\bm E\cdot\dd\bm l_t=0.
+\]
+这要求切向分量 $E_t=0$；否则表面自由电荷仍会沿表面移动。于是表面外侧的电场只能沿表面法线：
+\[
+  \bm E_{\mathrm{out}}=E_n\bm n.
+\]
+
+表面场强与面电荷密度的关系由跨越导体表面的薄柱形高斯面给出。令柱面的一个底面位于导体内部，另一个底面位于表面外紧邻处，底面积为 $\Delta S$、高度趋于零。柱侧面通量在极限中趋于零，内底面处 $\bm E_{\mathrm{in}}=0$，外底面通量为 $E_n\Delta S$；包围电荷为 $\sigma\Delta S$。高斯定理给出
+\[
+  E_n\Delta S=\frac{\sigma\Delta S}{\varepsilon_0},
+  \qquad
+  E_n=\frac{\sigma}{\varepsilon_0}.
+\]
+这里 $\sigma$ 为带符号的面电荷密度，法线取由导体指向外部的方向；因此 $\sigma>0$ 时外侧场指向外，$\sigma<0$ 时指向导体。
+
+最后，在导体材料内部任取一个完全位于导体内的闭合高斯面。其上 $\bm E=0$，故通量为零，从而包围净电荷为零。把该高斯面逐渐贴近导体外表面可知：静电平衡时导体体内没有净余电荷，导体所带的净电荷只能分布在表面。若导体带空腔，腔内电荷会诱导内表面电荷，使取在导体材料中的高斯面所包围净电荷仍为零。
+
+\begin{method}[含导体静电题的基本方程]
+导体题通常同时使用三类条件：导体内部 $E=0$，导体为等势体，电荷守恒。若有空腔和接地，还要区分内表面、外表面和大地之间的电荷交换。高斯面应优先取在导体材料内部，因为此处 $E=0$ 可直接推出包围净电荷为零。
+\end{method}
+
+\begin{example}[title={中心点电荷与中性导体球壳}]\label{eg:shell-charge}
+点电荷 $q$ 放在中性导体球壳中心，球壳内半径为 $R_1$，外半径为 $R_2$。求内外表面电荷量。
+\begin{solution}
+在导体材料内部取同心球形高斯面。由于导体内部 $E=0$，该高斯面的通量为零，包围净电荷也为零。高斯面包围中心点电荷 $q$ 和内表面感应电荷 $q_{\mathrm{in}}'$，故
+\[
+  q+q_{\mathrm{in}}'=0,\qquad q_{\mathrm{in}}'=-q.
+\]
+球壳整体中性，所以外表面电荷为
+\[
+  q_{\mathrm{out}}'=q.
+\]
+若球壳接地，外表面电荷可与大地交换，需重新由等势条件判断。
+\end{solution}
+\end{example}
+
+\begin{example}[title={接地导体球壳中心有点电荷}]\label{eg:grounded-shell}
+点电荷 $q$ 放在导体球壳中心，球壳内半径 $R_1$、外半径 $R_2$，球壳接地。求内外表面电荷和壳外电场。
+\begin{solution}
+在导体材料内部取高斯面，仍有 $E=0$，故包围净电荷为零：
+\[
+  q+q_{\mathrm{in}}'=0,\qquad q_{\mathrm{in}}'=-q.
+\]
+接地表示导体与大地相连，导体电势被固定为零，并可与大地交换电荷。中心点电荷和内表面感应电荷在壳外产生的总电场为零；若外表面仍有净电荷 $Q_{\mathrm{out}}$，壳外将出现等效点电荷场并使导体相对无穷远产生非零电势。为满足接地条件，外表面电荷为
+\[
+  q_{\mathrm{out}}'=0.
+\]
+因此壳外电场为零。接地后的导体壳实现内外双向屏蔽：腔内点电荷不影响壳外区域，外部场也不进入腔内。
+\end{solution}
+\end{example}
+
+\begin{example}[title={带电导体球的表面电荷密度与表面场强}]\label{eg:conducting-sphere}
+孤立导体球半径为 $R$，总电荷为 $Q$。求表面电荷密度、球内外场强和电势。
+\begin{solution}
+孤立导体球具有球对称性，电荷均匀分布在外表面：
+\[
+  \sigma=\frac{Q}{4\pi R^2}.
+\]
+导体内部场强为零。外部由高斯定理得
+\[
+  E(r)=\frac{1}{4\pi\varepsilon_0}\frac{Q}{r^2},\qquad r>R.
+\]
+表面外侧场强为
+\[
+  E(R^+)=\frac{1}{4\pi\varepsilon_0}\frac{Q}{R^2}=\frac{\sigma}{\varepsilon_0},
+\]
+与一般导体表面关系一致。取无穷远为零势点，
+\[
+  V(r)=\frac{1}{4\pi\varepsilon_0}\frac{Q}{r},\quad r\ge R;\qquad
+  V(r)=\frac{1}{4\pi\varepsilon_0}\frac{Q}{R},\quad r<R.
+\]
+\end{solution}
+\end{example}
+
+\begin{example}[title={无限大带电平面旁放置中性导体平板}]\label{eg:conducting-slab}
+无限大均匀带电平面面电荷密度为 $\sigma_0$，其一侧平行放置一块中性无限大导体平板。设导体靠近平面的一面感应电荷密度为 $\sigma_1$，远离平面的一面为 $\sigma_2$，求 $\sigma_1,\sigma_2$。
+\begin{solution}
+中性导体给出电荷守恒条件
+\[
+  \sigma_1+\sigma_2=0.
+\]
+无限大带电平面在任一点产生的场强大小为 $\sigma/(2\varepsilon_0)$，方向由该面指向外侧。取导体内部一点，静电平衡要求总场强为零。按垂直于平面的同一方向取正，在导体内部有
+\[
+  \frac{\sigma_0}{2\varepsilon_0}+\frac{\sigma_1}{2\varepsilon_0}
+  -\frac{\sigma_2}{2\varepsilon_0}=0.
+\]
+结合 $\sigma_2=-\sigma_1$，得
+\[
+  \sigma_1=-\frac{\sigma_0}{2},\qquad
+  \sigma_2=\frac{\sigma_0}{2}.
+\]
+这类题的核心不是套公式，而是同时写出导体内部 $E=0$ 和导体总电荷守恒。
+\end{solution}
+\end{example}
+
+\begin{attention}[静电屏蔽的物理解释]
+闭合导体壳在静电平衡时能屏蔽外部电场对腔内的影响。若壳内有电荷而导体壳不接地，腔内电荷会在外表面诱导等量净电荷，壳外仍有电场；若导体壳接地，外表面净电荷可流入大地，腔内电荷不再影响壳外区域。判断屏蔽方向时，应先问“电荷能否通过接地交换”，再问“哪一侧电势被固定”。
+\end{attention}
+
+\section{稳恒电流的磁场}
+
+\subsection{奥斯特实验与磁场来源}
+
+\begin{definition}[奥斯特实验的物理结论]\label{def:oersted-experiment}
+通电直导线附近的小磁针会发生偏转，说明电流能在周围空间产生磁场。电流方向改变时，小磁针偏转方向随之反向，表明磁场方向与电流方向有关。
+\end{definition}
+
+奥斯特实验把电现象和磁现象联系起来：静止电荷产生静电场，定向运动的电荷即电流产生磁场。长直电流周围的磁感应线为绕导线的同心圆，方向由右手螺旋定则确定。这个实验建立了“磁场由电流或运动电荷产生”的基本物理图像，也为毕奥--萨伐尔定律和安培环路定理提供了实验入口。
+
+\subsection{电流与电流密度}
+
+\begin{definition}[电流与体电流密度]\label{def:current-density}
+穿过给定有向截面的电荷量对时间的变化率称为电流：
+\[
+  I=\frac{\dd q}{\dd t}.
+\]
+约定正电荷运动方向为电流正方向。若电流在导体截面上分布不均匀，则用体电流密度矢量 $\bm J$ 描述单位面积上的局部电流。取过该点、法线为 $\bm n$ 的小面积 $\Delta S$，电流密度沿该法线的分量严格定义为
+\[
+  \bm J\cdot\bm n
+  =\lim_{\Delta S\to0}\frac{\Delta I}{\Delta S}.
+\]
+因此，对有向面积元 $\dd\bm S=\bm n\dd S$，有
+\[
+  \dd I=\bm J\cdot\dd\bm S,
+  \qquad
+  I=\int_S\bm J\cdot\dd\bm S.
+\]
+$\bm J$ 的方向为正电荷在该点运动的方向，单位为 $\mathrm{A/m^2}$。若截面上 $\bm J$ 均匀，且 $\bm J\parallel\bm n$，则 $I=JS$，即 $J=I/S$；只有在这一条件下才能把总电流除以截面积作为电流密度。
+\end{definition}
+
+设单位体积内有 $n$ 个同类载流子，每个载流子电荷量为 $q$，平均漂移速度为 $\bm v_d$。在时间 $\dd t$ 内，穿过垂直于漂移方向、面积为 $S$ 的截面的载流子总电荷为 $nqSv_d\dd t$，因此
+\[
+  \bm J=nq\bm v_d,
+  \qquad
+  I=n|q|v_dS\quad\text{（取大小）}.
+\]
+对金属中的电子，$q=-e$，故电子漂移方向与约定电流方向相反；这一符号关系是判断霍尔电压极性的基础。稳恒电流时任意体积元内不发生电荷积累，满足连续性方程 $\nabla\cdot\bm J=0$。在没有支路的稳态导线中，这意味着各横截面的总电流相同，但不意味着各处 $J$ 必相同：截面积变化时，漂移速度和电流密度可随之变化。
+
+\begin{definition}[面电流密度]\label{def:surface-current-density}
+当电流集中在很薄的表面层内时，定义面电流密度 $\bm K$ 为垂直于电流方向的单位宽度所通过的电流，单位为 $\mathrm{A/m}$。若宽度为 $b$ 的薄带上 $\bm K$ 均匀，则 $I=Kb$。无限大电流面和螺线管的等效电流面常用 $\bm K$ 描述。
+\end{definition}
+
+\begin{example}[title={由非均匀电流密度求总电流}]\label{eg:current-density-integral}
+半径为 $R$ 的圆柱导体中，电流密度沿轴线正方向分布为
+\[
+  \bm J(r)=J_0\left(1-\frac{r^2}{R^2}\right)\bm e_z
+  \qquad(0\le r\le R).
+\]
+求通过导体横截面的总电流，并说明为何不能取 $I=J_0\pi R^2$。
+\begin{solution}
+电流密度随半径变化，故必须按横截面上的局部通量积分。取半径为 $r$、宽度为 $\dd r$ 的环形面积元，$\dd S=2\pi r\dd r$，且 $\bm J$ 与截面法线同向，因而
+\[
+  I=\int_S\bm J\cdot\dd\bm S
+  =\int_0^R J_0\left(1-\frac{r^2}{R^2}\right)2\pi r\dd r
+  =\frac{\pi R^2J_0}{2}.
+\]
+$J_0$ 是轴线上电流密度的最大值，不是截面平均电流密度；本题的平均电流密度为 $\overline J=I/(\pi R^2)=J_0/2$。只有 $\bm J$ 在截面上均匀时，才可直接写 $I=JS$。
+\end{solution}
+\end{example}
+
+\subsection{磁感应强度、洛伦兹力与磁通量}
+
+\begin{definition}[磁感应强度]\label{def:magnetic-induction-definition}
+在某点放入电荷量为 $q$ 的测试电荷，使其以速度 $\bm v$ 通过该点。扣除电场力后，磁场力的大小满足
+\[
+  F_B=|q|vB\sin\theta=|q|v_\perp B,
+\]
+其中 $\theta$ 是 $\bm v$ 与 $\bm B$ 的夹角，$v_\perp=v\sin\theta$ 是速度垂直于磁场的分量。于是，当测试电荷以给定速率垂直通过该点时，磁感应强度的大小定义为磁场力与 $|q|v$ 的比值：
+\[
+  B=\frac{F_{B,\max}}{|q|v}\qquad(\bm v\perp\bm B).
+\]
+磁感应强度 $\bm B$ 是矢量；其方向规定为小磁针北极在该点静止时所指的方向，也即磁感应线在该点的切线方向。对正测试电荷，$\bm F_B$ 的方向由右手定则确定为 $\bm v\times\bm B$；对负电荷则相反。SI 单位为特斯拉：
+\[
+  1\ \mathrm T=1\ \frac{\mathrm N}{\mathrm A\cdot\mathrm m}
+  =1\ \frac{\mathrm N}{\mathrm C\cdot\mathrm{m}\,\mathrm{s}^{-1}}.
+\]
+\end{definition}
+
+磁场力只由速度的垂直分量决定。因此，静止电荷在磁场中不受磁场力，并不表示该处 $\bm B=0$；带电粒子沿磁感应线运动时同样有 $F_B=0$。单次受力实验只能测出垂直于 $\bm v$ 的磁场分量，完整的 $\bm B$ 需改变测试运动方向，或借助磁针确定其方向。
+
+\begin{theorem}[洛伦兹力]\label{thm:lorentz-force}
+电荷 $q$ 以速度 $\bm v$ 在电场和磁场中运动时，所受总电磁力为
+\[
+  \bm F=q\bm E+q\bm v\times\bm B.
+\]
+其中 $q\bm E$ 是电场力，$\bm F_B=q\bm v\times\bm B$ 是磁场力。磁场力垂直于 $\bm v$ 与 $\bm B$ 所构成的平面。
+\end{theorem}
+
+\textbf{磁场力不做功的推导}
+
+仅有磁场时，磁场力的瞬时功率为
+\[
+  P_B=\bm F_B\cdot\bm v
+  =q(\bm v\times\bm B)\cdot\bm v=0.
+\]
+由动能定理 $\dd(\frac12mv^2)/\dd t=P_B$，粒子的动能和速率保持不变。故磁场力只能改变速度方向或运动轨迹，不能单独使粒子加速或减速。
+
+匀强磁场中，若 $\bm v\perp\bm B$，带电粒子作匀速圆周运动：
+\[
+  R=\frac{mv}{|q|B},\qquad T=\frac{2\pi m}{|q|B}.
+\]
+若速度含平行于磁场的分量，平行分量保持不变，轨迹为螺旋线。
+
+\begin{example}[title={带电粒子在匀强磁场中的螺旋运动}]\label{eg:helical-motion}
+质量为 $m$、电荷量为 $q$ 的粒子以速度 $\bm v$ 进入匀强磁场 $\bm B$。设 $v_\perp$ 为垂直于磁场的分量，$v_\parallel$ 为平行于磁场的分量。求轨迹参数。
+\begin{solution}
+洛伦兹力 $q\bm v\times\bm B$ 永远垂直于速度，因此不改变速率。平行分量不受磁场力影响，保持匀速直线运动；垂直分量提供向心力：
+\[
+  |q|v_\perp B=\frac{m v_\perp^2}{R}.
+\]
+故
+\[
+  R=\frac{m v_\perp}{|q|B},\qquad
+  \omega=\frac{|q|B}{m},\qquad
+  T=\frac{2\pi m}{|q|B}.
+\]
+螺距为一个周期内沿磁场方向前进的距离：
+\[
+  h=v_\parallel T=\frac{2\pi m v_\parallel}{|q|B}.
+\]
+电荷正负只改变旋转方向，不改变 $R,T,h$ 的大小。
+\end{solution}
+\end{example}
+
+\begin{example}[title={速度选择器}]\label{eg:velocity-selector}
+互相垂直的匀强电场 $\bm E$ 与匀强磁场 $\bm B$ 中，一束带电粒子速度 $\bm v$ 同时垂直于 $\bm E$ 和 $\bm B$。求粒子不偏转的速度条件。
+\begin{solution}
+粒子不偏转要求电场力与磁场力大小相等、方向相反：
+\[
+  |q|E=|q|vB.
+\]
+因此
+\[
+  v=\frac{E}{B}.
+\]
+该条件与粒子电荷量、质量无关，但方向条件不能省略：只有当 $\bm E$ 与 $\bm v\times\bm B$ 方向相反时，才可能不偏转。
+\end{solution}
+\end{example}
+
+\begin{definition}[磁通量与磁场高斯定理]\label{def:magnetic-flux}
+磁通量定义为
+\[
+  \Phi_B=\int_S\bm B\cdot\dd\bm S.
+\]
+由于尚未发现磁单极子，磁感应线闭合成环，任意闭合曲面的磁通量为零：
+\[
+  \oint_S\bm B\cdot\dd\bm S=0.
+\]
+\end{definition}
+
+\subsection{毕奥--萨伐尔定律}
+
+\begin{theorem}[毕奥--萨伐尔定律]\label{thm:biot-savart}
+稳恒电流元 $I\dd\bm l$ 在场点产生的磁感应强度为
+\[
+  \dd\bm B=\frac{\mu_0}{4\pi}\frac{I\dd\bm l\times\bm e_r}{r^2}.
+\]
+方向由右手螺旋关系确定，大小为
+\[
+  \dd B=\frac{\mu_0}{4\pi}\frac{I\dd l\sin\theta}{r^2}.
+\]
+\end{theorem}
+
+\begin{method}[磁场计算定律的选择]
+毕奥--萨伐尔定律适合求有限导线、圆环轴线、局部电流元等缺少整体环路对称的问题；安培环路定理适合无限长直导线、长直螺线管、螺绕环、无限大电流面等高度对称问题。判断入口不是公式熟悉程度，而是能否找到使 $\oint\bm B\cdot\dd\bm l$ 简化的闭合路径。
+\end{method}
+
+\begin{example}[title={圆电流轴线上的磁场}]\label{eg:loop-B}
+半径为 $R$ 的圆形线圈通电流 $I$，求轴线上距圆心 $x$ 处的磁感应强度。
+\begin{solution}
+圆环上各电流元到轴线上场点距离相同，横向分量因对称性抵消，只保留轴向分量。由毕奥--萨伐尔定律积分得
+\[
+  B_x=\frac{\mu_0 I R^2}{2(R^2+x^2)^{3/2}}.
+\]
+圆心处 $x=0$，有 $B=\mu_0 I/(2R)$，方向由右手螺旋定则确定。
+\end{solution}
+\end{example}
+
+\begin{definition}[磁矩]\label{def:magnetic-moment}
+圆电流或小线圈的磁学性质可用磁矩描述。单匝面积为 $S$、电流为 $I$ 的平面线圈磁矩为
+\[
+  \bm m=IS\bm e_n,
+\]
+其中 $\bm e_n$ 与电流绕向满足右手定则。若线圈有 $N$ 匝，
+\[
+  \bm m=NIS\bm e_n.
+\]
+\end{definition}
+
+磁矩是磁偶极子的核心量，与电偶极矩类似。圆电流轴线上远处的磁场可用磁矩描述；外磁场中线圈的取向也由磁矩决定。
+
+\begin{theorem}[载流线圈在匀强磁场中的力矩]\label{thm:loop-torque}
+磁矩为 $\bm m$ 的载流线圈处在匀强磁场 $\bm B$ 中，所受合力为零，所受力矩为
+\[
+  \bm M=\bm m\times\bm B.
+\]
+其势能为
+\[
+  W=-\bm m\cdot\bm B=-mB\cos\theta.
+\]
+\end{theorem}
+
+磁力矩总是使磁矩转向磁场方向。$\bm m$ 与 $\bm B$ 平行时势能最低，为稳定平衡；反平行时势能最高，为不稳定平衡。这个结论与电偶极子在电场中的力矩和势能完全类比。
+
+\begin{example}[title={矩形载流线圈的磁力矩}]\label{eg:rect-loop-torque}
+面积为 $S$ 的 $N$ 匝矩形线圈通电流 $I$，置于匀强磁场 $B$ 中。线圈法线与 $\bm B$ 夹角为 $\theta$。求磁力矩大小。
+\begin{solution}
+线圈磁矩大小为
+\[
+  m=NIS.
+\]
+磁力矩大小为
+\[
+  M=mB\sin\theta=NISB\sin\theta.
+\]
+若 $\theta=0$，线圈平面垂直于磁场，磁矩已与磁场平行，力矩为零且处于稳定平衡；若 $\theta=\pi/2$，力矩最大。
+\end{solution}
+\end{example}
+
+\begin{example}[title={有限长直载流导线的磁场}]\label{eg:finite-wire-B}
+长直导线的一段通电流 $I$，场点 $P$ 到导线的垂直距离为 $a$。从垂足看导线两端的张角分别为 $\theta_1,\theta_2$。求 $P$ 点磁感应强度。
+\begin{solution}
+取导线沿 $x$ 轴，场点到导线垂足距离为 $a$。电流元 $I\dd x$ 到场点距离 $r=\sqrt{x^2+a^2}$，且 $\sin\alpha=a/r$。毕奥--萨伐尔定律给出
+\[
+  \dd B=\frac{\mu_0}{4\pi}\frac{I\dd x\sin\alpha}{r^2}
+  =\frac{\mu_0 I}{4\pi}\frac{a\,\dd x}{(x^2+a^2)^{3/2}}.
+\]
+积分得
+\[
+  B=\frac{\mu_0 I}{4\pi a}(\sin\theta_1+\sin\theta_2),
+\]
+方向垂直于导线和场点所在平面，由右手定则确定。若导线无限长，$\theta_1=\theta_2=90^\circ$，得到 $B=\mu_0 I/(2\pi a)$。
+\end{solution}
+\end{example}
+
+\begin{example}[title={宽金属薄板可视为电流线叠加}]\label{eg:current-sheet-biot}
+无限长薄板宽度为 $b$，总电流 $I$ 沿板长方向均匀分布。求位于薄板中垂线上、距板面距离 $a$ 的点的磁场大小。
+\begin{solution}
+把薄板分解为许多无限长电流线。每条线电流为
+\[
+  \dd I=\frac{I}{b}\dd x.
+\]
+距场点横向位置为 $x$ 的电流线到场点距离为 $\sqrt{x^2+a^2}$，其磁场大小为 $\mu_0\dd I/(2\pi\sqrt{x^2+a^2})$。对称电流线的垂直分量抵消，只保留沿板宽方向的合分量：
+\[
+  \dd B=\frac{\mu_0\dd I}{2\pi\sqrt{x^2+a^2}}\frac{a}{\sqrt{x^2+a^2}}
+  =\frac{\mu_0 I}{2\pi b}\frac{a\,\dd x}{x^2+a^2}.
+\]
+积分 $x\in[-b/2,b/2]$ 得
+\[
+  B=\frac{\mu_0 I}{\pi b}\arctan\frac{b}{2a}.
+\]
+当 $b\to 0$ 时近似为长直导线场；当 $b\to\infty$ 且面电流密度 $K=I/b$ 固定时，趋于 $B=\mu_0 K/2$。
+\end{solution}
+\end{example}
+
+\subsection{安培环路定理及应用}
+
+\begin{theorem}[安培环路定理]\label{thm:ampere-law}
+真空中稳恒电流产生的磁场满足
+\[
+  \oint_L \bm B\cdot\dd\bm l=\mu_0 I_{\mathrm{in}},
+\]
+其中 $I_{\mathrm{in}}$ 是穿过有向环路所围任一曲面的传导电流代数和。环路绕向确定后，电流正负由右手定则判断。
+\end{theorem}
+
+安培环路定理的左端是环路上总磁场的环流，环路内外所有电流都对 $\bm B$ 有贡献；右端只统计穿过环路所围曲面的电流。这一点与高斯定理中“所有电荷产生场，只有内部净电荷决定闭合通量”的结构相似。
+
+\lcfigure[caption={长直电流周围磁感应线为同心圆。选同心圆为安培环路时，$\bm B$ 与 $\dd\bm l$ 处处同向且大小相同。},label={fig:ampere-loop}]{ampere-loop}
+
+\begin{example}[title={无限长直导线磁场}]\label{eg:long-wire-B}
+无限长直导线通电流 $I$，求距导线 $r$ 处磁感应强度。
+\begin{solution}
+由柱对称性，磁感应线是以导线为轴的同心圆，$B$ 只与 $r$ 有关。取半径为 $r$ 的同心圆为安培环路：
+\[
+  \oint_L \bm B\cdot\dd\bm l=B(2\pi r)=\mu_0 I.
+\]
+故
+\[
+  B=\frac{\mu_0 I}{2\pi r}.
+\]
+方向由右手螺旋定则确定。
+\end{solution}
+\end{example}
+
+\begin{example}[title={无限长载流圆柱导体的磁场}]\label{eg:current-cylinder-B}
+半径为 $R$ 的无限长圆柱导体通稳恒电流 $I$，电流在截面上均匀分布。求距轴线 $r$ 处磁感应强度。
+\begin{solution}
+电流密度为 $J=I/(\pi R^2)$。磁场具有柱对称性，磁感应线为同心圆。取半径 $r$ 的同心圆为安培环路。
+当 $r<R$ 时，包围电流为
+\[
+  I_{\mathrm{in}}=J\pi r^2=I\frac{r^2}{R^2}.
+\]
+由安培环路定理
+\[
+  B(2\pi r)=\mu_0 I\frac{r^2}{R^2},
+  \qquad
+  B=\frac{\mu_0 I r}{2\pi R^2}.
+\]
+当 $r\ge R$ 时，包围全部电流 $I$，故
+\[
+  B=\frac{\mu_0 I}{2\pi r}.
+\]
+导体内部磁场随 $r$ 线性增大，外部按 $1/r$ 衰减。
+\end{solution}
+\end{example}
+
+\begin{example}[title={长直螺线管内磁场}]\label{eg:solenoid-B}
+长直密绕螺线管单位长度匝数为 $n$，通电流 $I$。求管内磁场。
+\begin{solution}
+理想长直螺线管内部磁场近似均匀并沿轴向，外部磁场可忽略。取矩形安培环路，一条长边长为 $l$ 位于管内并平行于轴线，另一条长边位于管外。短边与磁场垂直，不贡献环流；外部长边磁场近似为零。于是
+\[
+  \oint\bm B\cdot\dd\bm l=Bl.
+\]
+矩形面穿过的匝数为 $nl$，总包围电流为 $n l I$，故
+\[
+  B=\mu_0 nI.
+\]
+方向由右手螺旋定则确定：四指沿电流绕向，拇指指向管内磁场方向。
+\end{solution}
+\end{example}
+
+\begin{example}[title={螺绕环的磁场}]\label{eg:toroid-B}
+螺绕环总匝数为 $N$，通电流 $I$，内外半径为 $R_1,R_2$。求距中心 $r$ 处磁场。
+\begin{solution}
+螺绕环具有绕中心轴的环向对称性。取半径为 $r$ 的圆形安培环路。若 $R_1<r<R_2$，环路穿过 $N$ 匝电流：
+\[
+  B(2\pi r)=\mu_0 NI,\qquad
+  B=\frac{\mu_0 NI}{2\pi r}.
+\]
+若 $r<R_1$ 或 $r>R_2$，理想情况下安培环路所围净电流为零，且由对称性取 $B\approx0$。螺绕环与长直螺线管的差别在于其磁场大小随 $r$ 变化，不是严格均匀场。
+\end{solution}
+\end{example}
+
+\begin{example}[title={无限大均匀面电流的磁场}]\label{eg:surface-current-B}
+无限大薄导体板上有均匀面电流密度 $\bm K$。求板两侧磁场大小。
+\begin{solution}
+面电流方向设为 $x$ 方向，板法线为 $z$ 方向。由对称性，磁场平行于板面且垂直于电流方向，两侧大小相等、方向相反。取跨过电流面的矩形安培环路，长边长为 $l$，平行于磁场方向。两条长边贡献同号环流，总环流为
+\[
+  2Bl.
+\]
+环路所围电流为 $Kl$，故
+\[
+  2Bl=\mu_0Kl,\qquad
+  B=\frac{\mu_0K}{2}.
+\]
+方向由右手定则或边界关系判断。
+\end{solution}
+\end{example}
+
+\begin{pitfall}[磁场环流不为零不表示磁通量不为零]
+磁场是无源有旋场。无源对应 $\oint_S\bm B\cdot\dd\bm S=0$，表示磁感应线无头无尾；有旋对应 $\oint_L\bm B\cdot\dd\bm l$ 可不为零，表示电流周围磁感应线环绕电流。通量和环流使用的积分对象不同，不能互相替代。
+\end{pitfall}
+
+\subsection{安培力}
+
+\begin{definition}[安培力]\label{def:ampere-force}
+磁场对电流元的作用力为
+\[
+  \dd\bm F=I\dd\bm l\times\bm B.
+\]
+有限导线受力由积分得到：
+\[
+  \bm F=\int I\dd\bm l\times\bm B.
+\]
+若直导线长为 $L$，处于匀强磁场中且与磁场夹角为 $\theta$，则 $F=ILB\sin\theta$。
+\end{definition}
+
+安培力的本质是运动电荷所受洛伦兹力的宏观合力。两根平行长直电流同向相吸、反向相斥，可由一根导线产生的磁场和另一根导线上的安培力判断。
+
+\begin{example}[title={平行长直电流间的作用力}]\label{eg:parallel-current-force}
+两根相距 $d$ 的无限长平行直导线分别通电流 $I_1,I_2$。求单位长度相互作用力。
+\begin{solution}
+导线 1 在导线 2 处产生的磁场为
+\[
+  B_1=\frac{\mu_0 I_1}{2\pi d}.
+\]
+导线 2 上长度 $l$ 的电流元在该磁场中受力
+\[
+  F=I_2 l B_1.
+\]
+故单位长度受力为
+\[
+  \frac{F}{l}=\frac{\mu_0 I_1I_2}{2\pi d}.
+\]
+同向电流相吸，反向电流相斥。判断方向时不要只看公式大小，必须结合右手定则和安培力方向。
+\end{solution}
+\end{example}
+
+\begin{example}[title={霍尔效应的基本公式}]\label{eg:hall-effect}
+厚度为 $d$ 的导体薄片通电流 $I$，载流子数密度为 $n$，载流子电荷量为 $q$。磁场 $B$ 垂直于电流方向和薄片表面。求霍尔电压大小。
+\begin{solution}
+载流子漂移速度为 $v_d$，电流满足
+\[
+  I=n|q|v_d A,
+\]
+其中 $A$ 是垂直电流方向的截面积。载流子受磁场力偏转并在横向建立霍尔电场 $E_H$，平衡时
+\[
+  |q|E_H=|q|v_dB,\qquad E_H=v_dB.
+\]
+若霍尔电压跨越厚度 $d$，则
+\[
+  U_H=E_Hd=v_dBd.
+\]
+在常见几何中可化为
+\[
+  U_H=\frac{IB}{n|q|\,t},
+\]
+其中 $t$ 是沿磁场方向的样品厚度。霍尔电压极性可判断载流子正负，这是霍尔效应的实验价值。
+\end{solution}
+\end{example}
+
+\begin{method}[霍尔效应的极性判断]
+判断霍尔电压极性时先按电流方向确定正载流子的等效漂移方向，再由 $q\bm v\times\bm B$ 判断正载流子受力方向。若实际载流子为电子，电子受力方向与正载流子相反，但电子堆积的一侧带负电。霍尔电压的正负由横向电场达到平衡时的电荷分离决定。根据霍尔电压极性判断载流子正负，正是建立在这个步骤之上。
+\end{method}
+
+\begin{attention}[霍尔效应的应用性结论]
+霍尔效应可用于测量磁场、判断半导体载流子类型、制作位置和转速传感器。若题目以选择题形式出现，常用三点：横向电势差来自洛伦兹力导致的电荷分离；稳定时电场力与磁场力平衡；霍尔电压与磁场、电流成正比，与载流子数密度和样品厚度成反比。
+\end{attention}
+
+\begin{definition}[磁场能量密度]\label{def:magnetic-energy-density}
+从场的观点，磁场也携带能量。真空中磁场能量密度为
+\[
+  w_m=\frac{B^2}{2\mu_0}.
+\]
+与电场能量密度 $w_e=\frac12\varepsilon_0E^2$ 类似，磁能量密度刻画单位体积磁场储能。
+\end{definition}
+
+\section{电磁感应与麦克斯韦方程组}
+
+\subsection{电动势与法拉第电磁感应定律}
+
+\begin{definition}[电动势]\label{def:emf}
+电源或非静电力沿闭合回路移动单位正电荷所做的功称为电动势：
+\[
+  \mathcal E=\oint_L \bm E_k\cdot\dd\bm l.
+\]
+这里 $\bm E_k$ 表示维持电荷逆静电力方向运动的非静电场强。
+\end{definition}
+
+\begin{theorem}[法拉第电磁感应定律]\label{thm:faraday-law}
+闭合回路中的感应电动势为
+\[
+  \mathcal E=-\frac{\dd\Phi_B}{\dd t}.
+\]
+若线圈有 $N$ 匝，则 $\mathcal E=-N\dfrac{\dd\Phi_B}{\dd t}$。负号表示楞次定律：感应电流的磁效应总是阻碍引起磁通量变化的原因。
+\end{theorem}
+
+\begin{method}[楞次定律判向]
+判定感应电流方向可按三步进行：先确定原磁通量方向和增减；再确定感应磁场应阻碍这种变化，即“增反减同”；最后用右手螺旋定则由感应磁场方向反推出电流方向。阻碍的是磁通量变化，不是阻止运动本身；若外力维持运动，外力做功转化为电能和焦耳热。
+\end{method}
+
+\begin{attention}[磁通量的符号约定]
+法拉第定律中的负号必须与回路绕向和曲面法线一起理解。先规定回路正向，再由右手定则确定曲面正法线，磁通量 $\Phi_B=\int_S\bm B\cdot\dd\bm S$ 可能为正也可能为负。若只求感应电动势大小，可用 $|\mathcal E|=|\dd\Phi_B/\dd t|$；若要求电流方向，必须保留正负号或另用楞次定律判向。
+\end{attention}
+
+\begin{example}[title={矩形线圈在匀强磁场中转动}]\label{eg:rotating-coil-emf}
+面积为 $S$、匝数为 $N$ 的线圈在匀强磁场 $B$ 中绕垂直于磁场的轴匀速转动，角速度为 $\omega$。设线圈法线与磁场夹角为 $\theta=\omega t+\theta_0$，求感应电动势。
+\begin{solution}
+磁通量为
+\[
+  \Phi_B=NBS\cos\theta=NBS\cos(\omega t+\theta_0).
+\]
+由法拉第定律
+\[
+  \mathcal E=-\frac{\dd\Phi_B}{\dd t}
+  =NBS\omega\sin(\omega t+\theta_0).
+\]
+感应电动势最大值为 $\mathcal E_m=NBS\omega$。线圈平面与磁场平行时，磁通量为零但变化率最大，电动势最大；线圈平面与磁场垂直时，磁通量最大但瞬时变化率为零。
+\end{solution}
+\end{example}
+
+\subsection{动生电动势与感生电动势}
+
+\begin{definition}[动生电动势]\label{def:motional-emf}
+导体在稳恒磁场中运动时，导体内自由电荷受洛伦兹力 $q\bm v\times\bm B$ 作用而分离，形成动生电动势：
+\[
+  \mathcal E_i=\int_L(\bm v\times\bm B)\cdot\dd\bm l.
+\]
+\end{definition}
+
+\lcfigure[caption={金属棒向右运动、磁场垂直纸面向里时，$\bm v\times\bm B$ 沿棒向上，正电荷向上端聚集，动生电动势方向由下端指向上端。},label={fig:motional-emf}]{motional-emf}
+
+\begin{example}[title={滑动导体棒的动生电动势}]\label{eg:sliding-rod}
+长为 $l$ 的导体棒在垂直纸面向里的匀强磁场 $B$ 中以速度 $v$ 向右匀速运动，导体棒与速度方向垂直。求棒两端动生电动势。
+\begin{solution}
+棒上各点速度相同，$\bm v\times\bm B$ 沿棒向上。取积分方向由下端到上端，则
+\[
+  \mathcal E_i=\int_0^l vB\,\dd l=Bvl.
+\]
+上端为正极，下端为负极。若导体棒接入闭合回路，感应电流方向还可用楞次定律核对：运动使回路面积增大、向里磁通量增大，感应电流应产生向外磁场。
+\end{solution}
+\end{example}
+
+\begin{example}[title={滑动导体棒回路的电流、阻力和功率}]\label{eg:sliding-rod-circuit}
+两根平行光滑导轨相距 $l$，左端接电阻 $R$，导体棒在匀强磁场 $B$ 中以速度 $v$ 向右匀速滑动，磁场垂直导轨平面向里。忽略导轨和棒电阻。求感应电流、棒受磁阻力和外力功率。
+\begin{solution}
+动生电动势大小为
+\[
+  \mathcal E=Blv.
+\]
+回路电流为
+\[
+  I=\frac{\mathcal E}{R}=\frac{Blv}{R}.
+\]
+棒向右运动使向里磁通量增大，感应电流应产生向外磁场，因此回路电流为逆时针方向。导体棒中电流向上，磁场向里，由 $\bm F=I\bm l\times\bm B$ 得棒受安培力向左，大小
+\[
+  F=BIl=\frac{B^2l^2v}{R}.
+\]
+为维持匀速，外力向右且大小相等。外力功率
+\[
+  P_{\mathrm{ext}}=Fv=\frac{B^2l^2v^2}{R}.
+\]
+电阻消耗功率
+\[
+  P_R=I^2R=\frac{B^2l^2v^2}{R}.
+\]
+两者相等，说明机械功转化为电能并最终变为焦耳热。
+\end{solution}
+\end{example}
+
+\begin{example}[title={长直导线旁径向金属棒的动生电动势}]\label{eg:rod-near-wire-emf}
+无限长直导线通稳恒电流 $I$。一根长度为 $l$ 的金属棒与长直导线垂直，并沿导线的径向放置；棒的近端距导线 $a$，远端距导线 $a+l$。金属棒以速度 $v$ 平行于长直导线运动。求棒两端动生电动势大小。
+\begin{solution}
+长直导线在距导线 $r$ 处的磁场为
+\[
+  B(r)=\frac{\mu_0 I}{2\pi r}.
+\]
+棒上各点速度均与磁场垂直，且 $\bm v\times\bm B$ 沿棒的径向方向。取沿棒从近端到远端为积分方向，则
+\[
+  \mathcal E=\int_a^{a+l} vB(r)\,\dd r
+  =\int_a^{a+l} v\frac{\mu_0 I}{2\pi r}\,\dd r
+  =\frac{\mu_0 Iv}{2\pi}\ln\frac{a+l}{a}.
+\]
+若题目要求极性，应根据电流方向先判定 $\bm B$ 方向，再用 $\bm v\times\bm B$ 判断正电荷受力方向。
+\end{solution}
+\end{example}
+
+\begin{definition}[感生电场]\label{def:induced-electric-field}
+变化磁场在周围空间激发非保守电场，称为感生电场或涡旋电场。其环流满足
+\[
+  \oint_L \bm E_{\mathrm{ind}}\cdot\dd\bm l
+  =-\frac{\dd}{\dd t}\int_S\bm B\cdot\dd\bm S
+  =-\int_S\frac{\partial \bm B}{\partial t}\cdot\dd\bm S.
+\]
+\end{definition}
+
+感生电场不同于静电场：静电场由电荷产生，环流为零，电场线不闭合；感生电场由变化磁场产生，环流一般不为零，电场线可闭合。若题目中导体不动而磁场随时间变化，感应电动势的来源应判为感生电场。
+
+\begin{example}[title={均匀变化磁场中的感生电场}]\label{eg:induced-E-cylinder}
+半径为 $R$ 的长圆柱区域内存在均匀磁场 $\bm B(t)$，方向沿轴线，且 $\dd B/\dd t>0$。求距轴线 $r$ 处感生电场大小。
+\begin{solution}
+由对称性，感生电场线为同心圆，大小只与 $r$ 有关。取半径为 $r$ 的圆形回路，回路方向按右手定则与磁场正方向关联。
+
+当 $r<R$ 时，磁通量为 $\Phi_B=B\pi r^2$，故
+\[
+  E_{\mathrm{ind}}(2\pi r)=-\frac{\dd}{\dd t}(B\pi r^2),
+  \qquad
+  E_{\mathrm{ind}}=-\frac{r}{2}\frac{\dd B}{\dd t}.
+\]
+大小为
+\[
+  |E_{\mathrm{ind}}|=\frac{r}{2}\left|\frac{\dd B}{\dd t}\right|.
+\]
+当 $r>R$ 时，只有半径 $R$ 内有磁场，磁通量为 $\Phi_B=B\pi R^2$，故
+\[
+  E_{\mathrm{ind}}(2\pi r)=-\pi R^2\frac{\dd B}{\dd t},
+  \qquad
+  |E_{\mathrm{ind}}|=\frac{R^2}{2r}\left|\frac{\dd B}{\dd t}\right|.
+\]
+若 $\dd B/\dd t>0$，感生电场方向应产生反向磁通量，故相对于磁场正方向为顺时针。
+\end{solution}
+\end{example}
+
+\begin{method}[动生与感生同时存在时的处理]
+一般情况下，回路中总电动势可写为
+\[
+  \mathcal E=\oint_L(\bm v\times\bm B+\bm E_{\mathrm{ind}})\cdot\dd\bm l.
+\]
+导体运动导致边界扫过磁感线，对应动生项；磁场随时间变化导致空间出现涡旋电场，对应感生项。若用 $-\dd\Phi_B/\dd t$ 直接求总电动势，必须确保磁通量变化同时包含边界运动和磁场变化；若分开求动生与感生项，二者符号必须使用同一回路正向。
+\end{method}
+
+\subsection{涡电流、趋肤效应与电磁阻尼}
+
+\begin{definition}[涡电流]\label{def:eddy-current}
+大块导体处在变化磁场中，或在磁场中运动时，导体内部会出现闭合感应电流。这些电流在导体内部呈涡旋状，称为涡电流或傅科电流。
+\end{definition}
+
+涡电流不是额外的新定律，而是法拉第电磁感应定律在连续导体中的表现。导体虽然没有接入外部闭合回路，但内部任意小闭合路径都可看作回路；只要穿过这些路径的磁通量变化，就会出现感应电动势和感应电流。良导体电阻小，涡电流可能很强，因而产生明显热效应。
+
+\begin{attention}[涡电流的作用]
+涡电流有两类典型作用。其热效应可用于高频感应炉、电磁炉等感应加热；在变压器铁芯中则会造成能量损耗，通常用相互绝缘的薄硅钢片叠合来减小涡流回路面积。其安培力效应可产生电磁阻尼或电磁驱动，方向仍由楞次定律判断，即总是阻碍引起涡流的相对运动或磁通量变化。
+\end{attention}
+
+\begin{definition}[趋肤效应]\label{def:skin-effect}
+交流电频率较高时，导体内部由变化磁场引起的涡流会使电流主要集中在导体表面附近，导体内部电流密度减小，这种现象称为趋肤效应。
+\end{definition}
+
+趋肤效应使导体有效导电截面积减小，交流电阻增大。频率越高，趋肤效应越明显；其强弱还取决于导体材料和几何尺寸。这里用“由高频变化电流产生的涡流导致电流向表层集中”的物理图像解释这一现象。
+
+\begin{example}[title={电磁阻尼方向判断}]\label{eg:magnetic-damping}
+一块金属片进入垂直纸面的匀强磁场区域。说明金属片受到的磁阻力方向。
+\begin{solution}
+金属片进入磁场区域时，片内许多闭合路径所包围的磁通量从零增大。由楞次定律，涡电流产生的磁场应阻碍该磁通量增加；涡电流在外磁场中受到安培力，其合力表现为阻碍金属片进入磁场区域的力。因此磁阻力方向与金属片运动方向相反。若金属片离开磁场区域，磁通量减小，涡电流方向反向，但安培力仍阻碍离开，仍表现为阻尼。
+\end{solution}
+\end{example}
+
+\subsection{自感与互感}
+
+\begin{definition}[自感]\label{def:self-inductance}
+一个回路中的电流变化会使穿过自身的磁通链数发生变化，从而在本回路中产生感应电动势。若磁通链数与电流成正比，
+\[
+  \Psi=LI,
+\]
+比例系数 $L$ 称为自感系数，单位为亨利（H）。自感电动势为
+\[
+  \mathcal E_L=-L\frac{\dd I}{\dd t}.
+\]
+\end{definition}
+
+自感电动势的方向总是阻碍本回路电流的变化。电流增大时，自感电动势阻碍增大；电流减小时，自感电动势阻碍减小。它不是阻碍电流本身，而是阻碍电流的变化。
+
+\begin{definition}[互感]\label{def:mutual-inductance}
+两个相邻回路中，一个回路电流变化会改变穿过另一个回路的磁通链数，并在另一个回路中产生感应电动势。若回路 1 的电流 $I_1$ 在回路 2 中产生的磁通链数为
+\[
+  \Psi_{21}=M I_1,
+\]
+则 $M$ 称为互感系数。回路 2 中的互感电动势为
+\[
+  \mathcal E_2=-M\frac{\dd I_1}{\dd t}.
+\]
+\end{definition}
+
+\begin{definition}[磁场能量与自感]\label{def:inductor-energy}
+自感为 $L$ 的线圈中通电流 $I$ 时，磁场储能为
+\[
+  W_m=\frac12LI^2.
+\]
+这与电容器电场储能 $W_e=\frac12CU^2$ 对应：电容器把能量储存在电场中，电感线圈把能量储存在磁场中。
+\end{definition}
+
+\begin{attention}[自感与互感的学习定位]
+自感与互感是法拉第定律在含有多个电流回路的系统中的直接应用。本节介绍定义、负号所表达的楞次定律含义、$\mathcal E_L=-L\dd I/\dd t$、$\mathcal E_2=-M\dd I_1/\dd t$ 和 $W_m=\frac12LI^2$，并说明这些量与电路响应和场能之间的关系。
+\end{attention}
+
+\subsection{位移电流与麦克斯韦方程组积分形式}
+
+\begin{definition}[位移电流]\label{def:displacement-current}
+非稳恒电场通过曲面 $S$ 的位移电流定义为
+\[
+  I_d=\varepsilon_0\frac{\dd\Phi_E}{\dd t}
+  =\varepsilon_0\frac{\dd}{\dd t}\int_S\bm E\cdot\dd\bm S.
+\]
+位移电流本质是变化电场的磁效应，不是带电粒子的定向迁移；它没有通常传导电流的焦耳热效应。
+\end{definition}
+
+\begin{theorem}[全电流安培环路定理]\label{thm:ampere-maxwell-law}
+任取有向闭合曲线 $L$ 及以其为边界的有向曲面 $S$，真空中磁场满足
+\[
+  \oint_L\bm B\cdot\dd\bm l
+  =\mu_0\left(I_{\mathrm{c,in}}+I_{\mathrm{d,in}}\right)
+  =\mu_0 I_{\mathrm{c,in}}
+  +\mu_0\varepsilon_0\frac{\dd\Phi_E}{\dd t}.
+\]
+其中 $I_{\mathrm{c,in}}=\int_S\bm J\cdot\dd\bm S$ 是穿过曲面的传导电流，$I_{\mathrm{d,in}}=\varepsilon_0\dd\Phi_E/\dd t$ 是位移电流。曲线绕向与曲面法线由右手定则关联；电流和电通量均按该法线取代数值。
+\end{theorem}
+
+当电场不随时间变化时，$\dd\Phi_E/\dd t=0$，全电流安培环路定理退化为稳恒电流的安培环路定理。它不是在原式右端任意“添加一项”，而是保证同一环路的磁场环流不依赖于所选跨界曲面。
+
+\textbf{充电电容器中曲面一致性的说明}
+
+令同一安培环路的一张曲面 $S_1$ 穿过导线，另一张曲面 $S_2$ 张在两极板之间。$S_1$ 上有传导电流 $I_{\mathrm{c,in}}=I$，而 $S_2$ 上 $I_{\mathrm{c,in}}=0$。对平行板电容器，$\Phi_E=q/\varepsilon_0$，故
+\[
+  I_{\mathrm{d,in}}=\varepsilon_0\frac{\dd\Phi_E}{\dd t}
+  =\frac{\dd q}{\dd t}=I.
+\]
+于是两张曲面上的全电流都为 $I$，从而给出相同的 $\oint_L\bm B\cdot\dd\bm l$。这也是位移电流项必须出现的直接原因。
+
+\begin{example}[title={充电平行板电容器中的位移电流}]\label{eg:charging-capacitor}
+平行板电容器极板面积为 $S$，忽略边缘效应。充电过程中导线电流为 $I$，极板间电场为 $E(t)$。证明极板间位移电流等于导线电流。
+\begin{solution}
+极板上电荷量 $q$ 与极板间电场满足
+\[
+  E=\frac{q}{\varepsilon_0 S}.
+\]
+电通量为
+\[
+  \Phi_E=ES=\frac{q}{\varepsilon_0}.
+\]
+位移电流为
+\[
+  I_d=\varepsilon_0\frac{\dd\Phi_E}{\dd t}
+  =\varepsilon_0\frac{\dd}{\dd t}\left(\frac{q}{\varepsilon_0}\right)
+  =\frac{\dd q}{\dd t}=I.
+\]
+因此全电流在电路中连续：导线中是传导电流，极板间是位移电流。位移电流产生磁场，但不表示电荷穿过极板间真空。
+\end{solution}
+\end{example}
+
+\begin{example}[title={由位移电流求极板间磁场}]\label{eg:displacement-current-B}
+半径为 $R$ 的圆形平行板电容器正在充电，极板间电场均匀增加，导线电流为 $I$。求极板间距中心 $r<R$ 处的磁感应强度。
+\begin{solution}
+取半径为 $r$ 的圆形安培环路，磁场沿环向且大小相同。极板间位移电流密度均匀，总位移电流为 $I$，半径 $r$ 内包围的位移电流为
+\[
+  I_{d,\mathrm{in}}=I\frac{\pi r^2}{\pi R^2}=I\frac{r^2}{R^2}.
+\]
+全电流安培环路定理给出
+\[
+  B(2\pi r)=\mu_0 I\frac{r^2}{R^2},
+  \qquad
+  B=\frac{\mu_0 I r}{2\pi R^2}.
+\]
+这个结果与载流圆柱内部磁场形式相同，反映位移电流和传导电流具有相同磁效应。
+\end{solution}
+\end{example}
+
+\begin{theorem}[真空中麦克斯韦方程组的积分形式]\label{thm:maxwell-integral}
+\[
+\begin{aligned}
+  \oint_S \bm E\cdot\dd\bm S &= \frac{q_{\mathrm{in}}}{\varepsilon_0},\\
+  \oint_S \bm B\cdot\dd\bm S &=0,\\
+  \oint_L \bm E\cdot\dd\bm l &=-\frac{\dd}{\dd t}\int_S \bm B\cdot\dd\bm S,\\
+  \oint_L \bm B\cdot\dd\bm l &=\mu_0 I_{\mathrm{c,in}}+\mu_0\varepsilon_0\frac{\dd}{\dd t}\int_S\bm E\cdot\dd\bm S.
+\end{aligned}
+\]
+\end{theorem}
+
+\begin{attention}[四个方程的物理意义]
+第一式说明电荷是电场的源；第二式说明不存在孤立磁荷，磁感应线闭合；第三式说明变化磁场激发涡旋电场；第四式说明传导电流和变化电场都能激发磁场。学习中应能写出积分形式并解释每一项含义，尤其是位移电流项 $\mu_0\varepsilon_0\,\dd\Phi_E/\dd t$。
+\end{attention}
+
+\begin{method}[麦克斯韦方程组的记忆结构]
+四个积分方程可按“通量看源，环流看旋”整理。电场通量不为零，对应电荷源；磁场通量恒为零，对应无磁单极子。电场环流由变化磁场决定，对应感生电场；磁场环流由传导电流和变化电场共同决定，对应全电流安培环路定理。静电场和稳恒磁场只是麦克斯韦方程组在时间不变情形下的特例。
+\end{method}
+
+\begin{attention}[麦克斯韦方程组的进一步意义]
+麦克斯韦方程组预言变化电场和变化磁场可以相互激发并脱离电荷、电流传播，形成电磁波；光的电磁本性也由此得到解释。散度、旋度和微分形式提供了场论语言：散度对应通量源密度，旋度对应环流面密度。本讲义先从积分形式建立整体图景，再以微分形式补充散度、旋度和局域场方程之间的关系。
+\end{attention}
+
+\section{方法归纳与分层练习}
+
+\begin{method}[电磁学题目的入口判断]
+\begin{enumerate}
+  \item 求电荷产生的静电场：先看是否能用高斯定理；若缺少对称性，用库仑积分。
+  \item 求电势：点电荷系优先标量叠加；已知场强且路径简单时用 $V_a-V_b=\int_a^b\bm E\cdot\dd\bm l$。
+  \item 含导体静电平衡：先写 $E_{\mathrm{in}}=0$、等势和电荷守恒，再选导体内部高斯面。
+  \item 求稳恒磁场：高度对称用安培环路；有限电流分布用毕奥--萨伐尔。
+  \item 判断感应电流方向：先判磁通量变化，再用楞次定律；计算大小用 $\mathcal E=-\dd\Phi_B/\dd t$ 或 $\int(\bm v\times\bm B)\cdot\dd\bm l$。
+\end{enumerate}
+\end{method}
+
+\begin{pitfall}[常见错误]
+\begin{enumerate}
+  \item 把高斯面内电荷误认为唯一产生高斯面上 $\bm E$ 的电荷。
+  \item 用高斯定理处理缺少对称性的电场分布，并直接写出 $EA=q/\varepsilon_0$。
+  \item 混淆电势差符号：$V_a-V_b=\int_a^b\bm E\cdot\dd\bm l$。
+  \item 把磁场高斯定理误写为 $\oint_S\bm B\cdot\dd\bm S=\mu_0 I$。
+  \item 判断感应电流方向时只看运动方向，未先判断磁通量的方向和增减。
+  \item 将位移电流理解为真空中电荷跨越电容器极板间隙。
+\end{enumerate}
+\end{pitfall}

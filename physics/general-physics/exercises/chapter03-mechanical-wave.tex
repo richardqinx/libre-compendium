@@ -1,0 +1,241 @@
+% libre-compendium
+%
+% Copyright (C) 2026 Richard Qin
+%
+% This document is dual-licensed under either:
+% - GNU Free Documentation License, Version 1.3 or any later version
+%   published by the Free Software Foundation; with no Invariant Sections,
+%   no Front-Cover Texts, and no Back-Cover Texts (see COPYING.DOC); or
+% - Creative Commons Attribution-ShareAlike 4.0 International License
+%   (see LICENSE-CC-BY-SA-4.0).
+
+% Extracted from chapter03-mechanical-wave.tex.
+\begin{exercise}[level=basic]
+说明机械波产生的两个条件，并说明机械波传播时介质质元是否随波迁移。
+\begin{solution}
+需要波源和弹性介质。机械波传播的是振动状态、相位和能量，介质质元只在各自平衡位置附近振动，不随波作永久迁移。
+\end{solution}
+\end{exercise}
+
+\begin{exercise}[level=basic]
+区分横波和纵波，并说明空气中的声波属于哪一类。
+\begin{solution}
+横波中质元振动方向垂直于传播方向；纵波中质元振动方向平行于传播方向。空气中的声波为纵波。
+\end{solution}
+\end{exercise}
+
+\begin{exercise}[level=basic]
+从是否依赖弹性介质、扰动是否持续、传播区域三个角度，各举出一种波的分类。
+\begin{solution}
+示例：按是否依赖弹性介质，可分为机械波和非机械波；按扰动是否持续，可分为脉冲波和连续波；按传播区域，可分为体波和表面波。
+\end{solution}
+\end{exercise}
+
+\begin{exercise}[level=basic]
+写出沿 $x$ 正向传播的平面简谐波函数，并说明 $A,\omega,k,\lambda,T,\nu,u$ 的含义和关系。
+\begin{solution}
+沿 $x$ 正向传播：
+\[
+  y=A\cos(\omega t-kx+\varphi_0).
+\]
+$A$ 为振幅，$\omega=2\pi/T=2\pi\nu$，$k=2\pi/\lambda$，
+\[
+  u=\lambda\nu=\frac{\omega}{k}.
+\]
+\end{solution}
+\end{exercise}
+
+\begin{exercise}[level=basic]
+已知 $y=A\cos(\omega t-kx+\varphi_0)$，证明它沿 $x$ 正向传播。
+\begin{solution}
+取相位为常数：
+\[
+  \omega t-kx+\varphi_0=C.
+\]
+解得
+\[
+  x=\frac{\omega}{k}t+\frac{\varphi_0-C}{k}.
+\]
+同一相位点随时间向 $x$ 增大的方向移动，故波沿 $x$ 正向传播。
+\end{solution}
+\end{exercise}
+
+\begin{exercise}[level=standard]
+一列波 $\lambda=0.50\,\mathrm{m}$、$\nu=20\,\mathrm{Hz}$，求波速、周期、角频率和角波数。
+\begin{solution}
+\[
+  u=\lambda\nu=0.50\times20=10\,\mathrm{m/s},
+\]
+\[
+  T=\frac1\nu=0.05\,\mathrm{s},\qquad
+  \omega=2\pi\nu=40\pi\,\mathrm{rad/s},
+\]
+\[
+  k=\frac{2\pi}{\lambda}=4\pi\,\mathrm{rad/m}.
+\]
+\end{solution}
+\end{exercise}
+
+\begin{exercise}[level=standard]
+对沿 $x$ 正向传播的平面简谐波，求同一时刻相距 $\lambda/3$ 的两点相位差大小，并说明沿传播方向较远点相位超前还是落后。
+\begin{solution}
+相位差大小为
+\[
+  |\Delta\varphi|=\frac{2\pi}{\lambda}\frac{\lambda}{3}
+  =\frac{2\pi}{3}.
+\]
+沿 $x$ 正向传播时，传播方向上更远的点相位落后。
+\end{solution}
+\end{exercise}
+
+\begin{exercise}[level=standard]
+原点振动方程为 $y=0.02\cos(4\pi t+\pi/3)\,\mathrm{m}$，波沿 $x$ 正向传播，波速 $u=2\,\mathrm{m/s}$。写出波函数。
+\begin{solution}
+\[
+  y(x,t)=0.02\cos\left[4\pi\left(t-\frac{x}{2}\right)+\frac{\pi}{3}\right]
+  =0.02\cos\left(4\pi t-2\pi x+\frac{\pi}{3}\right)\,\mathrm{m}.
+\]
+\end{solution}
+\end{exercise}
+
+\begin{exercise}[level=standard]
+某波函数为 $y=0.05\cos(10\pi t+2\pi x)\,\mathrm{m}$，判断传播方向、波长、频率和波速。
+\begin{solution}
+因相位为 $10\pi t+2\pi x$，波沿 $x$ 负向传播。
+\[
+  \omega=10\pi,\qquad k=2\pi.
+\]
+故
+\[
+  \nu=\frac{\omega}{2\pi}=5\,\mathrm{Hz},\qquad
+  \lambda=\frac{2\pi}{k}=1\,\mathrm{m},
+\]
+\[
+  u=\lambda\nu=5\,\mathrm{m/s}.
+\]
+\end{solution}
+\end{exercise}
+
+\begin{exercise}[level=standard]
+沿 $x$ 正向传播的横波在某点波形斜率为正，判断该质元瞬时速度方向。
+\begin{solution}
+沿 $x$ 正向传播时
+\[
+  \frac{\partial y}{\partial t}=-u\frac{\partial y}{\partial x}.
+\]
+斜率为正，则 $\partial y/\partial t<0$，质元向负 $y$ 方向运动。
+\end{solution}
+\end{exercise}
+
+\begin{exercise}[level=standard]
+写出一维波动方程，并说明波函数和波动方程的区别。
+\begin{solution}
+一维波动方程：
+\[
+  \frac{\partial^2 \xi}{\partial x^2}
+  =\frac1{u^2}\frac{\partial^2 \xi}{\partial t^2}.
+\]
+波动方程是介质的动力学方程；波函数是满足该方程并由初始、边界条件决定的具体解。
+\end{solution}
+\end{exercise}
+
+\begin{exercise}[level=standard]
+两同相相干波源到某点路程差为 $3\lambda$，判断干涉加强或减弱。
+\begin{solution}
+路程差为整数倍波长，同相波源在该点相位差为 $2m\pi$，干涉加强。
+\end{solution}
+\end{exercise}
+
+\begin{exercise}[level=standard]
+两同相相干波源到某点路程差为 $2.5\lambda$，判断干涉加强或减弱。
+\begin{solution}
+路程差为半整数倍波长，相位差为奇数倍 $\pi$，干涉减弱。
+\end{solution}
+\end{exercise}
+
+\begin{exercise}[level=standard]
+两相干波在点 $P$ 的振幅分别为 $A_1,A_2$，相位差为 $\Delta\varphi$，写出合振幅公式。
+\begin{solution}
+\[
+  A=\sqrt{A_1^2+A_2^2+2A_1A_2\cos\Delta\varphi}.
+\]
+\end{solution}
+\end{exercise}
+
+\begin{exercise}[level=standard]
+两同相波源频率 $50\,\mathrm{Hz}$，波速 $10\,\mathrm{m/s}$。点 $P$ 到两波源距离差 $0.30\,\mathrm{m}$，判断干涉情况。
+\begin{solution}
+\[
+  \lambda=\frac{u}{\nu}=\frac{10}{50}=0.20\,\mathrm{m}.
+\]
+路程差 $0.30\,\mathrm{m}=1.5\lambda$，故干涉减弱。
+\end{solution}
+\end{exercise}
+
+\begin{exercise}[level=standard]
+声源频率 $800\,\mathrm{Hz}$，声速 $340\,\mathrm{m/s}$。声源静止，观察者以 $10\,\mathrm{m/s}$ 向声源运动，求接收频率。
+\begin{solution}
+声源静止，观察者向声源运动：
+\[
+  \nu_R=\nu_s\frac{u+v_R}{u}
+  =800\frac{340+10}{340}\approx823.5\,\mathrm{Hz}.
+\]
+\end{solution}
+\end{exercise}
+
+\begin{exercise}[level=standard]
+声源频率 $800\,\mathrm{Hz}$，观察者静止，声源以 $20\,\mathrm{m/s}$ 远离观察者，求接收频率。
+\begin{solution}
+观察者静止，声源远离，取 $v_S=-20\,\mathrm{m/s}$：
+\[
+  \nu_R=800\frac{340}{340+20}\approx755.6\,\mathrm{Hz}.
+\]
+\end{solution}
+\end{exercise}
+
+\begin{exercise}[level=advanced]
+波沿 $x$ 正向传播，$t=0$ 时原点位移为零且向正方向运动。振幅 $A$、角频率 $\omega$、波数 $k$ 已知，写出波函数。
+\begin{solution}
+设原点振动为 $y(0,t)=A\cos(\omega t+\varphi_0)$。$t=0$ 时 $y=0$ 且速度为正：
+\[
+  \cos\varphi_0=0,\qquad -A\omega\sin\varphi_0>0.
+\]
+故可取 $\varphi_0=-\pi/2$。波沿 $x$ 正向传播：
+\[
+  y=A\cos\left(\omega t-kx-\frac{\pi}{2}\right).
+\]
+\end{solution}
+\end{exercise}
+
+\begin{exercise}[level=advanced]
+两相干波源初相差为 $\pi$，到某点路程差为 $m\lambda$。判断该点加强还是减弱。
+\begin{solution}
+路程差为 $m\lambda$ 本会给出 $2m\pi$ 相位差；但波源初相差为 $\pi$，总相位差为奇数倍 $\pi$，故减弱。
+\end{solution}
+\end{exercise}
+
+\begin{exercise}[level=standard]
+写出驻波 $y=2A\cos kx\cos\omega t$ 的波节、波腹位置，并给出相邻波节间距。
+\begin{solution}
+波节满足
+\[
+  \cos kx=0,
+\]
+即
+\[
+  kx=\left(n+\frac12\right)\pi,\qquad
+  x=\left(n+\frac12\right)\frac{\lambda}{2}
+  =\frac{(2n+1)\lambda}{4}.
+\]
+波腹满足
+\[
+  |\cos kx|=1,
+\]
+即
+\[
+  x=\frac{n\lambda}{2}.
+\]
+相邻波节间距为 $\lambda/2$，相邻波节与波腹间距为 $\lambda/4$。
+\end{solution}
+\end{exercise}
+
