@@ -1,0 +1,340 @@
+% libre-compendium
+%
+% Copyright (C) 2026 Richard Qin
+%
+% This document is dual-licensed under either:
+% - GNU Free Documentation License, Version 1.3 or any later version
+%   published by the Free Software Foundation, with no Invariant Sections,
+%   no Front-Cover Texts, and no Back-Cover Texts (see COPYING.DOC); or
+% - Creative Commons Attribution-ShareAlike 4.0 International License
+%   (see LICENSE-CC-BY-SA-4.0).
+
+% Migrated from logic-review/tex/problems.tex and solutions.tex.
+% 数理逻辑
+\begin{exercise}[level=basic]
+判断下列句子是否为命题，并说明理由：\quad (1) $x+1>0$；(2) 明天会下雨；(3) 请关门；(4) $2$ 是偶数。
+\begin{solution}
+(1) 不是，$x$ 未赋值；(2) 是，虽未知但在确定日期和地点后真值唯一；(3) 不是命令句；(4) 是真命题。
+\end{solution}
+\end{exercise}
+
+\begin{exercise}[level=basic]
+令 $p$ 表示“系统通过验证”，$q$ 表示“完成全部测试”。符号化：“只有完成全部测试，系统才通过验证”。
+\begin{solution}
+$p\to q$。“只有 $q$ 才 $p$”中 $q$ 是必要条件。
+\end{solution}
+\end{exercise}
+
+\begin{exercise}[level=basic]
+判断 $((p\to q)\land p)\to q$ 是永真式、永假式还是偶然式。
+\begin{solution}
+永真式，内层是 MP 的形式；仅当前件真时，$p=1$ 且 $p\to q=1$，于是 $q=1$。
+\end{solution}
+\end{exercise}
+
+\begin{exercise}[level=basic]
+写出 $\neg(p\leftrightarrow q)$ 的一个仅含 $\neg,\land,\lor$ 的等价式。
+\begin{solution}
+$(p\land\neg q)\lor(\neg p\land q)$。
+\end{solution}
+\end{exercise}
+
+\begin{exercise}[level=basic]
+指出公式 $P(x)\land\forall x(Q(x)\to\exists yR(x,y))$ 中各变元出现的自由或约束情况。
+\begin{solution}
+第一个 $P(x)$ 中的 $x$ 自由；$Q(x)$ 和 $R(x,y)$ 中的 $x$ 受 $\forall x$ 约束；$R(x,y)$ 中的 $y$ 受 $\exists y$ 约束。
+\end{solution}
+\end{exercise}
+
+\begin{exercise}[level=standard]
+在整数域中判断 $\forall x\exists y(x+y=0)$ 与 $\exists y\forall x(x+y=0)$ 的真值。
+\begin{solution}
+前式真，对每个 $x$ 取 $y=-x$；后式假，不存在一个固定整数同时等于所有 $-x$。
+\end{solution}
+\end{exercise}
+
+\begin{exercise}[level=standard]
+用等值演算证明 $\neg(p\to q)\lor(\neg p\land q)\equiv\neg(p\leftrightarrow q)$。
+\begin{solution}
+\[
+\neg(p\to q)\lor(\neg p\land q)
+\equiv(p\land\neg q)\lor(\neg p\land q)
+\equiv\neg(p\leftrightarrow q).
+\]
+\end{solution}
+\end{exercise}
+
+\begin{exercise}[level=standard]
+求 $(p\lor q)\to r$ 的主析取范式与主合取范式。
+\begin{solution}
+原式仅在 $r=0$ 且 $p\lor q=1$ 时为假。按变量次序 $p,q,r$，
+\[
+\begin{aligned}
+\operatorname{PDNF}={}&(\neg p\land\neg q\land\neg r)\lor
+(\neg p\land\neg q\land r)\lor(\neg p\land q\land r)\\
+&\lor(p\land\neg q\land r)\lor(p\land q\land r),\\
+\operatorname{PCNF}={}&(p\lor\neg q\lor r)\land(\neg p\lor q\lor r)
+\land(\neg p\lor\neg q\lor r).
+\end{aligned}
+\]
+\end{solution}
+\end{exercise}
+
+\begin{exercise}[level=standard]
+判断推理 $p\to(q\lor r),\ \neg q,\ \neg r\vDash\neg p$ 是否有效，并给出推导。
+\begin{solution}
+有效。由 $\neg q,\neg r$ 得 $\neg(q\lor r)$；与 $p\to(q\lor r)$ 使用 MT 得 $\neg p$。
+\end{solution}
+\end{exercise}
+
+\begin{exercise}[level=standard]
+设论域为全体人，$S(x)$ 表示“$x$ 是学生”，$B(x,y)$ 表示“$x$ 借过 $y$”，$b$ 表示某本指定图书。符号化：“并非每个学生都借过这本书”。
+\begin{solution}
+$\neg\forall x(S(x)\to B(x,b))$，等价地写成 $\exists x(S(x)\land\neg B(x,b))$。
+\end{solution}
+\end{exercise}
+
+\begin{exercise}[level=standard]
+否定公式 $\forall x(P(x)\to\exists yQ(x,y))$，并把否定号推进到原子公式前。
+\begin{solution}
+\[
+\neg\forall x(P(x)\to\exists yQ(x,y))
+\equiv\exists x(P(x)\land\forall y\neg Q(x,y)).
+\]
+\end{solution}
+\end{exercise}
+
+\begin{exercise}[level=standard]
+将 $\neg\exists x(P(x)\land\forall yQ(x,y))$ 化为前束范式。
+\begin{solution}
+\[
+\neg\exists x(P(x)\land\forall yQ(x,y))
+\equiv\forall x(\neg P(x)\lor\exists y\neg Q(x,y))
+\equiv\forall x\exists y(\neg P(x)\lor\neg Q(x,y)).
+\]
+\end{solution}
+\end{exercise}
+
+\begin{exercise}[level=standard]
+设变量次序为 $p,q,r$，写出真值指派 $(1,0,1)$ 对应的最小项、最大项及编号。
+\begin{solution}
+二进制 $101=5$，故
+\[
+m_5=p\land\neg q\land r,qquad
+M_5=\neg p\lor q\lor\neg r.
+\]
+最小项按该行真值同号取文字，使其在该行取真；最大项反号取文字，使其在该行取假。
+\end{solution}
+\end{exercise}
+
+\begin{exercise}[level=standard]
+用条件证明法由 $p\to(q\to r)$ 推出 $(p\land q)\to r$，要求逐行注明规则。
+\begin{solution}
+\[
+\begin{array}{rll}
+1.&p\to(q\to r)&\text{前提}\\
+2.&p\land q&\text{临时假设}\\
+3.&p&2\ \text{化简}\\
+4.&q&2\ \text{化简}\\
+5.&q\to r&1,3\ \text{MP}\\
+6.&r&4,5\ \text{MP}\\
+7.&(p\land q)\to r&2\text{--}6\ \text{条件证明}
+\end{array}
+\]
+\end{solution}
+\end{exercise}
+
+\begin{exercise}[level=standard]
+判断下列代入是否会发生变量捕获；若会，先作约束变元改名：在
+$\exists y(P(x,y)\land Q(y))$ 中用 $y$ 代入自由变量 $x$。
+\begin{solution}
+直接代入会得到 $\exists y(P(y,y)\land Q(y))$，代入项中的自由变量
+$y$ 被 $\exists y$ 捕获。先改名：
+\[
+\exists u(P(x,u)\land Q(u)),
+\]
+再代入得到 $\exists u(P(y,u)\land Q(u))$。
+\end{solution}
+\end{exercise}
+
+\begin{exercise}[level=standard]
+将“每个学生都至少认识一位教师”与“有一位教师认识所有学生”分别符号化，并说明量词次序的差别。
+\begin{solution}
+设 $S(x)$ 表示学生，$T(y)$ 表示教师，$K(x,y)$ 表示 $x$ 认识 $y$：
+\[
+\forall x(S(x)\to\exists y(T(y)\land K(x,y))),
+\]
+\[
+\exists y(T(y)\land\forall x(S(x)\to K(y,x))).
+\]
+第一式允许不同学生对应不同教师；第二式要求同一位教师认识所有学生。第二句关系方向为教师认识学生，故使用 $K(y,x)$。
+\end{solution}
+\end{exercise}
+
+\begin{exercise}[level=standard]
+证明逻辑等价 $\equiv$ 具有传递性。
+\begin{solution}
+若 $A\equiv B$ 且 $B\equiv C$，则任取真值指派，$A$ 与 $B$ 真值相同，$B$ 与 $C$ 真值相同，所以 $A$ 与 $C$ 真值相同。故 $A\equiv C$。
+\end{solution}
+\end{exercise}
+
+\begin{exercise}[level=standard]
+写出 $p\downarrow q$ 的真值列，并用或非 $\downarrow$ 表示 $\neg p$ 和 $p\lor q$。
+\begin{solution}
+或非定义为 $p\downarrow q=\neg(p\lor q)$，按行序 $(0,0),(0,1),(1,0),(1,1)$ 的真值列为 $1000$。有
+\[
+\neg p\equiv p\downarrow p,\qquad
+p\lor q\equiv(p\downarrow q)\downarrow(p\downarrow q).
+\]
+\end{solution}
+\end{exercise}
+
+\begin{exercise}[level=standard]
+某报警器在“系统布防且门被打开或窗被打开”时报警。令 $s,d,w$ 分别表示布防、门开、窗开，写出报警条件。
+\begin{solution}
+报警条件为
+\[
+s\land(d\lor w).
+\]
+若题目要求报警信号 $a$ 与条件等价，则写为 $a\leftrightarrow s\land(d\lor w)$。
+\end{solution}
+\end{exercise}
+
+\begin{exercise}[level=advanced]
+判断 $\exists x(P(x)\land Q(x))\to(\exists xP(x)\land\exists xQ(x))$ 是否有效；判断其逆命题是否有效。
+\begin{solution}
+前式有效。若存在某个对象同时满足 $P,Q$，则当然存在对象满足 $P$，也存在对象满足 $Q$。逆命题
+\[
+(\exists xP(x)\land\exists xQ(x))\to\exists x(P(x)\land Q(x))
+\]
+无效；两个存在式可由不同对象满足。
+\end{solution}
+\end{exercise}
+
+\begin{exercise}[level=advanced]
+证明 $\{\to,\bot\}$ 是功能完备集，其中 $\bot$ 表示永假式。
+\begin{solution}
+$\neg p\equiv p\to\bot$，进而
+\[
+p\lor q\equiv(p\to\bot)\to q.
+\]
+由于 $\{\neg,\lor\}$ 功能完备，故 $\{\to,\bot\}$ 功能完备。
+\end{solution}
+\end{exercise}
+
+\begin{exercise}[level=advanced]
+用归结法证明 $p\lor q,\ p\to r,\ q\to r\vDash r$。
+\begin{solution}
+加入结论否定 $\neg r$。前提化为子句
+\[
+p\lor q,\quad\neg p\lor r,\quad\neg q\lor r,\quad\neg r.
+\]
+由后两类分别与 $\neg r$ 归结得 $\neg p,\neg q$；再与 $p\lor q$ 归结依次得到 $q$ 与空子句，故推理有效。
+\end{solution}
+\end{exercise}
+
+\begin{exercise}[level=advanced]
+判断下式是否有效；若无效，给出反例解释：
+\[
+\exists x(P(x)\to Q(x))\to(\exists xP(x)\to\exists xQ(x)).
+\]
+\begin{solution}
+无效。取单元素论域 $D=\{a\}$，令 $P(a)$ 真、$Q(a)$ 假。则 $P(a)\to Q(a)$ 假，所以前件 $\exists x(P(x)\to Q(x))$ 假，整个公式反而为真，不能构成反例。取二元素论域 $D=\{a,b\}$，令 $P(a)$ 真、$Q(a)$ 假，且 $P(b)$ 假、$Q(b)$ 假。此时前件因 $b$ 成立；$\exists xP(x)$ 真而 $\exists xQ(x)$ 假，后件为假，故全式为假。
+\end{solution}
+\end{exercise}
+
+\begin{exercise}[level=advanced]
+设论域非空，判断
+\[
+\forall x(P(x)\lor Q(x))\to(\forall xP(x)\lor\forall xQ(x))
+\]
+是否有效，并说明量词为何不能按析取直接分配。
+\begin{solution}
+无效。取 $D=\{a,b\}$，令 $P$ 仅对 $a$ 真，$Q$ 仅对 $b$ 真。则每个个体满足 $P\lor Q$，前件真；但并非所有个体都满足 $P$，也并非所有个体都满足 $Q$，后件假。不同个体可以由不同析取支满足，因此全称量词不能对析取直接分配。
+\end{solution}
+\end{exercise}
+
+\begin{exercise}[level=advanced]
+证明或否定：$\forall x\exists yP(x,y)\vDash\exists y\forall xP(x,y)$。
+\begin{solution}
+不成立。取整数域并令 $P(x,y)$ 表示 $x<y$。对每个整数 $x$ 都可取
+$y=x+1$，故 $\forall x\exists yP(x,y)$ 为真；但不存在大于所有整数的统一
+$y$，故 $\exists y\forall xP(x,y)$ 为假。
+\end{solution}
+\end{exercise}
+
+\begin{exercise}[level=advanced]
+将
+\[
+(\exists xP(x)\to\forall yQ(y))\lor\neg\exists zR(z)
+\]
+化为前束范式，要求说明每次约束变元改名和量词外提的条件。
+\begin{solution}
+先消去蕴涵并推进否定：
+\[
+(\neg\exists xP(x)\lor\forall yQ(y))\lor\forall z\neg R(z)
+\equiv(\forall x\neg P(x)\lor\forall yQ(y))\lor\forall z\neg R(z).
+\]
+三个约束变量互异，且分别不自由出现于其他析取支，故可依次外提：
+\[
+\forall x\forall y\forall z
+(\neg P(x)\lor Q(y)\lor\neg R(z)).
+\]
+\end{solution}
+\end{exercise}
+
+\begin{exercise}[level=advanced]
+用自然推理证明
+\[
+\forall x(P(x)\to Q(x)),\quad
+\forall x(Q(x)\to R(x)),\quad
+\exists x(S(x)\land P(x))
+\vDash\exists x(S(x)\land R(x)).
+\]
+\begin{solution}
+对存在前提作 EI，引入新常元 $c$：$S(c)\land P(c)$。化简得
+$S(c),P(c)$。两次 UI 得 $P(c)\to Q(c)$、$Q(c)\to R(c)$；连续使用 MP 得
+$Q(c),R(c)$。合取得 $S(c)\land R(c)$，再用 EG 得
+$\exists x(S(x)\land R(x))$。新常元 $c$ 未出现在最终结论中。
+\end{solution}
+\end{exercise}
+
+\begin{exercise}[level=advanced]
+用主范式方法求满足“$p,q,r$ 中恰有两个为真”的公式。
+\begin{solution}
+恰有两个为真的成真指派为 $(1,1,0),(1,0,1),(0,1,1)$，故主析取范式为
+\[
+(p\land q\land\neg r)\lor(p\land\neg q\land r)\lor(\neg p\land q\land r).
+\]
+也可写成
+\[
+(p\land q\land\neg r)\lor(p\land r\land\neg q)\lor(q\land r\land\neg p).
+\]
+\end{solution}
+\end{exercise}
+
+\begin{exercise}[level=advanced]
+判断
+\[
+\exists x\forall yR(x,y)\to \forall y\exists xR(x,y)
+\]
+是否有效，并说明反方向是否有效。
+\begin{solution}
+有效。若存在某个 $x_0$ 使任意 $y$ 都有 $R(x_0,y)$，则对每个给定的 $y$，可选择同一个 $x_0$ 作为存在见证，故 $\forall y\exists xR(x,y)$ 成立。反方向一般无效，因为 $\forall y\exists xR(x,y)$ 允许 $x$ 依赖 $y$。
+\end{solution}
+\end{exercise}
+
+\begin{exercise}[level=advanced]
+对 $\forall x\exists yP(x,y)$ 作 Skolem 化，并说明为什么不能写成逻辑等价。
+\begin{solution}
+Skolem 化为 $\forall xP(x,f(x))$，其中 $f$ 是新函数符号。它保持可满足性：若原式可满足，则每个 $x$ 至少有一个 $y$，可由 $f$ 选择一个见证；但它引入了新函数符号，公式语义语言改变，一般不能说与原式逻辑等价。
+\end{solution}
+\end{exercise}
+
+\begin{exercise}[level=advanced]
+用一阶消解法证明 $\forall x(P(x)\to Q(x)), P(a)\vDash Q(a)$。
+\begin{solution}
+加入结论否定 $\neg Q(a)$。前提 $\forall x(P(x)\to Q(x))$ 化为子句 $\neg P(x)\lor Q(x)$，另有 $P(a)$ 与 $\neg Q(a)$。用代换 $\{x/a\}$，由 $\neg P(x)\lor Q(x)$ 和 $P(a)$ 归结得 $Q(a)$，再与 $\neg Q(a)$ 归结得空子句，故推理有效。
+\end{solution}
+\end{exercise}
+

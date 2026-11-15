@@ -1,0 +1,459 @@
+% libre-compendium
+%
+% Copyright (C) 2026 Richard Qin
+%
+% This document is dual-licensed under either:
+% - GNU Free Documentation License, Version 1.3 or any later version
+%   published by the Free Software Foundation, with no Invariant Sections,
+%   no Front-Cover Texts, and no Back-Cover Texts (see COPYING.DOC); or
+% - Creative Commons Attribution-ShareAlike 4.0 International License
+%   (see LICENSE-CC-BY-SA-4.0).
+
+\chapter{谓词演算}
+
+\section{谓词、个体与论域}
+
+命题演算把简单命题作为不可再分的单位，因此不能表达简单命题内部共有的对象、性质和关系。例如“所有人都会死”“苏格拉底是人”“苏格拉底会死”在命题演算中只能写成彼此无结构联系的 $p,q,r$，无法形式化地反映前两个命题推出第三个命题的原因。谓词演算把命题进一步分解为个体、谓词和量词。
+
+\begin{definition}[个体、谓词与论域]\label{ch2-predicate}
+论域 $D$ 是所讨论个体组成的非空集合。个体常元表示论域中的特定对象，个体变元表示论域中的任意对象。$n$ 元谓词 $P$ 在 $D_1\times\cdots\times D_n$ 上为每个 $n$ 元个体组指定真或假；$P(x_1,\ldots,x_n)$ 称为命题函数。
+\end{definition}
+
+一元谓词表示性质，可看作论域的一个子集；二元谓词表示关系，可看作笛卡儿积上的一个二元关系。例如在 $D=\{1,2,3,4\}$ 中，若 $P(x)$ 表示“$x$ 是偶数”，则
+\[
+P^M=\{2,4\};
+\]
+若 $R(x,y)$ 表示“$x<y$”，则
+\[
+R^M=\{(1,2),(1,3),(1,4),(2,3),(2,4),(3,4)\}.
+\]
+有序对次序不能交换，$R(1,3)$ 与 $R(3,1)$ 是不同判断。
+
+谓词符号的元数必须固定。$L(x)$ 表示一元性质时，$L(x,y)$ 不能被视为同一谓词；若使用后者，必须另行定义其二元含义。
+
+\begin{example}[title={谓词演算保留内部结构}]\label{ch2-socrates}
+令 $H(x)$ 表示“$x$ 是人”，$M(x)$ 表示“$x$ 会死”，常元 $s$ 表示苏格拉底。则苏格拉底论证写为
+\[
+\forall x(H(x)\to M(x)),\qquad H(s)\quad\vDash\quad M(s).
+\]
+推理有效的原因是全称命题可实例化为 $H(s)\to M(s)$，再与 $H(s)$ 使用假言推理得到 $M(s)$。
+\end{example}
+
+\section{量词}
+
+命题函数 $P(x)$ 含自由个体变元，通常还没有真值。要得到命题，可以把 $x$ 代入为具体个体，也可以用量词把变量约束起来。
+
+\begin{definition}[全称量词与存在量词]\label{ch2-quantifier}
+$\forall x\,P(x)$ 表示论域中每个个体都满足 $P$，称为全称命题；$\exists x\,P(x)$ 表示论域中至少有一个个体满足 $P$，称为存在命题。量词只作用于它的辖域。
+\end{definition}
+
+若论域是有限集 $D=\{a_1,\ldots,a_n\}$，则
+\[
+\forall xP(x)\equiv P(a_1)\land\cdots\land P(a_n),
+\]
+\[
+\exists xP(x)\equiv P(a_1)\lor\cdots\lor P(a_n).
+\]
+这说明全称量词类似广义合取，存在量词类似广义析取。无限论域时不能把量词改写为有限公式，量词成为新的基本表达手段。
+
+符号化自然语言时，论域的选择会影响公式形式。若论域是全体人，“所有学生都及格”写为
+\[
+\forall x(S(x)\to P(x)).
+\]
+若论域已经限定为全体学生，则可写为 $\forall xP(x)$。在全体人论域中，错误写法 $\forall x(S(x)\land P(x))$ 声称所有人都是学生。
+
+\[
+\begin{array}{c|c}
+\text{自然语言} & \text{标准符号化}\\ \hline
+\text{所有 }A\text{ 都是 }B & \forall x(A(x)\to B(x))\\
+\text{有些 }A\text{ 是 }B & \exists x(A(x)\land B(x))\\
+\text{没有 }A\text{ 是 }B & \forall x(A(x)\to\neg B(x))\\
+\text{并非所有 }A\text{ 都是 }B & \exists x(A(x)\land\neg B(x))\\
+\text{只有 }A\text{ 才是 }B & \forall x(B(x)\to A(x))
+\end{array}
+\]
+
+全称限制通常用蕴涵，存在限制通常用合取。若把“有学生及格”写成 $\exists x(S(x)\to P(x))$，则任取一个非学生对象即可使蕴涵空真，公式不能表达原意。
+
+\begin{example}[title={量词次序的含义}]\label{ch2-quantifier-order}
+比较 $\forall x\exists y\,P(x,y)$ 与 $\exists y\forall x\,P(x,y)$。
+\begin{solution}
+前式表示对每个 $x$，可以选择一个可能依赖于 $x$ 的 $y$；后式表示存在同一个 $y$，对所有 $x$ 都适用。以整数域上 $P(x,y)$ 表示 $x<y$ 为例，$\forall x\exists y(x<y)$ 为真，可取 $y=x+1$；$\exists y\forall x(x<y)$ 为假，因为不存在大于所有整数的整数。
+\end{solution}
+\end{example}
+
+\begin{example}[title={唯一性表达}]\label{ch2-unique}
+“恰有一个对象满足 $P$”可写为
+\[
+\exists x\bigl(P(x)\land\forall y(P(y)\to y=x)\bigr).
+\]
+其中存在量词给出至少一个满足者，后面的全称条件排除第二个不同满足者。
+\end{example}
+
+\section{合式公式}
+
+谓词演算的合式公式需要先定义项和原子公式。项指称个体，公式才具有真值。
+
+\begin{definition}[项]\label{ch2-term}
+个体变元和个体常元是项。若 $f$ 是 $n$ 元函数符号，且 $t_1,\ldots,t_n$ 是项，则 $f(t_1,\ldots,t_n)$ 是项。
+\end{definition}
+
+例如语言中有常元 $0$、一元函数 $s$ 和二元函数 $+$ 时，$s(0)$、$s(x)$、$x+s(y)$ 都是项。项自身不是真或假，它只表示论域中的对象。
+
+教材中还允许一种条件项结构：
+\[
+\text{if }A\text{ then }t_1\text{ else }t_2,
+\]
+其中 $A$ 是合式公式，$t_1,t_2$ 是项。它表示一个项：当 $A$ 在当前解释和赋值下为真时取 $t_1$ 的值，否则取 $t_2$ 的值。应区分条件项与条件公式。条件公式
+\[
+\text{IF }A\text{ THEN }B\text{ ELSE }C
+\]
+的结果是公式，其真值由 $A$ 的真假决定选择 $B$ 或 $C$；条件项的结果是个体对象。
+
+\begin{definition}[原子公式]\label{ch2-atom}
+若 $P$ 是 $n$ 元谓词符号，$t_1,\ldots,t_n$ 是项，则 $P(t_1,\ldots,t_n)$ 是原子公式。若语言含等号，则 $t_1=t_2$ 也视为原子公式。
+\end{definition}
+
+\begin{definition}[谓词演算合式公式]\label{ch2-wff}
+原子公式是合式公式；若 $A,B$ 是合式公式，则 $\neg A$、$(A\land B)$、$(A\lor B)$、$(A\to B)$、$(A\leftrightarrow B)$ 是合式公式；若 $A$ 是合式公式，$x$ 是个体变元，则 $\forall xA$ 和 $\exists xA$ 是合式公式；只有有限次使用这些规则得到的符号串才是合式公式。
+\end{definition}
+
+条件公式可视为缩写：
+\[
+\text{IF }A\text{ THEN }B\text{ ELSE }C
+\equiv (A\land B)\lor(\neg A\land C).
+\]
+该缩写在语义上先检查条件 $A$，再选择 $B$ 或 $C$ 的真值。
+
+\begin{definition}[子公式与量词辖域]\label{ch2-subformula-scope}
+在公式形成过程中出现的完整公式称为子公式。若公式中某个子公式形如 $\forall xA$ 或 $\exists xA$，则 $A$ 称为该量词的辖域。
+\end{definition}
+
+\begin{definition}[自由出现、约束出现与闭式]\label{ch2-free-bound}
+变量的一次出现若位于相应同名量词的辖域内，则称为约束出现；否则称为自由出现。不含自由变元的公式称为闭式或语句。
+\end{definition}
+
+例如
+\[
+P(x)\lor\forall x(Q(x,y)\to\exists yR(x,y,z))
+\]
+中，$P(x)$ 里的 $x$ 是自由出现；$Q(x,y)$ 里的 $x$ 受 $\forall x$ 约束而 $y$ 自由；$R(x,y,z)$ 中的 $x$ 受 $\forall x$ 约束，$y$ 受 $\exists y$ 约束，$z$ 自由。判断自由与约束必须逐次出现判断，不能只看某个变量字母是否出现在量词后。
+
+约束变元的名称可在不造成混淆时改名：
+\[
+\forall xP(x)\equiv\forall yP(y).
+\]
+但改名不能捕获原有自由变量。
+
+\begin{definition}[自由代入]\label{ch2-free-substitution}
+把项 $t$ 代入公式 $A$ 中自由出现的变量 $x$ 时，若 $t$ 中的任何变量都不会因代入而落入同名量词辖域，则称 $t$ 对 $x$ 可自由代入。
+\end{definition}
+
+\begin{pitfall}[变量捕获]\label{ch2-capture}
+在 $\exists yR(x,y)$ 中直接用 $y$ 代入自由变量 $x$ 会得到 $\exists yR(y,y)$，代入项中的 $y$ 被量词 $\exists y$ 捕获，语义改变。应先改名为 $\exists uR(x,u)$，再代入得到 $\exists uR(y,u)$。
+\end{pitfall}
+
+\begin{example}[title={数学定义的符号化}]\label{ch2-limit}
+函数 $f$ 在 $a$ 处极限为 $L$ 可写为
+\[
+\forall\varepsilon\bigl(\varepsilon>0\to
+\exists\delta(\delta>0\land
+\forall x(0<|x-a|<\delta\to |f(x)-L|<\varepsilon))\bigr).
+\]
+量词顺序 $\forall\varepsilon\exists\delta\forall x$ 表示 $\delta$ 可依赖于给定的误差 $\varepsilon$，但一旦选定，必须对所有满足距离条件的 $x$ 同时有效。
+\end{example}
+
+\section{合式公式的有效性}
+
+谓词公式的真值不仅取决于逻辑形式，还取决于论域、常元、函数、谓词和自由变量赋值的解释。
+
+\begin{definition}[解释]\label{ch2-interpretation}
+一个解释 $M$ 指定非空论域 $D$，并为每个个体常元指定 $D$ 中元素，为每个函数符号指定 $D$ 上相应元数的函数，为每个谓词符号指定 $D$ 上相应元数的关系。若公式含自由变元，还需给自由变元赋值。
+\end{definition}
+
+满足关系可递归说明：原子公式的真假由谓词解释和项取值决定；否定和二元联结词按命题逻辑真值表决定；$M,s\models\forall xA$ 当且仅当对每个 $d\in D$，把赋值 $s$ 中 $x$ 的值改为 $d$ 后都有 $A$ 成立；$M,s\models\exists xA$ 当且仅当存在某个 $d\in D$，把 $x$ 赋值为 $d$ 后 $A$ 成立。闭式没有自由变元，其真值只依赖解释。
+
+\begin{definition}[有效、可满足、不可满足]\label{ch2-valid-sat}
+若公式在所有解释和所有相关赋值下均为真，称为有效式；若至少在一个解释和赋值下为真，称为可满足式；若在所有解释和赋值下均为假，称为不可满足式。
+\end{definition}
+
+固定某一论域下为真，不等于逻辑有效。例如 $\forall x(x^2\ge0)$ 在通常实数结构中为真，但这依赖实数运算和序关系的特殊含义，不是单靠逻辑形式保证的有效式。
+
+\begin{example}[title={有效式证明}]\label{ch2-valid-example}
+证明 $\forall xP(x)\to\exists xP(x)$ 有效。
+\begin{solution}
+任取一个解释。论域按约定非空，取任意 $d\in D$。若 $\forall xP(x)$ 为真，则 $P(d)$ 为真，于是存在某个对象（即 $d$）满足 $P$，故 $\exists xP(x)$ 为真。因此整个蕴涵在任意解释下为真。
+\end{solution}
+\end{example}
+
+\begin{example}[title={可满足但非有效}]\label{ch2-sat-not-valid}
+$\exists xP(x)$ 可满足但非有效。取单元素论域 $\{a\}$ 且令 $P(a)$ 真，则公式为真；若仍取 $\{a\}$ 但令 $P(a)$ 假，则公式为假。因此它不是有效式。
+\end{example}
+
+\begin{example}[title={不可满足公式}]\label{ch2-unsat-example}
+$\exists x(P(x)\land\neg P(x))$ 不可满足。
+\begin{solution}
+任取解释和任意对象 $d$，原子公式 $P(d)$ 的真值只能为真或假之一。若 $P(d)$ 真，则 $\neg P(d)$ 假；若 $P(d)$ 假，则 $P(d)$ 假。因此 $P(d)\land\neg P(d)$ 对每个 $d$ 都假，不存在见证使存在式为真。
+\end{solution}
+\end{example}
+
+\begin{example}[title={构造反解释证明非有效}]\label{ch2-countermodel}
+判断
+\[
+\forall x(P(x)\lor Q(x))\to(\forall xP(x)\lor\forall xQ(x))
+\]
+是否有效。
+\begin{solution}
+无效。取论域 $D=\{a,b\}$，令 $P$ 只对 $a$ 真，$Q$ 只对 $b$ 真。则每个对象都满足 $P\lor Q$，所以前件为真；但并非所有对象都满足 $P$，也并非所有对象都满足 $Q$，后件为假。该解释使整个蕴涵为假，故公式非有效。
+\end{solution}
+\end{example}
+
+\begin{example}[title={量词次序公式的有效性}]\label{ch2-order-valid}
+\[
+\exists y\forall xP(x,y)\to\forall x\exists yP(x,y)
+\]
+是有效式。
+\begin{solution}
+若前件真，则存在某个对象 $d$，使得任意 $x$ 都有 $P(x,d)$。对每个给定的 $x$，选择同一个 $d$ 作为存在量词的见证，即得 $\exists yP(x,y)$。因 $x$ 任意，后件成立。
+\end{solution}
+\end{example}
+
+\section{谓词演算的等价公式}
+
+\begin{definition}[谓词公式等价]\label{ch06-equivalence}
+若公式 $A,B$ 在相同自由变元和相同论域解释下，对任意解释和任意自由变元赋值都取相同真值，则称 $A$ 与 $B$ 等价，记作 $A\equiv B$。
+\end{definition}
+
+命题演算的等价律在谓词公式中仍可用于由联结词构成的部分。除此以外，量词带来新的等价式和限制条件。
+
+\begin{theorem}[量词否定律]\label{ch2-quantifier-negation}
+\[
+\neg\forall xA\equiv\exists x\neg A,\qquad
+\neg\exists xA\equiv\forall x\neg A.
+\]
+\end{theorem}
+\begin{proof}
+$\neg\forall xA$ 表示“并非所有对象都使 $A$ 真”，即存在某个对象使 $A$ 假，故等价于 $\exists x\neg A$。第二式同理：“不存在使 $A$ 真的对象”等价于“所有对象都使 $A$ 假”。
+\end{proof}
+
+同类量词可交换：
+\[
+\forall x\forall yA\equiv\forall y\forall xA,\qquad
+\exists x\exists yA\equiv\exists y\exists xA.
+\]
+异类量词通常不可交换。$\forall x\exists yA$ 允许 $y$ 依赖 $x$，而 $\exists y\forall xA$ 要求统一见证。
+
+量词与联结词的常用等价式如下，其中侧条件不可省略。
+\[
+\forall x(A\land B)\equiv(\forall xA)\land(\forall xB),
+\]
+\[
+\exists x(A\lor B)\equiv(\exists xA)\lor(\exists xB).
+\]
+但
+\[
+\exists x(A\land B)\not\equiv(\exists xA)\land(\exists xB),
+\]
+因为两个存在式可能由不同对象满足；
+\[
+\forall x(A\lor B)\not\equiv(\forall xA)\lor(\forall xB),
+\]
+因为不同对象可能满足不同析取支。
+
+若 $x$ 在 $B$ 中不自由出现，则
+\[
+\forall x(A\land B)\equiv(\forall xA)\land B,\qquad
+\exists x(A\lor B)\equiv(\exists xA)\lor B,
+\]
+\[
+\forall x(A\to B)\equiv(\exists xA)\to B,\qquad
+\exists x(A\to B)\equiv(\forall xA)\to B.
+\]
+这些式子的条件是为了避免外提量词改变 $B$ 中变量的自由状态。
+
+\begin{center}\small
+\begin{tabularx}{\textwidth}{lX}
+\toprule
+类型 & 等价式或说明\\
+\midrule
+约束改名 & $\forall xA\equiv\forall yA[y/x]$，$\exists xA\equiv\exists yA[y/x]$，其中 $y$ 不造成捕获\\
+量词否定 & $\neg\forall xA\equiv\exists x\neg A$，$\neg\exists xA\equiv\forall x\neg A$\\
+同类交换 & $\forall x\forall yA\equiv\forall y\forall xA$，$\exists x\exists yA\equiv\exists y\exists xA$\\
+全称合取 & $\forall x(A\land B)\equiv\forall xA\land\forall xB$\\
+存在析取 & $\exists x(A\lor B)\equiv\exists xA\lor\exists xB$\\
+外提合取 & 若 $x$ 在 $B$ 中不自由，$\forall x(A\land B)\equiv(\forall xA)\land B$，$\exists x(A\land B)\equiv(\exists xA)\land B$\\
+外提析取 & 若 $x$ 在 $B$ 中不自由，$\forall x(A\lor B)\equiv(\forall xA)\lor B$，$\exists x(A\lor B)\equiv(\exists xA)\lor B$\\
+外提蕴涵 & 若 $x$ 在 $B$ 中不自由，$\forall x(A\to B)\equiv(\exists xA)\to B$，$\exists x(A\to B)\equiv(\forall xA)\to B$\\
+后件量化 & 若 $x$ 在 $A$ 中不自由，$\forall x(A\to B)\equiv A\to\forall xB$，$\exists x(A\to B)\equiv A\to\exists xB$\\
+\bottomrule
+\end{tabularx}
+\end{center}
+
+\begin{pitfall}[不能拆开的量词公式]\label{ch2-bad-distribution}
+以下等价式一般不成立：
+\[
+\exists x(A(x)\land B(x))\equiv \exists xA(x)\land\exists xB(x),
+\]
+\[
+\forall x(A(x)\lor B(x))\equiv \forall xA(x)\lor\forall xB(x).
+\]
+第一个式子右边的两个存在见证可能不同；第二个式子左边允许不同对象分别满足不同析取支。
+\end{pitfall}
+
+\begin{theorem}[谓词等价替换]\label{ch2-replacement}
+若 $A\equiv B$，且替换不会造成变量捕获，则在任意公式中用 $B$ 替换完整子公式 $A$，所得公式与原公式等价。
+\end{theorem}
+\begin{proof}
+任取解释和赋值。被替换的子公式 $A,B$ 在该解释和赋值下真值相同。外层联结词和量词只依据子公式在相应赋值下的真值递归确定整体真值；若替换不捕获自由变量，则变量赋值关系不变，故整体真值不变。
+\end{proof}
+
+\begin{example}[title={量词否定}]\label{ch2-negation-example}
+否定“每个学生都完成了至少一项任务”。设 $S(x)$ 表示学生，$E(y)$ 表示任务，$P(x,y)$ 表示 $x$ 完成 $y$。
+\begin{solution}
+原命题为
+\[
+\forall x(S(x)\to\exists y(E(y)\land P(x,y))).
+\]
+否定并推进否定号：
+\[
+\begin{aligned}
+&\neg\forall x(S(x)\to\exists y(E(y)\land P(x,y)))\\
+\equiv{}&\exists x\neg(S(x)\to\exists y(E(y)\land P(x,y)))\\
+\equiv{}&\exists x(S(x)\land\neg\exists y(E(y)\land P(x,y)))\\
+\equiv{}&\exists x(S(x)\land\forall y(E(y)\to\neg P(x,y))).
+\end{aligned}
+\]
+含义是：存在一个学生，他没有完成任何一项任务。
+\end{solution}
+\end{example}
+
+\section{前束范式}
+
+量词全部位于公式前端、后面矩阵不含量词的公式称为前束范式。前束范式能系统整理量词结构，也是等值演算和推理方法的基础。
+
+\begin{method}[化前束范式]\label{ch2-prenex-method}
+先消去 $\to,\leftrightarrow$；再把否定推进到原子公式前；对不同量词使用的约束变元标准化改名；最后在不造成自由变量捕获的条件下，把量词逐步外提。
+\end{method}
+
+\begin{example}[title={前束范式转换}]\label{ch2-prenex-example}
+将
+\[
+(\forall x(P(x)\to\exists yR(x,y)))\land\neg\exists xQ(x)
+\]
+化为前束范式。
+\begin{solution}
+先把第二个 $x$ 改名为 $z$，避免与前半部分冲突：
+\[
+(\forall x(P(x)\to\exists yR(x,y)))\land\neg\exists zQ(z).
+\]
+消去蕴涵并推进否定：
+\[
+(\forall x(\neg P(x)\lor\exists yR(x,y)))\land\forall z\neg Q(z).
+\]
+外提前半部分中的存在量词：
+\[
+(\forall x\exists y(\neg P(x)\lor R(x,y)))\land\forall z\neg Q(z).
+\]
+各量词变量不自由出现于另一合取支，故可外提：
+\[
+\forall x\exists y\forall z\bigl((\neg P(x)\lor R(x,y))\land\neg Q(z)\bigr).
+\]
+\end{solution}
+\end{example}
+
+Skolem 化常用于消解法。它通过引入新的常元或函数消去存在量词。例如
+\[
+\exists yP(y)
+\]
+可用新常元 $c$ 得到 $P(c)$；而
+\[
+\forall x\exists yP(x,y)
+\]
+中 $y$ 可依赖 $x$，应引入新函数 $f$，得到
+\[
+\forall xP(x,f(x)).
+\]
+Skolem 化保持可满足性，不保持逻辑等价，因此不应写成 $\equiv$。
+
+\section{谓词演算的推理规则}
+
+命题演算中的 MP、MT、合取、析取等规则仍可用于谓词公式。谓词演算还需要处理量词的规则。
+
+\begin{center}\small
+\begin{tabularx}{\textwidth}{lXX}
+\toprule
+规则 & 形式 & 使用条件\\
+\midrule
+全称实例化（UI） & $\forall xA(x)\Rightarrow A(t)$ & $t$ 对 $x$ 可自由代入\\
+存在概括（EG） & $A(t)\Rightarrow\exists xA(x)$ & 抽象出对应项\\
+全称概括（UG） & $A(x)\Rightarrow\forall xA(x)$ & $x$ 代表任意对象，不依赖特殊前提\\
+存在实例化（EI） & $\exists xA(x)\Rightarrow A(c)$ & $c$ 为新的临时常元，不出现在相关前提和最终结论中\\
+\bottomrule
+\end{tabularx}
+\end{center}
+
+全称概括不能从特殊对象推出全体对象。例如由 $P(a)$ 不能推出 $\forall xP(x)$。存在实例化的见证也不能混用：由 $\exists xP(x)$ 与 $\exists xQ(x)$ 不能推出 $\exists x(P(x)\land Q(x))$，因为两个存在式可能由不同对象满足。
+
+\begin{example}[title={存在三段论}]\label{ch2-existential-proof}
+由“有些学生是运动员”和“所有运动员身体健康”推出“有些学生身体健康”。
+\begin{solution}
+令 $S(x),A(x),H(x)$ 分别表示学生、运动员、身体健康。前提为
+\[
+\exists x(S(x)\land A(x)),\qquad \forall x(A(x)\to H(x)).
+\]
+由存在实例化，引入新常元 $c$，得 $S(c)\land A(c)$。化简得 $S(c)$ 与 $A(c)$。由全称实例化得 $A(c)\to H(c)$，再由 MP 得 $H(c)$。合取得 $S(c)\land H(c)$，最后由存在概括得
+\[
+\exists x(S(x)\land H(x)).
+\]
+最终结论不含临时常元 $c$，故使用合法。
+\end{solution}
+\end{example}
+
+\begin{example}[title={链式谓词推理}]\label{ch2-chain-proof}
+证明
+\[
+\forall x(P(x)\to Q(x)),\quad
+\forall x(Q(x)\to R(x)),\quad
+\exists x(S(x)\land P(x))
+\vDash \exists x(S(x)\land R(x)).
+\]
+\begin{solution}
+由第三个前提作存在实例化，取新常元 $c$，得 $S(c)\land P(c)$。化简得 $S(c)$ 与 $P(c)$。由前两个全称前提实例化得
+\[
+P(c)\to Q(c),\qquad Q(c)\to R(c).
+\]
+两次 MP 得 $Q(c)$ 与 $R(c)$。合取得 $S(c)\land R(c)$，再由存在概括得 $\exists x(S(x)\land R(x))$。
+\end{solution}
+\end{example}
+
+\section{补充：一阶逻辑消解法概览}
+
+一阶逻辑消解法把谓词公式转化为子句集，再通过合一和归结证明不可满足。它的标准流程如下：
+\begin{enumerate}
+  \item 消去 $\to,\leftrightarrow$；
+  \item 把否定推进到原子公式前；
+  \item 标准化约束变元，使不同量词使用不同变量名；
+  \item 化为前束范式；
+  \item Skolem 化，消去存在量词；
+  \item 删除全称量词，把矩阵化为合取范式；
+  \item 拆成子句集，对互补原子通过合一后归结；
+  \item 若推出空子句，则原子句集不可满足。
+\end{enumerate}
+
+\begin{definition}[合一]\label{ch2-unification}
+若存在代换 $\theta$ 使两个原子公式 $A\theta$ 与 $B\theta$ 完全相同，则称 $A,B$ 可合一，$\theta$ 称为合一代换。
+\end{definition}
+
+\begin{example}[title={一阶归结示例}]\label{ch2-first-order-resolution}
+证明
+\[
+\forall x(P(x)\to Q(x)),\qquad P(a)\vDash Q(a).
+\]
+\begin{solution}
+加入结论否定 $\neg Q(a)$。第一个前提化为子句 $\neg P(x)\lor Q(x)$，另有子句 $P(a)$ 与 $\neg Q(a)$。用代换 $\theta=\{x/a\}$，由
+\[
+\neg P(x)\lor Q(x)
+\]
+和 $P(a)$ 归结得 $Q(a)$；再与 $\neg Q(a)$ 归结得空子句。故前提推出 $Q(a)$。
+\end{solution}
+\end{example}

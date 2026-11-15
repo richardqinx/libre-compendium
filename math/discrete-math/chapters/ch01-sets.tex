@@ -1,0 +1,302 @@
+% libre-compendium
+%
+% Copyright (C) 2026 Richard Qin
+%
+% This document is dual-licensed under either:
+% - GNU Free Documentation License, Version 1.3 or any later version
+%   published by the Free Software Foundation, with no Invariant Sections,
+%   no Front-Cover Texts, and no Back-Cover Texts (see COPYING.DOC); or
+% - Creative Commons Attribution-ShareAlike 4.0 International License
+%   (see LICENSE-CC-BY-SA-4.0).
+
+\chapter{集合}
+
+\section{集合的基本概念}
+
+集合是离散数学的基本语言。一个集合由若干确定对象组成，这些对象称为集合的元素。所谓“确定”，是指在给定语境下，对任一对象都能判定它是否属于该集合。若 $x$ 是集合 $A$ 的元素，记为 $x\in A$；若不是，记为 $x\notin A$。
+
+\begin{definition}[集合、元素与表示法]\label{ch1-set-basic}
+集合通常用大写字母 $A,B,C,\ldots$ 表示，元素通常用小写字母 $a,b,x,\ldots$ 表示。表示集合的常用方法有两种：
+\begin{enumerate}
+  \item 列举法：把元素列在花括号内，如 $\set{1,2,3,4}$；
+  \item 描述法：用条件刻画元素，如 $\set{x\in\mathbb Z\mid 0\le x\le 9}$。
+\end{enumerate}
+\end{definition}
+
+集合不记录元素的排列顺序，也不记录重复出现的次数。因此
+\[
+  \set{1,2,3}=\set{3,2,1}=\set{1,1,2,3}.
+\]
+这一区别在关系一章会变得重要：序偶 $(1,2)$ 与 $(2,1)$ 一般不同，而集合 $\set{1,2}$ 与 $\set{2,1}$ 相同。
+
+\begin{definition}[有限集、无限集、空集与全集]\label{ch1-empty-universe}
+元素个数有限的集合称为有限集；元素个数无限的集合称为无限集。不含任何元素的集合称为空集，记为 $\varnothing$。在某个问题中所讨论对象的全体称为全集，常记为 $U$。
+\end{definition}
+
+全集不是绝对固定的。例如讨论整数整除性时，全集可取为 $\mathbb Z$ 或正整数集；讨论平面点集时，全集可取为整个平面。补集运算必须先指定全集，否则“$A$ 的外面”没有确定含义。
+
+\begin{definition}[子集、真子集与集合相等]\label{ch1-subset}
+设 $A,B$ 是集合。若 $A$ 的每个元素都是 $B$ 的元素，则称 $A$ 是 $B$ 的子集，记为 $A\subseteq B$：
+\[
+  A\subseteq B \quad\Longleftrightarrow\quad \forall x\,(x\in A\Rightarrow x\in B).
+\]
+若 $A\subseteq B$ 且 $A\ne B$，则称 $A$ 是 $B$ 的真子集，记为 $A\subset B$。若 $A\subseteq B$ 且 $B\subseteq A$，则 $A=B$。
+\end{definition}
+
+\begin{theorem}[包含关系的基本性质]\label{ch1-subset-laws}
+对任意集合 $A,B,C$，有：
+\[
+  A\subseteq A,\qquad
+  \varnothing\subseteq A,\qquad
+  A\subseteq B,\ B\subseteq C \Rightarrow A\subseteq C.
+\]
+\end{theorem}
+
+证明。第一式由蕴涵 $x\in A\Rightarrow x\in A$ 恒真得到。第二式成立的原因是不存在 $x\in\varnothing$，所以命题“若 $x\in\varnothing$ 则 $x\in A$”没有反例。第三式中，任取 $x\in A$，由 $A\subseteq B$ 得 $x\in B$，再由 $B\subseteq C$ 得 $x\in C$，故 $A\subseteq C$。
+
+\begin{definition}[幂集与基数]\label{ch1-power-cardinality}
+集合 $A$ 的所有子集构成的集合称为 $A$ 的幂集，记为 $\pow(A)$。有限集 $A$ 的元素个数称为 $A$ 的基数，记为 $\card A$。
+\end{definition}
+
+若 $A=\set{a,b}$，则
+\[
+  \pow(A)=\set{\varnothing,\set a,\set b,\set{a,b}}.
+\]
+幂集的元素本身是集合。符号 $a\in A$ 与 $\set a\subseteq A$ 的类型不同；$\varnothing$ 与 $\set{\varnothing}$ 也不同，前者没有元素，后者有一个元素且该元素为空集。
+
+\begin{theorem}[有限集幂集的基数]\label{ch1-power-cardinality-theorem}
+若 $\card A=n$，则 $\card{\pow(A)}=2^n$。
+\end{theorem}
+
+证明。设 $A=\set{a_1,a_2,\ldots,a_n}$。构造一个子集时，对每个元素 $a_i$ 只有两种选择：选入或不选入。不同选择序列给出不同子集，每个子集也唯一对应一个选择序列。因此共有 $2\cdot2\cdots2=2^n$ 个子集。
+
+\begin{pitfall}[元素属于与子集包含]\label{ch1-in-subset}
+$\in$ 连接元素与集合，$\subseteq$ 连接集合与集合。若 $A=\set{1,\set 2}$，则 $1\in A$，$\set 2\in A$，$\set 1\subseteq A$，但 $2\notin A$。判断复杂表达式时，应先确定左右两边的对象类型。
+\end{pitfall}
+
+\section{集合的运算}
+
+集合运算把已有集合组合成新集合。后续关系的并、交、差、补仍按集合运算理解，因为关系本身就是由序偶组成的集合。
+
+\begin{definition}[并、交、差、补、对称差]\label{ch1-set-ops}
+设 $A,B\subseteq U$。定义
+\[
+\begin{aligned}
+ A\cup B&=\set{x\mid x\in A\ \text{或}\ x\in B},\\
+ A\cap B&=\set{x\mid x\in A\ \text{且}\ x\in B},\\
+ A-B&=\set{x\mid x\in A\ \text{且}\ x\notin B},\\
+ \overline A&=U-A=\set{x\in U\mid x\notin A},\\
+ A\oplus B&=(A-B)\cup(B-A).
+\end{aligned}
+\]
+\end{definition}
+
+\lcfigure[caption={集合运算区域},label={fig:venn-set-ops}]{venn-set-ops}
+
+图中阴影区域对应定义中的元素条件。$A-B$ 只取 $A$ 中不属于 $B$ 的部分；$A\oplus B$ 取恰属于 $A,B$ 之一的元素，交集部分被排除。因此 $A\oplus B$ 不是普通并集，而是“去掉重叠部分的并”。
+
+\begin{definition}[集合族的并与交]\label{ch1-indexed-union-intersection}
+设 $I$ 是指标集，$\{A_i\mid i\in I\}$ 是一族集合。定义
+\[
+  \bigcup_{i\in I}A_i=\set{x\mid \exists i\in I,\ x\in A_i},
+  \qquad
+  \bigcap_{i\in I}A_i=\set{x\mid \forall i\in I,\ x\in A_i}.
+\]
+当 $I=\set{1,2,\ldots,n}$ 时，也写作 $\bigcup_{i=1}^n A_i$ 与 $\bigcap_{i=1}^n A_i$。
+\end{definition}
+
+广义并集只要求属于至少一个成员，广义交集要求属于每一个成员。若指标集为空，$\bigcup_{i\in\varnothing}A_i$ 通常取为空集；$\bigcap_{i\in\varnothing}A_i$ 只有在指定全集后才有确定口径，本讲义避免使用空指标交集。
+
+\begin{example}[title={集合运算的直接计算}]\label{ch1-set-op-example}
+设 $A=\set{1,2,3,4}$，$B=\set{3,4,5,6}$，全集 $U=\set{1,2,3,4,5,6,7}$。求 $A\cup B,A\cap B,A-B,\overline A,A\oplus B$。
+\begin{solution}
+\[
+\begin{gathered}
+A\cup B=\set{1,2,3,4,5,6},\qquad
+A\cap B=\set{3,4},\\
+A-B=\set{1,2},\qquad
+\overline A=\set{5,6,7},\qquad
+A\oplus B=\set{1,2,5,6}.
+\end{gathered}
+\]
+补集依赖全集。若全集改变，$\overline A$ 的结果也随之改变。
+\end{solution}
+\end{example}
+
+\begin{theorem}[集合运算律]\label{ch1-set-laws}
+设 $A,B,C\subseteq U$，则有：
+\[
+\begin{array}{lll}
+A\cup B=B\cup A, & A\cap B=B\cap A & \text{交换律},\\
+(A\cup B)\cup C=A\cup(B\cup C), & (A\cap B)\cap C=A\cap(B\cap C) & \text{结合律},\\
+A\cup(B\cap C)=(A\cup B)\cap(A\cup C), &
+A\cap(B\cup C)=(A\cap B)\cup(A\cap C) & \text{分配律},\\
+A\cup A=A, & A\cap A=A & \text{幂等律},\\
+A\cup\varnothing=A, & A\cap U=A & \text{同一律},\\
+A\cup U=U, & A\cap\varnothing=\varnothing & \text{零一律},\\
+A\cup\overline A=U, & A\cap\overline A=\varnothing & \text{补元律},\\
+\overline{A\cup B}=\overline A\cap\overline B, &
+\overline{A\cap B}=\overline A\cup\overline B & \text{德摩根律},\\
+A\cup(A\cap B)=A, & A\cap(A\cup B)=A & \text{吸收律}.
+\end{array}
+\]
+\end{theorem}
+
+集合恒等式的证明常用元素追踪法。证明 $A\cap(B\cup C)=(A\cap B)\cup(A\cap C)$：任取 $x$，有
+\[
+\begin{aligned}
+x\in A\cap(B\cup C)
+&\Longleftrightarrow x\in A\ \text{且}\ (x\in B\ \text{或}\ x\in C)\\
+&\Longleftrightarrow (x\in A\ \text{且}\ x\in B)\ \text{或}\ (x\in A\ \text{且}\ x\in C)\\
+&\Longleftrightarrow x\in(A\cap B)\cup(A\cap C).
+\end{aligned}
+\]
+任意元素 $x$ 对两边的隶属关系相同，故两集合相等。
+
+\begin{theorem}[广义德摩根律]\label{ch1-general-demorgan}
+设 $A_i\subseteq U\ (i\in I)$，则
+\[
+  \overline{\bigcup_{i\in I}A_i}=\bigcap_{i\in I}\overline{A_i},
+  \qquad
+  \overline{\bigcap_{i\in I}A_i}=\bigcup_{i\in I}\overline{A_i}.
+\]
+\end{theorem}
+
+证明。任取 $x\in U$，则
+\[
+x\in\overline{\bigcup_{i\in I}A_i}
+\Longleftrightarrow \neg\exists i\in I\,(x\in A_i)
+\Longleftrightarrow \forall i\in I\,(x\notin A_i)
+\Longleftrightarrow x\in\bigcap_{i\in I}\overline{A_i}.
+\]
+第二式同理，把“不是对每个 $i$ 都属于 $A_i$”改写为“存在某个 $i$ 不属于 $A_i$”即可。
+
+\begin{theorem}[差集与对称差公式]\label{ch1-diff-sym-laws}
+对任意 $A,B,C\subseteq U$，有
+\[
+  A-B=A\cap\overline B,\qquad
+  A\oplus B=(A\cup B)-(A\cap B),
+\]
+\[
+  A\oplus B=B\oplus A,\qquad
+  A\oplus\varnothing=A,\qquad
+  A\oplus A=\varnothing.
+\]
+\end{theorem}
+
+证明。$x\in A-B$ 当且仅当 $x\in A$ 且 $x\notin B$，也即 $x\in A\cap\overline B$。又 $x\in A\oplus B$ 当且仅当 $x$ 恰属于 $A,B$ 之一，这等价于 $x\in A\cup B$ 且 $x\notin A\cap B$，故 $A\oplus B=(A\cup B)-(A\cap B)$。后三式由“恰属于一个集合”的条件直接得到。
+
+\begin{method}[证明集合等式的三种方法]\label{ch1-set-proof-methods}
+证明集合等式 $S=T$，常用方法如下：
+\begin{enumerate}
+  \item 双包含法：分别证明 $S\subseteq T$ 与 $T\subseteq S$；
+  \item 元素追踪法：证明任意 $x$ 满足 $x\in S\Longleftrightarrow x\in T$；
+  \item 运算律化简法：用已证集合代数律把一边变形为另一边。
+\end{enumerate}
+若题目含补集或差集，先改写为 $\overline A$ 与 $\cap$ 的形式通常更稳定。
+\end{method}
+
+\begin{example}[title={集合恒等式证明}]\label{ch1-set-identity-example}
+证明
+\[
+  A-(B\cup C)=(A-B)\cap(A-C).
+\]
+\begin{solution}
+任取 $x$，则
+\[
+\begin{aligned}
+x\in A-(B\cup C)
+&\Longleftrightarrow x\in A\ \text{且}\ x\notin B\cup C\\
+&\Longleftrightarrow x\in A\ \text{且}\ x\notin B\ \text{且}\ x\notin C\\
+&\Longleftrightarrow (x\in A\ \text{且}\ x\notin B)\ \text{且}\ (x\in A\ \text{且}\ x\notin C)\\
+&\Longleftrightarrow x\in(A-B)\cap(A-C).
+\end{aligned}
+\]
+故等式成立。
+\end{solution}
+\end{example}
+
+\section{包含排斥原理}
+
+有限集合计数的核心问题是避免重复计数。并集计数中，交集区域会在单独相加时被多算；包含排斥原理正是对这些重叠区域逐层校正。
+
+\begin{theorem}[两个集合的包含排斥公式]\label{ch1-ie-two}
+若 $A,B$ 为有限集，则
+\[
+  \card{A\cup B}=\card A+\card B-\card{A\cap B}.
+\]
+\end{theorem}
+
+证明。把 $A\cup B$ 分成互不相交的三部分：
+\[
+  A-B,\qquad A\cap B,\qquad B-A.
+\]
+于是
+\[
+\card{A\cup B}=\card{A-B}+\card{A\cap B}+\card{B-A}.
+\]
+而 $\card A=\card{A-B}+\card{A\cap B}$，$\card B=\card{B-A}+\card{A\cap B}$。相加后交集被算了两次，减去一次即得公式。
+
+\begin{definition}[互不相交与可加性]\label{ch1-disjoint-addition}
+若 $A\cap B=\varnothing$，称 $A$ 与 $B$ 不相交。若集合族 $A_1,\ldots,A_n$ 中任意两个不同集合都不相交，称它们两两不相交。有限个两两不相交集合满足
+\[
+  \card{\bigcup_{i=1}^n A_i}=\sum_{i=1}^n \card{A_i}.
+\]
+\end{definition}
+
+可加性是包含排斥公式的特殊情形。计数题中若能先把对象分成互不相交的类别，就不需要再做交集校正。
+
+\begin{theorem}[三个集合的包含排斥公式]\label{ch1-ie-three}
+若 $A,B,C$ 为有限集，则
+\[
+\card{A\cup B\cup C}
+=\card A+\card B+\card C
+-\card{A\cap B}-\card{A\cap C}-\card{B\cap C}
++\card{A\cap B\cap C}.
+\]
+\end{theorem}
+
+证明。先相加 $\card A+\card B+\card C$。只属于一个集合的元素被算一次；属于恰好两个集合的元素被算两次，减去对应两两交集后变为一次；属于三个集合的元素先被算三次，减去三个两两交集后变为零次，因此还需加回 $\card{A\cap B\cap C}$ 一次。
+
+\begin{theorem}[$n$ 个有限集合的包含排斥公式]\label{ch1-ie-n}
+设 $A_1,A_2,\ldots,A_n$ 为有限集，则
+\[
+\card{\bigcup_{i=1}^n A_i}
+=\sum_i\card{A_i}
+-\sum_{i<j}\card{A_i\cap A_j}
++\sum_{i<j<k}\card{A_i\cap A_j\cap A_k}
+-\cdots+(-1)^{n+1}\card{A_1\cap\cdots\cap A_n}.
+\]
+\end{theorem}
+
+该公式按交集层数交替加减：一阶交集加，二阶交集减，三阶交集加，依此类推。若某些集合互不相交，对应交集基数为 $0$。
+
+\begin{example}[title={整除计数}]\label{ch1-div-count}
+求 $1$ 到 $500$ 中能被 $3$、$5$ 或 $7$ 整除的整数个数。
+\begin{solution}
+令 $A_3,A_5,A_7$ 分别表示能被 $3,5,7$ 整除的整数集合。则
+\[
+\card{A_3}=\left\lfloor\frac{500}{3}\right\rfloor=166,\quad
+\card{A_5}=100,\quad
+\card{A_7}=71.
+\]
+两两交集按最小公倍数计数：
+\[
+\card{A_3\cap A_5}=33,\quad
+\card{A_3\cap A_7}=23,\quad
+\card{A_5\cap A_7}=14.
+\]
+三者交集对应能被 $\operatorname{lcm}(3,5,7)=105$ 整除的数，有
+\[
+\card{A_3\cap A_5\cap A_7}=\left\lfloor\frac{500}{105}\right\rfloor=4.
+\]
+由包含排斥原理，
+\[
+166+100+71-33-23-14+4=271.
+\]
+\end{solution}
+\end{example}
+
+\begin{pitfall}[包含排斥中的交集层数]\label{ch1-ie-pitfall}
+能被 $3$ 和 $5$ 整除的数应按 $15$ 的倍数计数，不是把 $\lfloor500/3\rfloor$ 与 $\lfloor500/5\rfloor$ 再相加。对整除类题目，交集对应“同时满足”，通常转化为最小公倍数。
+\end{pitfall}

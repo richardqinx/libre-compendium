@@ -1,0 +1,313 @@
+% libre-compendium
+%
+% Copyright (C) 2026 Richard Qin
+%
+% This document is dual-licensed under either:
+% - GNU Free Documentation License, Version 1.3 or any later version
+%   published by the Free Software Foundation, with no Invariant Sections,
+%   no Front-Cover Texts, and no Back-Cover Texts (see COPYING.DOC); or
+% - Creative Commons Attribution-ShareAlike 4.0 International License
+%   (see LICENSE-CC-BY-SA-4.0).
+
+\chapter{函数和运算}
+
+\section{函数}
+
+\begin{definition}[函数]\label{function-definition}
+  设关系 $f$ 定义在 $X\times Y$ 上。若对于每一个 $x\in X$，都有唯一的一个 $y\in Y$，使得
+  \[
+  \langle x,y\rangle\in f,
+  \]
+  则称 $f$ 为从 $X$ 到 $Y$ 的\emph{函数}（或映射），记为
+  \[
+  f:X\to Y.
+  \]
+  $x$ 称为函数 $f$ 的变量；$y$ 称为变量 $x$ 在 $f$ 下的值（或像），记为 $f(x)$。
+\end{definition}
+
+\begin{definition}[定义域、陪域和值域]\label{domain-codomain-range}
+  设 $f:X\to Y$。
+  \begin{enumerate}
+    \item 集合 $X$ 称为 $f$ 的\emph{定义域}，记为 $D(f)$。由函数定义，$D(f)=X$。
+    \item 集合 $Y$ 称为 $f$ 的\emph{陪域}（或到达集）。陪域是写出映射 $f:X\to Y$ 时预先指定的集合。
+    \item 集合
+    \[
+    R(f)=\set{y\in Y\mid \exists x\in X,\ \langle x,y\rangle\in f}
+    =\set{f(x)\mid x\in X}
+    \]
+    称为 $f$ 的\emph{值域}。因此总有 $R(f)\subseteq Y$；当且仅当 $R(f)=Y$ 时，$Y$ 中每个元素都是某个 $x\in X$ 的像。
+  \end{enumerate}
+\end{definition}
+
+这里“唯一”同时要求函数有定义且单值：
+\[
+\begin{aligned}
+&\forall x\in X,\ \exists y\in Y,\ (x,y)\in f
+&&\text{（每个 $x$ 都有像）},\\
+&\forall x\in X,\ \forall y_1,y_2\in Y,\
+\bigl((x,y_1)\in f\land(x,y_2)\in f\bigr)\Rightarrow y_1=y_2
+&&\text{（每个 $x$ 至多有一个像）}.
+\end{aligned}
+\]
+不同的自变量可以有同一个像；$Y$ 中的元素也不必都被取到。因此，通常所说的多值“函数”不符合这里的定义。
+
+\begin{definition}[函数集]\label{function-set}
+  从 $X$ 到 $Y$ 的所有函数构成的集合称为从 $X$ 到 $Y$ 的\emph{函数集}，记为
+  \[
+  Y^X=\set{f\mid f:X\to Y}.
+  \]
+  右上标 $X$ 表示自变量来自 $X$；它不是普通的集合幂。
+\end{definition}
+
+在同一函数集 $Y^X$ 中，函数相等当且仅当它们在每个自变量上的函数值相同：若
+\[
+f:X\to Y,\qquad g:X\to Y,
+\]
+则
+\[
+f=g\Longleftrightarrow \forall x\in X,\ f(x)=g(x).
+\]
+这一定义只比较相同定义域、陪域下的函数；陪域和值域仍应严格区分。
+
+若 $X,Y$ 为有限集且 $\card X=m,\card Y=n$，则
+\[
+\card{Y^X}=n^m.
+\]
+这个记号也解释了为什么幂集常写作 $2^X$：$\pow(X)$ 与函数集 $\set{0,1}^X$ 之间存在一一对应；对应关系由子集的特征函数给出。
+
+\lcfigure[caption={函数与一般关系的映射图},label={fig:function-mapping}]{function-mapping}
+
+\begin{pitfall}[函数与一般关系的区别]\label{function-relation}
+  关系只要求是 $X\times Y$ 的子集，函数还要求每个第一分量恰好配一个第二分量。因此，若某个 $x\in X$ 没有箭头，或有两条箭头指向不同元素，都不是 $X$ 到 $Y$ 的函数。值域不是定义的一部分，而是由函数实际取到的值决定；陪域可以比值域大。
+\end{pitfall}
+
+\begin{definition}[像与完全原像]\label{image-preimage-function}
+  设 $f:X\to Y$，$A\subseteq X$，$B\subseteq Y$。集合
+  \[
+  f[A]=\set{f(x)\mid x\in A}
+  \]
+  称为 $A$ 在 $f$ 下的像；集合
+  \[
+  f^{-1}[B]=\set{x\in X\mid f(x)\in B}
+  \]
+  称为 $B$ 在 $f$ 下的完全原像。
+\end{definition}
+
+函数值 $f(x)$ 是 $Y$ 中的一个元素，像 $f[A]$ 是 $Y$ 的一个子集，二者类型不同。完全原像不要求逆函数存在；它只是按函数 $f$ 把 $B$ 中元素的全部来源收集起来。一般有
+\[
+A\subseteq f^{-1}[f[A]],
+\]
+但不一定取等号；若 $f$ 是单射，则对任意 $A\subseteq X$ 有 $f^{-1}[f[A]]=A$。
+
+\begin{example}[title={常见函数}]\label{basic-functions}
+  \begin{enumerate}
+    \item 后继函数 $s:\N\to\N$，$s(n)=n+1$。它把每个自然数送到其后继。
+    \item 取整函数 $\lfloor x\rfloor:\R\to\Z$，把实数 $x$ 送到不超过 $x$ 的最大整数；上取整函数 $\lceil x\rceil$ 把 $x$ 送到不小于 $x$ 的最小整数。
+    \item 设 $A\subseteq U$。集合 $A$ 的特征函数为 $\chi_A:U\to\set{0,1}$，其中
+    \[
+    \chi_A(x)=
+    \begin{cases}
+      1,&x\in A,\\
+      0,&x\notin A.
+    \end{cases}
+    \]
+    特征函数把集合运算转化为 $0,1$ 运算，例如
+    \[
+    \chi_{\overline A}=1-\chi_A,\qquad
+    \chi_{A\cap B}=\chi_A\chi_B,\qquad
+    \chi_{A\cup B}=\chi_A+\chi_B-\chi_A\chi_B.
+    \]
+    因而每个子集都可由一个 $0,1$ 函数编码。
+  \end{enumerate}
+\end{example}
+
+设 $(P,\preceq)$ 与 $(Q,\le)$ 为偏序集。函数 $f:P\to Q$ 若满足
+\[
+x\preceq y\Longrightarrow f(x)\le f(y),
+\]
+则称为单调递增函数；若还满足 $x\prec y\Longrightarrow f(x)<f(y)$，则称为严格单调递增函数。通常微积分中的单调函数是这个定义在实数偏序上的特例。
+
+若 $R$ 是集合 $X$ 上的等价关系，则
+\[
+\pi:X\to X/R,\qquad \pi(x)=[x]_R
+\]
+称为由 $R$ 决定的自然映射。它总是满射；当 $R$ 为恒等关系时它是双射，其他情形一般不是单射。这个映射把等价关系和商集真正连接起来。
+
+若 $A\subseteq X$，则
+\[
+f|_A:A\to Y,\qquad f|_A(x)=f(x)
+\]
+称为 $f$ 在 $A$ 上的限制。反过来，若 $g:A\to Y$ 且存在 $f:X\to Y$ 使 $f|_A=g$，则称 $f$ 是 $g$ 的一个扩张。限制由原函数唯一决定，扩张通常不唯一。
+
+\begin{definition}[单射、满射、双射]\label{function-types}
+  设 $f:X\to Y$。
+  \begin{enumerate}
+    \item 若对任意 $x_1,x_2\in X$，$f(x_1)=f(x_2)$ 蕴含 $x_1=x_2$，则称 $f$ 为单射。
+    \item 若 $\ran f=Y$，则称 $f$ 为满射。
+    \item 若 $f$ 既是单射又是满射，则称 $f$ 为双射。
+  \end{enumerate}
+\end{definition}
+
+单射控制“不同自变量不会合并”，满射控制“陪域没有遗漏”。双射提供一一对应，因此是比较集合大小、定义逆函数和换元的基本工具。
+
+\begin{theorem}[有限集上的函数计数]\label{finite-function-count}
+  若 $\card X=m,\card Y=n$，则从 $X$ 到 $Y$ 的函数共有 $n^m$ 个。单射个数为
+  \[
+  \begin{cases}
+    n(n-1)\cdots(n-m+1),&m\le n,\\
+    0,&m>n.
+  \end{cases}
+  \]
+  双射存在当且仅当 $m=n$，此时双射个数为 $n!$。
+\end{theorem}
+
+\begin{proof}
+  对每个 $x\in X$，其像可在 $Y$ 中独立选择，共有 $n^m$ 种函数。若要求单射，给第一个元素选像有 $n$ 种，第二个只能在剩余 $n-1$ 个中选，依次得到下降乘积；若 $m>n$，抽屉原理说明必有两个元素取同一值，故单射不存在。双射要求既无合并又无遗漏，有限情形下等价于 $m=n$ 时的全排列。
+\end{proof}
+
+\section{函数复合与逆函数}
+
+设 $f:X\to Y$，$g:Y\to Z$。函数复合定义为
+\[
+g\circ f:X\to Z,\qquad (g\circ f)(x)=g(f(x)).
+\]
+记号 $g\circ f$ 的执行顺序是先 $f$ 后 $g$。若中间集合不匹配，复合可能没有定义。
+
+\begin{theorem}[复合的基本性质]\label{composition-laws}
+  设相关复合都有定义，则
+  \[
+  h\circ(g\circ f)=(h\circ g)\circ f.
+  \]
+  对任意集合 $X$，恒等函数
+  \[
+  I_X:X\to X,\qquad I_X(x)=x
+  \]
+  满足
+  \[
+  f\circ I_X=f,\qquad I_Y\circ f=f.
+  \]
+\end{theorem}
+
+\begin{proof}
+  对任意 $x$，
+  \[
+  \bigl(h\circ(g\circ f)\bigr)(x)=h(g(f(x)))=\bigl((h\circ g)\circ f\bigr)(x),
+  \]
+  故复合满足结合律。恒等函数不改变元素，代入定义即得两条恒等式。
+\end{proof}
+
+\begin{theorem}[复合保持单射、满射与双射]\label{composition-preserves-types}
+  设 $f:X\to Y$，$g:Y\to Z$。
+  \begin{enumerate}
+    \item 若 $f,g$ 都是满射，则 $g\circ f$ 是满射。
+    \item 若 $f,g$ 都是单射，则 $g\circ f$ 是单射。
+    \item 若 $f,g$ 都是双射，则 $g\circ f$ 是双射。
+  \end{enumerate}
+\end{theorem}
+
+\begin{proof}
+  若 $f,g$ 都满射，任取 $z\in Z$，由 $g$ 满射存在 $y\in Y$ 使 $g(y)=z$；由 $f$ 满射存在 $x\in X$ 使 $f(x)=y$，于是 $(g\circ f)(x)=z$。若 $f,g$ 都单射，且 $(g\circ f)(x_1)=(g\circ f)(x_2)$，由 $g$ 单射得 $f(x_1)=f(x_2)$，再由 $f$ 单射得 $x_1=x_2$。双射情形由前两项合并得到。
+\end{proof}
+
+上述定理的逆命题一般不成立。例如 $g\circ f$ 为单射，不必推出 $g$ 在整个定义域上单射；它只需要在 $\ran f$ 上不合并元素。类似地，$g\circ f$ 为满射也不必推出 $f$ 满射。
+
+若 $f:X\to Y$ 是双射，则可定义逆函数
+\[
+f^{-1}:Y\to X,\qquad f^{-1}(y)=x\Longleftrightarrow f(x)=y.
+\]
+这里满射保证每个 $y\in Y$ 至少有原像，单射保证原像唯一。
+
+把 $f$ 看作关系时，关系逆 $f^{-1}\subseteq Y\times X$ 总是存在；但它未必是从 $Y$ 到 $X$ 的函数。若 $f$ 是单射，则关系逆在 $\ran f$ 上是函数 $f^{-1}:\ran f\to X$；若 $f$ 还是满射，才得到从整个 $Y$ 到 $X$ 的逆函数。
+
+\begin{theorem}[逆函数判定]\label{inverse-function}
+  设 $f:X\to Y$，$g:Y\to X$。则 $g=f^{-1}$ 当且仅当
+  \[
+  g\circ f=I_X,\qquad f\circ g=I_Y.
+  \]
+  因而函数可逆当且仅当它是双射。
+\end{theorem}
+
+\begin{proof}
+  若 $g=f^{-1}$，则先作 $f$ 再作 $g$ 回到原来的 $x$，先作 $g$ 再作 $f$ 回到原来的 $y$，故两式成立。反过来，若两式成立，则对任意 $y\in Y$，取 $x=g(y)$，有 $f(x)=f(g(y))=y$，故 $f$ 满射；若 $f(x_1)=f(x_2)$，两边作用 $g$ 得 $x_1=x_2$，故 $f$ 单射。因此 $f$ 为双射，且 $g$ 正是其逆函数。
+\end{proof}
+
+\section{运算}
+
+一个 $n$ 元运算是从 $X^n$ 到某集合的函数。离散数学中最常用的是二元运算。若
+\[
+*:X\times X\to X,
+\]
+则称 $*$ 为 $X$ 上的二元运算。定义中的陪域仍是 $X$，这表示封闭性：任意 $a,b\in X$，结果 $a*b$ 必须仍属于 $X$。
+
+\lcfigure[caption={模三加法运算表},label={fig:operation-table-z3}]{operation-table-z3}
+
+有限集上的二元运算常用运算表表示。表头给出两个输入，表格内部给出输出。若表格内部出现集合外元素，则不是该集合上的二元运算；若表格关于主对角线对称，则该运算满足交换律。
+
+\begin{definition}[运算律和特殊元素]\label{ch03-operation-laws}
+  设 $*$ 是 $X$ 上的二元运算。
+  \begin{enumerate}
+    \item 交换律：对任意 $a,b\in X$，$a*b=b*a$。
+    \item 结合律：对任意 $a,b,c\in X$，$(a*b)*c=a*(b*c)$。
+    \item 幂等律：对任意 $a\in X$，$a*a=a$。
+    \item 左单位元 $e_l$ 满足 $e_l*a=a$；右单位元 $e_r$ 满足 $a*e_r=a$。若同一元素同时为左、右单位元，称为单位元。
+    \item 左零元 $\theta_l$ 满足 $\theta_l*a=\theta_l$；右零元 $\theta_r$ 满足 $a*\theta_r=\theta_r$。若同一元素同时为左、右零元，称为零元。
+    \item 若存在单位元 $e$，且 $a*b=e$，则 $b$ 称为 $a$ 的一个右逆元；若 $b*a=e$，则 $b$ 称为 $a$ 的一个左逆元。
+  \end{enumerate}
+  若另有运算 $\circ$，则 $*$ 对 $\circ$ 左分配表示
+  \[
+  a*(b\circ c)=(a*b)\circ(a*c),
+  \]
+  右分配表示
+  \[
+  (b\circ c)*a=(b*a)\circ(c*a).
+  \]
+\end{definition}
+
+\begin{theorem}[单位元、零元和逆元的唯一性]\label{identity-inverse-unique}
+  \begin{enumerate}
+    \item 若左单位元 $e_l$ 与右单位元 $e_r$ 都存在，则 $e_l=e_r$，因此单位元唯一。
+    \item 若左零元 $\theta_l$ 与右零元 $\theta_r$ 都存在，则 $\theta_l=\theta_r$，因此零元唯一。
+    \item 若 $*$ 满足结合律，且 $a$ 同时有左逆元 $b$ 与右逆元 $c$，则 $b=c$。此时称该元素为 $a$ 的逆元。
+  \end{enumerate}
+\end{theorem}
+
+\begin{proof}
+  对单位元，有
+  \[
+  e_l=e_l*e_r=e_r,
+  \]
+  中间等号左边使用 $e_r$ 是右单位元，右边使用 $e_l$ 是左单位元。零元同理：
+  \[
+  \theta_l=\theta_l*\theta_r=\theta_r.
+  \]
+  若 $b*a=e$ 且 $a*c=e$，则由结合律
+  \[
+  b=b*e=b*(a*c)=(b*a)*c=e*c=c.
+  \]
+\end{proof}
+
+\begin{example}[title={集合运算中的特殊元素}]\label{set-operation-elements}
+  在 $\pow(U)$ 上，$\cup$ 的单位元是 $\varnothing$，零元是 $U$；$\cap$ 的单位元是 $U$，零元是 $\varnothing$。两者都满足交换律、结合律和幂等律，并互相满足分配律。对称差 $\oplus$ 的单位元是 $\varnothing$，且每个集合都是自己的逆元，因为 $A\oplus A=\varnothing$。
+\end{example}
+
+设 $*$ 是 $X$ 上的二元运算。若 $a*b=a*c$ 总推出 $b=c$，则 $a$ 满足左消去律；若 $b*a=c*a$ 总推出 $b=c$，则 $a$ 满足右消去律。消去律不是由交换律或结合律自动推出的。例如集合并运算中
+\[
+\set1\cup\set2=\set1\cup\set{1,2},
+\]
+但 $\set2\ne\set{1,2}$，故并运算一般不能消去。
+
+\section{函数阶与算法复杂度}
+
+参考书在函数章中引入了算法复杂度的函数表示。设 $f,g:\N\to\R^+$。若存在常数 $C>0$ 与 $n_0\in\N$，使得对一切 $n\ge n_0$ 都有
+\[
+f(n)\le Cg(n),
+\]
+则记为
+\[
+f(n)=O(g(n)).
+\]
+它表示当输入规模 $n$ 足够大时，$f$ 的增长至多与 $g$ 同阶。常见阶从低到高可粗略排列为
+\[
+1,\quad \log n,\quad n,\quad n\log n,\quad n^2,\quad n^3,\quad 2^n.
+\]
+该记号只比较增长阶，不比较小规模下的具体运行时间；例如顺序查找最坏情形为 $O(n)$，二分查找为 $O(\log n)$。

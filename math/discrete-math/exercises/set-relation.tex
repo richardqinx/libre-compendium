@@ -1,0 +1,505 @@
+% libre-compendium
+%
+% Copyright (C) 2026 Richard Qin
+%
+% This document is dual-licensed under either:
+% - GNU Free Documentation License, Version 1.3 or any later version
+%   published by the Free Software Foundation, with no Invariant Sections,
+%   no Front-Cover Texts, and no Back-Cover Texts (see COPYING.DOC); or
+% - Creative Commons Attribution-ShareAlike 4.0 International License
+%   (see LICENSE-CC-BY-SA-4.0).
+
+% Migrated from set-relation-review/tex/problems.tex and solutions.tex.
+% 集合、关系与函数
+\begin{exercise}[level=basic]
+设 $A=\set{1,2,\set3}$。判断下列命题的真假：
+  \[
+  1\in A,\quad \set1\subseteq A,\quad 3\in A,\quad \set3\in A,\quad \set{\set3}\subseteq A.
+  \]
+\begin{solution}
+真值依次为：真、真、假、真、真。理由是 $A$ 的元素为 $1,2,\set3$；因此 $3$ 不是元素，但 $\set3$ 是元素。$\set{\set3}\subseteq A$ 表示它唯一的元素 $\set3$ 属于 $A$。
+\end{solution}
+\end{exercise}
+
+\begin{exercise}[level=basic]
+设 $A,B,C\subseteq U$。证明
+  \[
+  A-(B\cap C)=(A-B)\cup(A-C).
+  \]
+\begin{solution}
+任取 $x$，则
+  \[
+  \begin{aligned}
+  x\in A-(B\cap C)
+  &\Longleftrightarrow x\in A\ \text{且}\ x\notin B\cap C\\
+  &\Longleftrightarrow x\in A\ \text{且}\ (x\notin B\ \text{或}\ x\notin C)\\
+  &\Longleftrightarrow (x\in A\ \text{且}\ x\notin B)\ \text{或}\ (x\in A\ \text{且}\ x\notin C)\\
+  &\Longleftrightarrow x\in(A-B)\cup(A-C).
+  \end{aligned}
+  \]
+  故等式成立。
+\end{solution}
+\end{exercise}
+
+\begin{exercise}[level=basic]
+设 $A=\set{1,2,3}$。写出 $\pow(A)$，并核对其元素个数。
+\begin{solution}
+\[
+  \pow(A)=\set{\varnothing,\set1,\set2,\set3,\set{1,2},\set{1,3},\set{2,3},\set{1,2,3}}.
+  \]
+  因为 $\card A=3$，所以 $\card{\pow(A)}=2^3=8$，与列举结果一致。
+\end{solution}
+\end{exercise}
+
+\begin{exercise}[level=basic]
+设 $X=\set{1,2,3}$，
+  \[
+  R=\set{(1,1),(1,2),(2,2),(2,3),(3,3)}.
+  \]
+  写出 $R$ 的关系矩阵，并判断它是否自反、对称、反对称、传递。
+\begin{solution}
+按 $1,2,3$ 的顺序排列行列，
+  \[
+  M_R=\begin{pmatrix}
+  1&1&0\\
+  0&1&1\\
+  0&0&1
+  \end{pmatrix}.
+  \]
+  主对角线全为 $1$，故自反；$a_{12}=1,a_{21}=0$，故不对称；不存在非对角线位置双向同为 $1$，故反对称；因 $(1,2),(2,3)\in R$ 但 $(1,3)\notin R$，故不传递。
+\end{solution}
+\end{exercise}
+
+\begin{exercise}[level=standard]
+设 $X=\set{1,2,3}$，关系图中有弧 $1\to2$、$2\to3$、$1\to3$，没有自环，也没有其他弧。写出关系 $R$，并由关系图判断它是否自反、反自反、对称、反对称、传递。
+\begin{solution}
+\[
+  R=\set{(1,2),(2,3),(1,3)}.
+  \]
+  图中三个结点均无自环，故 $R$ 反自反且不自反。弧 $1\to2$ 没有反向弧 $2\to1$，故不对称。不同结点之间不存在双向弧，故反对称。唯一可连接的两步路径为 $1\to2\to3$，其捷径 $1\to3$ 已存在，故 $R$ 传递。
+\end{solution}
+\end{exercise}
+
+\begin{exercise}[level=standard]
+某班有 $60$ 人，参加数学竞赛的有 $28$ 人，参加程序设计竞赛的有 $25$ 人，两项都参加的有 $10$ 人。求至少参加一项竞赛的人数和两项都未参加的人数。
+\begin{solution}
+至少参加一项的人数为
+  \[
+  28+25-10=43.
+  \]
+  两项都未参加的人数为 $60-43=17$。
+\end{solution}
+\end{exercise}
+
+\begin{exercise}[level=standard]
+设 $R=\set{(1,2),(2,3)}$ 是 $X=\set{1,2,3}$ 上的关系。求 $r(R)$、$s(R)$ 和 $t(R)$。
+\begin{solution}
+\[
+  r(R)=\set{(1,1),(2,2),(3,3),(1,2),(2,3)}.
+  \]
+  \[
+  s(R)=\set{(1,2),(2,1),(2,3),(3,2)}.
+  \]
+  由于 $(1,2),(2,3)$ 强制推出 $(1,3)$，且没有更长路径产生新的序偶，
+  \[
+  t(R)=\set{(1,2),(2,3),(1,3)}.
+  \]
+\end{solution}
+\end{exercise}
+
+\begin{exercise}[level=standard]
+在 $\mathbb Z$ 上定义 $aRb$ 当且仅当 $a-b$ 是偶数。证明 $R$ 是等价关系，并写出商集。
+\begin{solution}
+自反性：$a-a=0$ 是偶数。对称性：若 $a-b$ 是偶数，则 $b-a=-(a-b)$ 是偶数。传递性：若 $a-b$ 与 $b-c$ 都是偶数，则 $a-c=(a-b)+(b-c)$ 是偶数。故 $R$ 是等价关系。商集为
+  \[
+  \mathbb Z/R=\set{[0],[1]},
+  \]
+  其中 $[0]$ 为偶数类，$[1]$ 为奇数类。
+\end{solution}
+\end{exercise}
+
+\begin{exercise}[level=advanced]
+设 $X=\set{1,2,3,6}$，关系 $\preceq$ 定义为整除关系。画出 Hasse 图的边集，并求 $\set{2,3}$ 的最小上界与最大下界。
+\begin{solution}
+Hasse 图只画覆盖边：
+  \[
+  \set{1,2},\quad \set{1,3},\quad \set{2,6},\quad \set{3,6}
+  \]
+  对应无向边。$\set{2,3}$ 的上界为 $\set6$，故最小上界为 $6$；下界为 $\set1$，故最大下界为 $1$。
+\end{solution}
+\end{exercise}
+
+\begin{exercise}[level=advanced]
+证明：若 $R$ 是 $X$ 上的自反关系，则 $R^n$ 对任意正整数 $n$ 都是自反的。
+\begin{solution}
+由 $R$ 自反知 $I_X\subseteq R$。对任意 $n\ge1$ 与任意 $x\in X$，可取路径
+  \[
+  xRxR\cdots Rx
+  \]
+  共 $n$ 步，因此 $(x,x)\in R^n$。故 $R^n$ 自反。
+\end{solution}
+\end{exercise}
+
+\begin{exercise}[level=advanced]
+设 $\mathcal P=\set{\set{1,2},\set{3},\set{4,5}}$ 是 $X=\set{1,2,3,4,5}$ 的划分。构造由 $\mathcal P$ 决定的等价关系，并写出所有等价类。
+\begin{solution}
+由划分决定的等价关系为同块内任意两元素相关：
+  \[
+  R=\set{(1,1),(1,2),(2,1),(2,2),(3,3),(4,4),(4,5),(5,4),(5,5)}.
+  \]
+  等价类为
+  \[
+  [1]=[2]=\set{1,2},\qquad [3]=\set3,\qquad [4]=[5]=\set{4,5}.
+  \]
+\end{solution}
+\end{exercise}
+
+\begin{exercise}[level=advanced]
+设 $(X,\preceq)$ 是偏序集，$A\subseteq X$。证明：若 $A$ 的最大元存在，则它是唯一的极大元。
+\begin{solution}
+设 $m$ 是 $A$ 的最大元。则对任意 $x\in A$，$x\preceq m$，所以不存在 $x\in A$ 使 $m\prec x$，故 $m$ 是极大元。若 $u$ 是任一极大元，由最大元定义有 $u\preceq m$。若 $u\ne m$，则 $u\prec m$，与 $u$ 极大矛盾。因此 $u=m$，最大元是唯一极大元。
+\end{solution}
+\end{exercise}
+
+\begin{exercise}[level=advanced]
+设 $A_1,A_2,A_3,A_4$ 是有限集。写出 $\card{A_1\cup A_2\cup A_3\cup A_4}$ 的包含排斥公式。
+\begin{solution}
+公式为
+  \[
+  \begin{aligned}
+  \card{\bigcup_{i=1}^4 A_i}
+  ={}&\sum_{i=1}^4\card{A_i}
+  -\sum_{1\le i<j\le4}\card{A_i\cap A_j}\\
+  &+\sum_{1\le i<j<k\le4}\card{A_i\cap A_j\cap A_k}
+  -\card{A_1\cap A_2\cap A_3\cap A_4}.
+  \end{aligned}
+  \]
+\end{solution}
+\end{exercise}
+
+\begin{exercise}[level=advanced]
+设 $\card A=3,\card B=4$。从 $A$ 到 $B$ 的二元关系有多少个？$A$ 上的二元关系有多少个？
+\begin{solution}
+因为 $\card{A\times B}=3\cdot4=12$，从 $A$ 到 $B$ 的二元关系共有 $2^{12}=4096$ 个。$A$ 上的二元关系是 $A\times A$ 的子集，$\card{A\times A}=9$，所以共有 $2^9=512$ 个。
+\end{solution}
+\end{exercise}
+
+\begin{exercise}[level=advanced]
+设 $R=\set{(1,2),(2,1),(2,3)}$，$S=\set{(2,3),(3,1)}$ 是 $X=\set{1,2,3}$ 上的关系。求 $R^{-1}$、$R\circ S$ 与 $S\circ R$。
+\begin{solution}
+\[
+  R^{-1}=\set{(2,1),(1,2),(3,2)}.
+  \]
+  计算复合时先走左边关系，再走右边关系。由 $(1,2)\in R$ 且 $(2,3)\in S$ 得 $(1,3)\in R\circ S$；由 $(2,3)\in R$ 且 $(3,1)\in S$ 得 $(2,1)\in R\circ S$，故
+  \[
+  R\circ S=\set{(1,3),(2,1)}.
+  \]
+  对 $S\circ R$，由 $(2,3)\in S$ 后没有以 $3$ 为第一分量的 $R$ 中序偶；由 $(3,1)\in S$ 且 $(1,2)\in R$ 得 $(3,2)$，故
+  \[
+  S\circ R=\set{(3,2)}.
+  \]
+\end{solution}
+\end{exercise}
+
+\begin{exercise}[level=advanced]
+设 $R=\set{(1,a),(2,a),(2,b)}\subseteq\set{1,2,3}\times\set{a,b}$。求 $R^{-1}$、$R[\set{1,2}]$ 与 $R^{-1}[\set a]$。再说明 $R[\set1\cap\set2]$ 与 $R[\set1]\cap R[\set2]$ 是否相等。
+\begin{solution}
+\[
+  R^{-1}=\set{(a,1),(a,2),(b,2)}.
+  \]
+  从 $1,2$ 出发可到达 $a,b$，故
+  \[
+  R[\set{1,2}]=\set{a,b}.
+  \]
+  与 $a$ 有关系的第一分量为 $1,2$，故
+  \[
+  R^{-1}[\set a]=\set{1,2}.
+  \]
+  又 $\set1\cap\set2=\varnothing$，所以 $R[\set1\cap\set2]=\varnothing$；但
+  \[
+  R[\set1]\cap R[\set2]=\set a.
+  \]
+  二者不相等，原因是同一个终点 $a$ 可分别由两个不同的起点到达。
+\end{solution}
+\end{exercise}
+
+\begin{exercise}[level=advanced]
+设 $R,S$ 是 $X$ 上的关系且 $R\subseteq S$。证明 $s(R)\subseteq s(S)$。
+\begin{solution}
+由对称闭包公式，
+  \[
+  s(R)=R\cup R^{-1},\qquad s(S)=S\cup S^{-1}.
+  \]
+  已知 $R\subseteq S$，于是 $R^{-1}\subseteq S^{-1}$。因此
+  \[
+  s(R)=R\cup R^{-1}\subseteq S\cup S^{-1}=s(S).
+  \]
+\end{solution}
+\end{exercise}
+
+\begin{exercise}[level=advanced]
+证明笛卡儿积的分配律
+  \[
+  A\times(B\cap C)=(A\times B)\cap(A\times C).
+  \]
+\begin{solution}
+任取序偶 $(x,y)$，则
+  \[
+  \begin{aligned}
+  (x,y)\in A\times(B\cap C)
+  &\Longleftrightarrow x\in A\ \text{且}\ y\in B\cap C\\
+  &\Longleftrightarrow x\in A\ \text{且}\ y\in B\ \text{且}\ y\in C\\
+  &\Longleftrightarrow (x,y)\in A\times B\ \text{且}\ (x,y)\in A\times C\\
+  &\Longleftrightarrow (x,y)\in(A\times B)\cap(A\times C).
+  \end{aligned}
+  \]
+  故等式成立。
+\end{solution}
+\end{exercise}
+
+\begin{exercise}[level=advanced]
+设 $R$ 是 $X$ 上的关系。用集合表达式证明：$R$ 反对称当且仅当 $R\cap R^{-1}\subseteq I_X$。
+\begin{solution}
+若 $R$ 反对称，任取 $(x,y)\in R\cap R^{-1}$，则 $(x,y)\in R$ 且 $(y,x)\in R$，由反对称性得 $x=y$，故 $(x,y)\in I_X$，于是 $R\cap R^{-1}\subseteq I_X$。反过来，若 $R\cap R^{-1}\subseteq I_X$，且 $(x,y),(y,x)\in R$，则 $(x,y)\in R\cap R^{-1}$，从而 $(x,y)\in I_X$，故 $x=y$，所以 $R$ 反对称。
+\end{solution}
+\end{exercise}
+
+\begin{exercise}[level=advanced]
+举例说明两个传递关系的并不一定传递。
+\begin{solution}
+取 $X=\set{1,2,3}$，
+  \[
+  R=\set{(1,2)},\qquad S=\set{(2,3)}.
+  \]
+  这两个关系都传递，因为各自不存在可连接的两步链。但
+  \[
+  R\cup S=\set{(1,2),(2,3)}
+  \]
+  中有 $(1,2)$ 与 $(2,3)$，却没有 $(1,3)$，故 $R\cup S$ 不传递。
+\end{solution}
+\end{exercise}
+
+\begin{exercise}[level=advanced]
+设 $X=\set{1,2,3}$，$R=\set{(1,2),(2,3)}$。求 $s(R)$，并判断 $s(R)$ 是否传递；再求 $t(s(R))$。
+\begin{solution}
+\[
+  s(R)=\set{(1,2),(2,1),(2,3),(3,2)}.
+  \]
+  它不传递，因为 $(1,2),(2,1)\in s(R)$，但 $(1,1)\notin s(R)$。从图上看，$1,2,3$ 在无向路径中连通，传递闭包会补出所有同一连通块内的有序对，因此
+  \[
+  t(s(R))=X\times X.
+  \]
+\end{solution}
+\end{exercise}
+
+\begin{exercise}[level=advanced]
+设 $X=\set{a,b,c}$，$R=\set{(a,b),(b,c),(c,a)}$。计算 $R^0,R^1,R^2,R^3$，说明关系幂序列的周期。
+\begin{solution}
+$R^0=I_X=\set{(a,a),(b,b),(c,c)}$，
+  \[
+  R^1=\set{(a,b),(b,c),(c,a)}.
+  \]
+  沿有向环走两步得到
+  \[
+  R^2=\set{(a,c),(b,a),(c,b)}.
+  \]
+  沿有向环走三步回到自身，故
+  \[
+  R^3=I_X=R^0.
+  \]
+  因而 $R^{k+3}=R^k$，关系幂序列以 $3$ 为周期循环。
+\end{solution}
+\end{exercise}
+
+\begin{exercise}[level=advanced]
+设 $X=\set{1,2,3}$，$Y=\set{a,b}$。判断下列关系是否为从 $X$ 到 $Y$ 的函数：
+  \[
+  R_1=\set{(1,a),(2,a),(3,b)},\quad
+  R_2=\set{(1,a),(1,b),(2,a),(3,b)},\quad
+  R_3=\set{(1,a),(2,b)}.
+  \]
+\begin{solution}
+$R_1$ 是函数，因为 $1,2,3$ 各恰好出现一次作为第一分量。$R_2$ 不是函数，因为 $1$ 同时对应 $a$ 与 $b$。$R_3$ 不是从 $X$ 到 $Y$ 的函数，因为 $3\in X$ 没有像。
+\end{solution}
+\end{exercise}
+
+\begin{exercise}[level=advanced]
+设 $f:\Z\to\Z$，$f(n)=2n+1$。判断 $f$ 是否单射、是否满射。若把陪域改为奇整数集，结论如何？
+\begin{solution}
+若 $f(m)=f(n)$，则 $2m+1=2n+1$，从而 $m=n$，故 $f$ 单射。作为 $\Z\to\Z$ 的函数，它不是满射，因为偶数没有原像。若陪域改为奇整数集，则每个奇整数 $2k+1$ 的原像为 $k$，故 $f:\Z\to\set{2k+1\mid k\in\Z}$ 是双射。
+\end{solution}
+\end{exercise}
+
+\begin{exercise}[level=advanced]
+设 $f:\R\to\R$，$f(x)=x+1$，$g:\R\to\R$，$g(x)=x^2$。分别求 $g\circ f$ 与 $f\circ g$，并说明函数复合是否交换。
+\begin{solution}
+\[
+  (g\circ f)(x)=g(x+1)=(x+1)^2,\qquad
+  (f\circ g)(x)=f(x^2)=x^2+1.
+  \]
+  两者一般不同，例如在 $x=1$ 处分别为 $4$ 与 $2$，故函数复合一般不交换。
+\end{solution}
+\end{exercise}
+
+\begin{exercise}[level=advanced]
+设 $\card X=4,\card Y=6$。求从 $X$ 到 $Y$ 的函数个数、单射个数；若 $\card X=\card Y=4$，求双射个数。
+\begin{solution}
+函数个数为 $6^4=1296$。单射个数为
+  \[
+  6\cdot5\cdot4\cdot3=360.
+  \]
+  当 $\card X=\card Y=4$ 时，双射个数为 $4!=24$。
+\end{solution}
+\end{exercise}
+
+\begin{exercise}[level=advanced]
+在 $\Z_4=\set{0,1,2,3}$ 上定义 $a*_4b$ 为 $a+b$ 除以 $4$ 的余数。写出 $*_4$ 的单位元，并求每个元素的逆元。
+\begin{solution}
+$*_4$ 是模 $4$ 加法。单位元为 $0$，因为 $0*_4a=a*_40=a$。逆元由 $a*_4b=0$ 决定：
+  \[
+  0^{-1}=0,\qquad 1^{-1}=3,\qquad 2^{-1}=2,\qquad 3^{-1}=1.
+  \]
+\end{solution}
+\end{exercise}
+
+\begin{exercise}[level=advanced]
+判断 $\pow(U)$ 上的运算 $\cup,\cap,\oplus$ 是否满足幂等律，并分别说明其单位元。
+\begin{solution}
+$\cup$ 与 $\cap$ 满足幂等律，因为 $A\cup A=A$、$A\cap A=A$。$\oplus$ 不满足幂等律，除非 $A=\varnothing$，因为 $A\oplus A=\varnothing$。$\cup$ 的单位元是 $\varnothing$，$\cap$ 的单位元是 $U$，$\oplus$ 的单位元是 $\varnothing$。
+\end{solution}
+\end{exercise}
+
+\begin{exercise}[level=advanced]
+证明：若 $A$ 是无限集，则 $A$ 含有一个可列无限子集。
+\begin{solution}
+从 $A$ 中任选一个元素 $a_0$。由于 $A$ 无限，$A-\set{a_0}$ 非空；再取 $a_1$。递归地，若已取互异元素 $a_0,\ldots,a_n$，有限集 $\set{a_0,\ldots,a_n}$ 不可能等于无限集 $A$，故可取
+  \[
+  a_{n+1}\in A-\set{a_0,\ldots,a_n}.
+  \]
+  于是 $\set{a_0,a_1,a_2,\ldots}$ 是 $A$ 的可列无限子集。
+\end{solution}
+\end{exercise}
+
+\begin{exercise}[level=advanced]
+证明：$\N\times\N$ 可列，并由此说明所有正有理数构成的集合可列。
+\begin{solution}
+按和 $i+j$ 从小到大排列 $(i,j)\in\N\times\N$，同一条对角线上只有有限多个点。例如
+  \[
+  (0,0),(1,0),(0,1),(2,0),(1,1),(0,2),\ldots
+  \]
+  这样每个有序对都会在第 $i+j$ 层出现，故 $\N\times\N$ 可列。每个正有理数可写成 $p/q$，其中 $p,q\in\N^+$，故正有理数集是 $\N^+\times\N^+$ 的像；可列集的像至多可列，又它包含 $\N^+$，所以为可列无限集。
+\end{solution}
+\end{exercise}
+
+\begin{exercise}[level=advanced]
+证明：$(0,1)$ 中的无理数集合不可列。
+\begin{solution}
+设 $I=(0,1)$ 中无理数集合可列。由于 $I$ 中有理数集合可列，两者并集
+  \[
+  (0,1)=(I\cap\Q)\cup(I-\Q)
+  \]
+  就是两个可列集的并，因而可列。这与 $(0,1)$ 不可列矛盾，故 $(0,1)$ 中无理数集合不可列。
+\end{solution}
+\end{exercise}
+
+\begin{exercise}[level=advanced]
+用 Schröder--Bernstein 定理证明 $(0,1)$ 与 $[0,1]$ 等势。
+\begin{solution}
+包含映射 $i:(0,1)\to[0,1]$ 是单射。另一方面
+  \[
+  f:[0,1]\to(0,1),\qquad f(x)=\frac{x+1}{3}
+  \]
+  是单射，因为 $x_1\ne x_2$ 时 $f(x_1)\ne f(x_2)$，且值域包含在 $(1/3,2/3)\subset(0,1)$。两个方向都有单射，由 Schröder--Bernstein 定理可得 $(0,1)\sim[0,1]$。
+\end{solution}
+\end{exercise}
+
+\begin{exercise}[level=advanced]
+设 $A$ 为任意集合。证明不存在从 $A$ 到 $\pow(A)$ 的满射。
+\begin{solution}
+假设存在满射 $f:A\to\pow(A)$。定义
+  \[
+  D=\set{x\in A\mid x\notin f(x)}.
+  \]
+  因为 $D\subseteq A$，满射性给出某个 $d\in A$ 使 $f(d)=D$。若 $d\in D$，则按 $D$ 的定义有 $d\notin f(d)=D$；若 $d\notin D$，则按定义有 $d\in f(d)=D$。矛盾。因此不存在这样的满射。
+\end{solution}
+\end{exercise}
+
+\begin{exercise}[level=advanced]
+判断正误并给出理由：若 $A$ 是可列集，则 $\pow(A)$ 也是可列集。
+\begin{solution}
+错。若 $A$ 可列无限，则 $\card A=\aleph_0$，而 Cantor 定理给出
+  \[
+  \card A<\card{\pow(A)}.
+  \]
+  特别地，$\pow(\N)$ 不可列，且 $\card{\pow(\N)}=\aleph$。若 $A$ 是有限集，则 $\pow(A)$ 才是有限集。
+\end{solution}
+\end{exercise}
+
+\begin{exercise}[level=advanced]
+设 $f:X\to Y$，$A_1,A_2\subseteq X$，$B_1,B_2\subseteq Y$。证明
+  \[
+  f[A_1\cup A_2]=f[A_1]\cup f[A_2],\qquad
+  f^{-1}[B_1\cap B_2]=f^{-1}[B_1]\cap f^{-1}[B_2].
+  \]
+  再举例说明 $f[A_1\cap A_2]=f[A_1]\cap f[A_2]$ 不一定成立。
+\begin{solution}
+任取 $y$，
+  \[
+  \begin{aligned}
+  y\in f[A_1\cup A_2]
+  &\Longleftrightarrow \exists x\in A_1\cup A_2,\ y=f(x)\\
+  &\Longleftrightarrow (\exists x\in A_1,\ y=f(x))\ \text{或}\ (\exists x\in A_2,\ y=f(x))\\
+  &\Longleftrightarrow y\in f[A_1]\cup f[A_2].
+  \end{aligned}
+  \]
+  任取 $x$，
+  \[
+  \begin{aligned}
+  x\in f^{-1}[B_1\cap B_2]
+  &\Longleftrightarrow f(x)\in B_1\cap B_2\\
+  &\Longleftrightarrow f(x)\in B_1\ \text{且}\ f(x)\in B_2\\
+  &\Longleftrightarrow x\in f^{-1}[B_1]\cap f^{-1}[B_2].
+  \end{aligned}
+  \]
+  反例：令 $X=\set{1,2}$，$Y=\set a$，$f(1)=f(2)=a$，$A_1=\set1$，$A_2=\set2$。则 $A_1\cap A_2=\varnothing$，所以 $f[A_1\cap A_2]=\varnothing$，但
+  \[
+  f[A_1]\cap f[A_2]=\set a.
+  \]
+\end{solution}
+\end{exercise}
+
+\begin{exercise}[level=advanced]
+设 $R$ 是 $X$ 上的等价关系，$\pi:X\to X/R$，$\pi(x)=[x]_R$。证明 $\pi$ 是满射，并说明 $\pi$ 何时为单射。
+\begin{solution}
+对任意等价类 $[x]_R\in X/R$，都有 $\pi(x)=[x]_R$，故 $\pi$ 是满射。若 $\pi$ 是单射，且 $xRy$，则 $[x]_R=[y]_R$，即 $\pi(x)=\pi(y)$，由单射性得 $x=y$，所以 $R$ 只能是恒等关系。反过来，若 $R=I_X$，则每个等价类都是单点集，$\pi(x)=\pi(y)$ 蕴含 $x=y$，故 $\pi$ 是单射。
+\end{solution}
+\end{exercise}
+
+\begin{exercise}[level=advanced]
+设 $f:X\to Y$、$g:Y\to Z$。证明若 $g\circ f$ 是单射，则 $f$ 必为单射；若 $g\circ f$ 是满射，则 $g$ 必为满射。分别举例说明不能推出 $g$ 单射或 $f$ 满射。
+\begin{solution}
+若 $f(x_1)=f(x_2)$，则
+  \[
+  (g\circ f)(x_1)=g(f(x_1))=g(f(x_2))=(g\circ f)(x_2).
+  \]
+  由 $g\circ f$ 单射得 $x_1=x_2$，故 $f$ 单射。若 $z\in Z$，由 $g\circ f$ 满射，存在 $x\in X$ 使 $g(f(x))=z$。令 $y=f(x)$，则 $g(y)=z$，故 $g$ 满射。
+
+  不能推出 $g$ 单射：取 $X=\set1$，$Y=\set{a,b}$，$Z=\set0$，$f(1)=a$，$g(a)=g(b)=0$。则 $g\circ f$ 是从单点集到单点集的单射，但 $g$ 不是单射。不能推出 $f$ 满射：取 $X=\set1$，$Y=\set{a,b}$，$Z=\set0$，$f(1)=a$，$g(a)=g(b)=0$。则 $g\circ f$ 满射到 $Z$，但 $f$ 不是满射到 $Y$。
+\end{solution}
+\end{exercise}
+
+\begin{exercise}[level=advanced]
+证明 $\pow(A)$ 与 $\set{0,1}^A$ 等势。
+\begin{solution}
+定义
+  \[
+  \Phi:\pow(A)\to\set{0,1}^A,\qquad \Phi(B)=\chi_B.
+  \]
+  若 $B_1\ne B_2$，则存在 $x\in A$ 使 $x$ 属于其中一个而不属于另一个，于是 $\chi_{B_1}(x)\ne\chi_{B_2}(x)$，故 $\Phi$ 单射。任取 $h\in\set{0,1}^A$，令
+  \[
+  B_h=\set{x\in A\mid h(x)=1}.
+  \]
+  则 $\chi_{B_h}=h$，故 $\Phi$ 满射。因此 $\Phi$ 是双射，$\pow(A)\sim\set{0,1}^A$。
+\end{solution}
+\end{exercise}
+

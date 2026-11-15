@@ -1,0 +1,734 @@
+% libre-compendium
+%
+% Copyright (C) 2026 Richard Qin
+%
+% This document is dual-licensed under either:
+% - GNU Free Documentation License, Version 1.3 or any later version
+%   published by the Free Software Foundation, with no Invariant Sections,
+%   no Front-Cover Texts, and no Back-Cover Texts (see COPYING.DOC); or
+% - Creative Commons Attribution-ShareAlike 4.0 International License
+%   (see LICENSE-CC-BY-SA-4.0).
+
+\chapter{二元关系}
+
+\section{关系}
+
+集合中的元素没有顺序，序偶则记录先后位置。关系一章从“哪些有序对象被选中”出发，把生活中的同学关系、数的大小关系、集合包含关系等统一为集合论对象。
+
+\begin{definition}[序偶与笛卡儿积]\label{ch2-ordered-product}
+由两个对象 $x,y$ 按顺序组成的对象称为序偶，记为 $(x,y)$。序偶满足
+\[
+  (x,y)=(u,v)\quad\Longleftrightarrow\quad x=u\ \text{且}\ y=v.
+\]
+设 $A,B$ 是集合，所有第一分量属于 $A$、第二分量属于 $B$ 的序偶组成的集合称为 $A$ 与 $B$ 的笛卡儿积：
+\[
+  A\times B=\set{(x,y)\mid x\in A,\ y\in B}.
+\]
+\end{definition}
+
+一般 $A\times B\ne B\times A$。例如 $A=\set1,B=\set2$ 时，$A\times B=\set{(1,2)}$，$B\times A=\set{(2,1)}$。若 $\card A=m,\card B=n$，则 $\card{A\times B}=mn$。
+
+\begin{theorem}[笛卡儿积的运算性质]\label{ch2-cartesian-laws}
+对任意集合 $A,B,C,D$，有：
+\[
+A\times\varnothing=\varnothing,\qquad \varnothing\times A=\varnothing,
+\]
+\[
+A\times(B\cup C)=(A\times B)\cup(A\times C),
+\]
+\[
+A\times(B\cap C)=(A\times B)\cap(A\times C),
+\]
+\[
+(B\cup C)\times A=(B\times A)\cup(C\times A),
+\]
+\[
+(B\cap C)\times A=(B\times A)\cap(C\times A).
+\]
+若 $A\subseteq C$ 且 $B\subseteq D$，则 $A\times B\subseteq C\times D$。
+\end{theorem}
+
+\begin{proof}
+以 $A\times(B\cup C)=(A\times B)\cup(A\times C)$ 为例。任取序偶 $(x,y)$，则
+\[
+\begin{aligned}
+(x,y)\in A\times(B\cup C)
+&\Longleftrightarrow x\in A\ \text{且}\ y\in B\cup C\\
+&\Longleftrightarrow x\in A\ \text{且}\ (y\in B\ \text{或}\ y\in C)\\
+&\Longleftrightarrow (x\in A\ \text{且}\ y\in B)\ \text{或}\ (x\in A\ \text{且}\ y\in C)\\
+&\Longleftrightarrow (x,y)\in(A\times B)\cup(A\times C).
+\end{aligned}
+\]
+其他等式同理。包含性由 $x\in A\Rightarrow x\in C$ 与 $y\in B\Rightarrow y\in D$ 直接得到。
+\end{proof}
+
+\begin{pitfall}[笛卡儿积不满足普通结合律]\label{ch2-cartesian-assoc-pitfall}
+一般 $(A\times B)\times C\ne A\times(B\times C)$。前者元素形如 $((a,b),c)$，后者元素形如 $(a,(b,c))$，二者的括号层次不同。若要研究三元组，通常直接写 $A\times B\times C$ 并约定其元素为 $(a,b,c)$。
+\end{pitfall}
+
+\begin{definition}[$n$ 元关系与二元关系]\label{ch2-relation}
+设 $A_1,\ldots,A_n$ 是集合，$A_1\times\cdots\times A_n$ 的任一子集称为从 $A_1,\ldots,A_n$ 上定义的 $n$ 元关系。特别地，$A\times B$ 的任一子集称为从 $A$ 到 $B$ 的二元关系。若 $A=B=X$，则称它为 $X$ 上的二元关系。
+\end{definition}
+
+若 $(x,y)\in R$，也写作 $xRy$，读作 $x$ 与 $y$ 有关系 $R$。若 $(x,y)\notin R$，写作 $x\not R y$。在有限集合上，二元关系可以直接列举为序偶集合。
+
+\begin{theorem}[有限集上关系的个数]\label{ch2-relation-count}
+若 $\card A=m,\card B=n$，则从 $A$ 到 $B$ 的二元关系共有
+\[
+  2^{mn}
+\]
+个。特别地，$n$ 元集合 $X$ 上的二元关系共有 $2^{n^2}$ 个。
+\end{theorem}
+
+\begin{proof}
+二元关系是 $A\times B$ 的任一子集，而 $\card{A\times B}=mn$。一个含 $mn$ 个元素的集合有 $2^{mn}$ 个子集，故关系个数为 $2^{mn}$。
+\end{proof}
+
+\begin{definition}[特殊关系、定义域和值域]\label{ch2-special-relations}
+设 $R\subseteq A\times B$。空关系为 $\varnothing$，全关系为 $A\times B$。当 $A=B=X$ 时，恒等关系为
+\[
+  I_X=\set{(x,x)\mid x\in X}.
+\]
+关系 $R$ 的定义域和值域分别为
+\[
+  \dom(R)=\set{x\in A\mid \exists y\in B,\ (x,y)\in R},
+\]
+\[
+  \ran(R)=\set{y\in B\mid \exists x\in A,\ (x,y)\in R}.
+\]
+\end{definition}
+
+\begin{example}[title={列举关系并求定义域和值域}]\label{ch2-relation-list}
+设 $A=\set{1,2,3}$，$B=\set{a,b}$，
+\[
+  R=\set{(1,a),(2,a),(2,b)}\subseteq A\times B.
+\]
+求 $\dom(R)$ 与 $\ran(R)$。
+\begin{solution}
+出现在第一分量中的元素为 $1,2$，出现在第二分量中的元素为 $a,b$，故
+\[
+  \dom(R)=\set{1,2},\qquad \ran(R)=\set{a,b}.
+\]
+元素 $3\in A$ 没有与任何 $B$ 中元素组成属于 $R$ 的序偶，因此 $3\notin\dom(R)$。
+\end{solution}
+\end{example}
+
+由于关系是集合，两个同类型关系可以作并、交、差、补等集合运算。例如若 $R,S\subseteq A\times B$，则 $R\cup S,R\cap S,R-S,\overline R=(A\times B)-R$ 仍是从 $A$ 到 $B$ 的关系。
+
+关系的集合运算要在同一个笛卡儿积中进行。若 $R\subseteq A\times B$，$S\subseteq C\times D$ 且底集不同，直接写 $R\cup S$ 往往会混淆关系类型；实际使用时通常会先说明它们都是 $X$ 上的关系或都是从 $A$ 到 $B$ 的关系。
+
+\begin{definition}[集合上关系的五种性质]\label{ch2-relation-properties}
+设 $R$ 是集合 $X$ 上的二元关系。
+\begin{enumerate}
+  \item 自反性：$\forall x\in X,\ (x,x)\in R$；
+  \item 反自反性：$\forall x\in X,\ (x,x)\notin R$；
+  \item 对称性：$\forall x,y\in X,\ (x,y)\in R\Rightarrow (y,x)\in R$；
+  \item 反对称性：$\forall x,y\in X,\ (x,y)\in R\land(y,x)\in R\Rightarrow x=y$；
+  \item 传递性：$\forall x,y,z\in X,\ (x,y)\in R\land(y,z)\in R\Rightarrow (x,z)\in R$。
+\end{enumerate}
+\end{definition}
+
+自反与反自反互相排斥，除非 $X=\varnothing$。对称与反对称并不互为否定：恒等关系既对称又反对称；关系 $\set{(1,2),(2,1),(2,3)}$ 既不对称也不反对称。
+
+\begin{theorem}[反自反且传递推出反对称]\label{ch2-irref-trans-antisym}
+若 $R$ 是 $X$ 上反自反且传递的关系，则 $R$ 反对称。
+\end{theorem}
+
+\begin{proof}
+反对称性只需要排除 $x\ne y$ 时同时有 $(x,y)\in R$ 与 $(y,x)\in R$。若二者同时成立，由传递性得 $(x,x)\in R$，这与反自反性矛盾。因此当 $(x,y),(y,x)$ 都属于 $R$ 时只能有 $x=y$。
+\end{proof}
+
+\begin{method}[关系性质的判定入口]\label{ch2-property-method}
+判定关系性质时，应按定义寻找反例：
+\begin{enumerate}
+  \item 自反性检查所有 $(x,x)$ 是否都在 $R$ 中；
+  \item 对称性对每个非对角序偶 $(x,y)$ 检查反向序偶 $(y,x)$；
+  \item 反对称性只禁止 $x\ne y$ 时双向同时存在，不禁止自环；
+  \item 传递性检查所有可连接的两步链 $(x,y),(y,z)$ 是否补有 $(x,z)$。
+\end{enumerate}
+\end{method}
+
+\section{关系矩阵和关系图}
+
+有限集上的关系可以用矩阵和有向图表示。矩阵适合计算，关系图适合观察结构。
+
+\begin{definition}[关系矩阵]\label{ch2-relation-matrix}
+设 $A=\set{x_1,\ldots,x_m}$，$B=\set{y_1,\ldots,y_n}$，$R\subseteq A\times B$。$R$ 的关系矩阵为 $m\times n$ 的 $0$-$1$ 矩阵 $M_R=(a_{ij})$，其中
+\[
+  a_{ij}=
+  \begin{cases}
+  1, & (x_i,y_j)\in R,\\
+  0, & (x_i,y_j)\notin R.
+  \end{cases}
+\]
+\end{definition}
+
+当 $R$ 是 $X$ 上的关系时，矩阵是方阵，行列都按同一元素顺序排列。元素顺序改变，矩阵形式也改变，但关系本身不变。
+
+\begin{definition}[关系图]\label{ch2-relation-digraph}
+设 $R$ 是有限集 $X$ 上的关系。以 $X$ 中元素为结点；若 $(x,y)\in R$，则从结点 $x$ 向结点 $y$ 画一条有向弧。所得有向图称为 $R$ 的关系图。若 $(x,x)\in R$，则在结点 $x$ 处画自环。
+\end{definition}
+
+\lcfigure[caption={关系图},label={fig:relation-digraph}]{relation-digraph}
+
+关系图把五种性质直接转化为可见的局部结构：
+\[
+\begin{array}{c|l}
+\text{性质}&\text{关系图中的表现}\\ \hline
+\text{自反}&\text{每个结点都有自环}\\
+\text{反自反}&\text{所有结点都没有自环}\\
+\text{对称}&\text{每条 }x\to y\text{ 弧都配有反向弧 }y\to x\\
+\text{反对称}&\text{不同结点之间不允许同时出现 }x\to y\text{ 与 }y\to x\\
+\text{传递}&\text{每条两步路径 }x\to y\to z\text{ 都有捷径 }x\to z
+\end{array}
+\]
+自环不影响反对称性；反对称禁止的是\emph{不同结点}之间的双向弧。因此“图中有箭头”不能直接说明反对称或不反对称，必须检查是否存在两点之间的双向弧。
+
+\lcfigure[caption={关系性质的图示},label={fig:relation-property-digraphs}]{relation-property-digraphs}
+
+上图中的四个小图分别给出自反、反自反、对称、反对称与传递性的最小视觉模型。传递性并不要求每对结点都直接相连，只要求已经存在两步路径时必须补上端点间的直接弧。
+
+\begin{example}[title={由关系图逐项判定性质}]\label{ch2-digraph-example}
+图 \texttt{relation-digraph.tex} 表示关系
+\[
+R=\set{(1,1),(3,3),(1,2),(2,1),(2,3),(3,4),(1,4)}
+\]
+在 $X=\set{1,2,3,4}$ 上。判断它是否自反、反自反、对称、反对称、传递。
+\begin{solution}
+结点 $2,4$ 没有自环，故 $R$ 不自反；结点 $1,3$ 有自环，故 $R$ 不反自反。弧 $2\to3$ 没有反向弧 $3\to2$，故 $R$ 不对称。不同结点 $1,2$ 之间同时有 $1\to2$ 与 $2\to1$，故 $R$ 不反对称。
+
+又 $1\to2$ 与 $2\to3$ 构成两步路径，但没有 $1\to3$，因此 $R$ 不传递。$2\to3\to4$ 也会要求 $2\to4$；这说明判定传递性时必须检查全部两步路径。
+\end{solution}
+\end{example}
+
+\begin{theorem}[关系性质的矩阵与图判定]\label{ch2-matrix-graph-properties}
+设 $R$ 是有限集 $X=\set{x_1,\ldots,x_n}$ 上的关系，关系矩阵为 $M_R=(a_{ij})$。则：
+\begin{enumerate}
+  \item $R$ 自反 $\Longleftrightarrow$ 主对角线元素全为 $1$；
+  \item $R$ 反自反 $\Longleftrightarrow$ 主对角线元素全为 $0$；
+  \item $R$ 对称 $\Longleftrightarrow$ $M_R$ 是对称矩阵；
+  \item $R$ 反对称 $\Longleftrightarrow$ 对任意 $i\ne j$，不同时有 $a_{ij}=a_{ji}=1$；
+  \item $R$ 传递 $\Longleftrightarrow$ 布尔矩阵乘积满足 $M_R^2\le M_R$。
+\end{enumerate}
+\end{theorem}
+
+\begin{proof}
+图判定直接来自关系图的画法：自环对应 $(x,x)$，双向弧对应 $(x,y),(y,x)$，两步路径对应一对可复合序偶。矩阵判定中，前四条分别把这些结构记录在主对角线或关于主对角线的对称位置。第五条中，布尔乘积的第 $(i,k)$ 项为
+\[
+  (M_R^2)_{ik}=\bigvee_{j=1}^n(a_{ij}\wedge a_{jk}).
+\]
+它等于 $1$ 当且仅当存在 $x_j$ 使 $(x_i,x_j)\in R$ 且 $(x_j,x_k)\in R$。传递性要求此时 $(x_i,x_k)\in R$，即 $a_{ik}=1$，这正是 $M_R^2\le M_R$ 的含义。
+\end{proof}
+
+\begin{example}[title={用矩阵判定性质}]\label{ch2-matrix-example}
+设 $X=\set{1,2,3}$，
+\[
+M_R=\begin{pmatrix}
+1&1&0\\
+0&1&1\\
+0&0&1
+\end{pmatrix}.
+\]
+判断 $R$ 的自反性、对称性、反对称性和传递性。
+\begin{solution}
+主对角线全为 $1$，故自反。由于 $a_{12}=1$ 但 $a_{21}=0$，故不对称。对任意 $i\ne j$，没有 $a_{ij}=a_{ji}=1$ 的情况，故反对称。又 $(1,2),(2,3)\in R$，但 $(1,3)\notin R$，所以不传递。
+\end{solution}
+\end{example}
+
+\section{关系的运算}
+
+关系除了可以作集合运算，还可以作逆运算和复合运算。复合反映“先经一个关系，再经另一个关系”的可达性。
+
+\begin{definition}[逆关系]\label{ch2-inverse-relation}
+设 $R\subseteq A\times B$。$R$ 的逆关系定义为
+\[
+  R^{-1}=\set{(y,x)\mid (x,y)\in R}\subseteq B\times A.
+\]
+\end{definition}
+
+若 $R$ 的矩阵为 $M_R$，则 $R^{-1}$ 的矩阵为 $M_R$ 的转置。关系对称当且仅当 $R=R^{-1}$。
+
+\begin{theorem}[逆关系的运算律]\label{ch2-inverse-laws}
+设 $R,S\subseteq A\times B$，则
+\[
+  (R^{-1})^{-1}=R,\qquad
+  (R\cup S)^{-1}=R^{-1}\cup S^{-1},\qquad
+  (R\cap S)^{-1}=R^{-1}\cap S^{-1},
+\]
+\[
+  (R-S)^{-1}=R^{-1}-S^{-1},\qquad
+  \dom(R^{-1})=\ran(R),\qquad
+  \ran(R^{-1})=\dom(R).
+\]
+\end{theorem}
+
+\begin{proof}
+以并集为例，
+\[
+(y,x)\in(R\cup S)^{-1}
+\Longleftrightarrow (x,y)\in R\cup S
+\Longleftrightarrow (x,y)\in R\ \text{或}\ (x,y)\in S
+\]
+\[
+\Longleftrightarrow (y,x)\in R^{-1}\ \text{或}\ (y,x)\in S^{-1}
+\Longleftrightarrow (y,x)\in R^{-1}\cup S^{-1}.
+\]
+其余各式均由逆关系定义展开得到。
+\end{proof}
+
+\begin{definition}[关系复合]\label{ch2-composition}
+设 $R\subseteq A\times B$，$S\subseteq B\times C$。$R$ 与 $S$ 的复合定义为
+\[
+  R\circ S=\set{(x,z)\in A\times C\mid \exists y\in B,\ (x,y)\in R\land(y,z)\in S}.
+\]
+有些教材也把同一运算记作 $RS$；本讲义采用 $R\circ S$，表示先走 $R$，再走 $S$。
+\end{definition}
+
+\begin{example}[title={关系复合的计算}]\label{ch2-composition-example}
+设
+\[
+R=\set{(1,a),(1,b),(2,b)},\qquad
+S=\set{(a,u),(b,v),(b,w)}.
+\]
+求 $R\circ S$。
+\begin{solution}
+从 $1$ 经 $a$ 可到 $u$，经 $b$ 可到 $v,w$；从 $2$ 经 $b$ 可到 $v,w$。故
+\[
+  R\circ S=\set{(1,u),(1,v),(1,w),(2,v),(2,w)}.
+\]
+\end{solution}
+\end{example}
+
+\begin{theorem}[关系复合的性质]\label{ch2-composition-laws}
+在各复合有意义时，关系复合满足结合律：
+\[
+  (R\circ S)\circ T=R\circ(S\circ T).
+\]
+一般不满足交换律，即通常 $R\circ S\ne S\circ R$；并且
+\[
+  (R\circ S)^{-1}=S^{-1}\circ R^{-1}.
+\]
+\end{theorem}
+
+\begin{proof}
+$(x,w)\in (R\circ S)\circ T$ 当且仅当存在 $z$ 使 $(x,z)\in R\circ S$ 且 $(z,w)\in T$；这又等价于存在 $y,z$ 使 $(x,y)\in R,(y,z)\in S,(z,w)\in T$。同理，$(x,w)\in R\circ(S\circ T)$ 也等价于同一组条件，故结合律成立。逆关系公式由
+\[
+(w,x)\in (R\circ S)^{-1}
+\Longleftrightarrow (x,w)\in R\circ S
+\Longleftrightarrow \exists y\,[(x,y)\in R\land(y,w)\in S]
+\]
+\[
+\Longleftrightarrow \exists y\,[(w,y)\in S^{-1}\land(y,x)\in R^{-1}]
+\Longleftrightarrow (w,x)\in S^{-1}\circ R^{-1}
+\]
+得到。
+\end{proof}
+
+复合运算一般不交换。例如 $R=\set{(1,2)}$，$S=\set{(2,3)}$ 时，$R\circ S=\set{(1,3)}$，而 $S\circ R=\varnothing$。因此计算复合时必须保持“先 $R$ 后 $S$”的顺序。
+
+\begin{definition}[关系的像与逆像]\label{ch2-image-preimage}
+设 $R\subseteq A\times B$，$C\subseteq A$，$D\subseteq B$。$C$ 在 $R$ 下的像定义为
+\[
+  R[C]=\set{y\in B\mid \exists x\in C,\ (x,y)\in R}.
+\]
+$D$ 在 $R$ 下的逆像定义为
+\[
+  R^{-1}[D]=\set{x\in A\mid \exists y\in D,\ (x,y)\in R}.
+\]
+特别地，$\ran(R)=R[A]$，$\dom(R)=R^{-1}[B]$。
+\end{definition}
+
+像描述“从一批起点经关系能到达哪些终点”，逆像描述“哪些起点能经关系到达目标集合”。有了复合定义后，像可以解释复合的顺序：若 $R\subseteq A\times B$、$S\subseteq B\times C$，则
+\[
+  (R\circ S)[C_0]=S[R[C_0]]\qquad(C_0\subseteq A),
+\]
+即先取 $R$-像，再取 $S$-像。
+
+\begin{theorem}[关系性质的集合表达式刻画]\label{ch2-property-set-characterization}
+设 $R$ 是集合 $X$ 上的关系，$I_X$ 为恒等关系，则：
+\[
+\begin{array}{rcl}
+R\text{ 自反} &\Longleftrightarrow& I_X\subseteq R,\\
+R\text{ 反自反} &\Longleftrightarrow& R\cap I_X=\varnothing,\\
+R\text{ 对称} &\Longleftrightarrow& R=R^{-1},\\
+R\text{ 反对称} &\Longleftrightarrow& R\cap R^{-1}\subseteq I_X,\\
+R\text{ 传递} &\Longleftrightarrow& R\circ R\subseteq R.
+\end{array}
+\]
+\end{theorem}
+
+\begin{proof}
+自反性要求所有 $(x,x)$ 都在 $R$ 中，正是 $I_X\subseteq R$。反自反性要求 $R$ 不含任何对角序偶，即 $R\cap I_X=\varnothing$。对称性要求 $(x,y)\in R$ 与 $(y,x)\in R$ 等价，即 $R=R^{-1}$。反对称性只允许双向同时出现时位于对角线上，因此 $R\cap R^{-1}\subseteq I_X$。传递性要求每个两步可达的端点对都已在 $R$ 中，而 $R\circ R$ 正是所有两步可达端点对。
+\end{proof}
+
+这组刻画适合证明题。若关系用集合表达式给出，通常先把性质转化为包含关系或等式，再用集合运算律证明。
+
+\begin{theorem}[像与集合运算]\label{ch2-image-laws}
+设 $R\subseteq A\times B$，$C,D\subseteq A$。则
+\[
+R[C\cup D]=R[C]\cup R[D],
+\qquad
+R[C\cap D]\subseteq R[C]\cap R[D].
+\]
+对 $E,F\subseteq B$，逆像满足
+\[
+R^{-1}[E\cup F]=R^{-1}[E]\cup R^{-1}[F],
+\qquad
+R^{-1}[E\cap F]\subseteq R^{-1}[E]\cap R^{-1}[F].
+\]
+若 $R$ 是单射函数，则 $R[C\cap D]=R[C]\cap R[D]$；若 $R$ 是函数，则 $R^{-1}[E\cap F]=R^{-1}[E]\cap R^{-1}[F]$。
+\end{theorem}
+
+\begin{proof}
+并集像的等式由存在量词对析取的分配得到。交集像只保证包含：若 $y\in R[C\cap D]$，则存在同一个 $x\in C\cap D$ 使 $xRy$，故 $y$ 同时属于 $R[C]$ 与 $R[D]$。反向不一定成立，因为 $y$ 可能分别由 $C$ 中一个元素和 $D$ 中另一个元素到达。
+
+若 $R$ 是单射函数，且 $y\in R[C]\cap R[D]$，则存在 $x\in C$、$x'\in D$ 使 $R(x)=y=R(x')$。单射性给出 $x=x'$，故 $x\in C\cap D$，即 $y\in R[C\cap D]$。这就得到像的交集等式。
+
+对逆像，若 $R$ 是函数且 $x\in R^{-1}[E]\cap R^{-1}[F]$，则 $R(x)$ 同时属于 $E,F$，故属于 $E\cap F$，即 $x\in R^{-1}[E\cap F]$。结合已知包含式得到逆像的交集等式。
+\end{proof}
+
+\begin{pitfall}[一般关系的交集像不能随意取等号]\label{ch2-image-intersection-pitfall}
+设 $R=\set{(1,a),(2,a)}$，$C=\set1$，$D=\set2$。则 $C\cap D=\varnothing$，所以 $R[C\cap D]=\varnothing$；但 $R[C]\cap R[D]=\set a$。因此一般关系只满足 $R[C\cap D]\subseteq R[C]\cap R[D]$。
+\end{pitfall}
+
+\begin{definition}[关系的幂]\label{ch2-relation-powers}
+设 $R$ 是 $X$ 上的关系。定义
+\[
+  R^1=R,\qquad R^{n+1}=R^n\circ R\quad(n\ge1).
+\]
+约定 $R^0=I_X$。$R^n$ 表示可沿 $R$ 走 $n$ 步到达的点对。
+\end{definition}
+
+若用矩阵计算复合，则普通加法、乘法替换为布尔“或”“与”：
+\[
+  (M_{R\circ S})_{ik}=\bigvee_j\bigl((M_R)_{ij}\wedge(M_S)_{jk}\bigr).
+\]
+
+\begin{theorem}[关系幂的运算律]\label{ch2-power-laws}
+设 $R$ 是 $X$ 上的关系，$m,n$ 为非负整数，则
+\[
+  R^m\circ R^n=R^{m+n},\qquad
+  (R^m)^n=R^{mn}.
+\]
+\end{theorem}
+
+\begin{proof}
+第一式由幂的递归定义和复合结合律归纳得到：$R^m$ 表示走 $m$ 步，$R^n$ 表示再走 $n$ 步，合起来正是走 $m+n$ 步。第二式表示把长度为 $m$ 的路径段连续复合 $n$ 次，路径总长度为 $mn$。
+\end{proof}
+
+\begin{theorem}[有限集上关系幂的周期性]\label{ch2-power-periodic}
+设 $X$ 是有限集，$R$ 是 $X$ 上的关系。序列
+\[
+R^0,R^1,R^2,\ldots
+\]
+中必存在 $s<t$，使 $R^s=R^t$。一旦出现 $R^s=R^t$，令 $p=t-s$，则对任意 $k\ge0$ 都有
+\[
+  R^{s+k}=R^{s+k+p}.
+\]
+\end{theorem}
+
+\begin{proof}
+若 $\card X=n$，则 $X$ 上关系总数只有 $2^{n^2}$ 个，而 $R^0,R^1,R^2,\ldots$ 是无限序列，故必有两项相等。若 $R^s=R^t$，则
+\[
+R^{s+1}=R^s\circ R=R^t\circ R=R^{t+1}.
+\]
+反复右复合 $R$，由归纳法得 $R^{s+k}=R^{t+k}=R^{s+p+k}$。
+\end{proof}
+
+该结论用于高次幂化简。计算 $R^m$ 时，不必一直乘到 $m$；只要找出幂序列的循环节，就可以按周期把高次幂化为低次幂。
+
+\begin{method}[关系运算的矩阵公式]\label{ch2-relation-matrix-ops}
+若 $R,S\subseteq A\times B$ 且采用相同的行列顺序，则
+\[
+M_{R\cup S}=M_R\vee M_S,\qquad
+M_{R\cap S}=M_R\wedge M_S,\qquad
+M_{\overline R}=\overline{M_R},
+\]
+其中 $\vee,\wedge,\overline{\phantom M}$ 分别逐项作布尔或、布尔与、布尔非。若 $R\subseteq A\times B$，$S\subseteq B\times C$，则
+\[
+M_{R\circ S}=M_R\odot M_S,
+\]
+其中 $\odot$ 为布尔矩阵乘法。
+\end{method}
+
+\begin{theorem}[关系性质在运算下的保持性]\label{ch2-property-preservation}
+设 $R,S$ 是 $X$ 上的关系。
+\begin{enumerate}
+  \item 若 $R,S$ 都自反，则 $R\cup S$、$R\cap S$ 都自反；
+  \item 若 $R,S$ 都反自反，则 $R\cup S$、$R\cap S$ 都反自反；
+  \item 若 $R,S$ 都对称，则 $R\cup S$、$R\cap S$ 都对称；
+  \item 若 $R,S$ 都反对称，则 $R\cap S$ 反对称，但 $R\cup S$ 不一定反对称；
+  \item 若 $R,S$ 都传递，则 $R\cap S$ 传递，但 $R\cup S$ 不一定传递。
+\end{enumerate}
+\end{theorem}
+
+\begin{proof}
+前三条由定义逐项检查即可。对第四条，若 $(x,y),(y,x)\in R\cap S$，则二者都在 $R$ 中，由 $R$ 反对称得 $x=y$，故交仍反对称；并不保持的反例为 $R=\set{(1,2)}$，$S=\set{(2,1)}$，二者都反对称，但 $R\cup S$ 不反对称。对第五条，若 $(x,y),(y,z)\in R\cap S$，则二者都在 $R$ 且都在 $S$，传递性给出 $(x,z)$ 同时属于 $R,S$，故属于 $R\cap S$；并不保持的反例为 $R=\set{(1,2)}$，$S=\set{(2,3)}$，二者都传递，但 $R\cup S$ 中有 $(1,2),(2,3)$ 却无 $(1,3)$。
+\end{proof}
+
+\section{闭包运算}
+
+闭包是在给定关系中补入尽可能少的序偶，使它获得指定性质。关键词是“包含原关系”和“最小”。
+
+\begin{definition}[自反闭包、对称闭包、传递闭包]\label{ch2-closures}
+设 $R$ 是集合 $X$ 上的关系。
+\begin{enumerate}
+  \item 包含 $R$ 的最小自反关系称为 $R$ 的自反闭包，记为 $r(R)$；
+  \item 包含 $R$ 的最小对称关系称为 $R$ 的对称闭包，记为 $s(R)$；
+  \item 包含 $R$ 的最小传递关系称为 $R$ 的传递闭包，记为 $t(R)$ 或 $R^+$。
+\end{enumerate}
+\end{definition}
+
+\begin{theorem}[自反闭包与对称闭包公式]\label{ch2-rs-closures}
+设 $R$ 是 $X$ 上的关系，则
+\[
+  r(R)=R\cup I_X,\qquad s(R)=R\cup R^{-1}.
+\]
+\end{theorem}
+
+\begin{proof}
+$R\cup I_X$ 显然包含 $R$，且含有所有 $(x,x)$，故自反。若 $S$ 是任一包含 $R$ 的自反关系，则 $S$ 必含 $I_X$，也必含 $R\cup I_X$，故 $R\cup I_X$ 是最小自反关系。对称闭包同理：$R\cup R^{-1}$ 对称且包含 $R$；任一包含 $R$ 的对称关系必须同时包含每个反向序偶，即包含 $R^{-1}$。
+\end{proof}
+
+\begin{theorem}[闭包运算的基本性质]\label{ch2-closure-laws}
+设 $R,S$ 是 $X$ 上的关系，且 $R\subseteq S$。则
+\[
+  r(R)\subseteq r(S),\qquad s(R)\subseteq s(S),\qquad t(R)\subseteq t(S).
+\]
+此外，
+\[
+  r(r(R))=r(R),\qquad s(s(R))=s(R),\qquad t(t(R))=t(R).
+\]
+\end{theorem}
+
+\begin{proof}
+若 $R\subseteq S$，则任何包含 $S$ 且具有指定性质的关系也包含 $R$，因此从 $R$ 出发所需补入的最小关系不会超过从 $S$ 出发的闭包，得单调性。幂等性来自闭包定义：$r(R)$ 已经自反，再取自反闭包不会补入新序偶；对称闭包和传递闭包同理。
+\end{proof}
+
+\begin{theorem}[闭包与原有性质]\label{ch2-closure-fixed-preserve}
+设 $R$ 是 $X$ 上的关系，则
+\[
+R\text{ 自反}\Longleftrightarrow r(R)=R,\qquad
+R\text{ 对称}\Longleftrightarrow s(R)=R,\qquad
+R\text{ 传递}\Longleftrightarrow t(R)=R.
+\]
+此外：
+\begin{enumerate}
+  \item 若 $R$ 自反，则 $s(R)$ 与 $t(R)$ 仍自反；
+  \item 若 $R$ 对称，则 $r(R)$ 与 $t(R)$ 仍对称；
+  \item 若 $R$ 传递，则 $r(R)$ 仍传递，但 $s(R)$ 不一定传递。
+\end{enumerate}
+\end{theorem}
+
+\begin{proof}
+前三个充要条件直接来自闭包的“最小包含”定义：若 $R$ 已具有目标性质，则最小的包含 $R$ 且具有该性质的关系就是 $R$ 本身；反向显然。若 $R$ 自反，加入反向序偶或传递路径端点不会删除已有自环，故 $s(R),t(R)$ 自反。若 $R$ 对称，则 $R\cup I_X$ 对称；又对称关系的任意幂仍对称，所以 $t(R)=\bigcup_{k\ge1}R^k$ 对称。若 $R$ 传递，则 $R\cup I_X$ 仍传递；但对称闭包可能破坏传递性，例如 $X=\set{1,2,3}$，$R=\set{(1,3)}$ 是传递的，而 $s(R)=\set{(1,3),(3,1)}$ 中有 $(1,3),(3,1)$ 却无 $(1,1)$，故不传递。
+\end{proof}
+
+\begin{pitfall}[多个闭包同时要求时的顺序]\label{ch2-closure-order-pitfall}
+若要由 $R$ 构造同时自反、对称、传递的最小关系，不能随意交换闭包顺序。对称闭包可能破坏传递性，因此传递闭包通常应放在对称闭包之后；常用形式是
+\[
+  t\bigl(s(r(R))\bigr)
+\]
+或在已经不缺自环时使用 $t(s(R))$。
+\end{pitfall}
+
+\lcfigure[caption={传递闭包补边},label={fig:transitive-closure-path}]{transitive-closure-path}
+
+传递闭包补入的是路径可达关系。若已有 $aRb,bRc,cRd$，传递性迫使加入 $aRc,bRd,aRd$ 等序偶。图中的实线表示原关系，虚线表示由长度 $2$ 或 $3$ 的路径补出的关系。
+
+\begin{theorem}[有限集上传递闭包的幂表示]\label{ch2-transitive-closure}
+设 $\card X=n$，$R$ 是 $X$ 上的关系，则
+\[
+  t(R)=R\cup R^2\cup\cdots\cup R^n.
+\]
+若需要同时允许零步到达，则自反传递闭包为
+\[
+  R^*=I_X\cup R\cup R^2\cup\cdots\cup R^n.
+\]
+\end{theorem}
+
+\begin{proof}
+若 $(x,y)\in R^k$，则存在从 $x$ 到 $y$ 的长度为 $k$ 的 $R$-路径。任一传递且包含 $R$ 的关系必须包含所有长度为 $k\ge1$ 的路径端点对，故必须包含 $\bigcup_{k\ge1}R^k$。反过来，有限集上若一条从 $x$ 到 $y$ 的路径长度超过 $n$，路径中必有重复结点，删去重复结点之间的回路后可得到长度不超过 $n$ 的路径。因此所有可达端点对已包含在 $R\cup\cdots\cup R^n$ 中。该并集包含 $R$ 且对路径拼接封闭，故为传递闭包。
+\end{proof}
+
+\begin{method}[Warshall 算法求传递闭包]\label{ch2-warshall}
+设 $M$ 是 $R$ 的 $n$ 阶关系矩阵。对 $k=1,2,\ldots,n$ 依次更新
+\[
+  m_{ij}\leftarrow m_{ij}\vee(m_{ik}\wedge m_{kj}).
+\]
+第 $k$ 轮结束后，矩阵记录了允许中间结点只来自 $\set{x_1,\ldots,x_k}$ 的可达关系。全部轮次结束后得到 $t(R)$ 的关系矩阵。
+\end{method}
+
+\begin{pitfall}[闭包不是随意补边]\label{ch2-closure-pitfall}
+自反闭包只补缺失的自环；对称闭包只补缺失的反向序偶；传递闭包只补由已有路径强制产生的端点序偶。若补入额外序偶，所得关系可能仍有目标性质，但不再是“最小”闭包。
+\end{pitfall}
+
+\section{等价关系和相容关系}
+
+等价关系把集合中的元素按“彼此等价”分组；相容关系只要求能共同相容，不要求传递，因此得到的是覆盖而不一定是划分。
+
+\begin{definition}[覆盖与划分]\label{ch2-cover-partition}
+设 $X$ 是非空集合，$\mathcal A=\set{A_i\mid i\in I}$ 是 $X$ 的若干非空子集组成的集合族。若
+\[
+  \bigcup_{i\in I}A_i=X,
+\]
+则称 $\mathcal A$ 是 $X$ 的一个覆盖。若进一步对 $i\ne j$ 有 $A_i\cap A_j=\varnothing$，则称 $\mathcal A$ 是 $X$ 的一个划分。
+\end{definition}
+
+\begin{definition}[等价关系与等价类]\label{ch2-equivalence}
+集合 $X$ 上同时具有自反性、对称性和传递性的关系称为等价关系，常记为 $\sim$。设 $\sim$ 是 $X$ 上的等价关系，元素 $x$ 的等价类定义为
+\[
+  [x]=\set{y\in X\mid y\sim x}.
+\]
+所有等价类组成的集合称为商集，记为 $X/{\sim}$。
+\end{definition}
+
+\lcfigure[caption={等价类与划分},label={fig:equivalence-partition}]{equivalence-partition}
+
+图中每个小区域是一个等价类。等价类内部任意两个元素等价；不同等价类没有公共元素；所有等价类合起来正好是全集 $X$。
+
+\begin{theorem}[等价类的基本性质]\label{ch2-equivalence-class-laws}
+设 $\sim$ 是 $X$ 上的等价关系。对任意 $a,b\in X$：
+\[
+  a\in[a],\qquad
+  a\sim b\Longleftrightarrow [a]=[b],\qquad
+  [a]\cap[b]\ne\varnothing\Longrightarrow [a]=[b].
+\]
+\end{theorem}
+
+\begin{proof}
+由自反性得 $a\sim a$，故 $a\in[a]$。若 $a\sim b$，任取 $x\in[a]$，则 $x\sim a$；由 $a\sim b$ 和传递性得 $x\sim b$，故 $x\in[b]$，所以 $[a]\subseteq[b]$。反向同理，得 $[a]=[b]$。若 $[a]=[b]$，由于 $a\in[a]$，有 $a\in[b]$，即 $a\sim b$。若 $[a]\cap[b]\ne\varnothing$，取 $c$ 属于交集，则 $c\sim a$ 且 $c\sim b$，由对称性和传递性得 $a\sim b$，故 $[a]=[b]$。
+\end{proof}
+
+\begin{theorem}[等价关系与划分的对应]\label{ch2-equivalence-partition-theorem}
+集合 $X$ 上的任一等价关系唯一确定 $X$ 的一个划分；反过来，$X$ 的任一划分也唯一确定一个等价关系。
+\end{theorem}
+
+\begin{proof}
+由上一条定理，等价类非空、两两相同或不交，且每个元素属于自己的等价类，所以所有等价类构成 $X$ 的划分。反过来，设 $\mathcal P$ 是 $X$ 的划分。定义 $x\sim y$ 当且仅当 $x,y$ 属于 $\mathcal P$ 中同一个块。自反性来自每个元素属于某个块；对称性由“同一个块”本身对称；传递性来自划分块两两不交：若 $x,y$ 同块且 $y,z$ 同块，则这两个块都含 $y$，只能是同一个块，故 $x,z$ 同块。
+\end{proof}
+
+\begin{example}[title={模同余关系}]\label{ch2-congruence}
+设 $m$ 为正整数。在整数集 $\mathbb Z$ 上定义
+\[
+  a\equiv b\pmod m \quad\Longleftrightarrow\quad m\mid(a-b).
+\]
+证明它是等价关系，并写出模 $5$ 的等价类。
+\begin{solution}
+自反性：$m\mid(a-a)=0$。对称性：若 $m\mid(a-b)$，则 $m\mid(b-a)$。传递性：若 $m\mid(a-b)$ 且 $m\mid(b-c)$，则 $m\mid(a-c)=(a-b)+(b-c)$。故为等价关系。模 $5$ 的商集为
+\[
+\mathbb Z/{\equiv_5}=\set{[0],[1],[2],[3],[4]},
+\]
+其中 $[r]=\set{5k+r\mid k\in\mathbb Z}$。
+\end{solution}
+\end{example}
+
+\begin{definition}[相容关系与最大相容块]\label{ch2-compatibility}
+集合 $X$ 上具有自反性和对称性的关系称为相容关系。若 $C\subseteq X$ 中任意两个元素都相容，且不能再加入 $X-C$ 中任何元素而保持这一性质，则称 $C$ 为最大相容块。
+\end{definition}
+
+等价关系一定是相容关系，但相容关系不一定传递。例如在姓名集合上定义“两个姓名含有相同汉字”为关系，它自反、对称，但可能 $A$ 与 $B$ 有共同字，$B$ 与 $C$ 有共同字，而 $A$ 与 $C$ 没有共同字，因此不传递。相容关系的最大相容块可能相交，所以它们通常形成覆盖，而不是划分。
+
+\begin{method}[最大相容块的图判定]\label{ch2-compatible-block-method}
+有限集上的相容关系可改画为无向图：省略每个结点的自环，把一对互逆有向弧合并成一条无向边。最大相容块对应这个无向图中的极大完全子图，即块内任意两点都有边相连，并且不能再加入外部结点保持完全性。
+\end{method}
+
+“极大”不是“最大”。极大完全子图只表示不能继续扩张；最大完全子图还要求顶点数在所有完全子图中最多。教材中的最大相容块采用的是极大意义，即不能再加入新元素而保持两两相容。
+
+\begin{pitfall}[等价类与相容块的差别]\label{ch2-equivalence-compatibility-pitfall}
+等价类由传递性保证“碰到就合并”：两个等价类只要有交集就相等。最大相容块没有这个保证，不同相容块可以共享元素。把相容关系误当作等价关系，会把覆盖错误地写成划分。
+\end{pitfall}
+
+\section{偏序关系}
+
+偏序关系保留“大小、包含、整除”等单向比较结构，但不要求任意两个元素都可比较。
+
+\begin{definition}[偏序、偏序集与全序]\label{ch2-poset}
+集合 $X$ 上同时具有自反性、反对称性和传递性的关系称为偏序关系，常记为 $\preceq$。带有偏序关系的集合称为偏序集，记为 $(X,\preceq)$。若对任意 $x,y\in X$，总有 $x\preceq y$ 或 $y\preceq x$，则称该偏序为全序或线性序。
+\end{definition}
+
+实数集上的 $\le$ 是全序；幂集 $\pow(X)$ 上的包含关系 $\subseteq$ 是偏序，但当 $X$ 至少含两个元素时通常不是全序；正整数上的整除关系 $\mid$ 是偏序。
+
+\begin{definition}[严格偏序]\label{ch2-strict-poset}
+设 $(X,\preceq)$ 是偏序集。由 $\preceq$ 导出的严格偏序记为 $\prec$，定义为
+\[
+  x\prec y
+  \Longleftrightarrow
+  x\preceq y\ \text{且}\ x\ne y.
+\]
+等价地，严格偏序关系本身满足：
+\begin{enumerate}
+  \item 反自反性：对任意 $x\in X$，$x\not\prec x$；
+  \item 传递性：若 $x\prec y$ 且 $y\prec z$，则 $x\prec z$。
+\end{enumerate}
+反过来，若 $\prec$ 是反自反且传递的关系，则可定义
+\[
+  x\preceq y
+  \Longleftrightarrow
+  x\prec y\ \text{或}\ x=y,
+\]
+从而恢复一个偏序关系。
+\end{definition}
+
+严格偏序中的 $x\prec y$ 表示“$x$ 不大于 $y$，且二者不同”。例如在通常数序中 $x<y$ 是由 $x\le y$ 导出的严格偏序；在集合包含偏序中 $A\subsetneq B$ 是由 $A\subseteq B$ 导出的严格偏序；在整除偏序中 $a\mid b$ 且 $a\ne b$ 时写作 $a\prec b$。
+
+\begin{definition}[可比、覆盖与 Hasse 图]\label{ch2-cover-hasse}
+在偏序集 $(X,\preceq)$ 中，若 $x\preceq y$ 或 $y\preceq x$，称 $x,y$ 可比；否则不可比。若 $x\prec y$ 且不存在 $z$ 使 $x\prec z\prec y$，则称 $y$ 覆盖 $x$。
+
+Hasse 图用点表示元素，只画覆盖关系；自环、由传递性推出的边和箭头通常省略，并约定较大的元素画在较高位置。
+\end{definition}
+
+\lcfigure[caption={整除偏序的 Hasse 图},label={fig:hasse-divisibility}]{hasse-divisibility}
+
+图中偏序为整除关系。虽然 $1\mid6$、$2\mid12$、$3\mid18$ 都成立，但这些关系可由覆盖边传递推出，所以 Hasse 图不画对应边。$12$ 与 $18$ 不可比，因为 $12\nmid18$ 且 $18\nmid12$。
+
+\begin{definition}[极大元、极小元、最大元、最小元]\label{ch2-extreme-elements}
+设 $(X,\preceq)$ 是偏序集，$A\subseteq X$。
+\begin{enumerate}
+  \item $a\in A$ 是 $A$ 的极大元，若不存在 $x\in A$ 使 $a\prec x$；
+  \item $a\in A$ 是 $A$ 的极小元，若不存在 $x\in A$ 使 $x\prec a$；
+  \item $a\in A$ 是 $A$ 的最大元，若对任意 $x\in A$ 都有 $x\preceq a$；
+  \item $a\in A$ 是 $A$ 的最小元，若对任意 $x\in A$ 都有 $a\preceq x$。
+\end{enumerate}
+\end{definition}
+
+最大元若存在，则一定是极大元；最小元若存在，则一定是极小元。反向不一定成立。极大元只要求“没有更大的可比较元素”，最大元要求“比所有元素都大”。
+
+\begin{theorem}[最大元与最小元的唯一性]\label{ch2-greatest-unique}
+偏序集的任一子集最多只有一个最大元，最多只有一个最小元。
+\end{theorem}
+
+\begin{proof}
+若 $a,b$ 都是 $A$ 的最大元，则由 $a$ 最大得 $b\preceq a$，由 $b$ 最大得 $a\preceq b$。反对称性给出 $a=b$。最小元同理。
+\end{proof}
+
+\begin{theorem}[有限偏序集存在极大元和极小元]\label{ch2-finite-poset-extreme}
+任一非空有限偏序集至少有一个极大元，至少有一个极小元。
+\end{theorem}
+
+\begin{proof}
+取任意 $x_0\in X$。若它不是极大元，则存在 $x_1$ 使 $x_0\prec x_1$；若 $x_1$ 不是极大元，则存在 $x_2$ 使 $x_1\prec x_2$。由于集合有限，这个严格上升过程不能无限进行，否则会出现重复并与反对称性、严格性矛盾。因此最终到达某个不能再上升的元素，即极大元。极小元用严格下降过程同理证明。
+\end{proof}
+
+\begin{definition}[上下界、最小上界与最大下界]\label{ch2-bounds}
+设 $(X,\preceq)$ 是偏序集，$A\subseteq X$。若 $u\in X$ 满足对任意 $a\in A$ 都有 $a\preceq u$，则称 $u$ 为 $A$ 的上界；若 $l\in X$ 满足对任意 $a\in A$ 都有 $l\preceq a$，则称 $l$ 为 $A$ 的下界。所有上界中的最小元称为最小上界或上确界，记为 $\lub A$；所有下界中的最大元称为最大下界或下确界，记为 $\glb A$。
+\end{definition}
+
+上界、下界不要求属于 $A$；最大元、最小元必须属于 $A$。若 $A$ 的最大元存在，则它就是 $\lub A$，但 $\lub A$ 存在时不一定属于 $A$。
+
+\begin{definition}[良序]\label{ch2-well-order}
+若偏序集 $(X,\preceq)$ 是全序集，且 $X$ 的每个非空子集都有最小元，则称它为良序集。
+\end{definition}
+
+自然数集在通常的 $\le$ 下是良序集。实数开区间 $(0,1)$ 在通常的 $\le$ 下是全序集，但不是良序集，因为它自身没有最小元。
+
+\begin{example}[title={偏序元素判定}]\label{ch2-poset-example}
+在整除偏序 $X=\set{1,2,3,6,12,18}$ 中，求极大元、极小元、最大元、最小元，并求 $\set{2,3}$ 的上界。
+\begin{solution}
+由 Hasse 图可见，$12,18$ 上方没有元素，故为极大元；$1$ 下方没有元素，故为极小元。不存在同时被所有元素整除的集合内最大元素，因为 $12$ 与 $18$ 不可比；最小元为 $1$。$\set{2,3}$ 的上界是在 $X$ 中同时被 $2$ 和 $3$ 整除的元素，即 $\set{6,12,18}$，其中最小上界为 $6$。
+\end{solution}
+\end{example}
+
+\begin{pitfall}[极大元不是最大元]\label{ch2-maximal-greatest-pitfall}
+若一个偏序集中有两个不可比的顶层元素，它们都可以是极大元，但最大元不存在。判定最大元时必须逐一检查它是否与所有元素可比且不小于所有元素，不能只看它是否“在图上最高”。
+\end{pitfall}

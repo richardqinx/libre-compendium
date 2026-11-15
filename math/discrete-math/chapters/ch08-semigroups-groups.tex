@@ -1,0 +1,647 @@
+% libre-compendium
+%
+% Copyright (C) 2026 Richard Qin
+%
+% This document is dual-licensed under either:
+% - GNU Free Documentation License, Version 1.3 or any later version
+%   published by the Free Software Foundation, with no Invariant Sections,
+%   no Front-Cover Texts, and no Back-Cover Texts (see COPYING.DOC); or
+% - Creative Commons Attribution-ShareAlike 4.0 International License
+%   (see LICENSE-CC-BY-SA-4.0).
+
+\chapter{半群和群}
+
+\section{半群与含幺半群}
+
+\begin{definition}[半群与含幺半群]\label{semigroup-monoid}
+  设 $S$ 是非空集合，$*$ 是 $S$ 上的二元运算。若
+  \[
+  (a*b)*c=a*(b*c),\qquad a,b,c\in S,
+  \]
+  则称 $(S,*)$ 为半群。若半群中存在元素 $e$，使
+  \[
+  e*a=a*e=a,\qquad a\in S,
+  \]
+  则称 $(S,*)$ 为含幺半群，$e$ 称为单位元。
+\end{definition}
+
+\begin{theorem}[群的解方程判定]\label{group-equation-test}
+  设 $(G,*)$ 是半群。则 $(G,*)$ 是群，当且仅当对任意 $a,b\in G$，方程
+  \[
+  x*a=b,\qquad a*x=b
+  \]
+  都在 $G$ 中有解。
+\end{theorem}
+
+\begin{proof}
+  若 $G$ 是群，则 $x=b*a^{-1}$ 与 $x=a^{-1}*b$ 分别是两方程的解。反过来，固定 $a\in G$。由 $x*a=a$ 有解，取一解 $e_\ell$；由 $a*x=a$ 有解，取一解 $e_r$。任取 $y\in G$，可写成 $y=a*x$，于是
+  \[
+  e_\ell*y=e_\ell*(a*x)=(e_\ell*a)*x=a*x=y.
+  \]
+  同理，任取 $y\in G$ 可写成 $y=x*a$，故 $y*e_r=y$。于是 $e_\ell=e_\ell*e_r=e_r$，记为 $e$。再取 $u,v\in G$ 使 $u*a=e$、$a*v=e$，则
+  \[
+  u=u*e=u*(a*v)=(u*a)*v=e*v=v.
+  \]
+  故 $u$ 是 $a$ 的双侧逆元。$G$ 有单位元且每个元素有逆元，是群。
+\end{proof}
+
+半群只要求封闭性和结合律。含幺半群在此基础上增加单位元。交换律、逆元都不是半群定义的一部分。
+
+\begin{example}[title={典型半群}]\label{semigroup-examples}
+  \begin{enumerate}
+    \item $(\N^+,+)$ 是半群，但没有加法单位元；$(\N,\,+)$ 是含幺半群，单位元为 $0$。
+    \item $n$ 阶实矩阵全体对矩阵加法、矩阵乘法都分别构成含幺半群。
+    \item $X$ 上二元关系全体对关系复合构成含幺半群，单位元是恒等关系 $I_X$。
+    \item 集合 $X$ 上所有函数对复合构成含幺半群，单位元为恒等函数。
+    \item 字母表 $\Sigma$ 上全体字符串 $\Sigma^*$ 对拼接运算构成含幺半群，单位元为空串 $\varepsilon$；非空字符串集 $\Sigma^+$ 构成自由半群。
+    \item 设 $\Pi(X)$ 为集合 $X$ 的全体划分。两个划分的交取为它们的共同细化；两个划分的和取为同时不粗于二者的最细划分。二者都满足结合律和交换律。共同细化的单位元是仅含一个划分块 $X$ 的划分；划分和的单位元是每个元素单独成块的离散划分。
+  \end{enumerate}
+\end{example}
+
+\begin{pitfall}[运算表不能只看有没有单位元]\label{table-check-semigroup}
+  有限集合上的二元运算可由运算表给出。判断半群必须检查结合律；运算表中出现单位元只说明可能是含幺系统，不能替代结合律验证。若表中结果不在原集合内，则连二元运算都未定义好。
+\end{pitfall}
+
+\section{群、逆元与基本法则}
+
+\begin{definition}[群]\label{group}
+  代数系统 $(G,*)$ 称为群，若满足：
+  \begin{enumerate}
+    \item 结合律：$(a*b)*c=a*(b*c)$；
+    \item 单位元：存在 $e\in G$，使 $e*a=a*e=a$；
+    \item 逆元：对每个 $a\in G$，存在 $a^{-1}\in G$，使 $a*a^{-1}=a^{-1}*a=e$。
+  \end{enumerate}
+  若还满足 $a*b=b*a$，则称为阿贝尔群。
+\end{definition}
+
+\begin{definition}[群的阶]\label{group-order}
+  若群 $G$ 是有限集，则其元素个数 $\card G$ 称为 $G$ 的阶。
+\end{definition}
+
+\begin{theorem}[群中的唯一性与消去律]\label{group-basic-laws}
+  在群 $(G,*)$ 中，单位元唯一，每个元素的逆元唯一，且满足左右消去律：
+  \[
+  a*b=a*c\Longrightarrow b=c,\qquad b*a=c*a\Longrightarrow b=c.
+  \]
+\end{theorem}
+
+\begin{proof}
+  若 $e,e'$ 都是单位元，则 $e=e*e'=e'$。若 $b,c$ 都是 $a$ 的逆元，则
+  \[
+  b=b*e=b*(a*c)=(b*a)*c=e*c=c.
+  \]
+  若 $a*b=a*c$，左乘 $a^{-1}$ 得
+  \[
+  a^{-1}*(a*b)=a^{-1}*(a*c),
+  \]
+  由结合律化为 $b=c$。右消去同理。
+\end{proof}
+
+\begin{theorem}[有限群运算表的行列重排性质]\label{group-table-latin}
+  设 $G=\{g_1,\ldots,g_n\}$ 为有限群。对任意固定的 $a\in G$，集合
+  \[
+  aG=\{ag\mid g\in G\},\qquad Ga=\{ga\mid g\in G\}
+  \]
+  都等于 $G$。因此有限群的运算表中，每一行、每一列都是全体群元素的一个排列。
+\end{theorem}
+
+\begin{proof}
+  映射 $L_a:G\to G,\ L_a(g)=ag$ 是单射：若 $ag_1=ag_2$，由左消去律得 $g_1=g_2$。有限集到自身的单射必为满射，故 $aG=G$。同理右乘映射 $R_a(g)=ga$ 也是双射，故 $Ga=G$。
+\end{proof}
+
+\begin{pitfall}[行列重排只是必要条件]\label{group-table-necessary}
+  若一个有限运算表来自群，则每行每列都必须恰好出现一次全体元素。但这个条件不是充分条件；还必须检查结合律、单位元和逆元。实际做题时，行列重排常用于快速排除“不可能是群”的运算表。
+\end{pitfall}
+
+\begin{theorem}[乘积逆元与指数律]\label{inverse-power-laws}
+  在群中，
+  \[
+  (a*b)^{-1}=b^{-1}*a^{-1}.
+  \]
+  对 $a\in G$，定义 $a^0=e$，$a^{n+1}=a^n*a$，$a^{-n}=(a^{-1})^n$，则
+  \[
+  a^m*a^n=a^{m+n},\qquad (a^m)^n=a^{mn}.
+  \]
+\end{theorem}
+
+\begin{proof}
+  因为
+  \[
+  (a*b)*(b^{-1}*a^{-1})=a*(b*b^{-1})*a^{-1}=a*e*a^{-1}=e,
+  \]
+  同理 $(b^{-1}*a^{-1})*(a*b)=e$，故乘积逆元公式成立。指数律由结合律和逆元定义按整数情形分类验证。
+\end{proof}
+
+\begin{theorem}[可交换元素的幂]\label{commuting-power}
+  若 $a*b=b*a$，则对任意整数 $n$，
+  \[
+  (a*b)^n=a^n*b^n.
+  \]
+\end{theorem}
+
+\begin{proof}
+  当 $n\ge0$ 时对 $n$ 归纳。$n=0$ 时两边同为 $e$。若结论对 $n$ 成立，则
+  \[
+  (ab)^{n+1}=(ab)^n(ab)=a^nb^nab=a^{n+1}b^{n+1},
+  \]
+  其中 $b^na=ab^n$ 由 $ab=ba$ 反复使用得到。对 $n<0$，由
+  $ab=ba$ 得 $a^{-1}b^{-1}=b^{-1}a^{-1}$，再对
+  $(ab)^{-1}=b^{-1}a^{-1}=a^{-1}b^{-1}$ 使用非负整数情形即可。
+\end{proof}
+
+\begin{theorem}[群的直接积]\label{group-direct-product}
+  若 $(G,*)$ 与 $(H,\circ)$ 是群，在 $G\times H$ 上定义
+  \[
+  (g_1,h_1)\diamond(g_2,h_2)=(g_1*g_2,\ h_1\circ h_2),
+  \]
+  则 $(G\times H,\diamond)$ 是群。其单位元为 $(e_G,e_H)$，且
+  \[
+  (g,h)^{-1}=(g^{-1},h^{-1}).
+  \]
+\end{theorem}
+
+\begin{proof}
+  结合律逐坐标成立：
+  \[
+  ((g_1,h_1)\diamond(g_2,h_2))\diamond(g_3,h_3)
+  =(g_1*(g_2*g_3),\ h_1\circ(h_2\circ h_3)).
+  \]
+  这与另一种加括号方式相同。单位元和逆元也按分量验证：
+  \[
+  (e_G,e_H)\diamond(g,h)=(g,h)=(g,h)\diamond(e_G,e_H),
+  \]
+  \[
+  (g,h)\diamond(g^{-1},h^{-1})=(e_G,e_H)
+  =(g^{-1},h^{-1})\diamond(g,h).
+  \]
+\end{proof}
+
+\begin{theorem}[含幺半群的直接积]\label{monoid-direct-product}
+  若 $(S,*)$ 与 $(T,\circ)$ 是含幺半群，则在 $S\times T$ 上按分量定义的运算
+  \[
+  (s_1,t_1)\diamond(s_2,t_2)=(s_1*s_2,\ t_1\circ t_2)
+  \]
+  使 $S\times T$ 成为含幺半群；其单位元为 $(e_S,e_T)$。
+\end{theorem}
+
+\begin{proof}
+  封闭性和结合律都由两个分量的相应性质逐坐标得到。又
+  \[
+  (e_S,e_T)\diamond(s,t)=(e_S*s,e_T\circ t)=(s,t)
+  \]
+  且右侧同理，故 $(e_S,e_T)$ 为单位元。
+\end{proof}
+
+\section{元素的阶与循环群}
+
+\begin{definition}[元素的阶与循环群]\label{order-cyclic}
+  设 $(G,*)$ 为群。若存在最小正整数 $m$ 使 $a^m=e$，则称 $m$ 为 $a$ 的阶，记作 $\ord(a)=m$。若不存在这样的正整数，则称 $a$ 为无限阶元素。
+
+  若存在 $g\in G$ 使
+  \[
+  G=\langle g\rangle=\set{g^k\mid k\in\Z},
+  \]
+  则称 $G$ 为循环群，$g$ 称为生成元。
+\end{definition}
+
+\begin{theorem}[有限阶元素的不同幂]\label{distinct-powers}
+  若 $\ord(a)=m$，则
+  \[
+  e,a,a^2,\ldots,a^{m-1}
+  \]
+  两两不同，并且 $a^r=e$ 当且仅当 $m\mid r$。
+\end{theorem}
+
+\begin{proof}
+  若 $0\le i<j<m$ 且 $a^i=a^j$，左乘 $a^{-i}$ 得 $e=a^{j-i}$，其中 $0<j-i<m$，与 $m$ 的最小性矛盾。若 $r=qm+s$，$0\le s<m$，则 $a^r=(a^m)^q a^s=a^s$。因此 $a^r=e$ 当且仅当 $s=0$，即 $m\mid r$。
+\end{proof}
+
+\begin{theorem}[有限循环群中元素的阶]\label{cyclic-order}
+  若 $G=\langle g\rangle$ 且 $\card G=n$，则
+  \[
+  \ord(g^k)=\frac{n}{\gcd(n,k)}.
+  \]
+  因而 $g^k$ 是生成元当且仅当 $\gcd(n,k)=1$。
+\end{theorem}
+
+\begin{proof}
+  $(g^k)^t=e$ 当且仅当 $g^{kt}=e$，当且仅当 $n\mid kt$。使 $n\mid kt$ 的最小正整数 $t$ 为 $n/\gcd(n,k)$。当该阶等于 $n$ 时，$g^k$ 才能生成整个群，即 $\gcd(n,k)=1$。
+\end{proof}
+
+\begin{theorem}[循环群的子群结构]\label{cyclic-subgroups}
+  循环群的任意子群仍是循环群。若 $G=\langle g\rangle$ 是无限循环群，则其非平凡子群均形如 $\langle g^m\rangle$，其中 $m\in\N^+$。若 $G=\langle g\rangle$ 是 $n$ 阶循环群，则对 $n$ 的每个正因子 $d$，$G$ 恰有一个 $d$ 阶子群，即
+  \[
+  \left\langle g^{n/d}\right\rangle.
+  \]
+\end{theorem}
+
+\begin{proof}
+  设 $H\le \langle g\rangle$。若 $H=\{e\}$，结论显然。否则取所有使 $g^k\in H$ 的正整数 $k$ 中最小者，记为 $m$。任取 $g^r\in H$，作带余除法 $r=qm+s$，$0\le s<m$。由于 $g^r(g^m)^{-q}=g^s\in H$，由 $m$ 的最小性得 $s=0$，故 $g^r\in\langle g^m\rangle$。于是 $H=\langle g^m\rangle$。
+
+  有限情形中，$\left\langle g^{n/d}\right\rangle$ 的阶为 $d$。若 $H$ 是 $d$ 阶子群，则由前段 $H=\langle g^m\rangle$，而 $\ord(g^m)=d$ 等价于 $n/\gcd(n,m)=d$，这给出的子群正是 $\langle g^{n/d}\rangle$。
+\end{proof}
+
+\begin{example}[title={模加法群}]\label{zn-add-group}
+  同余类集合 $\Z_n$ 对模 $n$ 加法构成循环群，$[1]$ 是生成元。元素 $[k]$ 的阶为
+  \[
+  \frac{n}{\gcd(n,k)}.
+  \]
+  例如在 $\Z_6$ 中，$[1]$、$[5]$ 为生成元，而 $[2]$ 的阶为 $3$，$[3]$ 的阶为 $2$。
+\end{example}
+
+\begin{theorem}[模乘法中可逆同余类的判定]\label{unit-mod-n}
+  同余类 $[a]\in\Z_n$ 在模 $n$ 乘法下可逆，当且仅当 $\gcd(a,n)=1$。
+\end{theorem}
+
+\begin{proof}
+  若 $[a]$ 有逆元 $[b]$，则 $ab\equiv1\pmod n$，即存在整数 $q$ 使
+  $ab-nq=1$。$\gcd(a,n)$ 同时整除左边的两项，故只能为 $1$。反之，若
+  $\gcd(a,n)=1$，由 Bézout 等式可取整数 $u,v$ 使
+  \[
+  au+nv=1.
+  \]
+  因而 $au\equiv1\pmod n$，即 $[u]$ 是 $[a]$ 的逆元。
+\end{proof}
+
+\begin{example}[title={模乘法中的可逆同余类}]\label{units-mod-n}
+  模 $n$ 乘法下，$[0]$ 不可能有逆元。由上一定理，
+  \[
+  U(n)=\set{[a]\in\Z_n\mid \gcd(a,n)=1}
+  \]
+  中每个元素都有逆元。若 $[a],[b]\in U(n)$，则 $\gcd(ab,n)=1$，故
+  $[a][b]\in U(n)$；结合律和单位元 $[1]$ 从 $\Z_n$ 的模乘法继承。因此
+  $U(n)$ 在模 $n$ 乘法下构成群。例如 $U(5)=\{[1],[2],[3],[4]\}$，而
+  $U(6)=\{[1],[5]\}$；$\{[1],[2],[3],[4],[5]\}$ 在模 $6$ 乘法下不是群，
+  因为 $[2]$ 没有逆元。
+\end{example}
+
+\section{二面体群与置换群}
+
+二面体群来自正多边形的对称变换。对正三角形，旋转 $r$ 与翻折 $s$ 生成全部六个对称：
+\[
+D_3=\set{e,r,r^2,s,sr,sr^2}.
+\]
+
+\lcfigure[caption={二面体群 $D_3$ 的生成元},label={fig:d3-triangle}]{d3-triangle}
+
+\begin{definition}[二面体群]\label{dihedral}
+  正 $n$ 边形的全部对称变换在复合运算下构成二面体群 $D_n$。它有 $2n$ 个元素，并可由
+  \[
+  r^n=e,\qquad s^2=e,\qquad srs=r^{-1}
+  \]
+  描述，其中 $r$ 表示旋转 $2\pi/n$，$s$ 表示一次翻折。
+\end{definition}
+
+\begin{theorem}[二面体群的换序公式]\label{dihedral-reordering}
+  在 $D_n=\langle r,s\mid r^n=e,\ s^2=e,\ srs=r^{-1}\rangle$ 中，
+  \[
+  r^ks=sr^{-k},\qquad sr^k=r^{-k}s,\qquad k\in\Z.
+  \]
+\end{theorem}
+
+\begin{proof}
+  由 $srs=r^{-1}$ 右乘 $s$ 得 $sr=r^{-1}s$，左乘 $s$ 得
+  $rs=sr^{-1}$。对 $k\ge0$，由归纳法，
+  \[
+  r^{k+1}s=r^k(rs)=r^k(sr^{-1})=(r^ks)r^{-1}=sr^{-(k+1)}.
+  \]
+  对负整数，使用 $r^{-1}s=sr$ 并作同样归纳即可；另一式由第一式改写得到。
+\end{proof}
+
+\begin{definition}[置换群]\label{permutation-group}
+  集合 $S$ 到自身的双射称为 $S$ 上的置换。置换的乘积取函数复合：
+  \[
+  (\sigma\circ\tau)(x)=\sigma(\tau(x)),
+  \]
+  因而右端的置换先施行。若 $\card S=n$，则 $S$ 上全部置换在复合运算下构成对称群 $S_n$，其阶为 $n!$。
+\end{definition}
+
+\begin{theorem}[置换在复合下成群]\label{permutation-composition}
+  集合 $S$ 上任意两个置换的复合仍是置换，复合满足结合律；恒等映射为单位元，每个置换的逆映射为逆元。因此 $S$ 上全体置换构成群。
+\end{theorem}
+
+\begin{proof}
+  双射的复合仍为双射，故复合封闭；函数复合满足结合律。恒等映射与任意置换复合后不改变该置换。置换是双射，故其逆映射存在且仍为 $S$ 到自身的双射，满足 $\sigma\circ\sigma^{-1}=\sigma^{-1}\circ\sigma=I_S$。
+\end{proof}
+
+\begin{theorem}[Cayley 定理]\label{cayley}
+  任意有限群都同构于某个对称群的子群。
+\end{theorem}
+
+\begin{proof}
+  对每个 $a\in G$，定义左平移
+  \[
+  L_a:G\to G,\qquad L_a(x)=a*x.
+  \]
+  $L_a$ 是双射，其逆为 $L_{a^{-1}}$。映射 $\Phi:G\to S_G$，$\Phi(a)=L_a$ 满足
+  \[
+  \Phi(a*b)=L_{a*b}=L_a\circ L_b.
+  \]
+  若 $L_a=L_b$，作用于 $e$ 得 $a=b$，故 $\Phi$ 单射。因此 $G$ 同构于 $\Phi(G)$，后者是 $S_G$ 的子群。
+\end{proof}
+
+\section{子群、陪集、正规子群与群同态}
+
+\begin{definition}[子群]\label{subgroup}
+  设 $(G,*)$ 是群，其单位元为 $e$；$H$ 是 $G$ 的非空子集。把 $*$ 限制在
+  $H\times H$ 上。若
+  \[
+  e\in H,\qquad
+  a\in H\Longrightarrow a^{-1}\in H,\qquad
+  a,b\in H\Longrightarrow a*b\in H,
+  \]
+  则称 $(H,*)$ 为 $(G,*)$ 的\emph{子群}，记为
+  \[
+  H\le G.
+  \]
+  这里的结合律不必重复验证：它已由 $G$ 的结合律自动继承；三项条件分别保证
+  $H$ 保有母群的单位元、逆元和封闭性。
+\end{definition}
+
+\begin{example}[title={子群的基本例子}]\label{subgroup-examples}
+  \begin{enumerate}
+    \item 在加法群 $(\Z,+)$ 中，$m\Z=\{mk\mid k\in\Z\}$ 是子群；其中
+    $0\in m\Z$，$-mk=m(-k)\in m\Z$，且
+    $mk+m\ell=m(k+\ell)\in m\Z$。
+    \item 任意群 $G$ 都有两个必然存在的子群：
+    \[
+    \{e\}\le G,\qquad G\le G.
+    \]
+    前者称为平凡子群。
+    \item 在 $D_3=\{e,r,r^2,s,sr,sr^2\}$ 中，
+    \[
+    \langle r\rangle=\{e,r,r^2\}\le D_3,\qquad
+    \langle s\rangle=\{e,s\}\le D_3.
+    \]
+    两者分别由旋转和一次翻折生成。
+  \end{enumerate}
+\end{example}
+
+\begin{definition}[生成子群与群的中心]\label{generated-center}
+  设 $B\subseteq G$。包含 $B$ 的所有子群的交
+  \[
+  \langle B\rangle=\bigcap\{H\le G\mid B\subseteq H\}
+  \]
+  称为由 $B$ 生成的子群。特别地，$\langle a\rangle$ 是由单个元素 $a$ 生成的循环子群。
+
+  群 $G$ 的中心定义为
+  \[
+  Z(G)=\{a\in G\mid ax=xa,\ \forall x\in G\}.
+  \]
+\end{definition}
+
+\begin{theorem}[中心是子群]\label{center-subgroup}
+  对任意群 $G$，$Z(G)\le G$。若 $G$ 是阿贝尔群，则 $Z(G)=G$。
+\end{theorem}
+
+\begin{proof}
+  显然 $e\in Z(G)$。若 $a,b\in Z(G)$，对任意 $x\in G$，
+  \[
+  (ab^{-1})x=a(b^{-1}x)=a(xb^{-1})=(ax)b^{-1}=(xa)b^{-1}=x(ab^{-1}).
+  \]
+  故 $ab^{-1}\in Z(G)$，由子群判定法得 $Z(G)\le G$。若 $G$ 中任意两个元素可交换，则每个元素都与全体元素可交换，所以 $Z(G)=G$。
+\end{proof}
+
+群的所有子群按包含关系构成一个偏序集。对有限群，这个偏序集常画成 Hasse 图，称为子群格。它把“由哪些子群包含哪些子群”可视化。例如 $\Z_{12}$ 的加法群中，由 $[d]$ 生成的子群与 $12$ 的因子对应；Klein 四元群的三个 $2$ 阶子群都位于平凡子群与整个群之间。
+
+\begin{theorem}[子群判定法]\label{subgroup-test}
+  非空子集 $H\subseteq G$ 是子群，当且仅当
+  \[
+  \forall a,b\in H,\quad a*b^{-1}\in H.
+  \]
+\end{theorem}
+
+\begin{proof}
+  若 $H$ 是子群，则 $b^{-1}\in H$，由封闭性得 $a*b^{-1}\in H$。反过来，取 $a=b\in H$ 得 $e=a*a^{-1}\in H$；取 $a=e$ 得 $b^{-1}\in H$；再由 $a,b\in H$ 推出 $a*(b^{-1})^{-1}=a*b\in H$。故 $H$ 含单位元、含逆元且封闭，因而为子群。
+\end{proof}
+
+\begin{definition}[左陪集与右陪集]\label{left-right-cosets}
+  设 $H\le G$，$a\in G$。集合
+  \[
+  aH=\set{a*h\mid h\in H}
+  \]
+  称为 $H$ 关于 $a$ 的\emph{左陪集}；集合
+  \[
+  Ha=\set{h*a\mid h\in H}
+  \]
+  称为 $H$ 关于 $a$ 的\emph{右陪集}。左、右陪集中的 $a$ 是同一个固定的
+  群元素；它不要求属于 $H$。
+\end{definition}
+
+\begin{theorem}[陪集的元素判定]\label{coset-membership}
+  对任意 $x\in G$，
+  \[
+  x\in aH\Longleftrightarrow a^{-1}x\in H,
+  \qquad
+  x\in Ha\Longleftrightarrow xa^{-1}\in H.
+  \]
+\end{theorem}
+
+\begin{proof}
+  $x\in aH$ 当且仅当存在 $h\in H$ 使 $x=ah$，这又当且仅当
+  $a^{-1}x=h\in H$。右陪集的证明相同：$x=ha$ 当且仅当
+  $xa^{-1}=h\in H$。
+\end{proof}
+
+\begin{example}[title={左、右陪集可以不同}]\label{left-right-coset-example}
+  在二面体群
+  \[
+  D_3=\{e,r,r^2,s,sr,sr^2\}
+  \]
+  中取子群 $H=\langle s\rangle=\{e,s\}$。由 $rs=sr^{-1}=sr^2$，有
+  \[
+  rH=\{r,rs\}=\{r,sr^2\},
+  \qquad
+  Hr=\{r,sr\}.
+  \]
+  因为 $sr\ne sr^2$，所以 $rH\ne Hr$。因此在非交换群中，左陪集和右陪集
+  不能默认相同。
+\end{example}
+
+\begin{theorem}[陪集的判定与划分]\label{coset-partition}
+  设 $H\le G$，$a,b\in G$。则下列命题等价：
+  \[
+  aH=bH,\qquad aH\cap bH\ne\varnothing,\qquad a^{-1}b\in H.
+  \]
+  因而 $H$ 的所有左陪集构成 $G$ 的一个划分。
+\end{theorem}
+
+\begin{proof}
+  若 $aH=bH$，则 $b\in bH=aH$，故存在 $h\in H$ 使 $b=ah$，于是
+  $a^{-1}b=h\in H$。若 $a^{-1}b=h\in H$，则 $b=ah$，并且
+  \[
+  bH=(ah)H=a(hH)=aH,
+  \]
+  其中 $hH=H$，因为左乘 $h$ 是 $H$ 上的双射。显然相等的陪集有非空交。
+
+  最后，任意 $a\in G$ 都属于 $aH$，故所有左陪集的并为 $G$；若两个左陪集相交，
+  前述等价性说明它们相等。因此它们构成划分。
+\end{proof}
+
+\begin{definition}[子群的指数]\label{subgroup-index}
+  有限群 $G$ 中，子群 $H$ 的不同左陪集的个数称为 $H$ 在 $G$ 中的指数，记为
+  \[
+  [G:H].
+  \]
+\end{definition}
+
+\begin{theorem}[子群积判定]\label{subgroup-product-test}
+  若 $A,B\le G$，则集合
+  \[
+  AB=\set{ab\mid a\in A,\ b\in B}
+  \]
+  是 $G$ 的子群，当且仅当 $AB=BA$。
+\end{theorem}
+
+\begin{proof}
+  若 $AB$ 是子群，则对任意 $a\in A,b\in B$，有
+  \[
+  ba=(a^{-1}b^{-1})^{-1}\in AB,
+  \]
+  因为 $a^{-1}b^{-1}\in AB$ 且 $AB$ 对逆元封闭。故 $BA\subseteq AB$；
+  交换 $A,B$ 得反向包含，故 $AB=BA$。
+
+  反之，若 $AB=BA$，则 $e\in AB$。任取 $a_1b_1,a_2b_2\in AB$，有
+  \[
+  (a_1b_1)(a_2b_2)=a_1(b_1a_2)b_2\in A(BA)B=A(AB)B=AB.
+  \]
+  又
+  \[
+  (ab)^{-1}=b^{-1}a^{-1}\in BA=AB.
+  \]
+  因而 $AB$ 含单位元、对乘法和逆元封闭，是子群。
+\end{proof}
+
+\begin{theorem}[Lagrange 定理]\label{lagrange}
+  若 $G$ 为有限群，$H\le G$，则
+  \[
+  \card H\mid \card G.
+  \]
+  因而有限群中任意元素的阶都整除群的阶。
+\end{theorem}
+
+\begin{proof}
+  左陪集构成 $G$ 的划分。每个左陪集 $aH$ 与 $H$ 等势，因为 $h\mapsto a*h$ 是双射。因此 $G$ 被分成若干个大小均为 $\card H$ 的块，故 $\card H$ 整除 $\card G$。取 $H=\langle a\rangle$ 得元素阶整除群阶。
+\end{proof}
+
+更精确地，
+\[
+\card G=[G:H]\card H.
+\]
+
+\begin{pitfall}[Lagrange 定理的逆命题不成立]\label{lagrange-converse-false}
+  Lagrange 定理给出的是必要条件：
+  \[
+  H\le G\Longrightarrow |H|\mid |G|,\qquad a\in G\Longrightarrow \ord(a)\mid |G|.
+  \]
+  但 $d\mid |G|$ 不保证 $G$ 中一定有 $d$ 阶元素。Klein 四元群 $V_4$ 的阶为 $4$，却没有 $4$ 阶元素；除单位元外的三个元素都为 $2$ 阶。
+\end{pitfall}
+
+\begin{theorem}[素数阶群必为循环群]\label{prime-order-cyclic}
+  若 $|G|=p$ 为素数，则 $G$ 是循环群，并且任意非单位元都是生成元。
+\end{theorem}
+
+\begin{proof}
+  取 $a\in G$ 且 $a\ne e$。由 Lagrange 定理，$\ord(a)$ 整除 $p$。又 $\ord(a)\ne1$，故 $\ord(a)=p$。于是 $\langle a\rangle$ 有 $p$ 个元素，只能等于 $G$。
+\end{proof}
+
+\begin{definition}[正规子群与商群]\label{normal-quotient}
+  子群 $N\le G$ 若满足
+  \[
+  aN=Na,\qquad a\in G,
+  \]
+  则称 $N$ 为正规子群，记为 $N\trianglelefteq G$。此时陪集集合 $G/N=\set{aN\mid a\in G}$ 可定义运算
+  \[
+  (aN)(bN)=(a*b)N,
+  \]
+  并构成群，称为商群。
+\end{definition}
+
+\begin{theorem}[商群运算的良定义性]\label{quotient-well-defined}
+  设 $N\trianglelefteq G$。若 $aN=a'N$、$bN=b'N$，则
+  \[
+  (ab)N=(a'b')N.
+  \]
+  因而 $(aN)(bN)=(ab)N$ 与代表元的选择无关，且 $G/N$ 在该运算下为群。
+\end{theorem}
+
+\begin{proof}
+  由 $aN=a'N$、$bN=b'N$，可取 $n_1,n_2\in N$ 使
+  $a'=an_1$、$b'=bn_2$。正规性给出 $n_1b=bn_3$，其中
+  $n_3=b^{-1}n_1b\in N$。于是
+  \[
+  a'b'=(an_1)(bn_2)=ab(n_3n_2),
+  \]
+  而 $n_3n_2\in N$，故 $(a'b')N=(ab)N$。陪集 $N=eN$ 是单位元，
+  $a^{-1}N$ 是 $aN$ 的逆元，结合律由 $G$ 的结合律继承，故 $G/N$ 是群。
+\end{proof}
+
+\begin{definition}[群同态与核]\label{group-hom-kernel}
+  群同态 $\varphi:G\to K$ 满足
+  \[
+  \varphi(a*b)=\varphi(a)\varphi(b).
+  \]
+  其核定义为
+  \[
+  \Ker\varphi=\set{a\in G\mid \varphi(a)=e_K}.
+  \]
+\end{definition}
+
+\begin{theorem}[群同态基本性质]\label{group-hom-laws}
+  群同态 $\varphi:G\to K$ 满足：
+  \[
+  \varphi(e_G)=e_K,\qquad \varphi(a^{-1})=\varphi(a)^{-1},
+  \]
+  且 $\Ker\varphi$ 是 $G$ 的正规子群，并且
+  \[
+  G/\Ker\varphi\cong\img\varphi.
+  \]
+\end{theorem}
+
+\begin{proof}
+  由 $\varphi(e_G)=\varphi(e_Ge_G)=\varphi(e_G)\varphi(e_G)$，消去得 $\varphi(e_G)=e_K$。又
+  \[
+  \varphi(a)\varphi(a^{-1})=\varphi(aa^{-1})=e_K,
+  \]
+  故 $\varphi(a^{-1})=\varphi(a)^{-1}$。若 $x,y\in\Ker\varphi$，则 $\varphi(xy^{-1})=e_K$，故核为子群。对任意 $g\in G,n\in\Ker\varphi$，
+  \[
+  \varphi(gng^{-1})=\varphi(g)e_K\varphi(g)^{-1}=e_K,
+  \]
+  故核正规。定义
+  \[
+  \overline\varphi:G/\Ker\varphi\longrightarrow\img\varphi,\qquad
+  \overline\varphi(g\Ker\varphi)=\varphi(g).
+  \]
+  若 $g\Ker\varphi=h\Ker\varphi$，则 $h^{-1}g\in\Ker\varphi$，从而
+  $\varphi(g)=\varphi(h)$，故该映射良定义。它显然满射；若
+  $\overline\varphi(g\Ker\varphi)=\overline\varphi(h\Ker\varphi)$，则
+  $\varphi(h^{-1}g)=e_K$，故 $g\Ker\varphi=h\Ker\varphi$，所以单射。
+  它保持陪集乘法，因而为同构。特别地，若 $\varphi$ 满射，则
+  $\img\varphi=K$，从而 $G/\Ker\varphi\cong K$。
+\end{proof}
+
+\begin{theorem}[同态像保持子群]\label{homomorphic-image-subgroup}
+  若 $\varphi:G\to K$ 是群同态，$H\le G$，则 $\varphi(H)\le K$。
+\end{theorem}
+
+\begin{proof}
+  由 $\varphi(e_G)=e_K$ 可知 $e_K\in\varphi(H)$。若
+  $\varphi(a),\varphi(b)\in\varphi(H)$，其中 $a,b\in H$，则
+  \[
+  \varphi(a)\varphi(b)^{-1}=\varphi(a)\varphi(b^{-1})
+  =\varphi(ab^{-1})\in\varphi(H).
+  \]
+  由子群判定法，$\varphi(H)$ 是 $K$ 的子群。
+\end{proof}
+
+\begin{example}[title={应用阅读：线性码的陪集译码思想}]\label{slepian-reading}
+  设 $C$ 是二元向量空间 $\mathbb F_2^n$ 的一个线性码。由于 $C$ 对向量加法构成 $\mathbb F_2^n$ 的子群，整个空间可分解为若干陪集
+  \[
+  C+v=\{c+v\mid c\in C\}.
+  \]
+  译码表通常把 $C$ 放在第一行，每个其他陪集选一个重量较小的代表元作为该行首元素。接收到向量 $r$ 后，先判断它属于哪个陪集 $C+v$，再把它译为 $r-v$。这里的核心不是编码细节，而是陪集把大集合分割成等大小块，从而把错误模式组织为可查表的结构。
+\end{example}
+
+\begin{summary}[本节提要]
+  半群强调结合律，群在半群基础上加入单位元和逆元。有限群运算表具有行列重排性质；循环群的子群结构由生成元幂完全控制。子群通过封闭、逆元判定，中心和生成子群是重要例子；陪集给出 Lagrange 定理，但其逆命题不能直接使用；正规子群使商群运算良定义；群同态的核自然产生正规子群。
+\end{summary}

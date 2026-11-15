@@ -1,0 +1,620 @@
+% libre-compendium
+%
+% Copyright (C) 2026 Richard Qin
+%
+% This document is dual-licensed under either:
+% - GNU Free Documentation License, Version 1.3 or any later version
+%   published by the Free Software Foundation, with no Invariant Sections,
+%   no Front-Cover Texts, and no Back-Cover Texts (see COPYING.DOC); or
+% - Creative Commons Attribution-ShareAlike 4.0 International License
+%   (see LICENSE-CC-BY-SA-4.0).
+
+\chapter{命题演算}
+
+\section{命题和逻辑联结词}
+
+命题演算研究命题之间由逻辑联结词形成的真值关系。它暂不分析简单命题内部的主语、谓语和量词结构，而把简单命题作为最小单位。该处理方式适合讨论“若……则……”“并且”“或者”“当且仅当”等复合命题的真假，以及由若干前提推出结论是否保真。
+
+\begin{definition}[命题、简单命题与复合命题]\label{ch1-proposition}
+在确定语境下能够判断真或假，并且恰有一个真值的陈述句称为命题。不能再分解为更简单命题的命题称为简单命题或原子命题；由简单命题通过逻辑联结词构成的命题称为复合命题。
+\end{definition}
+
+判断一个句子是否为命题，应检查三点：它必须是陈述句；语境应足以确定其对象和含义；它不能同时取真、假两个值，也不能没有真值。命令句和疑问句不是命题；含未指定变量的开句，如“$x+1>0$”，在变量未赋值或未量化前也不是命题。一个事实暂时未知并不妨碍其成为命题，例如“某年某日某地会下雨”在时间地点确定后有唯一真值。
+
+命题变元用 $p,q,r,\ldots$ 表示。命题变元不是某个固定命题，而是可被具体命题代入的符号。命题演算只关心代入命题的真值，不关心其具体内容。
+
+\begin{center}
+\begin{tabular}{ccl}
+\toprule
+公式 & 名称 & 真值条件\\
+\midrule
+$\neg p$ & 否定 & $p$ 为假\\
+$p\land q$ & 合取 & $p,q$ 均真\\
+$p\lor q$ & 析取 & $p,q$ 至少一个真\\
+$p\to q$ & 蕴涵 & 仅在 $p$ 真且 $q$ 假时为假\\
+$p\leftrightarrow q$ & 等值 & $p,q$ 真值相同\\
+\bottomrule
+\end{tabular}
+\end{center}
+
+析取 $\lor$ 在离散数学中通常指相容或，允许两个支命题同时为真。若题意要求“恰有一个成立”，应写成
+\[
+  (p\lor q)\land\neg(p\land q)
+  \equiv (p\land\neg q)\lor(\neg p\land q).
+\]
+
+\begin{pitfall}[材料蕴涵的空真]\label{ch1-material-implication}
+$p\to q$ 是按真值表定义的真值函数，不要求 $p$ 与 $q$ 之间具有因果关系。只有当前件 $p$ 为真而后件 $q$ 为假时，蕴涵为假；当前件为假时，$p\to q$ 为真。这一规定保证每一种真值组合都有确定结果，也是后续等值演算和推理规则成立的基础。
+\end{pitfall}
+
+自然语言中的条件词必须按“谁保证谁”判断。若 $p$ 是 $q$ 的充分条件，则 $p\to q$；若 $p$ 是 $q$ 的必要条件，则 $q\to p$。必要条件位于箭头右侧。
+
+\[
+\begin{array}{c|c}
+\text{自然语言表达} & \text{命题公式}\\ \hline
+p\text{ 是 }q\text{ 的充分条件} & p\to q\\
+p\text{ 是 }q\text{ 的必要条件} & q\to p\\
+\text{只有 }p\text{ 才 }q & q\to p\\
+p\text{ 仅当 }q & p\to q\\
+p\text{ 当且仅当 }q & p\leftrightarrow q\\
+\text{除非 }p\text{，否则 }q & \neg p\to q\equiv p\lor q
+\end{array}
+\]
+
+\begin{method}[命题符号化的基本步骤]\label{ch1-translation}
+符号化自然语言命题时，先划分简单命题并指定命题变元；再识别控制整个句子的主联结词；然后由内向外翻译；最后把公式读回原句，检查条件方向、否定范围和“或”的含义。
+\end{method}
+
+\begin{example}[title={必要条件的判断}]\label{ch1-only-if}
+将“只有通过资格审查，才能参加决赛；小王参加了决赛”符号化，并推出结论。
+\begin{solution}
+令 $p$ 表示“小王通过资格审查”，$q$ 表示“小王参加决赛”。“只有 $p$ 才 $q$”表示 $q\to p$，已知 $q$，由假言推理得到 $p$。若误写为 $p\to q$，便把必要条件误认为充分条件。
+\end{solution}
+\end{example}
+
+\section{合式公式与公式结构}
+
+逻辑联结词可以反复作用于命题变元，但并非任意符号串都是合法公式。合式公式的定义用递归方式给出，它同时说明公式如何生成，以及哪些符号串不能生成。
+
+\begin{definition}[合式公式]\label{ch1-wff}
+合式公式（well-formed formula，简记为 $\wff$）按以下规则定义：
+\begin{enumerate}
+  \item 每个命题变元是合式公式；
+  \item 若 $A$ 是合式公式，则 $\neg A$ 是合式公式；
+  \item 若 $A,B$ 是合式公式，则 $(A\land B)$、$(A\lor B)$、$(A\to B)$、$(A\leftrightarrow B)$ 是合式公式；
+  \item 只有有限次使用以上规则得到的符号串才是合式公式。
+\end{enumerate}
+\end{definition}
+
+第四条是排除规则。例如 $p\lor\to q$ 不能由形成规则生成，故不是合式公式。括号的作用是确定联结词的辖域。若省略括号，通常约定优先级为
+\[
+  \neg\quad >\quad \land\quad >\quad \lor\quad >\quad \to\quad >\quad \leftrightarrow .
+\]
+同级二元联结词连续出现时，若结合方式影响含义，应保留括号。
+
+\begin{definition}[子公式、主联结词与辖域]\label{ch1-subformula}
+在一个公式的形成过程中出现的每个完整公式称为该公式的子公式。不是任何更大子公式真部分的最外层联结词称为主联结词。一个联结词直接作用的子公式称为它的辖域。
+\end{definition}
+
+例如
+\[
+  A=\neg\bigl((p\to q)\land(\neg r\lor p)\bigr)
+\]
+的主联结词为最外层 $\neg$；合取号的左右辖域分别为 $p\to q$ 与 $\neg r\lor p$；第二个否定号只作用于 $r$。否定辖域判断错误，会改变整个公式的真值。
+
+\begin{definition}[代入与替换]\label{ch1-substitution}
+把命题变元 $p$ 的每次出现同时替换为同一个合式公式 $B$，称为对 $p$ 作统一代入。把公式中某个子公式 $A$ 的所有指定出现替换为公式 $B$，称为子公式替换。
+\end{definition}
+
+统一代入要求“同一变元同处同换”。例如在 $p\lor p$ 中，只替换第一个 $p$ 得到 $q\lor p$，这不是对命题变元 $p$ 的统一代入。
+
+合式公式的递归定义支持结构归纳。若要证明所有命题公式都具有性质 $\mathcal P$，先证明命题变元具有该性质；再证明当 $A,B$ 具有该性质时，$\neg A$ 与 $A\circ B$ 也具有该性质，其中 $\circ\in\{\land,\lor,\to,\leftrightarrow\}$。由于每个公式均由有限次形成规则构造，结论对所有公式成立。
+
+\begin{example}[title={结构归纳证明}]\label{ch1-structural-induction}
+证明：只含二元联结词的公式中，若命题变元出现次数为 $n$，则二元联结词出现次数为 $n-1$。
+\begin{solution}
+对公式结构归纳。单个命题变元有一次变元出现和零个二元联结词，满足 $0=1-1$。设 $A,B$ 分别有 $n_A,n_B$ 次变元出现和 $n_A-1,n_B-1$ 个二元联结词，则 $A\circ B$ 有 $n_A+n_B$ 次变元出现，二元联结词数为
+\[
+  (n_A-1)+(n_B-1)+1=n_A+n_B-1.
+\]
+故结论对所有由二元联结词构成的公式成立。
+\end{solution}
+\end{example}
+
+\section{真值表与公式分类}
+
+给命题公式中所有不同命题变元各指定一个真值，称为真值指派。若公式含 $n$ 个不同命题变元，则共有 $2^n$ 个真值指派。真值表按全部指派逐行计算公式真值，因此命题演算中的许多语义问题是有限可判定的。
+
+\begin{method}[真值表构造]\label{ch1-truth-table-method}
+列真值表时先固定变量顺序；再按二进制节奏列出全部指派；然后为关键子公式分别设置列，由内向外计算。蕴涵列可先寻找唯一假值模式 $1\to0$。
+\end{method}
+
+\[
+\begin{array}{ccc|c|c|c}
+p&q&r&p\to q&q\lor r&(p\to q)\land(q\lor r)\\ \hline
+0&0&0&1&0&0\\
+0&0&1&1&1&1\\
+0&1&0&1&1&1\\
+0&1&1&1&1&1\\
+1&0&0&0&0&0\\
+1&0&1&0&1&0\\
+1&1&0&1&1&1\\
+1&1&1&1&1&1
+\end{array}
+\]
+
+\begin{definition}[永真、永假、可满足]\label{ch1-classification}
+若公式在所有真值指派下均为真，称为永真公式或重言式；若在所有真值指派下均为假，称为永假公式或矛盾式；若至少在一个指派下为真，称为可满足公式。既可真又可假的公式称为偶然式。
+\end{definition}
+
+永真式必可满足，永假式不可满足；非永真只说明存在假指派，不等于永假；可满足只说明存在真指派，不等于永真。
+
+\begin{theorem}[永真公式的合取与析取]\label{ch1-taut-combine}
+若 $A,B$ 都是永真公式，则 $A\land B$ 与 $A\lor B$ 都是永真公式。
+\end{theorem}
+\begin{proof}
+任取一个真值指派。由于 $A,B$ 都永真，该指派下 $A=1,B=1$。于是 $A\land B=1$，且 $A\lor B=1$。指派任意，故两个复合公式均永真。
+\end{proof}
+
+\begin{theorem}[永真式的统一代入]\label{ch1-substitution-taut}
+若 $A$ 是永真公式，将其中某个命题变元的每次出现统一代入同一个合式公式后，所得公式仍为永真公式。
+\end{theorem}
+\begin{proof}
+代入后的公式在任一指派下，每个被代入公式都有确定真值。把这些真值视为原公式中相应命题变元的真值指派。原公式 $A$ 对任何指派均取真，故代入后的公式也取真。
+\end{proof}
+
+\begin{theorem}[命题公式的有限可判定性]\label{ch1-decidability}
+任一命题公式的永真性、永假性、非永真性和可满足性都可由有限过程判定。
+\end{theorem}
+\begin{proof}
+任一合式公式只含有限个命题变元，设为 $n$ 个。全部真值指派共有 $2^n$ 个。逐行计算真值表即可判定公式是否全真、全假、至少一真或至少一假。
+\end{proof}
+
+缩短真值表常用于证明永真。例如判断
+\[
+  ((p\to q)\land(q\to r))\to(p\to r)
+\]
+是否永真。若该公式为假，则前件真而后件假。后件 $p\to r$ 假迫使 $p=1,r=0$；由 $p\to q$ 真得 $q=1$；此时 $q\to r$ 为假，与前件真矛盾。故不存在反例指派，公式永真。
+
+\section{命题演算中的等价关系}
+
+\begin{definition}[逻辑等价]\label{ch1-equivalence}
+若公式 $A,B$ 在每个共同真值指派下取值相同，则称 $A$ 与 $B$ 逻辑等价，记作 $A\equiv B$。
+\end{definition}
+
+逻辑等价是公式之间的元语言关系；$A\leftrightarrow B$ 是对象语言中的公式。二者联系如下。
+
+\begin{theorem}[等价判据]\label{ch1-equiv-iff}
+$A\equiv B$ 当且仅当 $A\leftrightarrow B$ 是永真公式。
+\end{theorem}
+\begin{proof}
+若 $A\equiv B$，则任一指派下 $A,B$ 同真或同假，故 $A\leftrightarrow B$ 为真。反之，若 $A\leftrightarrow B$ 永真，则任一指派下双条件为真，所以 $A,B$ 真值相同，故 $A\equiv B$。
+\end{proof}
+
+\begin{theorem}[等价替换定理]\label{ch1-replacement}
+若 $A\equiv B$，且 $C'$ 由公式 $C$ 中某些完整出现的子公式 $A$ 替换为 $B$ 得到，则 $C'\equiv C$。
+\end{theorem}
+\begin{proof}
+任取真值指派。被替换的每个子公式 $A$ 与 $B$ 在该指派下真值相同。公式 $C$ 的其他部分不变，而联结词的输出只依赖其直接子公式真值，故整体真值不变。指派任意，得 $C'\equiv C$。
+\end{proof}
+
+\begin{theorem}[逻辑等价是等价关系]\label{ch1-equiv-relation}
+在同一组命题变元构成的合式公式集合上，逻辑等价 $\equiv$ 具有自反性、对称性和传递性。
+\end{theorem}
+\begin{proof}
+自反性：任一公式 $A$ 在每个指派下与自身真值相同，故 $A\equiv A$。
+
+对称性：若 $A\equiv B$，则每个指派下 $A,B$ 真值相同；“真值相同”这一关系可交换，故 $B\equiv A$。
+
+传递性：若 $A\equiv B$ 且 $B\equiv C$，则任一指派下 $A$ 与 $B$ 真值相同，$B$ 与 $C$ 真值相同，因此 $A$ 与 $C$ 真值相同，故 $A\equiv C$。
+\end{proof}
+
+等价关系把公式集合划分为若干等价类。同一个等价类中的公式虽然符号形态不同，但真值函数相同。例如 $p\to q$、$\neg p\lor q$、$\neg q\to\neg p$ 属于同一等价类。等值演算本质上是在同一等价类中选择更便于计算或证明的代表。
+
+\begin{center}\small
+\begin{tabularx}{\textwidth}{lX}
+\toprule
+名称 & 等价式\\
+\midrule
+双重否定 & $\neg\neg A\equiv A$\\
+幂等律 & $A\land A\equiv A,\quad A\lor A\equiv A$\\
+交换律 & $A\land B\equiv B\land A,\quad A\lor B\equiv B\lor A$\\
+结合律 & $(A\land B)\land C\equiv A\land(B\land C)$，析取同理\\
+分配律 & $A\land(B\lor C)\equiv(A\land B)\lor(A\land C)$；对偶式同理\\
+吸收律 & $A\lor(A\land B)\equiv A,\quad A\land(A\lor B)\equiv A$\\
+德摩根律 & $\neg(A\land B)\equiv\neg A\lor\neg B,\quad \neg(A\lor B)\equiv\neg A\land\neg B$\\
+蕴涵消去 & $A\to B\equiv\neg A\lor B$\\
+等值消去 & $A\leftrightarrow B\equiv(A\to B)\land(B\to A)\equiv(A\land B)\lor(\neg A\land\neg B)$\\
+逆否律 & $A\to B\equiv\neg B\to\neg A$\\
+否定蕴涵 & $\neg(A\to B)\equiv A\land\neg B$\\
+\bottomrule
+\end{tabularx}
+\end{center}
+
+吸收律可由分配律和排中律证明：
+\[
+A\lor(A\land B)\equiv(A\land1)\lor(A\land B)
+\equiv A\land(1\lor B)\equiv A.
+\]
+蕴涵消去式来自真值条件：$A\to B$ 只在 $A=1,B=0$ 时为假，$\neg A\lor B$ 也恰在此时为假。
+
+\begin{example}[title={等值演算证明}]\label{ch1-equiv-example}
+化简 $\neg[(p\to q)\land(p\to\neg q)]$。
+\begin{solution}
+\[
+\begin{aligned}
+\neg[(p\to q)\land(p\to\neg q)]
+&\equiv\neg[(\neg p\lor q)\land(\neg p\lor\neg q)]\\
+&\equiv\neg[\neg p\lor(q\land\neg q)]\\
+&\equiv\neg(\neg p\lor0)\\
+&\equiv\neg\neg p\\
+&\equiv p.
+\end{aligned}
+\]
+第二步使用分配律的逆向形式。
+\end{solution}
+\end{example}
+
+\section{逻辑联结词的可省略性}
+
+五个基本联结词并非都不可缺少。若一个联结词可由其他联结词定义，则在表达能力上可省略。例如
+\[
+A\to B\equiv\neg A\lor B,\qquad
+A\leftrightarrow B\equiv(A\land B)\lor(\neg A\land\neg B).
+\]
+因此 $\{\neg,\land,\lor\}$ 已能表示五个基本联结词。又因
+\[
+A\lor B\equiv\neg(\neg A\land\neg B),\qquad
+A\land B\equiv\neg(\neg A\lor\neg B),
+\]
+$\{\neg,\land\}$ 与 $\{\neg,\lor\}$ 也都功能完备。
+
+\begin{definition}[功能完备]\label{ch1-functionally-complete}
+若任意有限元真值函数都能由某个联结词集合中的联结词构造公式表示，则称该联结词集合是功能完备的。
+\end{definition}
+
+两个命题变元共有四种输入组合，因此二元真值函数共有 $2^4=16$ 个。常假、合取、投影、异或、析取、蕴涵、等值、常真等都是二元真值函数。若能表示任意真值表，就能表示任意命题公式的语义。
+
+\begin{center}\small
+\begin{tabular}{cc|cccccccccccccccc}
+\toprule
+$p$ & $q$ & $F_0$&$F_1$&$F_2$&$F_3$&$F_4$&$F_5$&$F_6$&$F_7$&$F_8$&$F_9$&$F_{10}$&$F_{11}$&$F_{12}$&$F_{13}$&$F_{14}$&$F_{15}$\\
+\midrule
+0&0&0&0&0&0&0&0&0&0&1&1&1&1&1&1&1&1\\
+0&1&0&0&0&0&1&1&1&1&0&0&0&0&1&1&1&1\\
+1&0&0&0&1&1&0&0&1&1&0&0&1&1&0&0&1&1\\
+1&1&0&1&0&1&0&1&0&1&0&1&0&1&0&1&0&1\\
+\bottomrule
+\end{tabular}
+\end{center}
+
+表中每一列给出一种二元真值函数。若按行序 $(0,0),(0,1),(1,0),(1,1)$ 读列向量，则常用联结词对应如下：
+\[
+\begin{array}{c|c}
+\text{列向量} & \text{常用表达}\\ \hline
+0000 & 0\\
+0001 & p\land q\\
+0111 & p\lor q\\
+1101 & p\to q\\
+1011 & q\to p\\
+0110 & p\oplus q\quad(\text{异或})\\
+1001 & p\leftrightarrow q\\
+1110 & p\mid q\quad(\text{与非})\\
+1000 & p\downarrow q\quad(\text{或非})\\
+1111 & 1
+\end{array}
+\]
+这张表说明，所谓“联结词完备”就是能够构造出任意列向量。
+
+与非和或非定义为
+\[
+A\mid B=\neg(A\land B),\qquad A\downarrow B=\neg(A\lor B).
+\]
+它们各自单独功能完备，因为
+\[
+\neg A\equiv A\mid A,\qquad
+A\land B\equiv(A\mid B)\mid(A\mid B),
+\]
+故 $\{\mid\}$ 可表示 $\{\neg,\land\}$；又有
+\[
+\neg A\equiv A\downarrow A,\qquad
+A\lor B\equiv(A\downarrow B)\downarrow(A\downarrow B),
+\]
+故 $\{\downarrow\}$ 可表示 $\{\neg,\lor\}$。
+
+不含否定能力的联结词集合通常不完备。例如只用 $\land,\lor$ 构成的公式，在所有变元均为真时必为真，无法表示 $\neg p$ 或常假函数。
+
+\clearpage
+\section{范式}
+
+\begin{definition}[初等积、初等和、析取范式、合取范式]\label{ch1-normal-form}
+命题变元及其否定称为文字。有限个文字的合取称为初等积；有限个文字的析取称为初等和。有限个初等积的析取称为析取范式；有限个初等和的合取称为合取范式。
+\end{definition}
+
+每个命题公式都可化为只含 $\neg,\land,\lor$ 且否定只作用于命题变元的形式，再通过分配律化为析取范式或合取范式。普通范式不唯一；例如 $p$ 与 $p\land(q\lor\neg q)$ 都是等价形式。
+
+\begin{method}[化范式的一般步骤]\label{ch1-nf-method}
+先消去 $\to,\leftrightarrow$；再用德摩根律和双重否定把否定推进到命题变元前；最后用分配律把公式整理为所需的析取范式或合取范式。
+\end{method}
+
+\begin{example}[title={化为析取范式和合取范式}]\label{ch1-nf-example}
+求 $\neg(p\to q)$ 的析取范式和合取范式。
+\begin{solution}
+\[
+\neg(p\to q)\equiv\neg(\neg p\lor q)\equiv p\land\neg q.
+\]
+它本身既是一个初等积，故是析取范式；也可看作两个初等和 $p$ 与 $\neg q$ 的合取，故是合取范式。
+\end{solution}
+\end{example}
+
+\section{主析取范式与主合取范式}
+
+\begin{definition}[最小项与最大项]\label{ch1-minmax}
+固定命题变元 $p_1,\ldots,p_n$。含每个变元恰一次的初等积称为最小项；含每个变元恰一次的初等和称为最大项。
+\end{definition}
+
+对真值指派 $\alpha=(a_1,\ldots,a_n)$，对应最小项 $m_\alpha$ 的规则是：若 $a_i=1$，取文字 $p_i$；若 $a_i=0$，取文字 $\neg p_i$。这样 $m_\alpha$ 只在该指派下为真。最大项 $M_\alpha$ 采用相反规则：若 $a_i=1$，取 $\neg p_i$；若 $a_i=0$，取 $p_i$。这样 $M_\alpha$ 只在该指派下为假。
+
+例如变量顺序为 $p,q,r$，指派 $(1,0,1)$ 的编号是二进制 $101=5$，对应
+\[
+m_5=p\land\neg q\land r,\qquad
+M_5=\neg p\lor q\lor\neg r.
+\]
+
+\begin{definition}[主范式]\label{ch1-principal-normal-form}
+由使公式为真的全部指派对应的最小项作析取，得到主析取范式；由使公式为假的全部指派对应的最大项作合取，得到主合取范式。
+\end{definition}
+
+\begin{theorem}[主范式定理]\label{ch1-principal-theorem}
+除去项的排列次序，每个非永假公式都有唯一的主析取范式；每个非永真公式都有唯一的主合取范式。
+\end{theorem}
+\begin{proof}
+任一公式的真值表唯一。主析取范式由真值为 $1$ 的行唯一确定，每行对应唯一最小项；这些最小项的析取在且仅在原公式为真的行取真，故与原公式等价且唯一。主合取范式同理，由真值为 $0$ 的行唯一确定。
+\end{proof}
+
+\begin{method}[补项法]\label{ch1-completion-method}
+若析取范式中的初等积缺少变元 $p$，用
+\[
+X\equiv X\land(p\lor\neg p)\equiv(X\land p)\lor(X\land\neg p)
+\]
+补齐；若合取范式中的初等和缺少变元 $p$，用
+\[
+X\equiv X\lor(p\land\neg p)\equiv(X\lor p)\land(X\lor\neg p)
+\]
+补齐。补齐后删除矛盾项和重复项。
+\end{method}
+
+\begin{example}[title={由真值表求主范式}]\label{ch1-principal-example}
+求 $A=(p\land q)\lor\neg r$ 的主范式。
+\begin{solution}
+$A$ 在 $r=0$ 的四行均真；在 $r=1$ 时仅 $p=q=1$ 为真。真行编号为 $0,2,4,6,7$，假行编号为 $1,3,5$。故
+\[
+A\equiv\bigvee m(0,2,4,6,7)
+\equiv\bigwedge M(1,3,5).
+\]
+展开为
+\[
+\begin{aligned}
+&(\neg p\land\neg q\land\neg r)
+\lor(\neg p\land q\land\neg r)
+\lor(p\land\neg q\land\neg r)\\
+&\lor(p\land q\land\neg r)
+\lor(p\land q\land r),
+\end{aligned}
+\]
+以及
+\[
+(p\lor q\lor\neg r)\land(p\lor\neg q\lor\neg r)\land(\neg p\lor q\lor\neg r).
+\]
+\end{solution}
+\end{example}
+
+\begin{method}[主范式的表格流程]\label{ch1-principal-table-method}
+求主范式可按以下表格流程进行：
+\begin{enumerate}
+  \item 固定变量顺序，例如 $p,q,r$；
+  \item 列出 $2^n$ 行真值指派，并计算目标公式；
+  \item 真值为 $1$ 的行写对应最小项，析取后得到主析取范式；
+  \item 真值为 $0$ 的行写对应最大项，合取后得到主合取范式；
+  \item 用行编号检查是否遗漏：真行编号与假行编号应合并为 $\{0,\ldots,2^n-1\}$。
+\end{enumerate}
+\end{method}
+
+\begin{example}[title={排课问题的主范式建模}]\label{ch1-schedule}
+某班一天前三节课安排三位教师 $A,B,C$ 各上一节。教师 $A$ 只能上第一或第二节，教师 $B$ 只能上第一或第三节，教师 $C$ 只能上第二或第三节。求可行安排。
+\begin{solution}
+用 $A_i$ 表示“教师 $A$ 上第 $i$ 节”，$B_i,C_i$ 同理。约束分为三类：
+\[
+(A_1\lor A_2)\land\neg A_3,\quad
+(B_1\lor B_3)\land\neg B_2,\quad
+(C_2\lor C_3)\land\neg C_1.
+\]
+每位教师恰上一节，每节课恰有一位教师。直接枚举允许集合：
+\[
+A\in\{1,2\},\quad B\in\{1,3\},\quad C\in\{2,3\}.
+\]
+再要求三人节次互不相同，得到两种安排：
+\[
+(A_1,B_3,C_2),\qquad (A_2,B_1,C_3).
+\]
+若用主析取范式表达，令每一种完整安排为一个最小项，则可行公式为
+\[
+(A_1\land B_3\land C_2)\lor(A_2\land B_1\land C_3),
+\]
+并附加“每人恰一节、每节恰一人”的背景约束。该例的要点是先把自然语言约束转化为成真指派，再由成真指派写最小项。
+\end{solution}
+\end{example}
+
+\begin{example}[title={名次推断的逻辑建模}]\label{ch1-ranking}
+四人 $A,B,C,D$ 参加比赛。甲说：“$A$ 第一，$B$ 第二”；乙说：“$C$ 第二，$D$ 第四”；丙说：“$A$ 第二，$D$ 第四”。已知三人都恰好说对一句，求可能名次。
+\begin{solution}
+设 $A_i$ 表示“$A$ 第 $i$ 名”，其余类似。三人的话分别给出：
+\[
+X_1=A_1,\ X_2=B_2;\qquad
+Y_1=C_2,\ Y_2=D_4;\qquad
+Z_1=A_2,\ Z_2=D_4.
+\]
+“恰好说对一句”表示
+\[
+(X_1\leftrightarrow\neg X_2)\land
+(Y_1\leftrightarrow\neg Y_2)\land
+(Z_1\leftrightarrow\neg Z_2).
+\]
+还要加入名次唯一性约束：每人恰有一个名次，每个名次恰有一人。由乙、丙都涉及 $D_4$，分两种情况。
+
+若 $D_4$ 假，则乙要恰好对一句，必须有 $C_2$ 真；丙要恰好对一句，必须有 $A_2$ 真。这与第二名唯一性矛盾。因此 $D_4$ 真。
+
+由 $D_4$ 真，乙的另一句 $C_2$ 必假，丙的另一句 $A_2$ 必假。甲须恰好对一句。若 $A_1$ 真，则第一名为 $A$，第二名不能为 $B$，又 $C$ 不能第二、$D$ 第四，剩余第二名只能为 $A$ 或 $D$，矛盾。故 $A_1$ 假，甲的 $B_2$ 真。此时 $D_4$、$B_2$ 已定，且 $C_2$、$A_1$、$A_2$ 均假，剩余第一、第三名由 $A,C$ 占据；因 $A$ 不能第一，只能 $A_3,C_1$。故唯一名次为
+\[
+C\text{ 第一},\quad B\text{ 第二},\quad A\text{ 第三},\quad D\text{ 第四}.
+\]
+
+这种题不宜只凭直觉猜测，应把每句话拆成命题并写出“恰一真”约束，再配合唯一性约束枚举。
+\end{solution}
+\end{example}
+
+\section{推理和证明方法}
+
+\begin{definition}[有效推理]\label{ch1-valid-argument}
+设 $A_1,\ldots,A_n,B$ 为命题公式。若每个使 $A_1,\ldots,A_n$ 同时为真的指派也使 $B$ 为真，则称 $B$ 是前提 $A_1,\ldots,A_n$ 的有效结论，记作
+\[
+A_1,\ldots,A_n\vDash B.
+\]
+\end{definition}
+
+该定义只关心前提全真的指派。当前提合取为假时，不要求结论真假。
+
+\begin{theorem}[推理的永真式判据]\label{ch1-argument-tautology}
+\[
+A_1,\ldots,A_n\vDash B
+\quad\Longleftrightarrow\quad
+(A_1\land\cdots\land A_n)\to B\text{ 是永真公式}.
+\]
+\end{theorem}
+\begin{proof}
+若 $A_1,\ldots,A_n\vDash B$，任取指派。当前提合取为真时，由定义 $B$ 真，蕴涵为真；当前提合取为假时，蕴涵按真值表也为真。因此蕴涵永真。反之，若该蕴涵永真，则任何使全部前提为真的指派都使前件为真，蕴涵要为真只能有 $B$ 真，故推理有效。
+\end{proof}
+
+\begin{definition}[反例指派]\label{ch1-countervaluation}
+若某个指派使所有前提为真而使结论为假，则称它为该推理的反例指派。存在反例指派当且仅当推理无效。
+\end{definition}
+
+\begin{theorem}[不可满足判据]\label{ch1-unsat-criterion}
+\[
+A_1,\ldots,A_n\vDash B
+\quad\Longleftrightarrow\quad
+A_1\land\cdots\land A_n\land\neg B
+\text{ 不可满足}.
+\]
+\end{theorem}
+\begin{proof}
+右侧合取式可满足，正表示存在一个指派使全部前提为真且 $B$ 为假，即反例指派存在。故其不可满足等价于无反例，亦即推理有效。
+\end{proof}
+
+\begin{center}\small
+\begin{tabular}{lll}
+\toprule
+规则 & 前提 & 结论\\
+\midrule
+假言推理（MP） & $P,\ P\to Q$ & $Q$\\
+拒取式（MT） & $P\to Q,\ \neg Q$ & $\neg P$\\
+假言三段论 & $P\to Q,\ Q\to R$ & $P\to R$\\
+析取三段论 & $P\lor Q,\ \neg P$ & $Q$\\
+合取引入 & $P,Q$ & $P\land Q$\\
+化简 & $P\land Q$ & $P$\\
+附加 & $P$ & $P\lor Q$\\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\begin{example}[title={逐行证明}]\label{ch1-line-proof}
+由 $p\to q$、$q\to(r\land s)$、$\neg r\lor t$、$p$ 推出 $t$。
+\begin{solution}
+\[
+\begin{array}{rll}
+1.&p\to q&\text{前提}\\
+2.&q\to(r\land s)&\text{前提}\\
+3.&\neg r\lor t&\text{前提}\\
+4.&p&\text{前提}\\
+5.&q&1,4\ \text{MP}\\
+6.&r\land s&2,5\ \text{MP}\\
+7.&r&6\ \text{化简}\\
+8.&r\to t&3\ \text{由 }\neg r\lor t\equiv r\to t\\
+9.&t&7,8\ \text{MP}
+\end{array}
+\]
+\end{solution}
+\end{example}
+
+\begin{example}[title={报警系统逻辑设计}]\label{ch1-alarm}
+某房间有门磁传感器 $d$、窗磁传感器 $w$ 和布防开关 $s$。要求系统在且仅在“已布防，并且门或窗被打开”时报警。写出报警信号 $a$ 的逻辑表达式，并说明如何只用与非门实现。
+\begin{solution}
+报警条件为
+\[
+a\leftrightarrow s\land(d\lor w).
+\]
+若只写 $s\to(d\lor w)$，表达的是“布防会导致门或窗开”，方向错误；若只写 $(d\lor w)\to a$，又没有要求布防。
+
+用与非门表示时，先写
+\[
+d\lor w\equiv(d\mid d)\mid(w\mid w).
+\]
+再令 $u=(d\mid d)\mid(w\mid w)$，则
+\[
+s\land u\equiv(s\mid u)\mid(s\mid u).
+\]
+故
+\[
+a\equiv
+\bigl(s\mid((d\mid d)\mid(w\mid w))\bigr)
+\mid
+\bigl(s\mid((d\mid d)\mid(w\mid w))\bigr).
+\]
+该例体现联结词完备性在数字逻辑设计中的用法。
+\end{solution}
+\end{example}
+
+条件证明法用于推出蕴涵结论：临时假设前件，推出后件后解除假设。反证法用于证明 $B$：在前提外加入 $\neg B$，若推出矛盾，则 $B$ 成立。
+
+\begin{example}[title={条件证明}]\label{ch1-conditional-proof}
+由 $p\to(q\to r)$ 推出 $(p\land q)\to r$。
+\begin{solution}
+临时假设 $p\land q$。由化简得 $p$ 与 $q$。由前提和 $p$ 得 $q\to r$，再由 $q$ 得 $r$。解除临时假设，得到 $(p\land q)\to r$。
+\end{solution}
+\end{example}
+
+\begin{pitfall}[两种常见错误推理]\label{ch1-fallacies}
+由 $P\to Q,Q$ 推出 $P$ 是肯定后件；由 $P\to Q,\neg P$ 推出 $\neg Q$ 是否定前件。两者都不保真。例如 $P=0,Q=1$ 时，$P\to Q$ 与 $Q$ 均真而 $P$ 假。
+\end{pitfall}
+
+\section{补充：消解证明法}
+
+消解法是常用的自动推理方法。它以不可满足判据为基础：证明 $S\vDash B$，等价于证明 $S\cup\{\neg B\}$ 不可满足。
+
+\begin{method}[命题消解法]\label{ch1-resolution-method}
+先把所有前提和结论否定化为合取范式；再拆成子句集合；若两个子句分别含互补文字 $L$ 与 $\neg L$，如 $L\lor\Gamma$ 与 $\neg L\lor\Delta$，可归结出 $\Gamma\lor\Delta$；若推出空子句 $\bot$，则原推理有效。
+\end{method}
+
+\begin{example}[title={消解证明}]\label{ch1-resolution-example}
+证明 $p\to q$、$r\to s$、$p\lor r$、$\neg q\vDash s$。
+\begin{solution}
+加入 $\neg s$，化为子句：
+\[
+\neg p\lor q,\quad \neg r\lor s,\quad p\lor r,\quad \neg q,\quad \neg s.
+\]
+归结过程为
+\[
+\neg p\lor q,\ \neg q\Rightarrow \neg p,
+\]
+\[
+p\lor r,\ \neg p\Rightarrow r,
+\]
+\[
+\neg r\lor s,\ r\Rightarrow s,
+\]
+\[
+s,\ \neg s\Rightarrow\bot.
+\]
+推出空子句，故前提与 $\neg s$ 不可满足，原推理有效。
+\end{solution}
+\end{example}

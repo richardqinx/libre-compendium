@@ -1,0 +1,25 @@
+% libre-compendium
+%
+% Copyright (C) 2026 Richard Qin
+%
+% This document is dual-licensed under either:
+% - GNU Free Documentation License, Version 1.3 or any later version
+%   published by the Free Software Foundation; with no Invariant Sections,
+%   no Front-Cover Texts, and no Back-Cover Texts (see COPYING.DOC); or
+% - Creative Commons Attribution-ShareAlike 4.0 International License
+%   (see LICENSE-CC-BY-SA-4.0).
+
+\begin{tikzpicture}[>=Latex, node distance=1.55cm, every node/.style={font=\small}]
+\tikzstyle{v}=[circle,draw,minimum size=7mm,inner sep=0pt]
+\node[v] (a) {$a$};
+\node[v,right=of a] (b) {$b$};
+\node[v,right=of b] (c) {$c$};
+\node[v,right=of c] (d) {$d$};
+\draw[->,thick] (a) -- (b);
+\draw[->,thick] (b) -- (c);
+\draw[->,thick] (c) -- (d);
+\draw[->,dashed,blue] (a) to[bend left=34] (c);
+\draw[->,dashed,blue] (b) to[bend left=34] (d);
+\draw[->,dashed,blue] (a) to[bend left=48] (d);
+\node[blue] at (2.35,1.15) {$R^2,R^3$};
+\end{tikzpicture}

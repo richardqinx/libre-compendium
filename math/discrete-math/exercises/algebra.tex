@@ -1,0 +1,310 @@
+% libre-compendium
+%
+% Copyright (C) 2026 Richard Qin
+%
+% This document is dual-licensed under either:
+% - GNU Free Documentation License, Version 1.3 or any later version
+%   published by the Free Software Foundation, with no Invariant Sections,
+%   no Front-Cover Texts, and no Back-Cover Texts (see COPYING.DOC); or
+% - Creative Commons Attribution-ShareAlike 4.0 International License
+%   (see LICENSE-CC-BY-SA-4.0).
+
+% Migrated from algebra-review/tex/problems.tex and solutions.tex.
+% 代数结构
+\begin{exercise}[level=basic]
+判断下列对象是否构成指定代数系统：
+  \[
+  (\N^+,+),\quad (\N^+,-),\quad (\Z_n,+_n),\quad (\pow(S),\cap).
+  \]
+  对不能构成者说明原因。
+\begin{solution}
+$(\N^+,+)$ 构成代数系统，因为正整数加法封闭。$(\N^+,-)$ 不能构成以减法为二元运算的代数系统，因为 $1-2=-1\notin\N^+$。$(\Z_n,+_n)$ 构成代数系统，模加法结果仍为同余类。$(\pow(S),\cap)$ 构成代数系统，因为任意两个子集的交仍为 $S$ 的子集。
+\end{solution}
+\end{exercise}
+
+\begin{exercise}[level=basic]
+设 $\varphi:\Z\to\Z_3$，$\varphi(a)=[a]_3$。证明 $\varphi$ 是从 $(\Z,+)$ 到 $(\Z_3,+_3)$ 的群同态，并求其核。
+\begin{solution}
+对任意 $a,b\in\Z$，
+  \[
+  \varphi(a+b)=[a+b]_3=[a]_3+_3[b]_3=\varphi(a)+_3\varphi(b),
+  \]
+  故 $\varphi$ 为同态。核为所有映到 $[0]_3$ 的整数：
+  \[
+  \Ker\varphi=\{a\in\Z\mid 3\mid a\}=3\Z.
+  \]
+\end{solution}
+\end{exercise}
+
+\begin{exercise}[level=basic]
+设 $G$ 为群，证明 $(ab)^{-1}=b^{-1}a^{-1}$。
+\begin{solution}
+\[
+  (ab)(b^{-1}a^{-1})=a(bb^{-1})a^{-1}=aea^{-1}=e,
+  \]
+  且
+  \[
+  (b^{-1}a^{-1})(ab)=b^{-1}(a^{-1}a)b=b^{-1}eb=e.
+  \]
+  因此 $b^{-1}a^{-1}$ 是 $ab$ 的逆元。
+\end{solution}
+\end{exercise}
+
+\begin{exercise}[level=basic]
+在 $\Z_{12}$ 的加法群中，求 $[3]$、$[4]$、$[5]$ 的阶。
+\begin{solution}
+在 $\Z_{12}$ 加法群中，$[k]$ 的阶为 $12/\gcd(12,k)$。故
+  \[
+  \ord([3])=4,\qquad \ord([4])=3,\qquad \ord([5])=12.
+  \]
+\end{solution}
+\end{exercise}
+
+\begin{exercise}[level=basic]
+在格 $(\pow(\{a,b,c\}),\subseteq)$ 中，求 $\{a\}\vee\{b,c\}$、$\{a,b\}\wedge\{b,c\}$ 以及 $\{a\}$ 的补元。
+\begin{solution}
+在幂集格中，$\vee$ 是并，$\wedge$ 是交。因此
+  \[
+  \{a\}\vee\{b,c\}=\{a,b,c\},\qquad
+  \{a,b\}\wedge\{b,c\}=\{b\}.
+  \]
+  $\{a\}$ 的补元是相对于全集 $\{a,b,c\}$ 的补集 $\{b,c\}$。
+\end{solution}
+\end{exercise}
+
+\begin{exercise}[level=standard]
+设集合 $X=\{a,b\}$ 上的运算 $*$ 由表
+  \[
+  \begin{array}{c|cc}
+  *&a&b\\ \hline
+  a&a&b\\
+  b&b&b
+  \end{array}
+  \]
+  给出。判断 $*$ 是否交换、是否幂等，并求单位元和零元。
+\begin{solution}
+运算表关于主对角线对称，所以 $*$ 交换。主对角线为 $a*a=a$、$b*b=b$，所以 $*$ 幂等。第 $a$ 行和第 $a$ 列都与表头一致，因此 $a$ 是单位元。第 $b$ 行和第 $b$ 列都全为 $b$，因此 $b$ 是零元。
+\end{solution}
+\end{exercise}
+
+\begin{exercise}[level=standard]
+设 $(X,*)$ 与 $(Y,\circ)$ 是代数系统，$\varphi:X\to Y$ 是同态。定义 $a\sim b$ 当且仅当 $\varphi(a)=\varphi(b)$。证明 $\sim$ 是同余关系。
+\begin{solution}
+自反性、对称性、传递性由等号直接得到。若 $a_1\sim a_2$ 且 $b_1\sim b_2$，则
+  \[
+  \varphi(a_1*b_1)=\varphi(a_1)\circ\varphi(b_1)
+  =\varphi(a_2)\circ\varphi(b_2)
+  =\varphi(a_2*b_2).
+  \]
+  故 $a_1*b_1\sim a_2*b_2$，所以 $\sim$ 是同余关系。
+\end{solution}
+\end{exercise}
+
+\begin{exercise}[level=standard]
+设 $G$ 为群，$H\subseteq G$ 非空。证明 $H$ 是子群当且仅当对任意 $a,b\in H$，有 $ab^{-1}\in H$。
+\begin{solution}
+若 $H$ 是子群，则 $b^{-1}\in H$，由封闭性得 $ab^{-1}\in H$。反过来，因 $H$ 非空，取 $a\in H$，由条件得 $aa^{-1}=e\in H$；再取 $a=e$ 得 $b^{-1}\in H$；由 $a,b\in H$ 及 $b^{-1}\in H$ 得 $a(b^{-1})^{-1}=ab\in H$。故 $H$ 含单位元、逆元并对乘法封闭，是子群。
+\end{solution}
+\end{exercise}
+
+\begin{exercise}[level=standard]
+证明有限群中任意元素的阶整除群的阶。
+\begin{solution}
+设 $a\in G$。由 $\langle a\rangle$ 是 $G$ 的子群，Lagrange 定理给出
+  \[
+  \card{\langle a\rangle}\mid \card G.
+  \]
+  而 $\card{\langle a\rangle}=\ord(a)$，故元素阶整除群阶。
+\end{solution}
+\end{exercise}
+
+\begin{exercise}[level=standard]
+设 $G=\langle g\rangle$ 是 $n$ 阶循环群。证明 $g^k$ 是生成元当且仅当 $\gcd(n,k)=1$。
+\begin{solution}
+由循环群元素阶公式，
+  \[
+  \ord(g^k)=\frac{n}{\gcd(n,k)}.
+  \]
+  $g^k$ 为生成元当且仅当 $\ord(g^k)=n$，这等价于 $\gcd(n,k)=1$。
+\end{solution}
+\end{exercise}
+
+\begin{exercise}[level=standard]
+设 $N\trianglelefteq G$。证明商群乘法 $(aN)(bN)=abN$ 良定义。
+\begin{solution}
+若 $aN=a'N$、$bN=b'N$，则存在 $n_1,n_2\in N$ 使 $a'=an_1$、$b'=bn_2$。于是
+  \[
+  a'b'=an_1bn_2=ab(b^{-1}n_1b)n_2.
+  \]
+  因 $N$ 正规，$b^{-1}n_1b\in N$，故 $(b^{-1}n_1b)n_2\in N$。因此 $a'b'N=abN$，商群乘法与代表元选择无关。
+\end{solution}
+\end{exercise}
+
+\begin{exercise}[level=standard]
+在任意格中证明
+  \[
+  a\le b\Longleftrightarrow a\wedge b=a\Longleftrightarrow a\vee b=b.
+  \]
+\begin{solution}
+若 $a\le b$，则 $a$ 是 $\{a,b\}$ 的最大下界，$b$ 是最小上界，故 $a\wedge b=a$ 且 $a\vee b=b$。若 $a\wedge b=a$，因为 $a\wedge b$ 是下界，有 $a\le b$。若 $a\vee b=b$，因为 $a\vee b$ 是上界，也有 $a\le b$。
+\end{solution}
+\end{exercise}
+
+\begin{exercise}[level=standard]
+证明分配格中补元唯一。
+\begin{solution}
+设 $b,c$ 都是 $a$ 的补元。利用分配律，
+  \[
+  b=b\wedge1=b\wedge(a\vee c)=(b\wedge a)\vee(b\wedge c)=0\vee(b\wedge c)=b\wedge c.
+  \]
+  同理 $c=c\wedge b$。故 $b=c$。
+\end{solution}
+\end{exercise}
+
+\begin{exercise}[level=standard]
+在布尔代数中证明 De Morgan 律
+  \[
+  (a\vee b)'=a'\wedge b'.
+  \]
+\begin{solution}
+只需证明 $a'\wedge b'$ 是 $a\vee b$ 的补元。首先
+  \[
+  (a\vee b)\wedge(a'\wedge b')
+  =[(a\vee b)\wedge a']\wedge b'
+  =[(a\wedge a')\vee(b\wedge a')]\wedge b'=0.
+  \]
+  其次
+  \[
+  (a\vee b)\vee(a'\wedge b')
+  =[(a\vee b)\vee a']\wedge[(a\vee b)\vee b']=1.
+  \]
+  补元唯一，故 $(a\vee b)'=a'\wedge b'$。
+\end{solution}
+\end{exercise}
+
+\begin{exercise}[level=standard]
+证明群的中心 $Z(G)=\{a\in G\mid ax=xa,\ \forall x\in G\}$ 是 $G$ 的子群。
+\begin{solution}
+显然 $e\in Z(G)$。若 $a,b\in Z(G)$，则对任意 $x\in G$，
+  \[
+  (ab^{-1})x=a(b^{-1}x)=a(xb^{-1})=(ax)b^{-1}=(xa)b^{-1}=x(ab^{-1}).
+  \]
+  故 $ab^{-1}\in Z(G)$，由子群判定法知 $Z(G)\le G$。
+\end{solution}
+\end{exercise}
+
+\begin{exercise}[level=standard]
+设 $G=\langle g\rangle$ 是 $12$ 阶循环群，写出它的所有子群及其阶。
+\begin{solution}
+$12$ 的正因子为 $1,2,3,4,6,12$。循环群对每个正因子 $d$ 恰有一个 $d$ 阶子群：
+  \[
+  \langle g^{12}\rangle=\{e\},\quad
+  \langle g^6\rangle,\quad
+  \langle g^4\rangle,\quad
+  \langle g^3\rangle,\quad
+  \langle g^2\rangle,\quad
+  \langle g\rangle.
+  \]
+  它们的阶分别为 $1,2,3,4,6,12$。
+\end{solution}
+\end{exercise}
+
+\begin{exercise}[level=advanced]
+判断正误并给出理由：若 $d\mid |G|$，则有限群 $G$ 中必有 $d$ 阶元素。
+\begin{solution}
+错。Lagrange 定理只说明元素阶一定整除群阶，不说明每个因子都能作为元素阶出现。Klein 四元群 $V_4$ 的阶为 $4$，但没有 $4$ 阶元素。
+\end{solution}
+\end{exercise}
+
+\begin{exercise}[level=advanced]
+设 $X=\{a,b\}$，$X$ 上所有函数对复合构成含幺半群。列出四个函数，并判断其中哪些可逆。
+\begin{solution}
+四个函数为
+  \[
+  f_1(a)=a,f_1(b)=b;\quad f_2(a)=b,f_2(b)=a;
+  \]
+  \[
+  f_3(a)=a,f_3(b)=a;\quad f_4(a)=b,f_4(b)=b.
+  \]
+  可逆函数必须是双射，因此 $f_1,f_2$ 可逆，$f_3,f_4$ 不可逆。
+\end{solution}
+\end{exercise}
+
+\begin{exercise}[level=advanced]
+写出 $D_3=\langle r,s\mid r^3=e,s^2=e,srs=r^{-1}\rangle$ 的六个元素，并说明它是否为阿贝尔群。
+\begin{solution}
+六个元素为
+  \[
+  e,\ r,\ r^2,\ s,\ sr,\ sr^2.
+  \]
+  它不是阿贝尔群，因为由 $srs=r^{-1}$ 可得 $sr=r^{-1}s=r^2s$，而一般 $rs\ne sr$。在 $D_3$ 中旋转与翻折的复合顺序会改变结果。
+\end{solution}
+\end{exercise}
+
+\begin{exercise}[level=advanced]
+设 $\varphi:G\to K$ 为群同态。证明 $\Ker\varphi$ 是 $G$ 的正规子群；若 $\varphi$ 满射，证明 $G/\Ker\varphi\cong K$。
+\begin{solution}
+若 $x,y\in\Ker\varphi$，则
+  \[
+  \varphi(xy^{-1})=\varphi(x)\varphi(y)^{-1}=e,
+  \]
+  故核为子群。任取 $g\in G$、$n\in\Ker\varphi$，
+  \[
+  \varphi(gng^{-1})=\varphi(g)e\varphi(g)^{-1}=e,
+  \]
+  故 $\Ker\varphi$ 正规。若 $\varphi$ 满射，定义
+  \[
+  \Psi:G/\Ker\varphi\to K,\qquad \Psi(g\Ker\varphi)=\varphi(g).
+  \]
+  若 $g\Ker\varphi=h\Ker\varphi$，则 $h^{-1}g\in\Ker\varphi$，所以 $\varphi(g)=\varphi(h)$，映射良定义。它保持运算、满射且单射，因此是同构。
+\end{solution}
+\end{exercise}
+
+\begin{exercise}[level=advanced]
+设 $B$ 为有限布尔代数，$A$ 为其全体基元集合。证明映射
+  \[
+  \theta:B\to\pow(A),\qquad \theta(x)=\{a\in A\mid a\le x\}
+  \]
+  是布尔代数同构。
+\begin{solution}
+$\theta$ 是双射由有限布尔代数的基元唯一表示定理得到。若 $a$ 是基元，则 $a\le x\vee y$ 当且仅当 $a\le x$ 或 $a\le y$，故
+  \[
+  \theta(x\vee y)=\theta(x)\cup\theta(y).
+  \]
+  类似地
+  \[
+  \theta(x\wedge y)=\theta(x)\cap\theta(y),\qquad
+  \theta(x')=A-\theta(x).
+  \]
+  因此 $\theta$ 保持布尔运算，是布尔代数同构。
+\end{solution}
+\end{exercise}
+
+\begin{exercise}[level=advanced]
+判断正误并给出理由：任意补格都是布尔代数。
+\begin{solution}
+错。布尔代数要求既是补格又是分配格。补格只保证每个元素有补元，不保证分配律；存在非分配补格，因此不能推出布尔代数。
+\end{solution}
+\end{exercise}
+
+\begin{exercise}[level=advanced]
+判断正误并给出理由：任意有限格都是完备格。
+\begin{solution}
+对。有限格的任意非空子集也是有限集。可逐步取两两上确界得到整个子集的上确界，逐步取两两下确界得到下确界，因此有限格是完备格。
+\end{solution}
+\end{exercise}
+
+\begin{exercise}[level=advanced]
+用禁用子格判定说明钻石格 $M_3$ 不是分配格。
+\begin{solution}
+钻石格 $M_3$ 本身含有与 $M_3$ 同构的子格，即它自己。由分配格禁用子格判定，含有 $M_3$ 同构子格的格不是分配格。因此 $M_3$ 不是分配格。也可直接取三个中间元素 $a,b,c$，则 $a\wedge(b\vee c)=a\wedge1=a$，而 $(a\wedge b)\vee(a\wedge c)=0\vee0=0$。
+\end{solution}
+\end{exercise}
+
+\begin{exercise}[level=advanced]
+设 $(B,*,\circ,{}',0,1)$ 满足交换律、两条分配律、同一律 $a*1=a,\ a\circ0=a$ 以及补元律 $a*a'=0,\ a\circ a'=1$。说明为什么它构成布尔代数。
+\begin{solution}
+这些条件是布尔代数的一组等价公理。交换律和分配律给出两种运算的对称和互相分配；同一律给出边界元 $0,1$ 的单位作用；补元律保证每个元素有补元。由这些条件可推出吸收律、结合律以及有界格结构，因此该代数系统是有补分配格，即布尔代数。
+\end{solution}
+\end{exercise}
+

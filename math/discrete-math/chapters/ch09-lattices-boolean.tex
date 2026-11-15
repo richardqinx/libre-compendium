@@ -1,0 +1,612 @@
+% libre-compendium
+%
+% Copyright (C) 2026 Richard Qin
+%
+% This document is dual-licensed under either:
+% - GNU Free Documentation License, Version 1.3 or any later version
+%   published by the Free Software Foundation, with no Invariant Sections,
+%   no Front-Cover Texts, and no Back-Cover Texts (see COPYING.DOC); or
+% - Creative Commons Attribution-ShareAlike 4.0 International License
+%   (see LICENSE-CC-BY-SA-4.0).
+
+\chapter{格和布尔代数}
+
+\section{格的偏序定义}
+
+格把偏序关系和代数运算联系起来。它既可以看作偏序集，也可以看作带有两个二元运算的代数系统。
+
+\begin{pitfall}[格运算符号不是命题联结词]\label{lattice-symbol-pitfall}
+  本章的 $\wedge,\vee$ 表示格中的最大下界和最小上界运算。它们在幂集格中对应交、并，在整除格中对应最大公约数、最小公倍数；只有在命题代数中才可解释为逻辑合取、析取。因此不能看到 $\wedge,\vee$ 就直接套用命题逻辑语义。
+\end{pitfall}
+
+\begin{definition}[格]\label{lattice-poset}
+  设 $(L,\le)$ 是偏序集。若任意 $a,b\in L$ 都有最小上界和最大下界，则称 $(L,\le)$ 为格。记
+  \[
+  a\vee b=\operatorname{lub}\{a,b\},\qquad
+  a\wedge b=\operatorname{glb}\{a,b\}.
+  \]
+  $a\vee b$ 称为并或上确界，$a\wedge b$ 称为交或下确界。
+\end{definition}
+
+\begin{example}[title={幂集格与整除格}]\label{lattice-examples}
+  \begin{enumerate}
+    \item $(\pow(S),\subseteq)$ 是格，其中
+    \[
+    A\vee B=A\cup B,\qquad A\wedge B=A\cap B.
+    \]
+    \item 在正整数集合的整除偏序中，若讨论集合对最大公约数和最小公倍数封闭，则
+    \[
+    a\wedge b=\gcd(a,b),\qquad a\vee b=\lcm(a,b).
+    \]
+    \item 全体划分按“细于”关系可构成格。两个划分的交对应共同细化，两个划分的并对应由两者生成的最小共同粗化。
+  \end{enumerate}
+\end{example}
+
+\begin{example}[title={偏序集不一定是格}]\label{poset-not-lattice}
+  设 $P=\{a,b,c\}$，偏序只规定 $a<c$、$b<c$，而 $a,b$ 不可比，且没有共同下界。
+  则 $a,b$ 虽有最小上界 $c$，却没有最大下界，因此 $(P,\le)$ 不是格。判断有限偏序集时，
+  只要找到一对元素缺少上确界或下确界，即可否定它是格。
+\end{example}
+
+Hasse 图是有限格的常用图示。较大的元素画在上方，覆盖关系连边；传递边省略。若任意两点都能在图中读出唯一的最小共同上界和最大共同下界，则该偏序集是格。
+
+\section{格的代数性质}
+
+\begin{theorem}[格的基本律]\label{lattice-basic-laws}
+  在任意格中，下列交换律、结合律、幂等律和吸收律成立：
+\[
+\begin{array}{ll}
+\text{交换律} & a\vee b=b\vee a,\quad a\wedge b=b\wedge a,\\[0.2em]
+\text{结合律} & a\vee(b\vee c)=(a\vee b)\vee c,\quad a\wedge(b\wedge c)=(a\wedge b)\wedge c,\\[0.2em]
+\text{幂等律} & a\vee a=a,\quad a\wedge a=a,\\[0.2em]
+\text{吸收律} & a\vee(a\wedge b)=a,\quad a\wedge(a\vee b)=a.
+\end{array}
+\]
+\end{theorem}
+
+\begin{proof}
+  交换律来自集合 $\{a,b\}$ 与 $\{b,a\}$ 相同。以 $\vee$ 的结合律为例，
+  $a\vee(b\vee c)$ 和 $(a\vee b)\vee c$ 都是 $\{a,b,c\}$ 的最小上界，故相等；
+  $\wedge$ 的结合律对偶。幂等律来自 $a$ 同时是 $\{a\}$ 的最小上界和最大下界。
+  又 $a\wedge b\le a$，故 $a$ 是 $\{a,a\wedge b\}$ 的最小上界，即
+  $a\vee(a\wedge b)=a$；另一吸收律对偶。
+\end{proof}
+
+\begin{theorem}[格运算的单调性]\label{lattice-monotonicity}
+  在格中，若 $a\le b$，则对任意 $c$，
+  \[
+  a\wedge c\le b\wedge c,\qquad a\vee c\le b\vee c.
+  \]
+\end{theorem}
+
+\begin{proof}
+  因为 $a\wedge c\le a\le b$，且 $a\wedge c\le c$，所以 $a\wedge c$ 是
+  $b,c$ 的一个下界，从而 $a\wedge c\le b\wedge c$。又 $b\vee c$ 同时是
+  $a,c$ 的上界，故 $a\vee c\le b\vee c$。
+\end{proof}
+
+\begin{theorem}[偏序与格运算的互相刻画]\label{order-lattice-ops}
+  在格 $L$ 中，对任意 $a,b\in L$，
+  \[
+  a\le b\Longleftrightarrow a\wedge b=a
+  \Longleftrightarrow a\vee b=b.
+  \]
+\end{theorem}
+
+\begin{proof}
+  若 $a\le b$，则 $a$ 是 $\{a,b\}$ 的最大下界，故 $a\wedge b=a$；同时 $b$ 是 $\{a,b\}$ 的最小上界，故 $a\vee b=b$。反过来，若 $a\wedge b=a$，由于 $a\wedge b$ 是下界，有 $a\le b$。若 $a\vee b=b$，由于 $a\vee b$ 是上界，有 $a\le b$。
+\end{proof}
+
+\begin{theorem}[代数定义的格]\label{lattice-algebraic}
+  若代数系统 $(L,\vee,\wedge)$ 满足交换律、结合律、吸收律，则可定义关系
+  \[
+  a\le b\Longleftrightarrow a\wedge b=a.
+  \]
+  该关系为偏序，且 $(L,\le)$ 是格，其上确界、下确界分别由 $\vee,\wedge$ 给出。
+\end{theorem}
+
+\begin{proof}
+  先由吸收律推出幂等律：
+  \[
+  a\wedge a=a\wedge\bigl(a\vee(a\wedge a)\bigr)=a,
+  \]
+  另一幂等律对偶。于是 $a\le a$。若 $a\le b$ 且 $b\le a$，则
+  $a=a\wedge b=b\wedge a=b$。若 $a\le b$ 且 $b\le c$，则
+  \[
+  a\wedge c=(a\wedge b)\wedge c=a\wedge(b\wedge c)=a\wedge b=a,
+  \]
+  故该关系为偏序。
+
+  由吸收律，
+  \[
+  a\wedge(a\vee b)=a,\qquad b\wedge(a\vee b)=b,
+  \]
+  所以 $a\vee b$ 是 $a,b$ 的上界。若 $c$ 也是上界，则
+  $a\wedge c=a$、$b\wedge c=b$。由吸收律可等价地写成
+  $a\vee c=c$、$b\vee c=c$，于是
+  \[
+  (a\vee b)\vee c=a\vee(b\vee c)=a\vee c=c.
+  \]
+  再用同一等价性得到 $(a\vee b)\wedge c=a\vee b$，故
+  $a\vee b\le c$，即它是最小上界。对偶地，$a\wedge b$ 是最大下界。
+\end{proof}
+
+\begin{definition}[分配格]\label{distributive-lattice}
+  格 $L$ 若对任意 $a,b,c\in L$ 满足
+  \[
+  a\wedge(b\vee c)=(a\wedge b)\vee(a\wedge c),
+  \qquad
+  a\vee(b\wedge c)=(a\vee b)\wedge(a\vee c),
+  \]
+  则称为分配格。
+\end{definition}
+
+\begin{theorem}[格的对偶原理]\label{lattice-duality}
+  在格中，若一个只由元素、等号、偏序符号、$\vee,\wedge$ 构成的命题恒真，则把 $\le$ 与 $\ge$ 互换、$\vee$ 与 $\wedge$ 互换后得到的对偶命题也恒真。
+\end{theorem}
+
+例如，由
+\[
+a\wedge b\le a
+\]
+可对偶得到
+\[
+a\vee b\ge a.
+\]
+由吸收律 $a\vee(a\wedge b)=a$ 可对偶得到 $a\wedge(a\vee b)=a$。使用对偶原理时，若命题出现在有界格中，还必须同时交换 $0$ 与 $1$。
+
+\begin{pitfall}[一般格不一定满足分配律]\label{lattice-distribution-pitfall}
+  集合格中有
+  \[
+  A\cap(B\cup C)=(A\cap B)\cup(A\cap C),
+  \]
+  但任意格中不必有
+  \[
+  a\wedge(b\vee c)=(a\wedge b)\vee(a\wedge c).
+  \]
+  分配律需要额外定义，不能从“是格”推出。
+\end{pitfall}
+
+\begin{theorem}[格的分配不等式]\label{lattice-distributive-inequalities}
+  任意格中都有
+  \[
+  a\vee(b\wedge c)\le (a\vee b)\wedge(a\vee c),
+  \]
+  以及其对偶式
+  \[
+  (a\wedge b)\vee(a\wedge c)\le a\wedge(b\vee c).
+  \]
+  分配格恰要求这些不等式都成为等式。
+\end{theorem}
+
+\begin{proof}
+  $a\vee(b\wedge c)$ 不超过 $a\vee b$，也不超过 $a\vee c$；它因而不超过
+  这两个元素的最大下界 $(a\vee b)\wedge(a\vee c)$。对偶原理给出第二式。
+\end{proof}
+
+\begin{theorem}[格的模不等式]\label{lattice-modular-inequality}
+  在任意格中，对任意 $a,b,c$，
+  \[
+  a\le c\quad\Longleftrightarrow\quad
+  a\vee(b\wedge c)\le(a\vee b)\wedge c.
+  \]
+\end{theorem}
+
+\begin{proof}
+  若 $a\le c$，则 $a\vee(b\wedge c)\le a\vee b$；又因
+  $a\le c$、$b\wedge c\le c$，有 $a\vee(b\wedge c)\le c$，故它不超过
+  $(a\vee b)\wedge c$。反之，若该不等式成立，则
+  \[
+  a\le a\vee(b\wedge c)\le(a\vee b)\wedge c\le c.
+  \]
+  证毕。对偶地，
+  \[
+  c\le a\quad\Longleftrightarrow\quad
+  (a\wedge b)\vee c\le a\wedge(b\vee c).
+  \]
+\end{proof}
+
+\section{子格、直接积、完备格、有界格与补元}
+
+\begin{definition}[子格与直接积]\label{sublattice-product}
+  设 $(L,\vee,\wedge)$ 为格，$S\subseteq L$。若 $S$ 对 $\vee,\wedge$ 都封闭，则称 $S$ 为 $L$ 的子格。若 $L_1,L_2$ 为格，则 $L_1\times L_2$ 上定义
+  \[
+  (a_1,a_2)\vee(b_1,b_2)=(a_1\vee b_1,\ a_2\vee b_2),
+  \]
+  \[
+  (a_1,a_2)\wedge(b_1,b_2)=(a_1\wedge b_1,\ a_2\wedge b_2),
+  \]
+  得到两个格的直接积。
+\end{definition}
+
+\begin{theorem}[格的直接积]\label{lattice-direct-product}
+  两个格的直接积按上述分量运算仍是格；若两个因子都是分配格，则其直接积也是分配格。
+\end{theorem}
+
+\begin{proof}
+  两个运算的交换律、结合律和吸收律都逐坐标成立，故由代数定义的格定理，
+  直接积为格。若两个因子满足分配律，则分配式两边的每一个坐标都相等，因而
+  直接积满足分配律。
+\end{proof}
+
+\begin{definition}[格同态]\label{lattice-homomorphism}
+  设 $L,M$ 为格。映射 $f:L\to M$ 若对任意 $a,b\in L$ 满足
+  \[
+  f(a\vee b)=f(a)\vee f(b),\qquad
+  f(a\wedge b)=f(a)\wedge f(b),
+  \]
+  则称为格同态；若 $f$ 为双射，则称为格同构。定义域和值域相同时，分别称为
+  格自同态和格自同构。
+\end{definition}
+
+\begin{definition}[完备格、有界格、补元]\label{complete-bounded-complement}
+  若格 $L$ 的每个非空子集都有上确界和下确界，则称 $L$ 为完备格。若 $L$ 有最大元 $1$ 与最小元 $0$，则称为有界格。
+
+  在有界格中，若 $a,b\in L$ 满足
+  \[
+  a\wedge b=0,\qquad a\vee b=1,
+  \]
+  则称 $b$ 为 $a$ 的补元。
+\end{definition}
+
+有限格一定是有界格，也一定是完备格：有限多个元素逐步取两两上确界可得到全体元素的上确界，逐步取两两下确界可得到全体元素的下确界。无限格不一定有界，例如整数集 $(\Z,\le)$ 构成格，但没有最小元和最大元；幂集格 $(\pow(S),\subseteq)$ 不论 $S$ 是否有限，都是有界格。
+
+在有界格中，$0$ 与 $1$ 对两种运算的角色如下：
+\[
+\begin{array}{c|cc}
+ & \wedge & \vee\\ \hline
+0 & \text{零元} & \text{单位元}\\
+1 & \text{单位元} & \text{零元}
+\end{array}
+\]
+也就是说 $a\wedge0=0$，$a\vee0=a$，$a\wedge1=a$，$a\vee1=1$。补元不一定存在，也不一定唯一。分配格中的补元才具有唯一性。
+
+\begin{definition}[补格]\label{complemented-lattice}
+  若有界格中每个元素都有补元，则称为补格。
+\end{definition}
+
+\begin{definition}[钻石格与五角格]\label{diamond-pentagon}
+  钻石格 $M_3$ 是五元格
+  \[
+  M_3=\{0,a,b,c,1\},
+  \]
+  其偏序由
+  \[
+  0<a<1,\qquad 0<b<1,\qquad 0<c<1
+  \]
+  给出，且 $a,b,c$ 两两不可比。因此任意两个不同的中间元素 $u,v$ 都满足
+  \[
+  u\wedge v=0,\qquad u\vee v=1.
+  \]
+
+  五角格 $N_5$ 是五元格
+  \[
+  N_5=\{0,x,y,z,1\},
+  \]
+  其偏序由两条链
+  \[
+  0<x<y<1,\qquad 0<z<1
+  \]
+  给出，并且 $z$ 与 $x,y$ 都不可比。特别地，
+  \[
+  x\wedge z=y\wedge z=0,\qquad x\vee z=y\vee z=1.
+  \]
+\end{definition}
+
+\lcfigure[caption={钻石格与五角格},label={fig:forbidden-lattices}]{forbidden-lattices}
+
+\begin{theorem}[分配格的禁用子格判定]\label{forbidden-lattices}
+  一个格是分配格，当且仅当它不含与钻石格 $M_3$ 或五角格 $N_5$ 同构的子格。
+\end{theorem}
+
+\begin{proof}
+  这里只验证“必要性”中最直接的部分：$M_3,N_5$ 自身均非分配格，故分配格不能含有
+  它们的同构子格。对 $M_3$，取三个中间元素 $a,b,c$，则
+  \[
+  a\wedge(b\vee c)=a\wedge1=a,
+  \]
+  而
+  \[
+  (a\wedge b)\vee(a\wedge c)=0\vee0=0.
+  \]
+  因此 $M_3$ 不满足分配律。对 $N_5$，由 $x<y$ 且 $y\vee z=1$，有
+  \[
+  y\wedge(x\vee z)=y\wedge1=y,
+  \]
+  而
+  \[
+  (y\wedge x)\vee(y\wedge z)=x\vee0=x.
+  \]
+  因 $x\ne y$，$N_5$ 也不满足分配律。反向“任何非分配格必含
+  $M_3$ 或 $N_5$ 型子格”是分配格的结构判定定理。
+\end{proof}
+
+\begin{method}[禁用子格判定的使用]\label{forbidden-lattice-method}
+  对有限格，先在 Hasse 图中寻找五个元素。若能找到三个两两不可比的中间元素，
+  它们共同覆盖 $0$ 且共同被 $1$ 覆盖，就得到 $M_3$；若能找到一条
+  $0<x<y<1$ 的三段链和一个只介于 $0,1$ 之间、但与 $x,y$ 不可比的元素，
+  就得到 $N_5$。只要找到其中一种子格，即可判定原格不是分配格。
+\end{method}
+
+\begin{theorem}[分配格中补元唯一]\label{complement-unique}
+  在分配格中，若 $b,c$ 都是 $a$ 的补元，则 $b=c$。
+\end{theorem}
+
+\begin{proof}
+  因为 $c$ 是 $a$ 的补元，所以 $a\vee c=1$。于是
+  \[
+  b=b\wedge1=b\wedge(a\vee c)=(b\wedge a)\vee(b\wedge c)=0\vee(b\wedge c)=b\wedge c.
+  \]
+  同理 $c=c\wedge b$。故 $b=b\wedge c=c$。
+\end{proof}
+
+\begin{theorem}[分配格的分离性质]\label{distributive-separation}
+  在分配格中，对任意 $a,b,c$，
+  \[
+  a\wedge b=a\wedge c,\quad a\vee b=a\vee c
+  \quad\Longleftrightarrow\quad b=c.
+  \]
+\end{theorem}
+
+\begin{proof}
+  必要性显然。反过来，记共同的交为 $u$、共同的并为 $v$。由分配律，
+  \[
+  b=b\wedge v=b\wedge(a\vee c)=(b\wedge a)\vee(b\wedge c)
+  =u\vee(b\wedge c).
+  \]
+  同理 $c=u\vee(b\wedge c)$，故 $b=c$。
+\end{proof}
+
+\section{布尔代数}
+
+\begin{definition}[布尔代数]\label{boolean-algebra}
+  既是补格又是分配格的有界格称为布尔代数，记为
+  \[
+  (B,\vee,\wedge,{}',0,1).
+  \]
+  其中 $\vee$ 称为析取或布尔和，$\wedge$ 称为合取或布尔积，$a'$ 称为 $a$ 的补元。
+\end{definition}
+
+布尔代数也可用等价公理化方式判定。设 $(B,*,\circ,{}',0,1)$ 是代数系统，若对任意 $a,b,c\in B$ 满足：
+\[
+a*b=b*a,\qquad a\circ b=b\circ a,
+\]
+\[
+a*(b\circ c)=(a*b)\circ(a*c),\qquad
+a\circ(b*c)=(a\circ b)*(a\circ c),
+\]
+\[
+a*1=a,\qquad a\circ0=a,
+\]
+\[
+a*a'=0,\qquad a\circ a'=1,
+\]
+则该系统构成布尔代数。这个判定适合处理给定抽象运算表或开关代数规则的题目：不用先证明所有格律，只需验证交换律、分配律、同一律和补元律。
+
+\lcfigure[caption={三元集合的布尔格},label={fig:boolean-lattice-b3}]{boolean-lattice-b3}
+
+布尔代数统一了命题演算、集合代数和开关代数。命题公式等价类以 $\vee,\wedge,\neg$ 构成布尔代数；幂集 $\pow(S)$ 以 $\cup,\cap,{}^c$ 构成布尔代数；二值集合 $\{0,1\}$ 以普通逻辑或、与、非构成最小非平凡布尔代数。
+
+\begin{example}[title={位向量布尔代数}]\label{bit-vector-boolean}
+  令
+  \[
+  B_n=\{0,1\}^n.
+  \]
+  对 $x=(x_1,\ldots,x_n)$、$y=(y_1,\ldots,y_n)$，逐坐标定义
+  \[
+  (x\vee y)_i=x_i\vee y_i,\qquad
+  (x\wedge y)_i=x_i\wedge y_i,\qquad
+  (x')_i=1-x_i.
+  \]
+  再取 $0=(0,\ldots,0)$、$1=(1,\ldots,1)$，便得到布尔代数。它与
+  $n$ 元集合的幂集布尔代数同构：每一个坐标记录相应元素是否被选入子集。
+\end{example}
+
+\begin{theorem}[布尔代数基本恒等式]\label{boolean-laws}
+  在布尔代数中，对任意 $a,b,c\in B$，有
+  \[
+  a\vee0=a,\quad a\wedge1=a,\quad a\vee1=1,\quad a\wedge0=0,
+  \]
+  \[
+  a\vee a'=1,\quad a\wedge a'=0,\quad (a')'=a,
+  \]
+  \[
+  (a\vee b)'=a'\wedge b',\qquad (a\wedge b)'=a'\vee b'.
+  \]
+\end{theorem}
+
+\begin{proof}
+  前两组由有界格和补元定义直接得到。对双重补，由 $a'$ 的补元唯一性可知 $a$ 是 $a'$ 的唯一补元，故 $(a')'=a$。对 De Morgan 律，以第一式为例：
+  \[
+  (a\vee b)\wedge(a'\wedge b')
+  =[(a\vee b)\wedge a']\wedge b'
+  =[(a\wedge a')\vee(b\wedge a')]\wedge b'
+  =(b\wedge a')\wedge b'=0,
+  \]
+  且
+  \[
+  (a\vee b)\vee(a'\wedge b')
+  =[(a\vee b)\vee a']\wedge[(a\vee b)\vee b']=1\wedge1=1.
+  \]
+  因此 $a'\wedge b'$ 是 $a\vee b$ 的补元，即 $(a\vee b)'=a'\wedge b'$。第二式由对偶性得到。
+\end{proof}
+
+\begin{theorem}[布尔代数中的偏序判定]\label{boolean-order-test}
+  对任意 $a,b$，下列条件等价：
+  \[
+  a\le b,\qquad a\wedge b=a,\qquad a\vee b=b,
+  \]
+  \[
+  a\wedge b'=0,\qquad a\vee b'=1,\qquad b'\le a'.
+  \]
+\end{theorem}
+
+\begin{proof}
+  前三项由格的偏序刻画等价。若 $a\le b$，则
+  \[
+  a\wedge b'=a\wedge b\wedge b'=a\wedge0=0,
+  \]
+  并由对偶性得到 $a\vee b'=1$。若 $a\wedge b'=0$，则
+  \[
+  a=a\wedge1=a\wedge(b\vee b')=(a\wedge b)\vee(a\wedge b')=a\wedge b,
+  \]
+  因而 $a\le b$。对 $a\le b$ 取补并用 De Morgan 律，得到
+  $b'\le a'$；反向同理。
+\end{proof}
+
+\begin{definition}[布尔同态与子布尔代数]\label{boolean-homomorphism}
+  布尔代数之间的映射 $f:B\to C$ 若满足
+  \[
+  f(a\vee b)=f(a)\vee f(b),\quad f(a\wedge b)=f(a)\wedge f(b),
+  \quad f(a')=f(a)',\quad f(0)=0,\quad f(1)=1,
+  \]
+  则称为布尔同态。若 $A\subseteq B$ 在这些运算及常元下封闭，则称 $A$ 为
+  $B$ 的子布尔代数。
+\end{definition}
+
+\begin{theorem}[布尔同态的像]\label{boolean-image}
+  若 $f:B\to C$ 是布尔同态，则 $\img f$ 是 $C$ 的子布尔代数。
+\end{theorem}
+
+\begin{proof}
+  设 $x=f(a),y=f(b)\in\img f$。则
+  \[
+  x\vee y=f(a\vee b),\quad x\wedge y=f(a\wedge b),\quad x'=f(a')
+  \]
+  都属于 $\img f$，且 $0=f(0)$、$1=f(1)$ 也属于 $\img f$。故像对全部
+  布尔运算和常元封闭。
+\end{proof}
+
+\begin{definition}[对偶]\label{dual}
+  将布尔代数命题中的 $\vee$ 与 $\wedge$ 互换，$0$ 与 $1$ 互换，$\le$ 与 $\ge$ 互换，所得命题称为原命题的对偶命题。
+\end{definition}
+
+\begin{theorem}[对偶原理]\label{duality}
+  若一个只由布尔代数运算、边界元和偏序关系表达的命题在任意布尔代数中成立，则其对偶命题也在任意布尔代数中成立。
+\end{theorem}
+
+对偶原理的作用是减少证明数量。例如证明了
+\[
+a\wedge0=0,
+\]
+即可对偶得到
+\[
+a\vee1=1.
+\]
+证明了一个关于 $\wedge$ 的分配式，也可对偶得到对应的 $\vee$ 分配式。
+
+\section{基元与有限布尔代数}
+
+\begin{definition}[基元]\label{atom}
+  在布尔代数 $B$ 中，非零元素 $a$ 若满足：不存在 $b\in B$ 使
+  \[
+  0<b<a,
+  \]
+  则称 $a$ 为基元。
+\end{definition}
+
+基元也常称为原子。在幂集布尔代数 $\pow(S)$ 中，基元正是单元素集合 $\{s\}$。在正整数 $n$ 的正因子格中，若用整除关系排序，则基元对应 $n$ 的素因子。它们是从 $0$ 向上第一层的不可再分非零元素。
+
+\begin{definition}[原子布尔代数]\label{atomic-boolean}
+  若对每个非零元素 $x\in B$，都存在基元 $a$ 使 $a\le x$，则称 $B$ 为原子布尔代数。
+\end{definition}
+
+\begin{theorem}[基元的等价刻画]\label{atom-characterization}
+  设 $a\ne0$。下列命题等价：
+  \begin{enumerate}
+    \item $a$ 是基元；
+    \item 对任意 $x\in B$，$a\wedge x$ 只能等于 $0$ 或 $a$；
+    \item 对任意 $x\in B$，都有 $a\le x$ 或 $a\le x'$。
+  \end{enumerate}
+\end{theorem}
+
+\begin{proof}
+  $(1)\Rightarrow(2)$：$a\wedge x\le a$；若它非零，基元性迫使
+  $a\wedge x=a$。
+
+  $(2)\Rightarrow(3)$：由假设，$a\wedge x=0$ 或 $a$。前一种情形由偏序判定得
+  $a\le x'$，后一种情形给出 $a\le x$。
+
+  $(3)\Rightarrow(1)$：若 $0<y<a$，将 $x=y$ 代入得 $a\le y$ 或
+  $a\le y'$。前者与 $y<a$ 矛盾；后者推出
+  $y=a\wedge y=0$，也矛盾。因此不存在这样的 $y$。
+\end{proof}
+
+\begin{theorem}[不同基元的交]\label{distinct-atoms-meet-zero}
+  若 $a,b$ 是两个不同的基元，则
+  \[
+  a\wedge b=0.
+  \]
+\end{theorem}
+
+\begin{proof}
+  由基元等价刻画，$a\wedge b$ 只能为 $0$ 或 $a$。若为 $a$，则 $a\le b$；
+  对 $b$ 同理可得 $b\le a$，从而 $a=b$，矛盾。因此 $a\wedge b=0$。
+\end{proof}
+
+\begin{theorem}[有限布尔代数的基元表示]\label{finite-boolean-atoms}
+  每个有限布尔代数都是原子布尔代数。设 $B$ 是有限布尔代数，$A$ 为 $B$ 中所有基元的集合。任意 $x\in B$ 都可唯一表示为若干基元的析取：
+  \[
+  x=\bigvee\{a\in A\mid a\le x\}.
+  \]
+  因而 $B$ 与 $\pow(A)$ 同构。
+\end{theorem}
+
+\begin{proof}
+  若 $x=0$，空析取表示 $0$。若 $x\ne0$，有限性保证在所有满足 $0<y\le x$ 的元素中存在极小元，它就是基元。取所有小于等于 $x$ 的基元的析取，记为 $u$。显然 $u\le x$。若 $u<x$，则 $x\wedge u'\ne0$，其中又含有某个基元 $a$，于是 $a\le x$ 且 $a\le u'$，与 $a$ 已出现在 $u$ 中矛盾。故 $u=x$。
+
+  唯一性来自不同基元互不相交：若 $a,b$ 为不同基元，则 $a\wedge b=0$。因此一个元素包含哪些基元完全由它本身决定。
+
+  定义
+  \[
+  \theta:B\longrightarrow\pow(A),\qquad
+  \theta(x)=\{a\in A\mid a\le x\}.
+  \]
+  基元表示说明 $\theta$ 为双射。若 $a\in A$，则由基元等价刻画，
+  \[
+  a\le x\vee y\Longleftrightarrow a\le x\ \text{或}\ a\le y,
+  \]
+  因而 $\theta(x\vee y)=\theta(x)\cup\theta(y)$。又
+  \[
+  a\le x\wedge y\Longleftrightarrow a\le x\ \text{且}\ a\le y,
+  \]
+  所以 $\theta(x\wedge y)=\theta(x)\cap\theta(y)$。最后，
+  $a\le x'$ 当且仅当 $a\nleq x$，故 $\theta(x')=A-\theta(x)$。
+  因此 $\theta$ 是布尔代数同构。
+\end{proof}
+
+\begin{theorem}[有限布尔代数的大小]\label{finite-boolean-size}
+  若有限布尔代数有 $n$ 个基元，则它有 $2^n$ 个元素。任意两个具有 $2^n$ 个元素的布尔代数同构。
+\end{theorem}
+
+\begin{proof}
+  由基元表示定理，每个元素唯一对应于基元集合的一个子集，故元素个数为 $\card{\pow(A)}=2^n$。若两个有限布尔代数基元数相同，则都同构于同一个 $n$ 元集合的幂集布尔代数。
+\end{proof}
+
+\section{其他代数系统}
+
+环可以看作同时具有加法和乘法的代数结构。
+
+\begin{definition}[环]\label{ring}
+  代数系统 $(R,+,\cdot)$ 称为环，若：
+  \begin{enumerate}
+    \item $(R,+)$ 是阿贝尔群；
+    \item $R$ 对乘法 $\cdot$ 封闭，且乘法满足结合律；
+    \item 乘法对加法满足左右分配律：
+    \[
+    a(b+c)=ab+ac,\qquad (a+b)c=ac+bc.
+    \]
+  \end{enumerate}
+\end{definition}
+
+整数集、有理数集、实数集在普通加法和乘法下都是环。若环中非零元素对乘法构成阿贝尔群，则得到域的结构；有理数、实数、复数是基本例子。
+
+\begin{example}[title={应用阅读：视图格与数据仓库查询}]\label{view-lattice-reading}
+  数据仓库中的物化视图可说明格的应用。一个维度可以按不同粒度分组，例如时间维可按“日、月、季度、全部”分组，地区维可按“城市、省份、全部”分组。若把“更细”看作偏序，则每个维度上的分组层次形成格。多个维度组合后，所有可能的物化视图按逐维加粗或加细也形成格。
+
+  这个例子的数学核心是：格中的上确界表示两个查询共同需要的最粗公共细化，下确界表示它们共同能退化到的较粗汇总层次。数据库系统可以利用这种偏序关系决定哪些已存视图能回答新的聚合查询。
+\end{example}
+
+\begin{summary}[本节提要]
+  格把偏序中的上下确界变成两个二元运算，格的对偶原理可成对产生定理。分配格可用禁用子格 $M_3,N_5$ 判定；补格要求每个元素有补元；布尔代数同时满足补性和分配性，是命题、集合、开关网络的统一代数模型。有限布尔代数由基元完全决定，因此必有 $2^n$ 个元素。
+\end{summary}

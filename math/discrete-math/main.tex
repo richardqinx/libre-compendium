@@ -1,0 +1,46 @@
+% libre-compendium
+%
+% Copyright (C) 2026 Richard Qin
+%
+% This document is dual-licensed under either:
+% - GNU Free Documentation License, Version 1.3 or any later version
+%   published by the Free Software Foundation, with no Invariant Sections,
+%   no Front-Cover Texts, and no Back-Cover Texts (see COPYING.DOC); or
+% - Creative Commons Attribution-ShareAlike 4.0 International License
+%   (see LICENSE-CC-BY-SA-4.0).
+\ProvidesFile{main.tex}[2026/11/15 v0.1.0 离散数学讲义]
+\documentclass[
+  scope=course,
+  profile=standard,
+  style=boxed,
+  color=full,
+  figures=inline
+]{lc-lecture}
+\input{settings}
+\lcset{
+  title       = {离散数学讲义},
+  short-title = {离散数学},
+  date        = {2026 年版},
+}
+\begin{document}
+\maketitle
+\tableofcontents
+
+\part{集合、关系与函数}
+\input{chapters/ch01-sets}
+\input{chapters/ch02-relations}
+\input{chapters/ch03-functions-operations}
+\input{chapters/ch04-infinite-sets}
+
+\part{数理逻辑}
+\input{chapters/ch05-propositional}
+\input{chapters/ch06-predicate}
+
+\part{代数结构}
+\input{chapters/ch07-algebra-systems}
+\input{chapters/ch08-semigroups-groups}
+\input{chapters/ch09-lattices-boolean}
+\clearpage
+\part*{附录与许可}
+\addcontentsline{toc}{part}{附录与许可}
+\end{document}

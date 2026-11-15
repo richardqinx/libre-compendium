@@ -1,0 +1,290 @@
+% libre-compendium
+%
+% Copyright (C) 2026 Richard Qin
+%
+% This document is dual-licensed under either:
+% - GNU Free Documentation License, Version 1.3 or any later version
+%   published by the Free Software Foundation, with no Invariant Sections,
+%   no Front-Cover Texts, and no Back-Cover Texts (see COPYING.DOC); or
+% - Creative Commons Attribution-ShareAlike 4.0 International License
+%   (see LICENSE-CC-BY-SA-4.0).
+
+\chapter{无限集合}
+
+\section{基数与等势}
+
+集合大小的比较不能只依靠“数出来”。对无限集合，核心方法是寻找双射。
+
+\begin{definition}[等势与基数]\label{cardinal-basic}
+  若集合 $A$ 与 $B$ 之间存在双射 $f:A\to B$，则称 $A$ 与 $B$ 等势，记为
+  \[
+  A\sim B.
+  \]
+  与 $A$ 等势的所有集合具有同一基数，记为 $\card A$。若 $A$ 与有限集合 $\set{1,2,\ldots,n}$ 等势，则称 $\card A=n$；不是有限集的集合称为无限集。
+\end{definition}
+
+\begin{example}[title={自然数与偶数等势}]\label{naturals-even}
+  设 $E=\set{0,2,4,\ldots}$。函数
+  \[
+  f:\N\to E,\qquad f(n)=2n
+  \]
+  是双射。因此自然数集与非负偶数集等势。无限集合可以与自己的真子集等势，这是无限集区别于有限集的重要现象。
+\end{example}
+
+\begin{theorem}[等势是等价关系]\label{equinumerous-equivalence}
+  在集合类上，等势关系满足自反性、对称性和传递性。
+\end{theorem}
+
+\begin{proof}
+  自反性由恒等函数 $I_A:A\to A$ 给出。若 $A\sim B$，存在双射 $f:A\to B$，则逆函数 $f^{-1}:B\to A$ 也是双射，故 $B\sim A$。若 $A\sim B$ 且 $B\sim C$，取双射 $f:A\to B$、$g:B\to C$，则 $g\circ f:A\to C$ 是双射，故 $A\sim C$。
+\end{proof}
+
+有限集不能与其真子集等势；若从有限集删去至少一个元素，元素个数严格减少。自然数集则不同，$\N\sim\N-\set0$，例如 $n\mapsto n+1$ 是双射。因此 $\N$ 是无限集。
+
+\section{可列集}
+
+\begin{definition}[可列集]\label{countable-set}
+  与 $\N$ 等势的集合称为可列无限集，其基数记为
+  \[
+  \aleph_0=\card\N.
+  \]
+  有限集或可列无限集合统称为至多可列集。
+\end{definition}
+
+一个集合可列，当且仅当它的元素能排成一个无遗漏、无重复要求可通过删重处理的序列
+\[
+a_0,a_1,a_2,\ldots .
+\]
+这里“能列出”并不是要求写完全部元素，而是要求存在一个从 $\N$ 到该集合的满射；删去重复项后可得到双射。
+
+\begin{theorem}[可列集的基本封闭性]\label{countable-closure}
+  \begin{enumerate}
+    \item 可列集的任意子集是有限集或可列集。
+    \item 有限集与可列集的并仍可列。
+    \item 有限多个可列集的并可列。
+    \item 可列多个可列集的并仍至多可列。
+  \end{enumerate}
+\end{theorem}
+
+\begin{proof}
+  子集结论可按原可列序列的顺序筛选子集元素。有限并只是在序列前插入或交错有限多个序列，不改变可列性。对可列多个可列集 $A_0,A_1,\ldots$，把每个 $A_i$ 写成序列
+  \[
+  A_i=\set{a_{i0},a_{i1},a_{i2},\ldots}.
+  \]
+  按 $i+j=0,1,2,\ldots$ 的对角线顺序列出 $a_{ij}$，并删去重复项，即得到并集的一个序列。
+\end{proof}
+
+\lcfigure[caption={countable-diagonal},label={fig:countable-diagonal}]{countable-diagonal}
+
+\begin{theorem}[$\N\times\N$ 与有理数集可列]\label{n2-q-countable}
+  集合 $\N\times\N$ 可列；整数集 $\Z$ 与有理数集 $\Q$ 都可列。
+\end{theorem}
+
+\begin{proof}
+  $\N\times\N$ 可按对角线顺序排列。整数可列，例如
+  \[
+  0,1,-1,2,-2,3,-3,\ldots
+  \]
+  列出了全部整数。对有理数，每个非零有理数可写成 $\frac pq$，其中 $p\in\Z$、$q\in\N^+$，所以 $\Q$ 是 $\Z\times\N^+$ 的像；可列集的像至多可列。又 $\N\subseteq\Q$，故 $\Q$ 是可列无限集。
+\end{proof}
+
+\begin{pitfall}[“稠密”不等于“不可列”]\label{dense-countable}
+  有理数在实数轴上稠密：任意两个不同实数之间都有有理数。但稠密只描述位置分布，不描述基数大小。$\Q$ 很密，却仍可列；不可列性需要用对角线等方法证明。
+\end{pitfall}
+
+\section{不可列集}
+
+\begin{theorem}[Cantor 对角线法]\label{cantor-diagonal-real}
+  开区间 $(0,1)$ 中的实数不可列。
+\end{theorem}
+
+\begin{proof}
+  假设 $(0,1)$ 可列，把其中所有实数写成小数表
+  \[
+  x_1=0.a_{11}a_{12}a_{13}\cdots,\quad
+  x_2=0.a_{21}a_{22}a_{23}\cdots,\quad
+  x_3=0.a_{31}a_{32}a_{33}\cdots,\quad\ldots
+  \]
+  对可能有两种小数表示的数，统一选不用末尾全为 $9$ 的表示。构造新数
+  \[
+  y=0.b_1b_2b_3\cdots
+  \]
+  使 $b_i$ 与 $a_{ii}$ 不同，例如令 $b_i=1$ 当 $a_{ii}\ne1$，令 $b_i=2$ 当 $a_{ii}=1$。则 $y$ 与第 $i$ 个数 $x_i$ 至少在第 $i$ 位小数不同，所以 $y$ 不等于表中任何一个 $x_i$。但 $y\in(0,1)$，与“表已列出全部实数”矛盾。故 $(0,1)$ 不可列。
+\end{proof}
+
+\begin{definition}[连续统基数]\label{continuum-cardinality}
+  实数集的基数称为\emph{连续统基数}，记为
+  \[
+  \aleph=\card{\R}=\card{(0,1)}=2^{\aleph_0}.
+  \]
+  其中 $2^{\aleph_0}$ 表示从 $\N$ 到 $\set{0,1}$ 的函数集的基数，即 $\card{\set{0,1}^{\N}}$。
+\end{definition}
+
+区间 $(0,1)$、$[0,1]$、任意非退化实区间以及 $\R$ 都有基数 $\aleph$。例如可用单调函数、分式变换或 Schröder--Bernstein 定理建立双射或等势关系。由于 $\Q\cap(0,1)$ 可列而 $(0,1)$ 不可列，$(0,1)$ 中的无理数仍有基数 $\aleph$。
+
+\section{基数的比较}
+
+\begin{definition}[基数不等式]\label{cardinal-order}
+  若存在单射 $f:A\to B$，或等价地 $A$ 与 $B$ 的某个子集等势，则记
+  \[
+  \card A\le \card B.
+  \]
+  若 $\card A\le\card B$ 且 $A$ 与 $B$ 不等势，则记 $\card A<\card B$。
+\end{definition}
+
+\begin{theorem}[Schröder--Bernstein 定理]\label{sb-theorem}
+  若 $\card A\le\card B$ 且 $\card B\le\card A$，则 $\card A=\card B$。
+\end{theorem}
+
+该定理在比较无限集合时常用于避免直接构造双射。典型用法是分别构造两个方向的单射，再推出等势。例如 $(0,1)\subseteq[0,1]$ 给出一个方向的单射，而 $x\mapsto \frac{x+1}{3}$ 把 $[0,1]$ 单射到 $(0,1)$，故二者等势。
+
+\begin{theorem}[幂集严格变大]\label{cantor-power-set}
+  对任意集合 $A$，都有
+  \[
+  \card A<\card{\pow(A)}.
+  \]
+\end{theorem}
+
+\begin{proof}
+  映射 $a\mapsto\set a$ 是从 $A$ 到 $\pow(A)$ 的单射，故 $\card A\le\card{\pow(A)}$。若存在满射 $f:A\to\pow(A)$，令
+  \[
+  D=\set{x\in A\mid x\notin f(x)}.
+  \]
+  因 $D\subseteq A$，应有某个 $d\in A$ 使 $f(d)=D$。若 $d\in D$，按 $D$ 的定义有 $d\notin f(d)=D$；若 $d\notin D$，按定义又有 $d\in f(d)=D$。两种情况均矛盾，故不存在从 $A$ 到 $\pow(A)$ 的满射，二者不等势。
+\end{proof}
+
+特征函数给出一个更具体的幂集表示。对每个 $B\subseteq A$，令 $\chi_B:A\to\set{0,1}$ 为 $B$ 的特征函数。映射
+\[
+\Phi:\pow(A)\to\set{0,1}^A,\qquad \Phi(B)=\chi_B
+\]
+是双射：不同子集至少在某个元素上成员关系不同，故特征函数不同；任意 $0,1$ 函数 $h:A\to\set{0,1}$ 又对应子集
+\[
+B_h=\set{x\in A\mid h(x)=1}.
+\]
+因此
+\[
+\card{\pow(A)}=\card{\set{0,1}^A}=2^{\card A}.
+\]
+这也是参考书用特征函数解释幂集基数的核心方法。
+
+\begin{definition}[基数的乘法与幂]\label{cardinal-product-power}
+  设 $\card A=\kappa$，$\card B=\lambda$。定义
+  \[
+  \kappa\lambda=\card{A\times B},\qquad
+  \kappa^\lambda=\card{A^B}.
+  \]
+  因此 $\kappa\lambda$ 表示有序对的数目，$\kappa^\lambda$ 表示从一个基数为 $\lambda$ 的集合到一个基数为 $\kappa$ 的集合的函数数目。
+\end{definition}
+
+\begin{theorem}[$\aleph_0$ 与 $\aleph$ 的基本性质]\label{aleph-properties}
+  两类基本无限基数满足：
+  \begin{enumerate}
+    \item 对任意有限正整数 $n$，
+    \[
+    n<\aleph_0<\aleph.
+    \]
+    \item 若 $A$ 为无限集，则 $\aleph_0\le\card A$。
+    \item 可列个两两不交、且各自基数为 $\aleph$ 的集合之并仍有基数 $\aleph$；等价地
+    \[
+    \aleph_0\aleph=\aleph.
+    \]
+    同时
+    \[
+    \aleph_0\aleph_0=\aleph_0,\qquad
+    n\aleph_0=\aleph_0,\qquad
+    n\aleph=\aleph\quad(n\in\N^+).
+    \]
+    \item 可列集的幂集有基数 $\aleph$，即
+    \[
+    2^{\aleph_0}=\aleph.
+    \]
+  \end{enumerate}
+\end{theorem}
+
+\begin{proof}
+  第一项中 $n<\aleph_0$ 是有限集与 $\N$ 不等势；$\aleph_0<\aleph$ 由实数不可列而 $\card\R=\aleph$ 得到。按教材的无限集刻画，任一无限集含有可列无限子集，故第二项成立。
+
+  对第三项，设 $A_1,A_2,\ldots$ 两两不交且 $\card{A_i}=\aleph$。每个 $A_i$ 与区间 $I_i=[i-1,i)$ 等势，故
+  \[
+  \bigcup_{i\ge1}A_i\sim\bigcup_{i\ge1}I_i=[0,\infty)\sim\R.
+  \]
+  所以并集的基数为 $\aleph$，这正是 $\aleph_0\aleph=\aleph$。另一方面，$\N\times\N$ 可列，故 $\aleph_0\aleph_0=\aleph_0$；有限个可列集的并仍可列，给出 $n\aleph_0=\aleph_0$。有限个基数为 $\aleph$ 的集合之并是上述可列并结论的特例，故 $n\aleph=\aleph$。
+
+  对第四项，特征函数双射已给出
+  \[
+  \card{\pow(\N)}=2^{\aleph_0}.
+  \]
+  以下证明 $\pow(\N)\sim(0,1)$。先定义
+  \[
+  u:\pow(\N)\to(0,1),\qquad
+  u(S)=\sum_{n=0}^{\infty}\frac{2\chi_S(n)}{3^{n+2}}.
+  \]
+  该级数的值落在 $[0,\frac13]\subset(0,1)$。若 $S\ne T$，取最小的 $m$ 使 $\chi_S(m)\ne\chi_T(m)$。第 $m$ 项的差的绝对值为 $2/3^{m+2}$，而其后各项差的绝对值之和至多为
+  \[
+  \sum_{n=m+1}^{\infty}\frac{2}{3^{n+2}}=\frac{1}{3^{m+2}}.
+  \]
+  因而 $u(S)\ne u(T)$，所以 $u$ 为单射。
+
+  再把 $\Q$ 枚举为 $\{q_0,q_1,\ldots\}$，并定义
+  \[
+  v:(0,1)\to\pow(\N),\qquad
+  v(x)=\set{n\in\N\mid q_n<x}.
+  \]
+  若 $x<y$，由有理数在实数中的稠密性可取 $q_n$ 使 $x<q_n<y$；于是 $n\notin v(x)$ 而 $n\in v(y)$，故 $v(x)\ne v(y)$。所以 $v$ 也是单射。由 Schröder--Bernstein 定理，
+  \[
+  \pow(\N)\sim(0,1).
+  \]
+  又 $\card{(0,1)}=\aleph$，从而
+  \[
+  2^{\aleph_0}=\card{\pow(\N)}=\aleph.
+  \]
+\end{proof}
+
+\begin{theorem}[幂运算公式]\label{aleph-power-laws}
+  由 $2^{\aleph_0}=\aleph$、$\aleph_0\aleph_0=\aleph_0$ 得
+  \[
+  2^{\aleph_0}
+  =2^{\aleph_0}\aleph_0
+  =(2^{\aleph_0})^{\aleph_0}
+  =\aleph^{\aleph_0}.
+  \]
+  因此
+  \[
+  \aleph=2^{\aleph_0}=\aleph^{\aleph_0}.
+  \]
+  又对任意整数 $k>2$，
+  \[
+  2^{\aleph_0}\le k^{\aleph_0}
+  \le\aleph_0^{\aleph_0}
+  \le\aleph^{\aleph_0},
+  \]
+  从而
+  \[
+  k^{\aleph_0}=\aleph_0^{\aleph_0}=\aleph.
+  \]
+  此外
+  \[
+  \aleph^{\aleph}=2^{\aleph}>\aleph.
+  \]
+\end{theorem}
+
+\begin{proof}
+  由 $\aleph=2^{\aleph_0}$ 和 $\aleph_0\aleph_0=\aleph_0$，指数法则给出
+  \[
+  (2^{\aleph_0})^{\aleph_0}
+  =2^{\aleph_0\cdot\aleph_0}
+  =2^{\aleph_0}=\aleph.
+  \]
+  又 $\aleph=2^{\aleph_0}$，所以左端等于 $\aleph^{\aleph_0}$，从而得到第一条等式链。夹逼不等式的左右两端均为 $\aleph$，故得到 $k^{\aleph_0}=\aleph_0^{\aleph_0}=\aleph$。最后
+  \[
+  \aleph^{\aleph}=(2^{\aleph_0})^{\aleph}
+  =2^{\aleph_0\cdot\aleph}=2^{\aleph},
+  \]
+  而 Cantor 定理给出 $2^{\aleph}>\aleph$。
+\end{proof}
+
+Cantor 定理还说明不存在“最大的基数”，因为对任意集合 $A$，其幂集总有更大的基数。
+
+\begin{summary}[本节提要]
+  函数提供了比较集合大小的工具；双射给出等势，单射给出基数不大于。可列集能按自然数编号，$\N,\Z,\Q,\N\times\N$ 都可列；实数区间不可列。幂集定理进一步说明无限基数存在严格层级。
+\end{summary}

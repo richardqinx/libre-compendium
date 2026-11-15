@@ -1,0 +1,44 @@
+% libre-compendium
+%
+% Copyright (C) 2026 Richard Qin
+%
+% This document is dual-licensed under either:
+% - GNU Free Documentation License, Version 1.3 or any later version
+%   published by the Free Software Foundation, with no Invariant Sections,
+%   no Front-Cover Texts, and no Back-Cover Texts (see COPYING.DOC); or
+% - Creative Commons Attribution-ShareAlike 4.0 International License
+%   (see LICENSE-CC-BY-SA-4.0).
+\ProvidesFile{problemset.tex}[2026/11/15 v0.1.0 离散数学分层习题集]
+\documentclass[
+  profile=practice,
+  style=boxed,
+  color=full
+]{lc-problemset}
+\input{settings}
+\lcset{
+  title     = {离散数学分层习题集},
+  date      = {2026 年版},
+  solutions = {end},
+  show      = {solution},
+  points    = {hide},
+  levels    = {show},
+}
+\begin{document}
+\maketitle
+\tableofcontents
+
+\part{集合、关系与函数}
+\section{集合、关系与函数练习}
+\lcinputexercises{exercises/set-relation}
+
+\part{数理逻辑}
+\section{数理逻辑练习}
+\lcinputexercises{exercises/logic}
+
+\part{代数结构}
+\section{代数结构练习}
+\lcinputexercises{exercises/algebra}
+\clearpage
+\part*{附录与许可}
+\addcontentsline{toc}{part}{附录与许可}
+\end{document}
