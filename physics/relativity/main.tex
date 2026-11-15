@@ -1,0 +1,1933 @@
+% libre-compendium
+%
+% Copyright (C) 2026 Richard Qin
+%
+% This document is dual-licensed under either:
+% - GNU Free Documentation License, Version 1.3 or any later version
+%   published by the Free Software Foundation; with no Invariant Sections,
+%   no Front-Cover Texts, and no Back-Cover Texts (see COPYING.DOC); or
+% - Creative Commons Attribution-ShareAlike 4.0 International License
+%   (see LICENSE-CC-BY-SA-4.0).
+\ProvidesFile{main.tex}[2026/11/15 v0.2.0 从洛伦兹变换到协变表述]
+\documentclass[style=classic,color=full]{lc-article}
+\input{settings}
+\addbibresource{references.bib}
+\lcset{
+  title       = {从洛伦兹变换到协变表述},
+  subtitle    = {狭义相对论的数学结构与物理意义},
+  short-title = {从洛伦兹变换到协变表述},
+}
+\begin{document}
+\maketitle
+\begin{abstract}
+狭义相对论改变了经典力学中关于时间、空间和物理量变换的基本认识。本文从时空均匀性、空间各向同性、相对性原理以及光速不变原理出发，推导洛伦兹变换及其四维几何结构，并讨论四维张量、洛伦兹群、李代数、旋量表示和庞加莱对称性。文章由三维运动学扩展到四维速度、四维力、角动量、自旋和 Pauli--Lubanski 四矢量，以 Fermi--Walker 输运定义加速观察者的非自转标架，并介绍 Rindler 坐标、相对论刚性及相关思想实验。协变电动力学部分通过作用量推出洛伦兹力和麦克斯韦方程，分析均匀电磁场中的粒子轨迹、Li\'enard--Wiechert 推迟场及相对论辐射，并以电磁场、尘埃和完美流体的能量--动量张量表述局域守恒。文章还利用洛伦兹不变量讨论二体衰变、散射和反应阈值，结合多类实验考察相对论依据，最后以固有时泛函、经典悖论和 G\^ateaux 变分讨论世界线、因果结构与自由粒子运动。
+\lckeywords{狭义相对论；洛伦兹群；庞加莱对称性；协变电动力学；固有时}
+\end{abstract}
+\tableofcontents
+\newpage
+\section{引言}
+
+\subsection{研究背景}
+
+牛顿力学把时间看作对所有观察者共同流逝的绝对参数，把空间看作承载物质运动的独立背景。若惯性系 $S'$ 相对 $S$ 沿 $x$ 轴以速度 $v$ 匀速运动，经典力学采用伽利略变换
+\begin{equation}
+  x'=x-vt,\qquad y'=y,\qquad z'=z,\qquad t'=t.
+  \label{eq:galilean}
+\end{equation}
+它保证牛顿第二定律在惯性系间形式不变，也给出经典速度合成律 $u'=u-v$。
+
+问题出现在电磁理论中。麦克斯韦方程预言真空电磁波以
+\begin{equation}
+  c=\frac{1}{\sqrt{\varepsilon_0\mu_0}}
+\end{equation}
+传播\cite{griffiths}。相对性原理要求电磁定律在所有惯性系中保持相同形式，因此方程中的特征速度在各惯性系中都应为 $c$。若一束光在 $S$ 中满足 $x=ct$，式\eqref{eq:galilean}会给出 $x'=(c-v)t'$，即 $S'$ 中的光速为 $c-v$；相应地，麦克斯韦方程在伽利略变换下不能保持原有形式。历史上，人们曾用“以太”解释光的传播，但迈克耳孙--莫雷实验没有发现预期的以太风效应\cite{michelson1887}。爱因斯坦在1905年把相对性原理和光速不变原理提升为基本出发点\cite{einstein1905}，由此改变了惯性系之间的时空变换。
+
+\subsection{研究目的与内容}
+
+本文旨在说明狭义相对论如何从惯性系之间的坐标变换发展为一套协变的物理理论。全文围绕以下问题展开：相对性原理和光速不变怎样确定洛伦兹变换？闵可夫斯基度规、光锥和固有时如何刻画时空几何？洛伦兹群与庞加莱群如何组织连续对称性及其守恒量？四维张量、作用量和能量--动量张量怎样统一表述粒子、场与连续介质的动力学？这些结构又如何落实为可检验的运动学效应、电磁现象和实验结果？
+
+文章依次考察洛伦兹变换的推导、闵可夫斯基时空、洛伦兹群及其李代数、庞加莱对称性、相对论运动学与动力学、协变电动力学、经典极限和实验验证。进一步讨论旋量与自旋、Fermi--Walker 输运、加速参考系、相对论碰撞、电磁辐射、局域守恒和固有时变分，并通过双生子佯谬、杆库悖论和 Bell 飞船等思想实验澄清同时性、刚性与因果结构。全文以经典狭义相对论为主线；旋量、Pauli--Lubanski 四矢量和 Unruh 效应用于说明理论向相对论量子理论延伸的接口，不展开完整的量子场论推导。
+
+\subsection{历史发展与研究脉络}
+
+狭义相对论经过多个阶段逐步形成。洛伦兹在研究运动介质中的电磁现象时建立了后来以其命名的坐标变换；庞加莱进一步强调相对性原理和这些变换的群性质；爱因斯坦则摆脱以太图景，从两个基本原理出发重建运动学。1908年，闵可夫斯基把时间与空间统一为四维几何结构\cite{minkowski1909}。本文沿着“洛伦兹变换—时空几何—连续对称性—协变动力学—实验检验”的逻辑考察这一理论结构。
+
+\subsection{符号与约定}
+
+全文采用度规号差 $(+,-,-,-)$，四维坐标记为 $x^\mu=(ct,x,y,z)$。希腊指标 $\mu,\nu=0,1,2,3$，重复的上下指标按爱因斯坦约定求和；粗体如 $\bm v$、$\bm p$ 表示三维矢量。除特别说明外，$m$ 表示不随参考系改变的静质量。
+
+\section{狭义相对论的基本原理}
+
+\subsection{两个基本原理}
+
+狭义相对论通常建立在两个基本原理之上：
+\begin{enumerate}
+  \item \textbf{相对性原理：}所有惯性参考系中的物理定律具有相同形式，不存在可由内部物理实验识别的“绝对静止系”。
+  \item \textbf{光速不变原理：}真空光速在所有惯性参考系中均为 $c$，与光源或观察者的匀速运动状态无关。
+\end{enumerate}
+
+这两个原理允许不同观察者对时间和长度给出不同数值。光速不变要求不同惯性系采用各自的时间与空间划分。
+
+\subsection{坐标变换的基本假设}
+
+时空均匀性意味着变换不应依赖某一特殊时刻或位置，因此惯性系间的坐标变换具有仿射形式；两系共同原点的约定可消去常数项，使其化为线性变换。空间各向同性意味着不存在优先方向；相对性原理还要求正变换和反变换具有相同结构。本文采用标准构型：$S'$ 相对 $S$ 以速度 $v$ 沿 $x$ 轴正方向运动，两系原点在 $t=t'=0$ 时重合，如图\ref{fig:frames}所示。
+
+\begin{figure}[htbp]
+  \centering
+  \begin{tikzpicture}[>=Latex,scale=0.95]
+    \draw[->,thick] (-0.3,0) -- (6.6,0) node[right] {$x$};
+    \draw[->,thick] (0,-0.3) -- (0,2.3) node[above] {$y$};
+    \node[below left] at (0,0) {$O$};
+    \fill[relblue] (3.1,0) circle (2pt);
+    \draw[->,thick,relblue] (3.1,0) -- (5.75,0) node[above right] {$x'$};
+    \draw[->,thick,relblue] (3.1,0) -- (3.1,2.05) node[above] {$y'$};
+    \node[below,relblue] at (3.1,0) {$O'$};
+    \draw[->,very thick,relred] (0.65,1.45) -- (2.65,1.45) node[midway,above] {$\bm v=v\hat{\bm x}$};
+    \draw[dashed,relgray] (3.1,-0.25) -- (3.1,2.2);
+    \node[align=center] at (5.0,1.55) {$O'$在$S$中满足\\$x=vt$};
+  \end{tikzpicture}
+  \caption{标准构型下的两个惯性参考系。}
+  \label{fig:frames}
+\end{figure}
+
+\section{洛伦兹变换的推导}
+
+\subsection{一般线性形式}
+
+时空均匀性意味着惯性系之间的坐标变换不能显含事件发生的位置和时刻，因此变换首先具有仿射形式。本文约定两参考系的原点在 $t=t'=0$ 时重合，仿射变换中的常数项随之消失，坐标变换化为线性形式。在一维运动情形下，先写成
+\begin{equation*}
+  x'=\alpha x+\beta_1t,
+  \qquad
+  t'=\delta x+\epsilon t,
+\end{equation*}
+其中各系数只依赖两参考系的相对速度 $v$。$S'$ 的原点满足 $x'=0$，其在 $S$ 中的世界线为 $x=vt$。把 $x=vt$ 代入空间变换，可得 $\beta_1=-\alpha v$。令 $A=\alpha$，空间变换写为
+\begin{equation}
+  x'=A(x-vt).
+  \label{eq:xgeneral}
+\end{equation}
+对于时间坐标，线性条件允许它同时依赖 $t$ 和 $x$。重新记系数 $B=\epsilon$、$D=\delta$，得到
+\begin{equation}
+  t'=Bt+Dx,
+  \label{eq:tgeneral}
+\end{equation}
+这种写法尚未假定空间式和时间式具有相同系数，后续将利用光速不变和相对性原理确定 $A,B,D$。
+
+\subsection{利用双向光传播条件}
+
+先考察沿 $+x$ 方向传播并经过共同原点的光。它满足 $x=ct$ 和 $x'=ct'$。代入式\eqref{eq:xgeneral}、\eqref{eq:tgeneral}得
+\begin{equation}
+  A(c-v)=c(B+cD).
+  \label{eq:lightplus}
+\end{equation}
+对于沿 $-x$ 方向传播的光，有 $x=-ct$ 且 $x'=-ct'$，从而
+\begin{equation}
+  A(c+v)=c(B-cD).
+  \label{eq:lightminus}
+\end{equation}
+两式相加、相减可得
+\begin{equation}
+  B=A,\qquad D=-\frac{Av}{c^2}.
+\end{equation}
+因此
+\begin{equation}
+  x'=A(x-vt),\qquad
+  t'=A\left(t-\frac{vx}{c^2}\right).
+  \label{eq:lorentzA}
+\end{equation}
+时间坐标中必须出现空间坐标 $x$。这一结构直接来自光速不变和线性要求。
+
+\subsection{利用反变换确定洛伦兹因子}
+
+相对性原理要求反变换把相对速度 $v$ 替换为 $-v$。暂时把反变换系数写成 $A(-v)$：
+\begin{equation}
+  x=A(-v)(x'+vt').
+\end{equation}
+空间各向同性意味着将 $x$ 轴反向不会改变变换的尺度因子，故 $A(-v)=A(v)=A$。把式\eqref{eq:lorentzA}代入上式，得到
+\begin{equation}
+  x=A^2\left(1-\frac{v^2}{c^2}\right)x.
+\end{equation}
+因此
+\begin{equation}
+  A=\frac{1}{\sqrt{1-v^2/c^2}}\equiv\gamma,
+\end{equation}
+方程同时允许 $A=\pm(1-v^2/c^2)^{-1/2}$。本文采用两参考系坐标轴同向、时间方向一致且单位相同的约定，因此 $v=0$ 时应有 $x'=x$、$t'=t$，即 $A(0)=1$。再要求 $A(v)$ 随 $v$ 连续变化，便选定正根，这个选择固定了坐标的空间取向和时间取向。定义
+\begin{equation}
+  \beta=\frac{v}{c},\qquad \gamma=\frac{1}{\sqrt{1-\beta^2}},
+\end{equation}
+标准构型中两坐标系的对应坐标轴彼此平行，相对运动只沿 $x$ 方向发生。绕 $x$ 轴的旋转对称性排除了横向坐标之间的特殊方向和横向坐标与 $x,t$ 的混合，因此可先写成
+\begin{equation*}
+  y'=C(v)y,\qquad z'=C(v)z.
+\end{equation*}
+反变换给出 $C(v)C(-v)=1$，空间各向同性又要求 $C(-v)=C(v)$，所以 $C(v)^2=1$。结合 $C(0)=1$ 以及 $C(v)$ 对速度的连续性，可得 $C(v)=1$。因此 $y'=y$、$z'=z$，标准洛伦兹变换为
+\begin{equation}
+  \boxed{
+  \begin{aligned}
+    x'&=\gamma(x-vt),\\
+    t'&=\gamma\left(t-\frac{vx}{c^2}\right),\\
+    y'&=y,\qquad z'=z.
+  \end{aligned}}
+  \label{eq:lorentz}
+\end{equation}
+
+与式\eqref{eq:galilean}相比，关键差异是 $t'\neq t$。
+
+\clearpage
+\section{闵可夫斯基时空与不变量}
+
+洛伦兹变换表明，惯性系变换会同时改变空间坐标和时间坐标。例如，$x'$ 同时依赖 $x$ 与 $t$，$t'$ 也同时依赖 $t$ 与 $x$。单独讨论三维空间中的位置已经无法完整描述这种变换。闵可夫斯基的几何表述把事件的时间和空间信息合并到四维时空中，使洛伦兹变换可以被理解为时空坐标系之间的几何变换。本节先建立这一几何结构，再考察其中保持不变的量与因果关系。
+
+\subsection{事件、四维坐标与世界线}
+
+物理事件是发生在某一时刻和某一位置的局域现象，例如粒子的发射、探测器的一次计数或两束粒子的碰撞。在给定惯性系中，一个事件由四个坐标 $(t,x,y,z)$ 标记。为了使时间分量与空间分量具有相同量纲，把时间乘以光速 $c$，定义事件的四维坐标
+
+\begin{equation}
+  x^\mu=(x^0,x^1,x^2,x^3)=(ct,x,y,z).
+  \label{eq:fourposition}
+\end{equation}
+上标 $\mu=0,1,2,3$ 用于统一表示四个分量，其中 $x^0=ct$ 是时间分量，$(x^1,x^2,x^3)=(x,y,z)$ 是空间分量。这里的四维写法表达坐标之间的变换关系，没有把时间与空间视为完全相同的物理量；两者的差别将体现在度规的符号中。
+
+粒子随时间运动时会经历一系列连续事件。这些事件在四维时空中形成一条曲线，称为粒子的\textbf{世界线}：
+\begin{equation}
+  x^\mu=x^\mu(\lambda),
+\end{equation}
+其中 $\lambda$ 是描述曲线上位置的参数。静止粒子的世界线沿时间方向延伸，匀速粒子的世界线在时空图中是一条直线。光的世界线满足 $\lvert\dd\bm r\rvert/\dd t=c$，构成因果结构的边界。
+
+\subsection{时空间隔、闵可夫斯基度规与指标记号}
+
+欧氏空间中两点距离由 $\dd l^2=\dd x^2+\dd y^2+\dd z^2$ 给出，并在空间旋转下保持不变。狭义相对论需要一个在洛伦兹变换下保持不变的四维量。对两个邻近事件，定义时空间隔
+\begin{equation}
+  \dd s^2=c^2\dd t^2-\dd x^2-\dd y^2-\dd z^2.
+  \label{eq:interval}
+\end{equation}
+时间项与空间项符号不同，时空因而具有伪欧氏几何结构。为了把这种几何结构写成四维形式，引入号差为 $(+,-,-,-)$ 的闵可夫斯基度规
+\begin{equation}
+  \eta_{\mu\nu}=\eta^{\mu\nu}
+  =\operatorname{diag}(1,-1,-1,-1).
+  \label{eq:minkowskimetric}
+\end{equation}
+式\eqref{eq:fourposition}中的 $x^\mu$ 是四维坐标的逆变分量。度规把它变为协变分量：
+\begin{equation}
+  x_\mu=\eta_{\mu\nu}x^\nu=(ct,-x,-y,-z),
+  \qquad
+  x^\mu=\eta^{\mu\nu}x_\nu.
+  \label{eq:indexlowering}
+\end{equation}
+这一运算称为指标的下降与上升。上标和下标对应逆变分量与协变分量，空间分量在升降指标时改变符号。
+
+本文采用爱因斯坦求和约定：同一项中的某个指标出现两次，并且一次在上、一次在下时，默认对它从 $0$ 到 $3$ 求和。因此式\eqref{eq:interval}可以写为
+\begin{equation}
+  \dd s^2=\eta_{\mu\nu}\dd x^\mu\dd x^\nu.
+\end{equation}
+其中 $\mu$、$\nu$ 都是被求和的哑指标，可以改用其他字母。只出现一次的指标称为自由指标，张量等式两侧必须具有相同的自由指标。后文使用的拉丁指标 $i,j,k$ 只取空间分量 $1,2,3$。例如，两个四维矢量 $A^\mu$ 和 $B^\mu$ 的闵可夫斯基内积为
+\begin{equation}
+  A_\mu B^\mu
+  =\eta_{\mu\nu}A^\mu B^\nu
+  =A^0B^0-A^1B^1-A^2B^2-A^3B^3.
+  \label{eq:minkowskiinnerproduct}
+\end{equation}
+度规由此规定四维内积，并决定时空间隔的正负分类。
+
+把式\eqref{eq:lorentz}直接代入，可验证
+\begin{equation}
+  c^2\dd t'^2-\dd x'^2=c^2\dd t^2-\dd x^2.
+\end{equation}
+由于 $y'=y$、$z'=z$，四维间隔也满足
+\begin{equation}
+  \dd s'^2=\dd s^2.
+\end{equation}
+因此所有惯性观察者对同一对事件的时空间隔给出相同数值。坐标时间和空间距离会随参考系改变，二者按照式\eqref{eq:interval}组成的时空间隔保持不变。
+
+对类时世界线，可由时空间隔定义固有时间
+\begin{equation}
+  \dd\tau=\frac{\dd s}{c}
+  =\sqrt{\dd t^2-\frac{\lvert\dd\bm r\rvert^2}{c^2}}.
+  \label{eq:propertimegeometry}
+\end{equation}
+固有时间由沿该世界线运动的时钟直接测量。它为后文定义四维速度和相对论动量提供与参考系无关的参数。第五部分将把间隔不变性写成矩阵条件，并据此讨论洛伦兹群。
+
+\subsection{间隔分类与因果结构}
+
+根据 $\Delta s^2$ 的符号，事件间隔可分为：
+\begin{itemize}
+  \item $\Delta s^2>0$：\textbf{类时间隔}。存在一个惯性系使两个事件发生在同一地点，此时 $\Delta s^2=c^2\Delta\tau^2$。速度低于光速的粒子可以依次经过这两个事件，因此它们可以具有因果联系。
+  \item $\Delta s^2=0$：\textbf{类光间隔}。两个事件位于同一条光线上，只能由以光速传播的信号连接。光锥正是由相对于原点具有类光间隔的事件组成。
+  \item $\Delta s^2<0$：\textbf{类空间隔}。存在一个惯性系使两个事件同时发生。连接它们需要超光速信号，因此狭义相对论不允许二者形成因果联系。
+\end{itemize}
+
+间隔的符号具有洛伦兹不变性，所以事件分类不会因惯性系改变。对类时或类光事件，所有保持时间方向的惯性系都同意两个事件的先后次序；对类空事件，不同惯性系可以给出不同的先后次序，这不会造成因果矛盾，因为两事件之间不存在因果信号。
+
+图\ref{fig:lightcone}展示了一维空间中的光锥。原点 $O$ 表示选定的参考事件。未来光锥包含能够受到 $O$ 影响的事件，过去光锥包含能够影响 $O$ 的事件，光锥外部为类空区域。洛伦兹变换会改变坐标轴的方向，但保持光线 $x=\pm ct$ 以及三个区域的划分，因而保持因果结构。
+
+\begin{figure}[htbp]
+  \centering
+  \begin{tikzpicture}[>=Latex,scale=0.95]
+    \fill[relblue!10] (0,0) -- (-3,3) -- (3,3) -- cycle;
+    \fill[relred!8] (0,0) -- (-3,-3) -- (3,-3) -- cycle;
+    \draw[->,thick] (-4,0) -- (4,0) node[right] {$x$};
+    \draw[->,thick] (0,-3.6) -- (0,3.7) node[above] {$ct$};
+    \draw[very thick,relblue] (-3.4,-3.4) -- (3.4,3.4) node[above right] {$x=ct$};
+    \draw[very thick,relblue] (3.4,-3.4) -- (-3.4,3.4) node[above left] {$x=-ct$};
+    \node[relblue] at (0,2.25) {未来光锥};
+    \node[relred] at (0,-2.25) {过去光锥};
+    \node[relgray] at (3.0,0.45) {类空区域};
+    \node[relgray] at (-3.0,0.45) {类空区域};
+    \fill (0,0) circle (2pt) node[below right] {$O$};
+    \fill[relgreen] (1.35,1.75) circle (2.2pt) node[above right] {类时事件};
+    \fill[relred] (2.8,1.2) circle (2.2pt) node[right] {类空事件};
+  \end{tikzpicture}
+  \caption{闵可夫斯基时空中的光锥及事件分类。}
+  \label{fig:lightcone}
+\end{figure}
+
+\clearpage
+\section{洛伦兹群、李代数与庞加莱对称性}
+
+\subsection{沿坐标轴的变换矩阵}
+
+将作用在四维坐标列向量上的变换矩阵记为 $\Lambda$，其矩阵元写作 $\Lambda^\mu{}_{\nu}$。沿 $x$ 轴的洛伦兹变换可写成
+\begin{equation}
+  x'^\mu=\Lambda^\mu{}_{\nu}x^\nu,
+\end{equation}
+其中
+\begin{equation}
+  \Lambda(v)=
+  \begin{pmatrix}
+    \gamma&-\beta\gamma&0&0\\
+    -\beta\gamma&\gamma&0&0\\
+    0&0&1&0\\
+    0&0&0&1
+  \end{pmatrix}.
+  \label{eq:boostmatrix}
+\end{equation}
+矩阵形式把一次坐标变换表示为对四维列向量的线性作用。连续进行两次变换对应矩阵乘法，反变换对应逆矩阵。这种表示适合讨论任意方向的运动以及多次变换的复合。
+
+第四部分已经得到 $\dd s'^2=\dd s^2$。利用
+\begin{equation}
+  \dd x'=\Lambda\dd x,
+  \qquad
+  \dd s^2=\dd x^{\mathrm T}\eta\dd x,
+\end{equation}
+可将间隔不变写成
+\begin{equation}
+  \dd x^{\mathrm T}\Lambda^{\mathrm T}\eta\Lambda\dd x
+  =\dd x^{\mathrm T}\eta\dd x.
+\end{equation}
+该等式对任意四维位移 $\dd x$ 成立，因此
+\begin{equation}
+  \boxed{\Lambda^{\mathrm T}\eta\Lambda=\eta.}
+  \label{eq:metricinvariance}
+\end{equation}
+以 $ct$--$x$ 子空间为例，记
+\begin{equation}
+  \Lambda_2=
+  \begin{pmatrix}\gamma&-\beta\gamma\\-\beta\gamma&\gamma\end{pmatrix},
+  \qquad
+  \eta_2=\begin{pmatrix}1&0\\0&-1\end{pmatrix}.
+\end{equation}
+直接相乘得到
+\begin{equation}
+  \Lambda_2^{\mathrm T}\eta_2\Lambda_2
+  =\begin{pmatrix}
+  \gamma^2(1-\beta^2)&0\\0&-\gamma^2(1-\beta^2)
+  \end{pmatrix}
+  =\eta_2,
+\end{equation}
+其中使用了 $\gamma^2(1-\beta^2)=1$。
+
+\subsection{四维张量与微分算符}
+
+式\eqref{eq:metricinvariance}给出了洛伦兹矩阵 $\Lambda$ 的度规不变条件。在此基础上可以系统定义四维张量。若 $V^\mu$ 是逆变四矢量，$W_\mu$ 是协变四矢量，则洛伦兹变换下分别有
+\begin{equation}
+  V'^\mu=\Lambda^\mu{}_{\nu}V^\nu,
+  \qquad
+  W'_\mu=(\Lambda^{-1})^\nu{}_{\mu}W_\nu.
+  \label{eq:covariantcontravarianttransform}
+\end{equation}
+度规不变性保证升降指标与洛伦兹变换相容。更一般地，具有 $r$ 个上指标和 $s$ 个下指标的张量按照每个指标分别乘以相应变换矩阵，例如
+\begin{equation}
+  T'^{\mu\nu}
+  =\Lambda^\mu{}_{\rho}\Lambda^\nu{}_{\sigma}
+  T^{\rho\sigma}.
+  \label{eq:ranktwotensortransform}
+\end{equation}
+一个上指标和一个下指标的缩并在洛伦兹变换下保持不变。因此 $V_\mu V^\mu$ 是标量，$T^\mu{}_{\mu}$ 是二阶张量的迹。
+
+对时空坐标求偏导可定义协变四维梯度
+\begin{equation}
+  \partial_\mu
+  =\frac{\partial}{\partial x^\mu}
+  =\left(\frac{1}{c}\frac{\partial}{\partial t},\bm\nabla\right),
+  \qquad
+  \partial^\mu
+  =\left(\frac{1}{c}\frac{\partial}{\partial t},-\bm\nabla\right).
+  \label{eq:fourgradient}
+\end{equation}
+两次缩并得到达朗贝尔算符
+\begin{equation}
+  \mdlgwhtsquare=\partial_\mu\partial^\mu
+  =\frac{1}{c^2}\frac{\partial^2}{\partial t^2}-\nabla^2.
+  \label{eq:dalembertian}
+\end{equation}
+它是洛伦兹标量算符。波动方程 $\mdlgwhtsquare\phi=0$ 因而在所有惯性系中具有相同形式。后文的四维电流守恒、麦克斯韦方程和能量--动量守恒都使用这些张量与微分规则。
+
+\subsection{任意方向的洛伦兹推动}
+
+设 $S'$ 相对 $S$ 的速度为三维矢量 $\bm v$，定义
+\begin{equation}
+  \bm\beta=\frac{\bm v}{c},\qquad
+  \beta=\lvert\bm\beta\rvert,\qquad
+  \gamma=\frac{1}{\sqrt{1-\beta^2}}.
+\end{equation}
+把位置矢量分解为平行和垂直于 $\bm v$ 的两部分：
+\begin{equation}
+  \bm r=\bm r_{\parallel}+\bm r_{\perp},
+  \qquad
+  \bm r_{\parallel}
+  =\frac{\bm\beta\mathbin{\cdot}\bm r}{\beta^2}\bm\beta.
+\end{equation}
+沿运动方向的分量服从一维洛伦兹变换，垂直分量保持不变，因此
+\begin{equation}
+  \begin{aligned}
+    ct'&=\gamma\left(ct-\bm\beta\mathbin{\cdot}\bm r\right),\\
+    \bm r'&=\bm r
+    +\frac{\gamma-1}{\beta^2}
+      (\bm\beta\mathbin{\cdot}\bm r)\bm\beta
+    -\gamma\bm\beta\,ct.
+  \end{aligned}
+  \label{eq:generalboost}
+\end{equation}
+式\eqref{eq:generalboost}可写为分块矩阵
+\begin{equation}
+  \Lambda(\bm v)=
+  \begin{pmatrix}
+    \gamma & -\gamma\bm\beta^{\mathrm T}\\[0.3em]
+    -\gamma\bm\beta &
+    I_3+\dfrac{\gamma-1}{\beta^2}
+    \bm\beta\bm\beta^{\mathrm T}
+  \end{pmatrix}.
+  \label{eq:generalboostmatrix}
+\end{equation}
+这里 $I_3$ 是三维单位矩阵，$\bm\beta\bm\beta^{\mathrm T}$ 是 $3\times3$ 外积矩阵。当 $\bm v$ 沿 $x$ 轴时，式\eqref{eq:generalboostmatrix}化为式\eqref{eq:boostmatrix}。当 $\beta\to0$ 时，含 $\beta^{-2}$ 的项按其连续极限理解，整个矩阵趋于四维单位矩阵。
+
+\subsection{引入快度的动机}
+
+速度的相对论合成包含分式结构。对于同一直线上的速度，直接使用 $v$ 会使连续变换的计算较繁琐。洛伦兹因子满足
+\begin{equation}
+  \gamma^2-(\beta\gamma)^2=1,
+\end{equation}
+这一关系与双曲恒等式 $\cosh^2\varphi-\sinh^2\varphi=1$ 具有相同形式。因此定义快度 $\varphi$：
+\begin{equation}
+  \tanh\varphi=\beta,\qquad
+  \cosh\varphi=\gamma,\qquad
+  \sinh\varphi=\beta\gamma.
+  \label{eq:rapiditydefinition}
+\end{equation}
+沿 $x$ 轴的推动在 $ct$--$x$ 子空间中写为
+\begin{equation}
+  B(\varphi)=
+  \begin{pmatrix}
+    \cosh\varphi&-\sinh\varphi\\
+    -\sinh\varphi&\cosh\varphi
+  \end{pmatrix}.
+\end{equation}
+利用双曲函数加法公式可以直接验证
+\begin{equation}
+  B(\varphi_2)B(\varphi_1)
+  =B(\varphi_1+\varphi_2).
+  \label{eq:rapidityaddition}
+\end{equation}
+快度把同向推动的复合转化为普通加法。再由
+\begin{equation}
+  \beta=\tanh(\varphi_1+\varphi_2)
+  =\frac{\beta_1+\beta_2}{1+\beta_1\beta_2}
+\end{equation}
+得到同向速度合成律
+\begin{equation}
+  v=\frac{v_1+v_2}{1+v_1v_2/c^2}.
+\end{equation}
+在 $ct$--$x$ 平面中，推动的形式类似欧氏平面中的旋转；旋转使用三角函数并保持 $x^2+y^2$，推动使用双曲函数并保持 $c^2t^2-x^2$\cite{taylorwheeler,rindler}。
+
+\subsection{洛伦兹群的定义与性质}
+
+根据式\eqref{eq:metricinvariance}，所有满足
+\begin{equation}
+  \Lambda^{\mathrm T}\eta\Lambda=\eta
+  \label{eq:lorentzgroupdefinition}
+\end{equation}
+的实 $4\times4$ 矩阵组成洛伦兹群 $O(1,3)$。群结构包含以下四条性质：
+\begin{enumerate}
+  \item \textbf{封闭性：}若 $\Lambda_1$、$\Lambda_2\in O(1,3)$，则
+  \begin{equation}
+    (\Lambda_2\Lambda_1)^{\mathrm T}\eta
+    (\Lambda_2\Lambda_1)
+    =\Lambda_1^{\mathrm T}
+    (\Lambda_2^{\mathrm T}\eta\Lambda_2)
+    \Lambda_1=\eta,
+  \end{equation}
+  所以 $\Lambda_2\Lambda_1\in O(1,3)$。
+
+  \item \textbf{结合律：}矩阵乘法满足
+  $(\Lambda_3\Lambda_2)\Lambda_1
+  =\Lambda_3(\Lambda_2\Lambda_1)$。
+
+  \item \textbf{单位元：}四维单位矩阵 $I_4$ 满足
+  $I_4^{\mathrm T}\eta I_4=\eta$，且
+  $I_4\Lambda=\Lambda I_4=\Lambda$。
+
+  \item \textbf{逆元：}由式\eqref{eq:lorentzgroupdefinition}可得
+  \begin{equation}
+    \Lambda^{-1}=\eta\Lambda^{\mathrm T}\eta.
+  \end{equation}
+  沿固定方向的推动满足 $B^{-1}(\varphi)=B(-\varphi)$，对应相对速度反向。
+\end{enumerate}
+
+对式\eqref{eq:lorentzgroupdefinition}取行列式可得 $(\det\Lambda)^2=1$，因此 $\det\Lambda=\pm1$。满足 $\det\Lambda=1$ 的变换称为正洛伦兹变换（proper Lorentz transformation）；进一步满足 $\Lambda^0{}_0\ge1$ 的变换保持时间方向，称为正时变换。与恒等变换连续相连的部分记为 $SO^+(1,3)$，其中包含通常的空间旋转和速度推动。形如 $\operatorname{diag}(1,R)$、$R\in SO(3)$ 的矩阵构成空间旋转子群。
+
+洛伦兹群具有非交换性。对不同方向的两个推动，一般有 $\Lambda_2\Lambda_1\neq\Lambda_1\Lambda_2$。它们的复合通常包含一个额外的空间旋转，这一效应称为维格纳旋转。恒等分支 $SO^+(1,3)$ 中的任意变换都可由空间旋转与速度推动组合得到；完整的 $O(1,3)$ 还包含空间反演、时间反演及其组合等离散变换。群结构由此统一描述参考系变换的连续变化、复合与求逆。
+
+\subsection{无穷小变换与洛伦兹李代数}
+
+群的有限变换说明坐标如何发生整体改变；李代数则研究恒等变换附近的无穷小变化。它能够用有限个生成元编码连续群的局部结构，并把多次微小变换的复合转化为生成元之间的对易关系。令
+\begin{equation}
+  \Lambda=I_4+\Omega+O(\Omega^2),
+  \label{eq:infinitesimallorentz}
+\end{equation}
+其中 $\Omega$ 是无穷小矩阵。将其代入式\eqref{eq:metricinvariance}并保留一阶项，得到
+\begin{equation}
+  \Omega^{\mathrm T}\eta+\eta\Omega=0.
+\end{equation}
+定义 $\Omega_{\mu\nu}=\eta_{\mu\rho}\Omega^\rho{}_{\nu}$，上式等价于
+\begin{equation}
+  \Omega_{\mu\nu}=-\Omega_{\nu\mu}.
+  \label{eq:omegaantisymmetric}
+\end{equation}
+四维反对称矩阵具有 $4\times3/2=6$ 个独立分量。因此洛伦兹群有六个连续生成元，其中三个对应空间旋转，另外三个对应沿空间方向的推动。
+
+把洛伦兹代数的生成元记为 $M^{\mu\nu}=-M^{\nu\mu}$。无穷小变换可写为
+\begin{equation}
+  \Lambda
+  =I_4-\frac{\ii}{2}\omega_{\mu\nu}M^{\mu\nu}
+  +O(\omega^2),
+\end{equation}
+其中 $\omega_{\mu\nu}$ 是实的反对称参数。定义旋转生成元和推动生成元
+\begin{equation}
+  J_i=\frac{1}{2}\epsilon_{ijk}M^{jk},
+  \qquad
+  K_i=M^{0i},
+\end{equation}
+则它们满足
+\begin{equation}
+  \begin{aligned}
+    [J_i,J_j]&=\ii\epsilon_{ijk}J_k,\\
+    [J_i,K_j]&=\ii\epsilon_{ijk}K_k,\\
+    [K_i,K_j]&=-\ii\epsilon_{ijk}J_k.
+  \end{aligned}
+  \label{eq:lorentzalgebra}
+\end{equation}
+第一式是三维旋转代数，第二式说明推动生成元在旋转下按三维矢量变换。第三式中的负号体现闵可夫斯基度规的非欧氏性质，也表明不同方向的推动不对易；连续执行两个不同方向的推动会产生额外的空间旋转。这正是前述维格纳旋转在李代数层面的来源\cite{weinberg1995}。
+
+\subsection{从生成元到有限变换}
+
+李代数描述恒等元附近的变化，指数映射把生成元恢复为有限变换。采用上述生成元约定，恒等分支中靠近单位元的变换可表示为
+\begin{equation}
+  \Lambda(\bm\theta,\bm\varphi)
+  =\exp\left[-\ii\left(
+    \bm\theta\mathbin{\cdot}\bm J
+    +\bm\varphi\mathbin{\cdot}\bm K
+  \right)\right],
+  \label{eq:lorentzexponential}
+\end{equation}
+其中 $\bm\theta$ 是旋转参数，$\bm\varphi$ 是推动的快度参数。纯粹沿 $x$ 方向的推动写为
+\begin{equation}
+  B_x(\varphi)=\exp(-\ii\varphi K_x).
+\end{equation}
+在四维矢量表示中展开这个指数，便得到式\eqref{eq:boostmatrix}中的双曲函数矩阵。由此可见，快度的可加性来自同一生成元所形成的单参数子群。对于不同方向的生成元，由于 $[K_i,K_j]\neq0$，一般不能把两个指数直接合并为参数之和。
+
+\subsection{洛伦兹群的旋量表示}
+
+本小节属于洛伦兹对称性在量子理论中的延伸。四维矢量和普通张量可分解为洛伦兹群的整数自旋表示，半整数自旋粒子则需要使用旋量。正时正洛伦兹群 $SO^+(1,3)$ 的双覆盖群为 $SL(2,\mathbb C)$：两个相差整体负号的 $SL(2,\mathbb C)$ 矩阵对应同一个洛伦兹变换。其两个基本二维表示分别对应左手和右手 Weyl 旋量，二者组合后形成四分量 Dirac 旋量。
+
+旋量在空间旋转 $2\pi$ 后可以改变符号，在旋转 $4\pi$ 后恢复原值，这一变换性质无法由普通四维矢量表示获得。旋量表示解释了相对论量子理论中半整数自旋的群论来源；完整推导还需要狄拉克方程和场量子化，本文不再展开\cite{weinberg1995}。
+
+\subsection{庞加莱群：加入时空平移}
+
+洛伦兹变换保持时空原点不动，但时空均匀性还允许改变坐标原点。把洛伦兹变换与常量四维平移 $a^\mu$ 结合，得到
+\begin{equation}
+  x'^\mu=\Lambda^\mu{}_{\nu}x^\nu+a^\mu.
+  \label{eq:poincaretransformation}
+\end{equation}
+所有这类变换组成庞加莱群。若把群元素记为 $(\Lambda,a)$，连续施加 $(\Lambda_1,a_1)$ 和 $(\Lambda_2,a_2)$ 可得
+\begin{equation}
+  (\Lambda_2,a_2)(\Lambda_1,a_1)
+  =\left(\Lambda_2\Lambda_1,
+    \Lambda_2a_1+a_2\right).
+  \label{eq:poincareproduct}
+\end{equation}
+平移部分在复合时受到洛伦兹矩阵作用，所以庞加莱群具有半直积结构
+\begin{equation}
+  ISO(1,3)=\mathbb R^{1,3}\rtimes O(1,3).
+\end{equation}
+若只考虑与恒等变换连续相连并保持空间、时间方向的变换，相应部分为
+\begin{equation}
+  \mathbb R^{1,3}\rtimes SO^+(1,3).
+\end{equation}
+庞加莱群共有十个连续参数：四个时空平移参数、三个空间旋转参数和三个推动参数。
+
+\subsection{庞加莱代数与守恒量}
+
+将四维平移的生成元记为 $P^\mu$。庞加莱代数除包含洛伦兹代数外，还满足
+\begin{equation}
+  [P^\mu,P^\nu]=0,
+  \label{eq:translationcommutator}
+\end{equation}
+以及
+\begin{equation}
+  [M^{\mu\nu},P^\rho]
+  =\ii\left(
+    \eta^{\nu\rho}P^\mu
+    -\eta^{\mu\rho}P^\nu
+  \right).
+  \label{eq:poincarealgebra}
+\end{equation}
+式\eqref{eq:translationcommutator}说明四个方向的平移彼此交换；式\eqref{eq:poincarealgebra}说明 $P^\mu$ 在洛伦兹变换下构成四维矢量。后文定义的四维动量正是时空平移生成元的物理实现。
+
+连续对称性与守恒量之间的联系由诺特定理给出。对于庞加莱不变的孤立系统，主要对应关系为
+\begin{table}[htbp]
+  \centering
+  \caption{庞加莱对称性及其对应守恒量。}
+  \label{tab:poincare-noether}
+  \begin{tabular}{ll}
+    \toprule
+    连续对称性 & 对应守恒量 \\
+    \midrule
+    时间平移 & 能量 $E$ \\
+    空间平移 & 三维动量 $\bm p$ \\
+    空间旋转 & 角动量 $\bm J$ \\
+    洛伦兹推动 & 推动荷，与系统质心运动相关 \\
+    \bottomrule
+  \end{tabular}
+\end{table}
+能量和三维动量因而自然组合为四维动量 $P^\mu=(E/c,\bm p)$。其洛伦兹不变量 $P^\mu P_\mu$ 将在第七部分写成粒子的质量壳关系。庞加莱对称性由此把时空几何、动力学守恒律和粒子物理量连接起来\cite{weinberg1995,landau}。
+
+\subsection{诺特定理与庞加莱流}
+
+上表给出了对称性与守恒量的对应关系，诺特定理还能把这种对应写成局域方程。设场 $\phi_a(x)$ 的作用量为
+\begin{equation}
+  S=\frac{1}{c}\int \mathcal L
+  (\phi_a,\partial_\mu\phi_a)\,\dd^4x.
+  \label{eq:genericfieldaction}
+\end{equation}
+对常量时空平移 $x^\mu\mapsto x^\mu+\epsilon^\mu$，拉格朗日密度没有显含坐标时，可得到正则能量--动量张量
+\begin{equation}
+  T^\mu{}_{\nu}
+  =\sum_a
+  \frac{\partial\mathcal L}
+       {\partial(\partial_\mu\phi_a)}
+  \partial_\nu\phi_a
+  -\delta^\mu{}_{\nu}\mathcal L,
+  \label{eq:canonicalenergymomentum}
+\end{equation}
+使用场的欧拉--拉格朗日方程后，该张量满足
+\begin{equation}
+  \partial_\mu T^\mu{}_{\nu}=0.
+  \label{eq:noethertranslationcurrent}
+\end{equation}
+在边界通量消失时，守恒四动量为
+\begin{equation}
+  P^\nu=\frac{1}{c}\int T^{0\nu}\,\dd^3\bm x,
+  \label{eq:noetherfourmomentum}
+\end{equation}
+其中 $P^0=E/c$。因子 $1/c$ 来自本文采用的坐标 $x^0=ct$。
+
+无穷小洛伦兹变换同时改变坐标和场分量。相应的总角动量流可写为
+\begin{equation}
+  \mathcal J^{\lambda\mu\nu}
+  =x^\mu T^{\lambda\nu}
+  -x^\nu T^{\lambda\mu}
+  +S^{\lambda\mu\nu},
+  \qquad
+  \partial_\lambda\mathcal J^{\lambda\mu\nu}=0,
+  \label{eq:noetherangularmomentumcurrent}
+\end{equation}
+其中 $S^{\lambda\mu\nu}$ 是场的内禀自旋流；标量场的该项为零。这些守恒方程同样是在场方程成立时得到的。向正则能量--动量张量加入一个超势项的散度，可以构造对称的 Belinfante--Rosenfeld 能量--动量张量；该改进只改变局域密度的表达，在适当边界条件下不改变式\eqref{eq:noetherfourmomentum}定义的总四动量，并把轨道角动量流与自旋流重新组合。这里的局域守恒式为后文电磁场及物质的能量--动量平衡提供一般框架\cite{landau,weinberg1995}。
+
+\section{洛伦兹变换的物理效应}
+
+\subsection{同时性的相对性}
+
+对两个事件取坐标差，洛伦兹变换给出
+\begin{equation}
+  \Delta t'=\gamma\left(\Delta t-\frac{v\Delta x}{c^2}\right).
+  \label{eq:relativitysimultaneity}
+\end{equation}
+若两个异地事件在 $S$ 中同时，即 $\Delta t=0$ 且 $\Delta x\neq0$，则
+\begin{equation}
+  \Delta t'=-\gamma\frac{v\Delta x}{c^2}\neq0.
+\end{equation}
+因此“异地同时”依赖参考系。图\ref{fig:spacetime}中，$S$ 的同时线为水平线，$S'$ 的同时线与 $x'$ 轴平行，两者方向不同。
+
+\begin{figure}[htbp]
+  \centering
+  \begin{tikzpicture}[>=Latex,scale=1.0]
+    \draw[->,thick] (-4.2,0) -- (4.4,0) node[right] {$x$};
+    \draw[->,thick] (0,-4.1) -- (0,5.0) node[above] {$ct$};
+    \draw[->,very thick,relblue] (0,0) -- (2.7,4.5) node[above left] {$ct'$};
+    \draw[->,very thick,relblue] (0,0) -- (4.5,2.7) node[below right] {$x'$};
+    \draw[dashed,relgray] (-3.7,2.7) -- (3.7,2.7);
+    \node[relgray,above right] at (3.15,2.7) {$t=\text{常量}$};
+    \draw[dashed,relblue] (-3.5,0.6) -- (3.5,4.8);
+    \node[relblue,below left] at (-2.75,1.05) {$t'=\text{常量}$};
+    \draw[relred,thick] (-3.7,-3.7) -- (3.7,3.7);
+    \draw[relred,thick] (3.7,-3.7) -- (-3.7,3.7);
+    \draw[relgreen,thick,domain=-3.5:3.5,samples=100]
+      plot (\x,{sqrt(4+\x*\x)});
+    \node[relgreen,fill=white,inner sep=1pt] at (-2.8,4.0) {$c^2t^2-x^2=4$};
+    \node[relred] at (4.00,3.90) {$x=ct$};
+    \fill (2.2,2.7) circle (2pt) node[below right=1pt] {$A$};
+    \fill (-2.2,2.7) circle (2pt) node[below left=1pt] {$B$};
+  \end{tikzpicture}
+  \caption{$\beta=0.6$ 时的闵可夫斯基图。$ct'$ 轴满足 $x=\beta ct$，$x'$ 轴及其平行线满足 $ct=\beta x+\text{常量}$；绿色双曲线表示不变间隔。}
+  \label{fig:spacetime}
+\end{figure}
+
+\subsection{时间膨胀}
+
+固有时间 $\Delta\tau$ 是由与两个事件处于同一地点的时钟测得的时间。若时钟静止于 $S'$，两个事件都发生在这只时钟所在的位置，因此 $\Delta x'=0$ 且 $\Delta t'=\Delta\tau$。由反变换
+\begin{equation}
+  \Delta t=\gamma\left(\Delta t'+\frac{v\Delta x'}{c^2}\right)
+\end{equation}
+可得
+\begin{equation}
+  \boxed{\Delta t=\gamma\Delta\tau.}
+\end{equation}
+因为 $\gamma\ge1$，相对于时钟运动的参考系测得的时间间隔更长。这一结论描述同一对事件在不同参考系中的坐标时间比较，与光传播造成的视觉延迟无关。
+
+\subsection{长度收缩}
+
+物体的固有长度 $L_0$ 是在物体静止系中测得的长度。设杆静止于 $S'$，则 $L_0=\Delta x'$。在 $S$ 中测量运动杆长度必须同时记录两端位置，即 $\Delta t=0$。由
+\begin{equation}
+  \Delta x'=\gamma(\Delta x-v\Delta t)
+\end{equation}
+得到
+\begin{equation}
+  \boxed{L=\frac{L_0}{\gamma}.}
+\end{equation}
+长度收缩只发生在运动方向，并且与同时性的相对性密切相关。该参考系中的长度要求同时记录物体两端的位置。
+
+\subsection{三维速度变换}
+
+对式\eqref{eq:lorentz}取微分，有
+\begin{equation}
+  \dd x'=\gamma(\dd x-v\dd t),\qquad
+  \dd t'=\gamma\left(\dd t-\frac{v\dd x}{c^2}\right).
+\end{equation}
+因此平行于参考系相对运动方向的速度满足
+\begin{equation}
+  \boxed{u'_x=\frac{u_x-v}{1-u_xv/c^2}.}
+  \label{eq:velocityaddition}
+\end{equation}
+横向坐标不变，但时间微分发生变化，因此另外两个分量为
+\begin{equation}
+  \boxed{
+  u'_y=\frac{u_y}{\gamma_v(1-u_xv/c^2)},
+  \qquad
+  u'_z=\frac{u_z}{\gamma_v(1-u_xv/c^2)},}
+  \label{eq:transversevelocity}
+\end{equation}
+其中 $\gamma_v=(1-v^2/c^2)^{-1/2}$。令 $u_x=c$ 且 $u_y=u_z=0$，立即得到 $u'_x=c$。当所有速度远小于 $c$ 时，分母和 $\gamma_v$ 均趋近1，三维公式恢复经典速度合成律。
+
+\subsection{三维加速度变换}
+
+加速度变换可由式\eqref{eq:velocityaddition}和式\eqref{eq:transversevelocity}对 $t'$ 求导得到。记
+\begin{equation*}
+  D=1-\frac{u_xv}{c^2},
+  \qquad
+  \bm a=\frac{\dd\bm u}{\dd t},
+\end{equation*}
+则
+\begin{equation}
+  \boxed{
+  \begin{aligned}
+    a'_x&=\frac{a_x}{\gamma_v^3D^3},\\
+    a'_y&=\frac{a_yD+a_xu_yv/c^2}
+      {\gamma_v^2D^3},\\
+    a'_z&=\frac{a_zD+a_xu_zv/c^2}
+      {\gamma_v^2D^3}.
+  \end{aligned}}
+  \label{eq:accelerationtransformation}
+\end{equation}
+三维加速度的平行与横向分量具有不同变换因子。即使某一参考系中的加速度只沿横向，另一参考系中的速度与加速度关系也会受到同时性和时间变换的共同影响。
+
+\subsection{四波矢与相位不变性}
+
+洛伦兹变换不仅作用于粒子的时空坐标，也作用于波的频率和传播方向。考虑相位为
+\begin{equation}
+  \Phi=\bm k\mathbin{\cdot}\bm r-\omega t
+\end{equation}
+的平面波，其中 $\omega$ 是角频率，$\bm k$ 是三维波矢。同一个波峰对应同一物理事件，因此不同惯性观察者必须对该事件给出相同相位。定义四波矢
+\begin{equation}
+  k^\mu=\left(\frac{\omega}{c},\bm k\right),
+  \label{eq:fourwavevector}
+\end{equation}
+便可将相位写成洛伦兹标量
+\begin{equation}
+  \Phi=-k_\mu x^\mu.
+\end{equation}
+相位不变要求 $k^\mu$ 按四维矢量变换。真空中的光满足色散关系 $\omega=c\lvert\bm k\rvert$，所以
+\begin{equation}
+  k^\mu k_\mu
+  =\frac{\omega^2}{c^2}-\lvert\bm k\rvert^2=0.
+  \label{eq:lightdispersion}
+\end{equation}
+四波矢因而是类光四矢量。量子理论中的光子四动量满足 $p^\mu=\hbar k^\mu$，式\eqref{eq:lightdispersion}与后文无质量粒子的质量壳条件一致。
+
+\subsection{相对论多普勒效应与光行差}
+
+设 $S'$ 相对 $S$ 沿 $x$ 轴以速度 $v$ 运动。将式\eqref{eq:boostmatrix}作用于四波矢，得到
+\begin{equation}
+  \frac{\omega'}{c}
+  =\gamma\left(\frac{\omega}{c}-\beta k_x\right),
+\end{equation}
+即
+\begin{equation}
+  \boxed{\omega'=\gamma\omega(1-\beta\cos\theta),}
+  \label{eq:relativisticdoppler}
+\end{equation}
+其中 $\theta$ 是光在 $S$ 系中传播方向与 $x$ 轴的夹角，并使用了 $k_x=(\omega/c)\cos\theta$。对于沿 $+x$ 方向传播的光，若接收者 $S'$ 沿同方向远离光源，则 $\theta=0$，从而
+\begin{equation}
+  \omega'=\omega\sqrt{\frac{1-\beta}{1+\beta}}.
+  \label{eq:longitudinaldoppler}
+\end{equation}
+频率降低，对应红移。接收者朝向光源运动时可用 $\beta\to-\beta$ 得到蓝移公式。
+
+空间分量的变换还会改变光的传播方向。由 $k'_x=\gamma(k_x-\beta\omega/c)$ 与 $\lvert\bm k'\rvert=\omega'/c$ 可得
+\begin{equation}
+  \boxed{
+  \cos\theta'
+  =\frac{\cos\theta-\beta}
+  {1-\beta\cos\theta}.}
+  \label{eq:aberration}
+\end{equation}
+这一关系称为光行差。多普勒效应和光行差由同一个四波矢变换同时给出，分别对应其时间分量和空间方向的改变\cite{rindler,taylorwheeler}。
+
+\section{四维矢量与相对论动力学}
+
+\subsection{固有时与四维速度}
+
+第四部分已经由时空间隔定义了固有时间。沿粒子世界线有
+$\lvert\dd\bm r\rvert=v\dd t$，代入式\eqref{eq:propertimegeometry}得到
+\begin{equation}
+  \dd\tau=\dd t\sqrt{1-\frac{v^2}{c^2}}=\frac{\dd t}{\gamma}.
+\end{equation}
+四维速度定义为
+\begin{equation}
+  U^\mu=\frac{\dd x^\mu}{\dd\tau}
+  =\gamma(c,\bm v).
+\end{equation}
+它的闵可夫斯基模长为不变量：
+\begin{equation}
+  U^\mu U_\mu=\gamma^2(c^2-v^2)=c^2.
+\end{equation}
+
+\subsection{四维加速度与正交关系}
+
+四维加速度定义为四维速度对固有时的变化率：
+\begin{equation}
+  A^\mu=\frac{\dd U^\mu}{\dd\tau}.
+  \label{eq:fouracceleration}
+\end{equation}
+由于 $U^\mu U_\mu=c^2$ 沿世界线保持不变，对固有时求导可得
+\begin{equation}
+  \frac{\dd}{\dd\tau}(U^\mu U_\mu)
+  =2U_\mu A^\mu=0,
+\end{equation}
+因此
+\begin{equation}
+  \boxed{U_\mu A^\mu=0.}
+  \label{eq:velocityaccelerationorthogonal}
+\end{equation}
+四维速度与四维加速度在闵可夫斯基内积下正交。该正交关系不表示它们在普通三维空间中垂直，而是来自四维速度模长恒定。
+
+记实验室系中的三维加速度为 $\bm a=\dd\bm v/\dd t$。利用 $\dd/\dd\tau=\gamma\dd/\dd t$，式\eqref{eq:fouracceleration}可写成
+\begin{equation}
+  A^\mu=\left(
+    \gamma^4\frac{\bm v\mathbin{\cdot}\bm a}{c},
+    \gamma^2\bm a
+    +\gamma^4\frac{\bm v\mathbin{\cdot}\bm a}{c^2}\bm v
+  \right).
+  \label{eq:fouraccelerationcomponents}
+\end{equation}
+三维速度和加速度平行时，空间分量化为 $\gamma^4\bm a$；二者垂直时，空间分量为 $\gamma^2\bm a$。这说明坐标加速度的不同方向分量具有不同的相对论修正。
+
+\subsection{Fermi--Walker 输运与非自转标架}
+
+沿加速世界线比较不同时刻的空间方向时，需要规定观察者携带的标架怎样演化。若只在每个时刻进行瞬时洛伦兹推动，非共线推动的复合会包含额外旋转。Fermi--Walker 输运给出沿任意类时世界线保持陀螺仪方向的协变规则。
+
+设 $V^\mu(\tau)$ 是沿世界线定义的四矢量。它满足 Fermi--Walker 输运条件时，有
+\begin{equation}
+  \boxed{
+  \frac{\dd V^\mu}{\dd\tau}
+  =\frac{1}{c^2}
+  \left(A^\mu U_\nu-U^\mu A_\nu\right)V^\nu.}
+  \label{eq:fermiwalker}
+\end{equation}
+若 $V^\mu U_\mu=0$，它在观察者瞬时静止系中表示一个空间方向；式\eqref{eq:fermiwalker}保证这一正交关系和 $V^\mu V_\mu$ 在输运过程中保持不变。取三个彼此正交的空间矢量 $e_{(i)}^\mu$ 作 Fermi--Walker 输运，便得到观察者携带的非自转正交标架。自由陀螺仪的自旋方向在忽略外力矩时遵循同一输运规律。
+
+惯性运动满足 $A^\mu=0$，此时式\eqref{eq:fermiwalker}化为普通的平行输运，标架分量保持常量。对于方向不断改变的加速运动，Fermi--Walker 标架与实验室坐标轴之间会积累托马斯旋转；后文的托马斯进动角速度正是这种相对转动的三维表达\cite{rindler,landau}。
+
+\subsection{固有加速度}
+
+固有加速度是粒子瞬时静止系中测得的加速度。由于瞬时静止系中 $U^\mu=(c,\bm0)$，式\eqref{eq:velocityaccelerationorthogonal}要求 $A^0=0$，四维加速度只含空间分量。其大小可由洛伦兹不变量定义为
+\begin{equation}
+  \boxed{\alpha=\sqrt{-A^\mu A_\mu}.}
+  \label{eq:properacceleration}
+\end{equation}
+把实验室系三维加速度分解为平行和垂直于速度的部分，可得
+\begin{equation}
+  \alpha^2
+  =\gamma^6a_{\parallel}^2
+  +\gamma^4a_{\perp}^2.
+  \label{eq:properaccelerationcomponents}
+\end{equation}
+对于一维运动，$a_\perp=0$，因此
+\begin{equation}
+  \boxed{\alpha=\gamma^3a.}
+  \label{eq:properacceleration1d}
+\end{equation}
+固有加速度可以由随粒子运动的加速度计直接测量；实验室系中的坐标加速度 $a$ 则随粒子速度改变。
+
+若粒子从 $t=0$、$x=0$ 静止出发，并保持大小为 $\alpha$ 的恒定一维固有加速度，其世界线可用固有时参数化为
+\begin{equation}
+  \begin{aligned}
+    ct(\tau)&=\frac{c^2}{\alpha}
+      \sinh\left(\frac{\alpha\tau}{c}\right),\\
+    x(\tau)&=\frac{c^2}{\alpha}
+      \left[\cosh\left(\frac{\alpha\tau}{c}\right)-1\right].
+  \end{aligned}
+  \label{eq:uniformproperacceleration}
+\end{equation}
+消去 $\tau$ 得到
+\begin{equation}
+  \boxed{
+  \left(x+\frac{c^2}{\alpha}\right)^2-c^2t^2
+  =\left(\frac{c^2}{\alpha}\right)^2.}
+  \label{eq:accelerationhyperbola}
+\end{equation}
+它在闵可夫斯基图中是一条双曲线，而粒子的瞬时斜率始终对应低于 $c$ 的速度。
+
+\begin{figure}[htbp]
+  \centering
+  \begin{tikzpicture}[>=Latex,scale=0.95]
+    \draw[->,thick] (-2.4,0) -- (5.4,0) node[right] {$x$};
+    \draw[->,thick] (0,-0.35) -- (0,5.2) node[above] {$ct$};
+    \draw[dashed,relgray] (-1.0,0) -- (4.0,5.0)
+      node[above right] {$x=ct-c^2/\alpha$};
+    \draw[very thick,relblue,domain=0:2.15,samples=120]
+      plot ({(exp(\x)+exp(-\x))/2-1},
+            {(exp(\x)-exp(-\x))/2});
+    \fill[relred] (0,0) circle (2.2pt)
+      node[below right] {$t=0,\ x=0$};
+    \draw[->,relgreen,thick] (1.24,2.00) -- ++(0.90,1.01)
+      node[midway,right] {$U^\mu$};
+    \node[relblue,align=left] at (3.65,1.15)
+      {恒定固有加速度\\世界线};
+  \end{tikzpicture}
+  \caption{一维恒定固有加速度粒子的双曲线世界线。坐标以 $c^2/\alpha$ 为单位；虚线是世界线在未来方向渐近接近的类光直线。}
+  \label{fig:properacceleration}
+\end{figure}
+
+\subsection{Rindler 坐标与加速视界}
+
+恒定固有加速度世界线可以推广为覆盖一族加速观察者的坐标系。取参考加速度为 $\alpha$，定义 Rindler 坐标 $(\eta,\xi,y,z)$：
+\begin{equation}
+  \begin{aligned}
+    ct&=\left(\frac{c^2}{\alpha}+\xi\right)
+      \sinh\left(\frac{\alpha\eta}{c}\right),\\
+    x+\frac{c^2}{\alpha}
+      &=\left(\frac{c^2}{\alpha}+\xi\right)
+      \cosh\left(\frac{\alpha\eta}{c}\right).
+  \end{aligned}
+  \label{eq:rindlercoordinates}
+\end{equation}
+固定 $\xi$ 的坐标线都是双曲线，其中 $\xi=0$ 对应式\eqref{eq:uniformproperacceleration}；不同坐标线的固有加速度为 $\alpha/(1+\alpha\xi/c^2)$。将式\eqref{eq:rindlercoordinates}代入闵可夫斯基间隔，得到
+\begin{equation}
+  \dd s^2
+  =\left(1+\frac{\alpha\xi}{c^2}\right)^2
+    c^2\dd\eta^2
+  -\dd\xi^2-\dd y^2-\dd z^2.
+  \label{eq:rindlermetric}
+\end{equation}
+该式只是平直时空的非惯性坐标表达，时空曲率仍为零。坐标区域满足 $\xi>-c^2/\alpha$，边界对应两条类光直线
+\begin{equation}
+  x+\frac{c^2}{\alpha}=\pm ct.
+\end{equation}
+这些边界构成 Rindler 视界。持续加速的观察者只能接收特定时空区域发出的信号，因此视界体现了加速运动对可观测因果区域的限制\cite{rindler}。
+
+Rindler 坐标在量子场论中还通向 Unruh 效应。具有恒定固有加速度 $\alpha$ 的观察者把惯性观察者的闵可夫斯基真空描述为温度
+\begin{equation}
+  T_{\mathrm U}=\frac{\hbar\alpha}{2\pi c k_{\mathrm B}}
+  \label{eq:unruhtemperature}
+\end{equation}
+的热态\cite{unruh1976}。该效应发生在平直时空中，与 Rindler 视界以及不同观察者对粒子概念的划分有关。其推导依赖量子场的模展开、Bogoliubov 变换和真空态结构，本文只说明它与加速参考系的联系。
+
+\subsection{Born 刚性、Bell 飞船与 Ehrenfest 圆盘}
+
+相对论中不存在能够瞬时传递形变信息的理想刚体。较合适的运动学条件是 \textbf{Born 刚性}：相邻物质点在各自瞬时共动系中测得的距离保持不变。对于沿同一直线加速的一列观察者，Born 刚性要求不同位置具有不同的固有加速度。由 Rindler 度规可见，固定 $\xi$ 的观察者具有
+\begin{equation}
+  \alpha(\xi)
+  =\frac{\alpha}{1+\alpha\xi/c^2}.
+  \label{eq:rindleraccelerationprofile}
+\end{equation}
+后端的固有加速度较大，前端较小，这种分布才能保持瞬时共动距离恒定。
+
+Bell 飞船思想实验展示了这一点。两艘初始静止且相距固定的飞船若在原实验室系中采用完全相同的加速度程序，它们在该系中的坐标距离保持不变；两船瞬时共动系要求的固有距离却随洛伦兹因子增大。连接两船的细线因此受到拉伸并可能断裂。若要求细线保持 Born 刚性，两船必须采用式\eqref{eq:rindleraccelerationprofile}所示的不同加速度历程。
+
+Ehrenfest 圆盘讨论旋转体系的几何。实验室系测量旋转圆盘的半径时，径向线元与局部速度垂直；测量圆周时，圆周线元沿运动方向并涉及不同位置的同时性。圆周与半径不能继续满足普通欧氏关系 $C=2\pi R$。此外，圆盘上各点的瞬时静止系无法拼接成覆盖整个圆盘的单一惯性系。该问题说明旋转参考系的空间几何和时钟同步已经超出全局惯性坐标的范围\cite{rindler,taylorwheeler}。
+
+\subsection{四维动量与能量--动量关系}
+
+对于静质量 $m>0$ 的粒子，固有时和四维速度均有定义，其四维动量为
+\begin{equation}
+  p^\mu=mU^\mu
+  =\left(\frac{E}{c},\bm p\right),
+\end{equation}
+这里把时间分量乘以 $c$ 后记为 $E$，并把空间分量记为 $\bm p$，于是
+\begin{equation}
+  E=\gamma mc^2,
+  \qquad
+  \bm p=\gamma m\bm v.
+\end{equation}
+自由粒子作用量给出的正则动量和哈密顿量分别等于 $\bm p$ 与 $E$，后文的作用量部分将直接验证这一点；也可以由相对论功--能关系确认 $E$ 的能量含义。
+由 $p^\mu p_\mu=m^2c^2$ 得
+\begin{equation}
+  \frac{E^2}{c^2}-\bm p^2=m^2c^2,
+\end{equation}
+即
+\begin{equation}
+  \boxed{E^2=p^2c^2+m^2c^4.}
+  \label{eq:energymomentum}
+\end{equation}
+粒子静止时 $p=0$，式\eqref{eq:energymomentum}给出静止能量 $E_0=mc^2$。更一般地，能量和三维动量组成四维矢量
+\begin{equation}
+  p^\mu=\left(\frac{E}{c},\bm p\right),
+\end{equation}
+其闵可夫斯基模长给出质量壳条件 $p^\mu p_\mu=m^2c^2$。对于无质量粒子，四动量不能借助固有时定义，而由能量和动量在洛伦兹变换下组成四维矢量来定义；其不变模平方为零，即 $p^\mu p_\mu=0$。光子的世界线为类光曲线，$\dd\tau=0$，因此不能使用 $p^\mu=mU^\mu$。由零质量壳条件可得
+\begin{equation}
+  E=pc.
+\end{equation}
+静止粒子的能量满足 $E_0=mc^2$；具有任意动量的粒子满足式\eqref{eq:energymomentum}。
+
+\subsection{四维力与三维功率}
+
+定义三维力为 $\bm F=\dd\bm p/\dd t$。四维力是四维动量对固有时的变化率：
+\begin{equation}
+  K^\mu=\frac{\dd p^\mu}{\dd\tau}
+  =\gamma\left(
+    \frac{\bm F\mathbin{\cdot}\bm v}{c},
+    \bm F
+  \right).
+  \label{eq:fourforce}
+\end{equation}
+时间分量使用了功率关系
+\begin{equation}
+  \frac{\dd E}{\dd t}=\bm F\mathbin{\cdot}\bm v.
+\end{equation}
+对于静质量不变的粒子，$p^\mu=mU^\mu$，因此
+\begin{equation}
+  K^\mu=mA^\mu,
+  \qquad
+  K^\mu U_\mu=0.
+  \label{eq:fourforceorthogonal}
+\end{equation}
+四维力的正交关系保证 $p^\mu p_\mu=m^2c^2$ 沿运动过程保持不变。若系统能够改变粒子的内部能量或不变质量，则需要把相应自由度计入完整系统的四动量。
+
+\subsection{角动量张量}
+
+相对论中，轨道角动量可写成反对称二阶张量
+\begin{equation}
+  L^{\mu\nu}
+  =x^\mu p^\nu-x^\nu p^\mu.
+  \label{eq:angularmomentumtensor}
+\end{equation}
+它有六个独立分量。三个纯空间分量与普通角动量
+\begin{equation}
+  \bm L=\bm r\times\bm p
+\end{equation}
+对应，三个时间--空间分量则与推动生成元及系统质心运动有关。若四维力矩
+\begin{equation}
+  N^{\mu\nu}
+  =x^\mu K^\nu-x^\nu K^\mu
+\end{equation}
+为零，则 $\dd L^{\mu\nu}/\dd\tau=0$。角动量张量由此把空间旋转守恒量和洛伦兹推动守恒量统一起来。这里的 $L^{\mu\nu}$ 是粒子轨道角动量；第五部分的 $M^{\mu\nu}$ 表示抽象的洛伦兹群生成元，二者具有相同的反对称张量结构，但承担不同角色。
+
+\subsection{内禀自旋与 Pauli--Lubanski 四矢量}
+
+本小节进一步采用量子理论中的单粒子表示。具有内部自由度的粒子或场还携带内禀角动量。总角动量张量写为
+\begin{equation}
+  J^{\mu\nu}=L^{\mu\nu}+S^{\mu\nu},
+  \qquad
+  L^{\mu\nu}=x^\mu p^\nu-x^\nu p^\mu,
+  \label{eq:totalangularmomentum}
+\end{equation}
+其中 $S^{\mu\nu}$ 描述自旋部分。不同观察者对空间角动量和推动分量的划分会发生混合，因此三维自旋矢量本身不能完整表达相对论变换性质。
+
+庞加莱对称性提供了协变描述。取 $\epsilon^{0123}=+1$，定义 Pauli--Lubanski 四矢量
+\begin{equation}
+  W^\mu
+  =\frac{1}{2}\epsilon^{\mu\nu\rho\sigma}
+  P_\nu J_{\rho\sigma}.
+  \label{eq:paulilubanski}
+\end{equation}
+它满足 $W^\mu P_\mu=0$。庞加莱群有两个常用的二次不变量
+\begin{equation}
+  P^\mu P_\mu,
+  \qquad
+  W^\mu W_\mu.
+  \label{eq:poincarecasimirs}
+\end{equation}
+对于质量为 $m$、自旋量子数为 $s$ 的单粒子态，二者的本征值分别为
+\begin{equation}
+  P^\mu P_\mu=m^2c^2,
+  \qquad
+  W^\mu W_\mu=-m^2c^2\hbar^2s(s+1).
+  \label{eq:massspincasimirs}
+\end{equation}
+质量和自旋由此成为庞加莱群不可约表示的基本标签。无质量粒子的自旋信息通常用螺旋度表示，即角动量在动量方向上的投影\cite{weinberg1995}。
+
+\subsection{小群与相对论粒子分类}
+
+庞加莱群对单粒子态的分类还可以通过\textbf{小群}说明。给定一个标准四动量 $k^\mu$，保持它不变的洛伦兹变换集合称为该四动量的小群：
+\begin{equation}
+  G_k=\left\{\Lambda\in SO^+(1,3)
+  \mid \Lambda^\mu{}_{\nu}k^\nu=k^\mu\right\}.
+  \label{eq:littlegroupdefinition}
+\end{equation}
+任意满足同一质量壳条件的四动量都可以由某个洛伦兹变换从标准四动量得到，因此只需研究小群怎样作用于粒子的内部状态。
+
+对于质量 $m>0$ 的粒子，可以选择静止系标准动量
+\begin{equation}
+  k^\mu=(mc,\bm0).
+\end{equation}
+保持该四动量不变的连续变换只有三维空间旋转，所以小群同构于 $SO(3)$；在量子理论中使用其双覆盖群 $SU(2)$。粒子的内部状态按照角动量量子数
+\begin{equation}
+  s=0,\frac12,1,\frac32,\ldots
+\end{equation}
+分类，并具有 $2s+1$ 个自旋投影。这个结果与式\eqref{eq:massspincasimirs}中的 Pauli--Lubanski 不变量一致。
+
+对于无质量粒子，不存在静止系，可取沿 $z$ 方向传播的标准动量
+\begin{equation}
+  k^\mu=(\kappa,0,0,\kappa),
+  \qquad \kappa>0.
+\end{equation}
+其小群同构于二维欧氏群 $ISO(2)$，包含绕传播方向的旋转以及两个类似平移的生成元。对通常观察到的有限螺旋度粒子，平移部分在物理态上取平凡表示，绕动量方向的旋转则给出相位
+\begin{equation}
+  \lvert p,\lambda\rangle
+  \longrightarrow
+  e^{-\ii\lambda\theta}\lvert p,\lambda\rangle,
+  \label{eq:helicitytransformation}
+\end{equation}
+其中 $\lambda$ 是螺旋度。光子的两个物理偏振对应 $\lambda=\pm1$。小群方法由此说明，有质量粒子用静止系自旋分类，无质量粒子通常用螺旋度分类。$ISO(2)$ 还允许连续自旋表示，但这类粒子尚无实验依据，本文不作展开\cite{weinberg1995}。
+
+\begin{table}[htbp]
+  \centering
+  \caption{有质量与无质量粒子的庞加莱小群分类。}
+  \label{tab:littlegroupclassification}
+  \begin{tabular}{llll}
+    \toprule
+    类型 & 标准四动量 & 小群 & 常用内部标签 \\
+    \midrule
+    $m>0$ & $(mc,0,0,0)$ & $SO(3)$ 或 $SU(2)$ & 自旋 $s$ \\
+    $m=0$ & $(\kappa,0,0,\kappa)$ & $ISO(2)$ & 螺旋度 $\lambda$ \\
+    \bottomrule
+  \end{tabular}
+\end{table}
+
+\subsection{维格纳旋转与托马斯进动}
+
+洛伦兹代数中的 $[K_i,K_j]\neq0$ 表明不同方向的推动不对易。粒子沿弯曲轨迹运动时，相邻瞬时静止系之间的推动方向持续改变，其累积效应包含一个空间旋转。该旋转的连续极限称为托马斯进动，其角速度为
+\begin{equation}
+  \boxed{
+  \bm\omega_{\mathrm T}
+  =\frac{\gamma^2}{\gamma+1}
+  \frac{\bm a\times\bm v}{c^2}.}
+  \label{eq:thomasprecession}
+\end{equation}
+当 $v\ll c$ 时，
+\begin{equation}
+  \bm\omega_{\mathrm T}
+  \approx\frac{\bm a\times\bm v}{2c^2}.
+\end{equation}
+托马斯进动是维格纳旋转在连续加速运动中的表现，也可理解为 Fermi--Walker 非自转标架相对于连续瞬时推动标架的转动。它在原子自旋--轨道耦合和相对论性束流动力学中具有实际作用\cite{rindler,weinberg1995}。
+
+\subsection{系统四动量与不变质量}
+
+对于由多个粒子组成的系统，总四动量定义为各粒子四动量之和：
+\begin{equation}
+  P^\mu=\sum_i p_i^\mu
+  =\left(\frac{E_{\mathrm{tot}}}{c},\bm P_{\mathrm{tot}}\right).
+  \label{eq:totalfourmomentum}
+\end{equation}
+总四动量的闵可夫斯基模长是洛伦兹不变量，据此定义系统的不变质量 $M$：
+\begin{equation}
+  \boxed{
+  M^2c^4=E_{\mathrm{tot}}^2
+  -c^2\lvert\bm P_{\mathrm{tot}}\rvert^2.}
+  \label{eq:invariantmass}
+\end{equation}
+这里的 $M$ 是整个系统的质量，不等于各粒子静质量的简单相加。粒子之间的相对运动能、束缚能和其他内部能量都会影响 $M$。在系统的质心系中，$\bm P_{\mathrm{tot}}=0$，所以
+\begin{equation}
+  E_{\mathrm{CM}}=Mc^2.
+  \label{eq:centerofmassenergy}
+\end{equation}
+质心能量是能够用于产生新粒子或转化为系统内部能量的总能量。实验室系中的总能量还可能包含质心整体运动对应的能量，因此高能碰撞通常使用 $E_{\mathrm{CM}}$ 比较反应规模。
+
+\subsection{相对论碰撞与反应阈值}
+
+孤立系统在碰撞或衰变过程中满足总四动量守恒：
+\begin{equation}
+  \boxed{
+  \sum_{i\in\text{初态}}p_i^\mu
+  =\sum_{f\in\text{末态}}p_f^\mu.}
+  \label{eq:fourmomentumconservation}
+\end{equation}
+该方程同时包含能量守恒和三维动量守恒，并且在任意惯性系中保持相同形式。对反应
+\begin{equation*}
+  a+b\longrightarrow 1+2+\cdots+n,
+\end{equation*}
+定义曼德尔斯坦变量
+\begin{equation}
+  s=(p_a+p_b)^\mu(p_a+p_b)_\mu.
+  \label{eq:mandelstams}
+\end{equation}
+它在洛伦兹变换下保持不变，并满足
+\begin{equation}
+  E_{\mathrm{CM}}=c\sqrt{s}.
+\end{equation}
+对于二体散射 $1+2\to3+4$，还定义
+\begin{equation}
+  t=(p_1-p_3)^2,
+  \qquad
+  u=(p_1-p_4)^2,
+  \label{eq:mandelstamtu}
+\end{equation}
+其中四矢量平方表示闵可夫斯基内积。利用四动量守恒和质量壳条件可得
+\begin{equation}
+  s+t+u=(m_1^2+m_2^2+m_3^2+m_4^2)c^2.
+  \label{eq:mandelstamrelation}
+\end{equation}
+$s$ 描述总质心能量，$t$ 和 $u$ 描述不同粒子配对之间的四动量转移。它们使散射运动学可以用与参考系无关的变量表达。
+
+二体衰变也可由不变量直接求解。设质量为 $M$ 的母粒子在静止系中衰变为质量 $m_1$、$m_2$ 的两个粒子。末态动量大小相等、方向相反，其大小为
+\begin{equation}
+  p_*
+  =\frac{c}{2M}
+  \sqrt{\left[M^2-(m_1+m_2)^2\right]
+        \left[M^2-(m_1-m_2)^2\right]}.
+  \label{eq:twobodydecaymomentum}
+\end{equation}
+星号表示母粒子静止系。该式同时给出衰变允许条件 $M\ge m_1+m_2$，并说明二体末态的能量由三个质量完全确定。
+
+在反应阈值处，末态粒子在质心系中没有相对动能，因此
+\begin{equation}
+  s_{\mathrm{thr}}
+  =\left(\sum_{f=1}^{n}m_f\right)^2c^2.
+  \label{eq:thresholds}
+\end{equation}
+
+若实验采用固定靶构型，入射粒子 $a$ 撞击静止粒子 $b$，则 $p_b^\mu=(m_bc,\bm0)$。设 $E_a$ 为入射粒子的总能量，由式\eqref{eq:mandelstams}得到
+\begin{equation}
+  s=m_a^2c^2+m_b^2c^2+2m_bE_a.
+\end{equation}
+结合式\eqref{eq:thresholds}可得阈值入射总能量
+\begin{equation}
+  \boxed{
+  E_{a,\mathrm{thr}}
+  =\frac{
+    \left(\sum_fm_f\right)^2-m_a^2-m_b^2
+  }{2m_b}c^2.}
+  \label{eq:thresholdenergy}
+\end{equation}
+固定靶实验中，一部分入射能量必须转化为末态整体动量。对撞机让两束粒子的总三维动量在实验室中相互抵消，可以使更多能量进入质心系，从而显著提高可用于新粒子产生的能量\cite{pdg2024,taylorwheeler}。
+
+\section{协变电动力学}
+
+经典电磁学是狭义相对论的重要动力学实例。三维形式中的电场和磁场会随惯性系改变，两者可以统一为四维场强张量。协变形式同时展示麦克斯韦方程的洛伦兹对称性，并说明电场与磁场是同一电磁场在不同参考系中的分量。
+
+\subsection{四维势与场强张量}
+
+将标势 $\phi$ 和矢势 $\bm A$ 组成四维势
+\begin{equation}
+  A^\mu=\left(\frac{\phi}{c},\bm A\right).
+  \label{eq:fourpotential}
+\end{equation}
+采用四维导数 $\partial_\mu=\partial/\partial x^\mu$，定义电磁场强张量
+\begin{equation}
+  F^{\mu\nu}
+  =\partial^\mu A^\nu-\partial^\nu A^\mu.
+  \label{eq:fieldstrength}
+\end{equation}
+它满足 $F^{\mu\nu}=-F^{\nu\mu}$，六个独立分量正好对应电场和磁场的六个分量。在本文的度规约定下，矩阵形式为
+\begin{equation}
+  F^{\mu\nu}=
+  \begin{pmatrix}
+    0&-E_x/c&-E_y/c&-E_z/c\\
+    E_x/c&0&-B_z&B_y\\
+    E_y/c&B_z&0&-B_x\\
+    E_z/c&-B_y&B_x&0
+  \end{pmatrix}.
+  \label{eq:fieldstrengthmatrix}
+\end{equation}
+势的规范变换
+\begin{equation}
+  A^\mu\longrightarrow A^\mu+\partial^\mu\chi
+\end{equation}
+不会改变 $F^{\mu\nu}$，因为偏导数彼此交换。规范自由度表明四维势的不同表示可以描述同一个电磁场。
+
+\subsection{四维电流与协变麦克斯韦方程}
+
+电荷密度 $\rho$ 和电流密度 $\bm J$ 组成四维电流
+\begin{equation}
+  J^\mu=(c\rho,\bm J).
+  \label{eq:fourcurrent}
+\end{equation}
+四条含源麦克斯韦方程可以统一写成
+\begin{equation}
+  \boxed{\partial_\mu F^{\mu\nu}=\mu_0J^\nu.}
+  \label{eq:covariantmaxwellsource}
+\end{equation}
+当 $\nu=0$ 时，该式给出高斯定律 $\bm\nabla\mathbin{\cdot}\bm E=\rho/\varepsilon_0$；当 $\nu=1,2,3$ 时，它给出安培--麦克斯韦定律。
+
+定义对偶场强张量
+\begin{equation}
+  \widetilde F^{\mu\nu}
+  =\frac{1}{2}\epsilon^{\mu\nu\rho\sigma}
+  F_{\rho\sigma},
+\end{equation}
+另外四条无源方程可写成
+\begin{equation}
+  \boxed{\partial_\mu\widetilde F^{\mu\nu}=0.}
+  \label{eq:covariantmaxwellhomogeneous}
+\end{equation}
+它包含磁场高斯定律 $\bm\nabla\mathbin{\cdot}\bm B=0$ 和法拉第电磁感应定律。对式\eqref{eq:covariantmaxwellsource}再作用 $\partial_\nu$，利用 $F^{\mu\nu}$ 的反对称性可得
+\begin{equation}
+  \partial_\mu J^\mu=0,
+  \label{eq:chargecontinuity}
+\end{equation}
+这正是电荷守恒的连续性方程。
+
+\subsection{协变洛伦兹力}
+
+带电粒子在电磁场中的运动方程可写为
+\begin{equation}
+  \boxed{
+  \frac{\dd p^\mu}{\dd\tau}
+  =qF^\mu{}_{\nu}U^\nu.}
+  \label{eq:covariantlorentzforce}
+\end{equation}
+其空间分量等价于
+\begin{equation}
+  \frac{\dd\bm p}{\dd t}
+  =q(\bm E+\bm v\times\bm B),
+\end{equation}
+时间分量则给出功率关系
+\begin{equation}
+  \frac{\dd E}{\dd t}=q\bm E\mathbin{\cdot}\bm v.
+\end{equation}
+由于场强张量反对称，$U_\mu F^\mu{}_{\nu}U^\nu=0$，所以四维力与四维速度正交。这与式\eqref{eq:velocityaccelerationorthogonal}一致，并保证带电粒子的静质量在经典电磁作用下保持不变。
+
+\subsection{带电粒子的协变作用量}
+
+自由粒子作用量可以加入电磁相互作用项。带电量为 $q$ 的粒子在给定四维势中的作用量为
+\begin{equation}
+  S[x]
+  =-mc\int\dd s-q\int A_\mu\dd x^\mu.
+  \label{eq:chargedparticleaction}
+\end{equation}
+第二项是沿世界线的四维标量积分，因此整个作用量具有洛伦兹不变性。用坐标时间参数化后，其拉格朗日量为
+\begin{equation}
+  \mathcal L
+  =-mc^2\sqrt{1-\frac{\bm v^2}{c^2}}
+  +q\bm A\mathbin{\cdot}\bm v-q\phi.
+  \label{eq:chargedparticlelagrangian}
+\end{equation}
+对粒子世界线作固定端点变分，可得
+\begin{equation}
+  m\frac{\dd U^\mu}{\dd\tau}
+  =qF^\mu{}_{\nu}U^\nu,
+\end{equation}
+即式\eqref{eq:covariantlorentzforce}。规范变换使作用量只增加端点项
+\begin{equation}
+  \Delta S=-q[\chi(x_2)-\chi(x_1)],
+\end{equation}
+所以固定端点下的运动方程保持不变。
+
+\subsection{电磁场作用量与规范对称性}
+
+电磁场自身的动力学也可由作用量给出。令 $\dd^4x=\dd(ct)\dd^3\bm x$，取
+\begin{equation}
+  S_{\mathrm{field}}[A]
+  =\frac{1}{c}\int\dd^4x
+  \left[
+    -\frac{1}{4\mu_0}F_{\mu\nu}F^{\mu\nu}
+    -J_\mu A^\mu
+  \right].
+  \label{eq:electromagneticaction}
+\end{equation}
+对 $A_\nu$ 作固定边界变分，并利用
+\begin{equation*}
+  \delta F_{\mu\nu}
+  =\partial_\mu\delta A_\nu
+  -\partial_\nu\delta A_\mu,
+\end{equation*}
+分部积分后得到场方程
+\begin{equation}
+  \partial_\mu F^{\mu\nu}=\mu_0J^\nu.
+\end{equation}
+无源麦克斯韦方程由 $F_{\mu\nu}$ 以四维势定义时自动满足的 Bianchi 恒等式给出。
+
+在规范变换 $A_\mu\to A_\mu+\partial_\mu\chi$ 下，场强项保持不变。源项的变化经过分部积分为
+\begin{equation}
+  \Delta S_{\mathrm{source}}
+  =\frac{1}{c}\int\dd^4x\,
+  \chi\,\partial_\mu J^\mu,
+\end{equation}
+其中已忽略边界项。作用量对任意 $\chi$ 保持规范不变要求
+\begin{equation}
+  \partial_\mu J^\mu=0.
+\end{equation}
+规范对称性由此与局域电荷守恒直接联系起来\cite{griffiths,landau}。
+
+\subsection{电磁场的洛伦兹变换与不变量}
+
+场强张量在洛伦兹变换下满足
+\begin{equation}
+  F'^{\mu\nu}
+  =\Lambda^\mu{}_{\rho}\Lambda^\nu{}_{\sigma}
+  F^{\rho\sigma}.
+  \label{eq:fieldtransformationtensor}
+\end{equation}
+将电磁场分解为平行和垂直于参考系相对速度 $\bm v$ 的分量，可得
+\begin{equation}
+  \begin{aligned}
+    \bm E'_{\parallel}&=\bm E_{\parallel},&
+    \bm B'_{\parallel}&=\bm B_{\parallel},\\
+    \bm E'_{\perp}&=\gamma(\bm E+\bm v\times\bm B)_{\perp},&
+    \bm B'_{\perp}&=\gamma\left(
+      \bm B-\frac{\bm v\times\bm E}{c^2}
+    \right)_{\perp}.
+  \end{aligned}
+  \label{eq:electromagneticfieldtransformation}
+\end{equation}
+电场和磁场会在参考系变换中相互混合。两个由场强张量构成的洛伦兹不变量为
+\begin{equation}
+  \frac{1}{2}F_{\mu\nu}F^{\mu\nu}
+  =B^2-\frac{E^2}{c^2},
+  \qquad
+  \frac{1}{4}F_{\mu\nu}\widetilde F^{\mu\nu}
+  =-\frac{\bm E\mathbin{\cdot}\bm B}{c}.
+  \label{eq:electromagneticinvariants}
+\end{equation}
+它们使不同观察者能够对电磁场进行与参考系无关的分类。例如，若 $\bm E\mathbin{\cdot}\bm B=0$ 且 $E^2>c^2B^2$，则存在一个惯性系使磁场消失；若 $E^2<c^2B^2$，则存在一个惯性系使电场消失。平面电磁波满足两个不变量都为零\cite{griffiths,landau}。
+
+\subsection{均匀电磁场中的典型运动}
+
+协变洛伦兹力在均匀场中可以给出若干标准轨迹。先考虑粒子从静止出发，在 $x$ 方向均匀电场 $\bm E=E\bm e_x$ 中运动，且 $\bm B=0$。动量方程为
+\begin{equation}
+  \frac{\dd p_x}{\dd t}=qE,
+  \qquad p_x=qEt.
+\end{equation}
+利用 $E_{\mathrm p}^2=p_x^2c^2+m^2c^4$，其中 $E_{\mathrm p}$ 表示粒子能量，可得
+\begin{equation}
+  v_x(t)=\frac{qEt}{
+  \sqrt{m^2+(qEt/c)^2}},
+  \qquad
+  x(t)=\frac{mc^2}{qE}
+  \left[
+    \sqrt{1+\left(\frac{qEt}{mc}\right)^2}-1
+  \right].
+  \label{eq:uniformelectricmotion}
+\end{equation}
+该运动具有大小 $\alpha=\lvert qE\rvert/m$ 的恒定固有加速度，并与式\eqref{eq:uniformproperacceleration}描述同一类双曲线世界线。坐标速度随时间趋近 $c$，不会达到或超过 $c$。
+
+若只有均匀磁场 $\bm B=B\bm e_z$，磁场不做功，所以 $E_{\mathrm p}$ 和 $\gamma$ 保持常量。垂直于磁场的动量作圆周运动，其相对论回旋角频率和轨道半径为
+\begin{equation}
+  \omega_{\mathrm c}=\frac{\lvert q\rvert B}{\gamma m},
+  \qquad
+  r_{\mathrm L}=\frac{p_\perp}{\lvert q\rvert B}.
+  \label{eq:relativisticcyclotron}
+\end{equation}
+平行于磁场的速度保持不变，因此一般轨迹为螺旋线。回旋频率随能量增加而降低，这是同步回旋加速器必须进行频率修正的原因。
+
+对于相互垂直且满足 $E<cB$ 的均匀场，式\eqref{eq:electromagneticinvariants}保证存在一个惯性系使电场消失。该参考系相对实验室的速度可取为
+\begin{equation}
+  \bm v_{\mathrm d}
+  =\frac{\bm E\times\bm B}{B^2},
+  \qquad \lvert\bm v_{\mathrm d}\rvert<c.
+  \label{eq:crossedfielddrift}
+\end{equation}
+在该系中粒子只作磁场回旋；变换回实验室后，回旋中心以 $\bm v_{\mathrm d}$ 漂移。这个例子把电磁场不变量、参考系选择和粒子轨迹联系起来\cite{griffiths,landau}。
+
+\subsection{电磁场的能量--动量张量}
+
+电磁场本身携带能量和动量。为了在四维形式中统一描述能量密度、能流、动量密度和应力，定义电磁场的能量--动量张量
+\begin{equation}
+  T_{\mathrm{em}}^{\mu\nu}
+  =\frac{1}{\mu_0}
+  \left(
+    -F^{\mu\lambda}F^\nu{}_{\lambda}
+    +\frac{1}{4}\eta^{\mu\nu}
+      F_{\rho\sigma}F^{\rho\sigma}
+  \right).
+  \label{eq:emenergymomentumtensor}
+\end{equation}
+它是对称张量。时间--时间分量给出电磁场能量密度
+\begin{equation}
+  T_{\mathrm{em}}^{00}=u
+  =\frac{\varepsilon_0}{2}E^2
+  +\frac{1}{2\mu_0}B^2,
+  \label{eq:emenergydensity}
+\end{equation}
+时间--空间分量给出能流
+\begin{equation}
+  T_{\mathrm{em}}^{0i}=\frac{S^i}{c},
+  \qquad
+  \bm S=\frac{1}{\mu_0}\bm E\times\bm B,
+  \label{eq:poyntingvector}
+\end{equation}
+其中 $\bm S$ 是坡印廷矢量。由于 $T_{\mathrm{em}}^{\mu\nu}$ 对称，$T^{i0}/c$ 同时表示电磁场的动量密度。空间--空间分量则与麦克斯韦应力张量相联系。
+
+\subsection{推迟势与 Li\'enard--Wiechert 场}
+
+电磁相互作用以有限速度传播，因此观察点 $(\bm x,t)$ 处的场取决于电荷在较早时刻的运动状态。对点电荷轨迹 $\bm z(t)$，推迟时刻 $t_{\mathrm r}$ 由
+\begin{equation}
+  t-t_{\mathrm r}
+  =\frac{R(t_{\mathrm r})}{c},
+  \qquad
+  \bm R=\bm x-\bm z(t_{\mathrm r}),
+  \qquad R=\lvert\bm R\rvert
+  \label{eq:retardedtime}
+\end{equation}
+隐式确定。记 $\bm n=\bm R/R$、$\bm\beta=\bm v/c$ 和 $\kappa=1-\bm n\mathbin{\cdot}\bm\beta$，点电荷的 Li\'enard--Wiechert 势为
+\begin{equation}
+  \phi(\bm x,t)
+  =\frac{q}{4\pi\varepsilon_0}
+  \left[\frac{1}{\kappa R}\right]_{\mathrm r},
+  \qquad
+  \bm A(\bm x,t)
+  =\frac{\bm v}{c^2}\phi(\bm x,t),
+  \label{eq:lienardwiechertpotentials}
+\end{equation}
+方括号下标 $\mathrm r$ 表示其中各量均在推迟时刻取值。
+
+由势求导得到的电场可以分成随 $R^{-2}$ 衰减的速度场和随 $R^{-1}$ 衰减的辐射场：
+\begin{equation}
+  \bm E
+  =\frac{q}{4\pi\varepsilon_0}
+  \left[
+    \frac{(1-\beta^2)(\bm n-\bm\beta)}
+         {\kappa^3R^2}
+    +\frac{\bm n\times
+      \left[(\bm n-\bm\beta)\times\dot{\bm\beta}\right]}
+      {c\kappa^3R}
+  \right]_{\mathrm r},
+  \qquad
+  \bm B=\frac{1}{c}\bm n\times\bm E.
+  \label{eq:lienardwiechertfields}
+\end{equation}
+第一项在近区占主导并随电荷匀速运动，第二项由加速度产生，在远区携带能量和动量。因子 $\kappa^{-3}$ 使高速粒子的辐射集中在速度方向附近约 $1/\gamma$ 的角范围内，这称为相对论束射。
+
+利用式\eqref{eq:poyntingvector}，对远区坡印廷通量积分可得 Li\'enard 辐射功率
+\begin{equation}
+  \boxed{
+  P
+  =\frac{q^2\gamma^6}{6\pi\varepsilon_0c^3}
+  \left(
+    a^2-\frac{\lvert\bm v\times\bm a\rvert^2}{c^2}
+  \right).}
+  \label{eq:lienardpower}
+\end{equation}
+当 $v\ll c$ 时，它化为 Larmor 公式 $P=q^2a^2/(6\pi\varepsilon_0c^3)$。平行加速时 $P\propto\gamma^6a^2$，垂直加速时 $P\propto\gamma^4a^2$；后者解释了高能电子在同步加速器中显著的同步辐射损失\cite{jackson,griffiths}。
+
+\subsection{一般物质的能量--动量张量}
+
+能量--动量张量也适用于粒子集合和连续介质。在介质的局域静止系中，$T^{00}$ 表示能量密度，$T^{0i}$ 表示能流除以 $c$，$T^{i0}/c$ 表示动量密度，$T^{ij}$ 表示动量通量与应力。张量形式把这些在三维语言中分开的物理量组织为同一几何对象。
+
+对于没有压强和内应力的尘埃模型，设 $\rho_0$ 是局域静止系中的质量密度，则
+\begin{equation}
+  T_{\mathrm{dust}}^{\mu\nu}
+  =\rho_0 U^\mu U^\nu.
+  \label{eq:dusttensor}
+\end{equation}
+更一般的各向同性完美流体具有局域静止能量密度 $\varepsilon$ 和压强 $p$，其能量--动量张量为
+\begin{equation}
+  \boxed{
+  T_{\mathrm{fluid}}^{\mu\nu}
+  =\frac{\varepsilon+p}{c^2}U^\mu U^\nu
+  -p\eta^{\mu\nu}.}
+  \label{eq:perfectfluidtensor}
+\end{equation}
+在流体静止系中 $U^\mu=(c,\bm0)$，所以
+\begin{equation}
+  T^{\mu\nu}=\operatorname{diag}(\varepsilon,p,p,p).
+\end{equation}
+压强因而既是机械应力，也参与运动参考系中的能量与动量输运。取 $p=0$ 且 $\varepsilon=\rho_0c^2$ 时，式\eqref{eq:perfectfluidtensor}化为尘埃模型。一般介质还可包含黏滞应力和热流，它们对应 $T^{\mu\nu}$ 的额外分量\cite{landau}。
+
+\subsection{局域能量--动量守恒}
+
+结合麦克斯韦方程和场强张量的反对称性，可以得到
+\begin{equation}
+  \partial_\mu T_{\mathrm{em}}^{\mu\nu}
+  =-F^{\nu\lambda}J_\lambda.
+  \label{eq:emlocalbalance}
+\end{equation}
+右端是电磁场作用于带电物质的四维力密度的负值。若物质部分的能量--动量张量记为 $T_{\mathrm m}^{\mu\nu}$，则物质获得的能量和动量满足
+\begin{equation}
+  \partial_\mu T_{\mathrm m}^{\mu\nu}
+  =F^{\nu\lambda}J_\lambda.
+  \label{eq:matterlocalbalance}
+\end{equation}
+两式相加得到场与物质组成的封闭系统的局域守恒方程
+\begin{equation}
+  \boxed{
+  \partial_\mu T_{\mathrm{tot}}^{\mu\nu}=0,
+  \qquad
+  T_{\mathrm{tot}}^{\mu\nu}
+  =T_{\mathrm{em}}^{\mu\nu}+T_{\mathrm m}^{\mu\nu}.}
+  \label{eq:localenergymomentumconservation}
+\end{equation}
+当 $\nu=0$ 时，该式描述局域能量守恒；当 $\nu=1,2,3$ 时，它描述三个方向的局域动量守恒。在空间边界没有净通量或场足够快衰减的条件下，对空间积分便得到系统总四动量守恒。局域方程还揭示，电磁场能量或动量的减少与物质所得完全对应，场和物质之间可以持续交换能量与动量\cite{landau,griffiths}。
+
+\section{经典力学的低速极限}
+
+\subsection{洛伦兹因子的展开}
+
+当 $\beta=v/c\ll1$ 时，二项式展开给出
+\begin{equation}
+  \gamma=(1-\beta^2)^{-1/2}
+  =1+\frac{1}{2}\beta^2+\frac{3}{8}\beta^4+O(\beta^6).
+  \label{eq:gammaexpansion}
+\end{equation}
+图\ref{fig:gamma}显示，在低速区域 $\gamma$ 非常接近1，而当 $v$ 接近 $c$ 时迅速增大。
+
+\begin{figure}[htbp]
+  \centering
+  \begin{tikzpicture}
+    \begin{axis}[
+      width=11cm,height=7cm,
+      xlabel={$\beta=v/c$},ylabel={$\gamma$},
+      xmin=0,xmax=0.995,ymin=0.8,ymax=10,
+      grid=major,
+      legend style={at={(0.04,0.96)},anchor=north west},
+      samples=250,
+      domain=0:0.995
+    ]
+      \addplot[very thick,relblue] {1/sqrt(1-x^2)};
+      \addlegendentry{精确值 $(1-\beta^2)^{-1/2}$}
+      \addplot[thick,dashed,relred,domain=0:0.8] {1+0.5*x^2+0.375*x^4};
+      \addlegendentry{四阶低速近似}
+      \addplot[only marks,mark=*,relgreen] coordinates {(0.8,1.6667) (0.9,2.2942) (0.99,7.0888)};
+    \end{axis}
+  \end{tikzpicture}
+  \caption{洛伦兹因子随无量纲速度 $\beta$ 的变化。}
+  \label{fig:gamma}
+\end{figure}
+
+\subsection{经典变换与经典动能的恢复}
+
+在所考察的有限时空尺度上，若 $v/c\ll1$，同时有 $vx/c^2$ 相对于特征时间可以忽略，则 $\gamma=1+O(v^2/c^2)$，时间变换中的相对性修正也可忽略。保持有限的 $v$、$x$ 和 $t$，并把 $1/c$ 作为小参数展开，式\eqref{eq:lorentz}的一阶近似为
+\begin{equation}
+  x'\approx x-vt,\qquad t'\approx t,
+\end{equation}
+即伽利略变换。另一方面，粒子总能量展开为
+\begin{equation}
+  E=\gamma mc^2
+  \approx mc^2+\frac{1}{2}mv^2+\frac{3}{8}\frac{mv^4}{c^2}+\cdots.
+\end{equation}
+扣除与运动状态无关的静止能量 $mc^2$ 后，最低阶项正是经典动能 $K=mv^2/2$。经典力学构成狭义相对论在低速、弱相对论效应条件下的有效近似\cite{zhaokaihua}。
+
+\section{实验验证与实际应用}
+
+\subsection{大气宇宙线 \texorpdfstring{$\mu$}{μ} 子}
+
+$\mu$ 子静止系中的平均寿命为 $\tau_0\approx\SI{2.197}{\micro\second}$\cite{pdg2024}。若完全使用经典估计，即使它以接近光速运动，平均飞行距离也只有
+\begin{equation}
+  c\tau_0\approx 660\,\mathrm{m},
+\end{equation}
+远小于其在高层大气中产生位置到地面的典型距离。取 $v=0.998c$，有 $\gamma\approx15.82$，地面系中的平均寿命和飞行距离约为
+\begin{equation}
+  \tau=\gamma\tau_0\approx34.8\,\mu\mathrm{s},\qquad
+  d=v\tau\approx10.4\,\mathrm{km}.
+\end{equation}
+
+只比较平均飞行距离还不够，因为衰变是随机过程。若传播距离为 $L$，地面系中存活到该位置的概率为
+\begin{equation}
+  P(L)=\exp\left(-\frac{L}{v\gamma\tau_0}\right).
+  \label{eq:muonsurvival}
+\end{equation}
+取 $L=\SI{10}{\kilo\metre}$，忽略时间膨胀相当于令 $\gamma=1$，得到 $P_{\mathrm{classical}}\approx2.5\times10^{-7}$；采用相对论时间膨胀则有 $P_{\mathrm{SR}}\approx0.38$。虽然真实大气中的产生高度、能谱和能量损失具有分布，这一数量级比较已经显示两种预测的巨大差异。Frisch 与 Smith 对不同海拔处宇宙线 $\mu$ 子计数的比较给出了经典实验验证\cite{frischsmith1963}。
+
+Frisch--Smith 实验在海拔约 $\SI{1917}{\metre}$ 的华盛顿山记录到约 $563$ 个/小时的选定 $\mu$ 子，在剑桥海平面记录到约 $412$ 个/小时；若不考虑相对论时间膨胀，同一传播过程只应留下约 $27$ 个/小时。图\ref{fig:frischsmithdata}把论文报告的计数率与经典模型预言并列展示。原实验还包含能量选择、路径长度修正与能量损失分析。该图仅呈现最直接的数量级差异，完整数据处理见原论文。
+
+\begin{figure}[htbp]
+  \centering
+  \begin{tikzpicture}
+    \begin{axis}[
+      ybar,
+      width=12cm,height=7.2cm,
+      ymin=0,ymax=650,
+      ylabel={$\mu$ 子计数率/($\mathrm{h}^{-1}$)},
+      symbolic x coords={mountain,sea,classic},
+      xtick={mountain,sea,classic},
+      xticklabels={华盛顿山实测,海平面实测,无时间膨胀预言},
+      x tick label style={align=center,font=\small},
+      bar width=23pt,
+      nodes near coords,
+      nodes near coords style={font=\small},
+      grid=major,
+      enlarge x limits=0.22
+    ]
+      \addplot[fill=relblue!75,draw=relblue] coordinates {
+        (mountain,563) (sea,412)
+      };
+      \addplot[fill=relred!75,draw=relred] coordinates {
+        (classic,27)
+      };
+    \end{axis}
+  \end{tikzpicture}
+  \caption{Frisch--Smith 实验报告的近似计数率与无时间膨胀模型预言。数据来源：文献\cite{frischsmith1963}。}
+  \label{fig:frischsmithdata}
+\end{figure}
+
+\begin{table}[htbp]
+  \centering
+  \caption{$v=0.998c$ 时 $\mu$ 子传播数量级比较。}
+  \label{tab:muon}
+  \begin{tabular}{>{\centering\arraybackslash}p{4.2cm}cc}
+    \toprule
+    物理量 & 不计时间膨胀 & 相对论结果 \\
+    \midrule
+    平均寿命 & $2.20\,\mu\mathrm{s}$ & $34.8\,\mu\mathrm{s}$ \\
+    平均飞行距离 & $0.66\,\mathrm{km}$ & $10.4\,\mathrm{km}$ \\
+    $\SI{10}{\kilo\metre}$ 处存活概率 & $2.5\times10^{-7}$ & $0.38$ \\
+    \bottomrule
+  \end{tabular}
+\end{table}
+
+在 $\mu$ 子自身参考系中，也可用长度收缩描述同一现象：大气层厚度缩短为地面系厚度的 $1/\gamma$。两种描述不同，但对“$\mu$ 子是否到达地面”给出一致结论。
+
+\subsection{粒子加速器}
+
+粒子速度接近 $c$ 后，继续输入的能量主要增加粒子的能量和动量，其速度保持在 $c$ 以下。由
+\begin{equation}
+  K=(\gamma-1)mc^2
+\end{equation}
+可知，$\gamma$ 随速度趋近 $c$ 而发散。现代同步加速器和对撞机必须使用相对论动量 $\bm p=\gamma m\bm v$ 设计磁场、轨道和碰撞能量。实验中能量与动量守恒也必须以四维形式处理\cite{pdg2024}。
+
+带电粒子垂直进入均匀磁场时，洛伦兹力只改变动量方向。由 $\lvert q\rvert vB=pv/\rho$ 可得
+\begin{equation}
+  \boxed{B\rho=\frac{p}{\lvert q\rvert},}
+  \label{eq:magneticrigidity}
+\end{equation}
+其中 $\rho$ 是轨道曲率半径，$B\rho$ 称为磁刚度。磁刚度直接反映高能粒子束偏转的困难程度：动量越大，维持给定环形轨道所需的磁场或弯转半径越大。加速器实验常通过已知磁场和轨迹曲率反推出粒子动量，这也是磁谱仪的基本原理。
+
+电子等轻带电粒子沿弯曲轨道运动时还会产生显著同步辐射。对于半径为 $\rho$ 的超相对论圆周运动，将 $a\simeq c^2/\rho$ 代入式\eqref{eq:lienardpower}，并乘以一周运动时间 $2\pi\rho/c$，得到每圈辐射能量损失的近似式
+\begin{equation}
+  U_0\simeq
+  \frac{q^2\gamma^4}{3\varepsilon_0\rho}.
+  \label{eq:synchrotronlossperturn}
+\end{equation}
+该损失随 $\gamma^4$ 快速增长，并随弯转半径增大而降低。因此高能电子环形加速器需要持续补偿辐射能量，直线对撞机则可避免粒子反复弯转造成的累计损失。质子质量较大，在相同能量下的洛伦兹因子较小，同步辐射效应通常弱得多\cite{jackson,pdg2024}。
+
+\subsection{多普勒效应与运动时钟实验}
+
+Ives 与 Stilwell 使用高速离子束发出的谱线检验相对论多普勒效应。他们同时观测顺向和逆向辐射，以一阶多普勒移动的对称组合提取与 $v^2/c^2$ 同阶的横向多普勒项。实验结果支持频率变换中的洛伦兹因子，并构成时间膨胀的早期光谱学检验\cite{ivesstilwell1938}。
+
+Hafele 与 Keating 在1971年携带铯原子钟分别向东、向西绕地球飞行，并与地面参考钟比较。运动导致的狭义相对论时间差与引力势导致的广义相对论时间差同时存在；结合飞行路径、速度和高度进行修正后，实测钟差与相对论预言在实验精度内一致\cite{hafele1972theory,hafele1972experiment}。这一实验包含狭义和广义相对论效应，验证了实际计时系统中运动学时间膨胀与引力频移的联合计算。
+
+现代光钟把检验推进到更小速度和更短距离。Chou 等人比较两台铝离子光钟，观测到由相对速度低至约 $\SI{10}{\metre\per\second}$ 引起的时间膨胀，并分辨出高度差约 $\SI{33}{\centi\metre}$ 对应的引力频移\cite{chou2010}。光钟实验说明相对论时间变换已经进入实验室尺度的高精度计量。
+
+\subsection{现代技术中的应用}
+
+全球卫星导航系统需要对卫星钟进行相对论校正。以 GPS 典型轨道为例，卫星运动造成约 $-\SI{7.2}{\micro\second\per\day}$ 的狭义相对论校正，引力势差造成约 $+\SI{45.7}{\micro\second\per\day}$ 的广义相对论校正，合计约 $+\SI{38.5}{\micro\second\per\day}$\cite{ashby2003}。若不预先修正，定位误差会快速累积。狭义相对论还广泛用于同步辐射、核物理、宇宙线研究和高能天体物理。GPS 的总校正同时包含狭义相对论与广义相对论效应，其中运动学校正是实际工程的重要组成部分。
+
+\section{固有时泛函、双生子佯谬与变分原理}
+
+\subsection{固有时泛函}
+
+对于连接两个固定类时事件的分段光滑世界线，可在一个惯性系中用单调增加的坐标时间 $t$ 参数化。沿世界线积累的固有时为
+\begin{equation}
+  \tau[\bm x]
+  =\int_{t_1}^{t_2}
+  \sqrt{1-\frac{\lvert\dot{\bm x}(t)\rvert^2}{c^2}}\,\dd t,
+  \qquad
+  \dot{\bm x}=\frac{\dd\bm x}{\dd t}.
+  \label{eq:propertimefunctional}
+\end{equation}
+这里 $\tau$ 的自变量是一整条轨迹 $\bm x(t)$，因此它是泛函。不同世界线即使具有相同端点，也可能积累不同的固有时。
+
+自由粒子的作用量与固有时泛函成正比：
+\begin{equation}
+  S=-mc^2\tau=-mc\int\dd s.
+  \label{eq:action}
+\end{equation}
+对于静质量 $m>0$ 的粒子，作用量与固有时具有相同的驻值路径；按照式\eqref{eq:action}的负号约定，最大固有时对应作用量的最小值。
+
+\subsection{Jensen 不等式与最大固有时}
+
+令总坐标时间 $T=t_2-t_1$，并定义
+\begin{equation}
+  f(\bm v)=\sqrt{1-\frac{\lvert\bm v\rvert^2}{c^2}},
+  \qquad \lvert\bm v\rvert<c.
+\end{equation}
+函数 $f$ 在允许的速度区域内是严格凹函数。对式\eqref{eq:propertimefunctional}使用 Jensen 不等式，得到
+\begin{equation}
+  \frac{\tau[\bm x]}{T}
+  =\frac{1}{T}\int_{t_1}^{t_2}f(\bm v(t))\,\dd t
+  \leq
+  f\left(
+    \frac{1}{T}\int_{t_1}^{t_2}\bm v(t)\,\dd t
+  \right).
+\end{equation}
+又因为
+\begin{equation}
+  \frac{1}{T}\int_{t_1}^{t_2}\bm v(t)\,\dd t
+  =\frac{\bm x(t_2)-\bm x(t_1)}{T}
+  =\frac{\Delta\bm x}{T},
+\end{equation}
+所以
+\begin{equation}
+  \boxed{
+  \tau[\bm x]
+  \leq T\sqrt{1-
+    \frac{\lvert\Delta\bm x\rvert^2}{c^2T^2}}.}
+  \label{eq:jensenpropertime}
+\end{equation}
+严格凹性表明，等号仅在 $\bm v(t)$ 几乎处处恒定时成立。因此，在平直时空中，连接两个固定类时事件的惯性世界线具有最大的固有时。这一结论是全局比较结果，不依赖某一特定坐标系对路径进行分段计算。
+
+\subsection{双生子佯谬}
+
+时间膨胀具有表面的相互性：在匀速相对运动阶段，每位观察者都可以认为对方的钟走得更慢。双生子佯谬据此提出疑问，当两人重逢时为何会出现确定的年龄差。考虑理想化往返过程。地球双生子保持静止，旅行双生子以恒定速率 $v$ 飞行，在总坐标时间 $T$ 的中点迅速转向，并以相同速率返回。地球双生子的固有时为
+\begin{equation}
+  \tau_{\mathrm E}=T,
+\end{equation}
+旅行双生子的两段匀速世界线给出
+\begin{equation}
+  \tau_{\mathrm T}
+  =T\sqrt{1-\frac{v^2}{c^2}}
+  =\frac{T}{\gamma}.
+  \label{eq:twinpropertime}
+\end{equation}
+重逢时的年龄差为
+\begin{equation}
+  \Delta\tau
+  =T\left(1-\sqrt{1-\frac{v^2}{c^2}}\right)>0.
+\end{equation}
+两位观察者连接相同的出发事件和重逢事件，但经历不同的世界线。地球双生子的世界线是一条惯性直线，旅行双生子的世界线在转向处改变方向并切换惯性系，其同时面也随之改变。Jensen 不等式因此给出 $\tau_{\mathrm T}<\tau_{\mathrm E}$。有限时间的平滑转向会改变具体积分，但不会恢复两条世界线的对称性；年龄差由完整世界线的固有时决定。
+
+\begin{figure}[htbp]
+  \centering
+  \begin{tikzpicture}[>=Latex,scale=0.95]
+    \draw[->,thick] (-4.0,0) -- (4.2,0) node[right] {$x$};
+    \draw[->,thick] (0,-0.25) -- (0,5.5) node[above] {$ct$};
+    \draw[very thick,relblue] (0,0) -- (0,5.0);
+    \draw[very thick,relred] (0,0) -- (2.6,2.5) -- (0,5.0);
+    \fill (0,0) circle (2pt) node[below left] {$O$};
+    \fill (2.6,2.5) circle (2pt) node[right] {转向};
+    \fill (0,5.0) circle (2pt) node[above right] {重逢};
+    \node[relblue,left] at (0,3.5) {地球双生子};
+    \node[relred,rotate=43] at (1.45,1.05) {去程};
+    \node[relred,rotate=-43] at (1.45,3.95) {返程};
+  \end{tikzpicture}
+  \caption{双生子佯谬的理想化时空图。两条世界线具有共同的出发和重逢事件，旅行者的折线世界线积累较少的固有时。}
+  \label{fig:twinparadox}
+\end{figure}
+
+\subsection{杆库悖论与超光速因果倒置}
+
+杆库悖论把长度收缩与同时性的相对性结合起来。设一根固有长度大于车库的杆高速穿过车库。在车库参考系中，运动杆发生长度收缩，可以在某一时刻完全位于车库内，并允许前后门同时短暂关闭。在杆的静止系中，车库发生长度收缩，无法在同一时刻容纳整根杆；然而两扇门的关闭事件在该系中并不同时。前门先开启后，杆的前端继续运动，后门才关闭。两个参考系对门的动作次序采用不同的同时面，对所有局域事件及其因果联系仍给出一致判断。任何要求杆瞬间整体停止的方案还会涉及应力传播，必须使用 Born 刚性和有限信号速度分析。
+
+类空分离事件的时间次序能够随惯性系改变。若假设存在速度 $u>c$ 的信号，从事件 $A$ 传播到 $B$，在某一参考系中有 $\Delta x=u\Delta t$。洛伦兹时间变换给出
+\begin{equation}
+  \Delta t'
+  =\gamma_v\Delta t
+  \left(1-\frac{uv}{c^2}\right).
+  \label{eq:superluminaltimeorder}
+\end{equation}
+选择满足 $c^2/u<v<c$ 的惯性系便有 $\Delta t'<0$，即该系认为接收发生在发送之前。若所有惯性观察者都能按同一规则发送可控超光速回信，可以构造信号返回到原发送事件之前的闭合因果链，通常称为快子反电话。光速上限因此同时维护洛伦兹对称性与因果次序。相位速度等可以超过 $c$ 的量不直接携带可控信息，不满足上述信号假设\cite{rindler,taylorwheeler}。
+
+\subsection{G\^ateaux 变分与自由粒子方程}
+
+Jensen 不等式给出固定端点之间的全局固有时比较。自由粒子的局部运动方程可以从作用量的 G\^ateaux 变分推出。用沿世界线单调增加的参数 $\lambda$ 表示
+\begin{equation}
+  S[x]=-mc\int_{\lambda_1}^{\lambda_2}
+  \sqrt{\dot x^\mu\dot x_\mu}\,\dd\lambda,
+  \qquad
+  \dot x^\mu=\frac{\dd x^\mu}{\dd\lambda}.
+  \label{eq:parametrizedaction}
+\end{equation}
+取变分族
+\begin{equation}
+  x_\varepsilon^\mu(\lambda)
+  =x^\mu(\lambda)+\varepsilon h^\mu(\lambda),
+\end{equation}
+其中变分方向满足固定端点条件
+\begin{equation}
+  h^\mu(\lambda_1)=h^\mu(\lambda_2)=0.
+  \label{eq:fixedendpointvariation}
+\end{equation}
+作用量在方向 $h^\mu$ 上的 G\^ateaux 导数定义为
+\begin{equation}
+  \delta S[x;h]
+  =\left.\frac{\dd}{\dd\varepsilon}
+  S[x+\varepsilon h]\right|_{\varepsilon=0}.
+  \label{eq:gateauxdefinition}
+\end{equation}
+对式\eqref{eq:parametrizedaction}直接求导得到
+\begin{equation}
+  \delta S[x;h]
+  =-mc\int_{\lambda_1}^{\lambda_2}
+  \frac{\dot x_\mu\dot h^\mu}
+  {\sqrt{\dot x^\rho\dot x_\rho}}\,\dd\lambda.
+\end{equation}
+分部积分并利用式\eqref{eq:fixedendpointvariation}消去边界项，可得
+\begin{equation}
+  \delta S[x;h]
+  =mc\int_{\lambda_1}^{\lambda_2}
+  h_\mu\frac{\dd}{\dd\lambda}
+  \left(
+    \frac{\dot x^\mu}
+    {\sqrt{\dot x^\rho\dot x_\rho}}
+  \right)\dd\lambda.
+\end{equation}
+驻值条件要求该式对任意满足端点条件的 $h^\mu$ 都为零，因此由变分法基本引理得到
+\begin{equation}
+  \frac{\dd}{\dd\lambda}
+  \left(
+    \frac{\dot x^\mu}
+    {\sqrt{\dot x^\rho\dot x_\rho}}
+  \right)=0.
+  \label{eq:freeparticleparameter}
+\end{equation}
+选择 $\lambda=\tau$ 后，$\dot x^\mu=U^\mu$ 且 $\sqrt{U^\rho U_\rho}=c$，于是
+\begin{equation}
+  \boxed{\frac{\dd U^\mu}{\dd\tau}=0.}
+  \label{eq:freeparticleequation}
+\end{equation}
+这表明自由粒子的四维速度保持不变，其世界线在惯性坐标中是一条直线。以坐标时间为参数时，作用量对应的拉格朗日量仍为
+\begin{equation}
+  \mathcal L=-mc^2\sqrt{1-\frac{\bm v^2}{c^2}},
+\end{equation}
+并给出正则动量 $\partial\mathcal L/\partial\bm v=\gamma m\bm v$ 和能量 $E=\bm p\mathbin{\bm\cdot}\bm v-\mathcal L=\gamma mc^2$。因此，四维几何、泛函极值和相对论动力学给出一致的自由运动规律\cite{landau,rindler}。
+
+\section{结论}
+
+本文从经典时空观与光速不变之间的矛盾出发，推导了洛伦兹变换。时间坐标中的空间项直接来自相对性原理、光速不变和线性条件。矩阵关系 $\Lambda^{\mathrm T}\eta\Lambda=\eta$ 揭示了闵可夫斯基间隔、光锥和因果结构的不变性；四维张量及微分算符则为协变物理定律提供统一记号。洛伦兹李代数用旋转与推动生成元描述连续时空变换，旋量表示补充半整数自旋的变换结构；加入四维平移后得到庞加莱群，诺特定理进一步导出能量--动量流和总角动量流的局域守恒。
+
+同时性的相对性、时间膨胀和长度收缩都来自同一个时空变换。三维速度与加速度、四波矢、四维速度和四维力共同构成相对论运动学与动力学。Fermi--Walker 输运为加速观察者定义非自转标架，并与托马斯进动建立联系；Rindler坐标刻画恒定加速观察者及其因果视界，Born 刚性、Bell 飞船和 Ehrenfest 圆盘说明加速或旋转体系中的长度关系。角动量张量和 Pauli--Lubanski 四矢量分别描述总角动量与自旋不变量。四维动量的不变模还统一了系统质量、质心能量、二体衰变、Mandelstam 变量和反应阈值。
+
+带电粒子和电磁场的协变作用量分别给出洛伦兹力与麦克斯韦方程，均匀场中的标准轨迹展示了协变方程的具体应用。Li\'enard--Wiechert 势和场体现电磁作用的推迟传播，Li\'enard 功率公式则描述加速电荷的相对论辐射；能量--动量张量进一步统一场、尘埃和完美流体的能量与动量输运。低速展开、实验检验、固有时泛函、经典悖论和 G\^ateaux 变分共同连接理论的近似极限、经验依据、因果结构与运动原理。全文由此把时空几何、连续对称性、协变动力学、电磁辐射、连续介质、局域守恒和变分原理组织为统一结构。
+
+本文的主要结论适用于平直闵可夫斯基时空，并以惯性系之间的庞加莱对称性为基础。加速观察者可以使用 Rindler 坐标和 Fermi--Walker 标架描述，但这些坐标仍建立在零曲率时空上；当引力引起的时空曲率不可忽略时，需要采用广义相对论。文中的粒子轨迹、电磁场和连续介质主要采用经典描述，旋量、自旋分类与 Unruh 效应只用于说明量子理论中的相关结构；涉及粒子产生、真空涨落和相互作用量子化的问题需要进一步使用相对论量子力学或量子场论。狭义相对论在这些推广中仍提供局域洛伦兹对称性、因果结构和协变表述的基础。
+
+\lcbibliography
+\end{document}
