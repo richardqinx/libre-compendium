@@ -1,0 +1,190 @@
+% libre-compendium
+%
+% Copyright (C) 2026 Richard Qin
+%
+% This document is dual-licensed under either:
+% - GNU Free Documentation License, Version 1.3 or any later version
+%   published by the Free Software Foundation; with no Invariant Sections,
+%   no Front-Cover Texts, and no Back-Cover Texts (see COPYING.DOC); or
+% - Creative Commons Attribution-ShareAlike 4.0 International License
+%   (see LICENSE-CC-BY-SA-4.0).
+
+% Exercises migrated from problems06.tex and solutions06.tex.
+\begin{exercise}[level=basic]
+证明 Logistic 函数满足
+\[
+\sigma'(z)=\sigma(z)(1-\sigma(z)).
+\]
+\begin{solution}
+\[
+\sigma'(z)
+=-\frac{1}{(1+e^{-z})^2}(-e^{-z})
+=\frac{e^{-z}}{(1+e^{-z})^2}.
+\]
+又
+\[
+\sigma(z)(1-\sigma(z))
+=\frac1{1+e^{-z}}\frac{e^{-z}}{1+e^{-z}},
+\]
+两式相等。
+\end{solution}
+\end{exercise}
+
+\begin{exercise}[level=basic]
+对二分类交叉熵，证明
+\[
+\frac{\partial\ell}{\partial z}=\sigma(z)-y.
+\]
+\begin{solution}
+对
+$\ell=-y\log\sigma(z)-(1-y)\log(1-\sigma(z))$，
+\begin{align*}
+\frac{\partial\ell}{\partial z}
+&=-y\frac{\sigma'}{\sigma}
++(1-y)\frac{\sigma'}{1-\sigma}\\
+&=-y(1-\sigma)+(1-y)\sigma
+=\sigma-y.
+\end{align*}
+\end{solution}
+\end{exercise}
+
+\begin{exercise}[level=basic]
+验证 Softmax 对平移不变：
+\[
+\operatorname{softmax}(z+c\mathbf1)
+=\operatorname{softmax}(z).
+\]
+说明这一性质如何用于避免指数溢出。
+\begin{solution}
+\[
+\frac{e^{z_k+c}}{\sum_je^{z_j+c}}
+=\frac{e^ce^{z_k}}{e^c\sum_je^{z_j}}
+=\frac{e^{z_k}}{\sum_je^{z_j}}.
+\]
+因此可取 $c=-\max_jz_j$，使所有新的指数自变量不大于零，避免 $e^{z_j}$ 上溢。
+\end{solution}
+\end{exercise}
+
+\begin{exercise}[level=basic]
+对 $L(\theta)=\theta^2$，写出固定学习率 $\eta$ 的梯度下降迭代，并确定使 $\theta_t\to0$ 的 $\eta$ 取值范围。
+\begin{solution}
+$L'(\theta)=2\theta$，所以
+\[
+\theta_{t+1}=(1-2\eta)\theta_t,
+\qquad
+\theta_t=(1-2\eta)^t\theta_0.
+\]
+对任意初值收敛到零的充要条件是
+\[
+|1-2\eta|<1,
+\]
+即 $0<\eta<1$。
+\end{solution}
+\end{exercise}
+
+\begin{exercise}[level=standard]
+设 $z=Wx+b$、$\widehat y=\operatorname{softmax}(z)$，损失为交叉熵。求 $\nabla_W\ell$、$\nabla_b\ell$ 和 $\nabla_x\ell$。
+\begin{solution}
+记 $\delta=\widehat y-y$。由 Softmax 与交叉熵的合成梯度，
+\[
+\nabla_z\ell=\delta.
+\]
+由 $dz=(dW)x+Wdx+db$，得
+\[
+\nabla_W\ell=\delta x^{\mathsf T},
+\qquad
+\nabla_b\ell=\delta,
+\qquad
+\nabla_x\ell=W^{\mathsf T}\delta.
+\]
+\end{solution}
+\end{exercise}
+
+\begin{exercise}[level=standard]
+证明若神经网络各层都使用恒等激活，则任意多层网络都等价于单个仿射变换。
+\begin{solution}
+对两层有
+\[
+W_2(W_1x+b_1)+b_2
+=(W_2W_1)x+(W_2b_1+b_2),
+\]
+仍是仿射变换。假设前 $k$ 层的复合为 $Ax+c$，再复合一层 $Wx+b$ 得
+$WAx+(Wc+b)$，仍是仿射变换。归纳完成证明。
+\end{solution}
+\end{exercise}
+
+\begin{exercise}[level=standard]
+对两层网络
+\[
+a=\phi(W_1x+b_1),
+\qquad
+\widehat y=W_2a+b_2,
+\qquad
+\mathcal L=\frac12\lVert\widehat y-y\rVert^2,
+\]
+写出 $W_1,b_1,W_2,b_2$ 的梯度。
+\begin{solution}
+记
+\[
+\delta_2=\widehat y-y,
+\qquad
+\delta_1=(W_2^{\mathsf T}\delta_2)\odot\phi'(W_1x+b_1).
+\]
+则
+\[
+\nabla_{W_2}\mathcal L=\delta_2a^{\mathsf T},
+\qquad
+\nabla_{b_2}\mathcal L=\delta_2,
+\]
+\[
+\nabla_{W_1}\mathcal L=\delta_1x^{\mathsf T},
+\qquad
+\nabla_{b_1}\mathcal L=\delta_1.
+\]
+\end{solution}
+\end{exercise}
+
+\begin{exercise}[level=standard]
+设数据下标 $i$ 在 $\{1,\ldots,N\}$ 中均匀抽取。证明单样本梯度 $g=\nabla\ell_i(\theta)$ 是完整经验风险梯度的无偏估计。
+\begin{solution}
+由均匀抽样，
+\[
+\mathbb E[g]
+=\sum_{i=1}^N\frac1N\nabla\ell_i(\theta)
+=\nabla\left(\frac1N\sum_{i=1}^N\ell_i(\theta)\right)
+=\nabla L(\theta).
+\]
+因此单样本梯度是无偏估计。
+\end{solution}
+\end{exercise}
+
+\begin{exercise}[level=advanced]
+设 $\widehat y=\operatorname{softmax}(z)$。证明
+\[
+J=\diag(\widehat y)-\widehat y\widehat y^{\mathsf T}
+\]
+是半正定矩阵，并证明 $J\mathbf1=0$。
+\begin{solution}
+对任意 $v\in\R^K$，
+\begin{align*}
+v^{\mathsf T}Jv
+&=\sum_i\widehat y_iv_i^2
+-\left(\sum_i\widehat y_iv_i\right)^2.
+\end{align*}
+这是以 $\widehat y_i$ 为概率权重的随机变量 $v_i$ 的方差，因而非负，所以 $J$ 半正定。又
+\[
+J\mathbf1=\widehat y-widehat y(\widehat y^{\mathsf T}\mathbf1)
+=\widehat y-widehat y=0.
+\]
+这与 Softmax 对整体平移不变一致。
+\end{solution}
+\end{exercise}
+
+\begin{exercise}[level=advanced]
+从反向传播的连乘结构说明：若每层权重矩阵谱范数不超过 $\rho$，激活导数绝对值不超过 $\gamma$，则跨越 $k$ 层传播的梯度范数至多被放大 $(\rho\gamma)^k$ 倍。
+\begin{solution}
+每向前跨过一层反向传播时，梯度先乘以权重矩阵转置，再与激活导数逐元素相乘。对角导数矩阵的谱范数不超过 $\gamma$，权重矩阵转置的谱范数不超过 $\rho$。由谱范数的次乘性，每层至多乘以 $\rho\gamma$，跨越 $k$ 层后至多乘以
+$(\rho\gamma)^k$。若 $\rho\gamma<1$，该上界指数衰减；若它显著大于 $1$，则存在梯度爆炸风险。
+\end{solution}
+\end{exercise}
+

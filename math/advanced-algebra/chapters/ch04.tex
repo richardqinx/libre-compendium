@@ -1,0 +1,903 @@
+% libre-compendium
+%
+% Copyright (C) 2026 Richard Qin
+%
+% This document is dual-licensed under either:
+% - GNU Free Documentation License, Version 1.3 or any later version
+%   published by the Free Software Foundation; with no Invariant Sections,
+%   no Front-Cover Texts, and no Back-Cover Texts (see COPYING.DOC); or
+% - Creative Commons Attribution-ShareAlike 4.0 International License
+%   (see LICENSE-CC-BY-SA-4.0).
+
+\chapter{复内积空间、Hermite 矩阵与 Fourier 分析}
+
+本章把标量域扩展到复数域 $\C$。对复矩阵 $A$，记
+\[
+A^{\mathsf H}=\overline A^{\mathsf T}
+\]
+为共轭转置。本章统一采用
+\[
+\langle x,y\rangle=x^{\mathsf H}y
+\]
+作为标准复内积，因此内积对第一变量共轭线性、对第二变量线性。部分教材采用相反约定；只要从定义到伴随算子始终一致，两种约定都可使用。
+
+\section{复数的代数表示与极坐标表示}
+
+\begin{definition}[复数、实部与虚部]
+复数写成 $z=a+bi$，其中 $a,b\in\R$ 且 $i^2=-1$。定义
+\[
+\operatorname{Re}z=a,
+\qquad
+\operatorname{Im}z=b,
+\qquad
+\overline z=a-bi.
+\]
+\end{definition}
+
+共轭满足
+\[
+\overline{z+w}=\overline z+\overline w,
+\quad
+\overline{zw}=\overline z\,\overline w,
+\quad
+\overline{z/w}=\frac{\overline z}{\overline w}\quad(w\ne0),
+\quad
+z\overline z=a^2+b^2.
+\]
+
+\begin{definition}[模与幅角]
+复数 $z=a+bi$ 的模定义为
+\[
+|z|=\sqrt{z\overline z}=\sqrt{a^2+b^2}.
+\]
+若 $z\ne0$，则存在实数 $\theta$ 使
+\[
+z=|z|(\cos\theta+i\sin\theta).
+\]
+$\theta$ 称为 $z$ 的一个幅角，所有幅角相差 $2k\pi$。零没有幅角。
+\end{definition}
+
+\begin{pitfall}[模长不能写成 $z\overline z$]
+$z\overline z=|z|^2$ 是模长的平方，而不是模长。原点到 $z$ 的距离是
+$|z|=\sqrt{z\overline z}$。复向量同样满足 $x^{\mathsf H}x=\lVert x\rVert_2^2$。
+\end{pitfall}
+
+若 $z\ne0$，则除法可通过共轭有理化：
+\[
+\frac zw=\frac{z\overline w}{w\overline w}
+=\frac{z\overline w}{|w|^2}.
+\]
+
+\begin{theorem}[Euler 公式]
+对任意 $\theta\in\R$，
+\[
+e^{i\theta}=\cos\theta+i\sin\theta.
+\]
+因此非零复数可写成 $z=re^{i\theta}$，其中 $r=|z|>0$。
+\end{theorem}
+\begin{proof}
+把指数函数、正弦函数和余弦函数的幂级数分别展开：
+\[
+e^{i\theta}=\sum_{n=0}^{\infty}\frac{(i\theta)^n}{n!}.
+\]
+偶次项中 $i^{2k}=(-1)^k$，其和为 $\cos\theta$；奇次项中
+$i^{2k+1}=i(-1)^k$，其和为 $i\sin\theta$。合并即得公式。
+\end{proof}
+
+\begin{corollary}[乘法、棣莫弗公式与开方]
+若 $z_1=r_1e^{i\theta_1}$、$z_2=r_2e^{i\theta_2}$，则
+\[
+z_1z_2=r_1r_2e^{i(\theta_1+\theta_2)},
+\qquad
+\frac{z_1}{z_2}=\frac{r_1}{r_2}e^{i(\theta_1-\theta_2)}.
+\]
+对整数 $n$，
+\[
+(\cos\theta+i\sin\theta)^n
+=\cos(n\theta)+i\sin(n\theta).
+\]
+若 $z=re^{i\theta}\ne0$，则方程 $w^n=z$ 的全部解为
+\[
+w_k=r^{1/n}e^{i(\theta+2k\pi)/n},
+\qquad k=0,\ldots,n-1.
+\]
+\end{corollary}
+
+\begin{definition}[单位根]
+令
+\[
+\omega_n=e^{-2\pi i/n}.
+\]
+方程 $z^n=1$ 的全部根为
+$1,\omega_n,\ldots,\omega_n^{n-1}$。当 $n\nmid k$ 时，
+\[
+1+\omega_n^k+\cdots+\omega_n^{(n-1)k}=0;
+\]
+当 $n\mid k$ 时，该和为 $n$。
+\end{definition}
+\begin{proof}
+若 $q=\omega_n^k\ne1$，则 $q^n=1$，由有限几何级数公式
+\[
+1+q+\cdots+q^{n-1}=\frac{1-q^n}{1-q}=0.
+\]
+若 $q=1$，每一项均为 $1$，和为 $n$。
+\end{proof}
+
+\begin{example}[title={求复数的全部三次根}]
+求 $-8i$ 的全部三次根。
+\begin{solution}
+可写
+\[
+-8i=8e^{-i\pi/2}.
+\]
+故三次根为
+\[
+2e^{i(-\pi/6+2k\pi/3)},
+\qquad k=0,1,2.
+\]
+它们在半径为 $2$ 的圆上等间隔分布。
+\end{solution}
+\end{example}
+
+\section{复矩阵与实数化}
+
+设 $A=A_1+iA_2\in\C^{m\times n}$，其中 $A_1,A_2$ 为实矩阵。定义实数化矩阵
+\[
+\mathcal R(A)=
+\begin{pmatrix}
+A_1&-A_2\\
+A_2&A_1
+\end{pmatrix}\in\R^{2m\times2n}.
+\]
+
+\begin{proposition}[复线性方程组的实数化]
+令 $x=x_1+ix_2$、$b=b_1+ib_2$。则
+\[
+Ax=b
+\]
+等价于
+\[
+\begin{pmatrix}A_1&-A_2\\A_2&A_1\end{pmatrix}
+\begin{pmatrix}x_1\\x_2\end{pmatrix}
+=\begin{pmatrix}b_1\\b_2\end{pmatrix}.
+\]
+而且
+\[
+\mathcal R(AB)=\mathcal R(A)\mathcal R(B),
+\qquad
+\det\mathcal R(A)=|\det A|^2
+\]
+对复方阵成立。因此 $A$ 可逆当且仅当 $\mathcal R(A)$ 可逆。
+\end{proposition}
+
+\section{共轭转置与复内积空间}
+
+\begin{proposition}[共轭转置的运算律]
+尺寸相容时，
+\[
+(A+B)^{\mathsf H}=A^{\mathsf H}+B^{\mathsf H},
+\quad
+(cA)^{\mathsf H}=\overline cA^{\mathsf H},
+\quad
+(AB)^{\mathsf H}=B^{\mathsf H}A^{\mathsf H},
+\quad
+(A^{\mathsf H})^{\mathsf H}=A.
+\]
+若 $A$ 可逆，则 $(A^{-1})^{\mathsf H}=(A^{\mathsf H})^{-1}$。
+\end{proposition}
+
+\begin{definition}[复内积]
+复线性空间 $V$ 上的函数
+$\langle\cdot,\cdot\rangle:V\times V\to\C$ 若满足
+\begin{enumerate}
+\item $\langle x,y_1+y_2\rangle=\langle x,y_1\rangle+\langle x,y_2\rangle$，
+$\langle x,cy\rangle=c\langle x,y\rangle$；
+\item $\langle x_1+x_2,y\rangle=\langle x_1,y\rangle+\langle x_2,y\rangle$，
+$\langle cx,y\rangle=\overline c\langle x,y\rangle$；
+\item $\langle x,y\rangle=\overline{\langle y,x\rangle}$；
+\item $\langle x,x\rangle\ge0$，且等号当且仅当 $x=0$，
+\end{enumerate}
+则称其为复内积。由
+\[
+\lVert x\rVert=\sqrt{\langle x,x\rangle}
+\]
+定义相应范数。
+\end{definition}
+
+在 $\C^n$ 中，标准内积为
+\[
+\langle x,y\rangle=x^{\mathsf H}y
+=\sum_{j=1}^n\overline{x_j}y_j.
+\]
+
+\begin{theorem}[Cauchy--Schwarz 不等式]
+对复内积空间中的任意 $x,y$，
+\[
+|\langle x,y\rangle|
+\le\lVert x\rVert\lVert y\rVert.
+\]
+等号当且仅当 $x,y$ 线性相关。
+\end{theorem}
+\begin{proof}
+若 $y=0$，结论成立。设 $y\ne0$，令
+\[
+c=\frac{\langle y,x\rangle}{\langle y,y\rangle}.
+\]
+由正定性，
+\begin{align*}
+0&\le\lVert x-cy\rVert^2\\
+&=\lVert x\rVert^2-\overline c\langle y,x\rangle
+-c\langle x,y\rangle+|c|^2\lVert y\rVert^2\\
+&=\lVert x\rVert^2-
+\frac{|\langle x,y\rangle|^2}{\lVert y\rVert^2}.
+\end{align*}
+移项即得不等式。等号等价于 $x=cy$。
+\end{proof}
+
+\begin{proposition}[复 Gram--Schmidt 正交化]
+若 $v_1,\ldots,v_r$ 线性无关，则递推定义
+\[
+w_k=v_k-\sum_{j=1}^{k-1}\langle e_j,v_k\rangle e_j,
+\qquad
+e_k=\frac{w_k}{\lVert w_k\rVert}
+\]
+得到张成同一子空间的标准正交向量组。
+\end{proposition}
+
+\section{半双线性型、Hermite 型与矩阵表示}
+
+\begin{definition}[半双线性型与 Hermite 型]
+若 $g:V\times V\to\C$ 对第一变量共轭线性、对第二变量线性，则称 $g$ 为半双线性型。若还满足
+\[
+g(x,y)=\overline{g(y,x)},
+\]
+则称 $g$ 为 Hermite 型。定义对应的 Hermite 二次型
+\[
+H(x)=g(x,x)\in\R.
+\]
+\end{definition}
+
+\begin{theorem}[Hermite 型的矩阵表示与换基]
+设 $\mathcal E=(e_1,\ldots,e_n)$ 是 $V$ 的一组基，定义
+\[
+G=(g(e_i,e_j))_{n\times n}.
+\]
+若 $x,y$ 是向量在该基下的坐标，则
+\[
+g(x,y)=x^{\mathsf H}Gy.
+\]
+$g$ 为 Hermite 型当且仅当 $G^{\mathsf H}=G$。
+
+若新基满足 $\widetilde{\mathcal E}=\mathcal EP$，则新矩阵为
+\[
+\widetilde G=P^{\mathsf H}GP.
+\]
+这是合同变换，不是相似变换。
+\end{theorem}
+\begin{proof}
+写 $\alpha=\sum_i x_ie_i$、$\beta=\sum_jy_je_j$。由半双线性，
+\[
+g(\alpha,\beta)
+=\sum_{i,j}\overline{x_i}y_jg(e_i,e_j)
+=x^{\mathsf H}Gy.
+\]
+Hermite 对称性给出 $g(e_i,e_j)=\overline{g(e_j,e_i)}$，这正是
+$G^{\mathsf H}=G$。换基后旧坐标为 $Px,Py$，故
+\[
+g(\alpha,\beta)=(Px)^{\mathsf H}G(Py)
+=x^{\mathsf H}(P^{\mathsf H}GP)y.
+\]
+\end{proof}
+
+\begin{theorem}[复极化恒等式]
+Hermite 型由 $H(x)=g(x,x)$ 唯一确定，并且
+\[
+g(x,y)=\frac14\sum_{k=0}^3 (-i)^kH(x+i^ky).
+\]
+等价地，
+\[
+g(x,y)=\frac14\bigl(H(x+y)-H(x-y)
++iH(x-iy)-iH(x+iy)\bigr).
+\]
+\end{theorem}
+\begin{proof}
+展开 $H(x+y)$ 与 $H(x-y)$，利用
+$g(y,x)=\overline{g(x,y)}$，得到
+\[
+H(x+y)-H(x-y)=4\operatorname{Re}g(x,y).
+\]
+同理，
+\[
+H(x-iy)-H(x+iy)=4\operatorname{Im}g(x,y).
+\]
+将实部与虚部合并即得第二式，第一式是同一公式的紧凑写法。
+\end{proof}
+
+\section{Hermite 矩阵与谱定理}
+
+\begin{definition}[Hermite、斜 Hermite 与正规矩阵]
+复方阵 $A$ 若满足
+\[
+A^{\mathsf H}=A,
+\]
+称为 Hermite 矩阵；若 $A^{\mathsf H}=-A$，称为斜 Hermite 矩阵；若
+\[
+A^{\mathsf H}A=AA^{\mathsf H},
+\]
+称为正规矩阵。
+\end{definition}
+
+每个复方阵唯一分解为
+\[
+A=\frac{A+A^{\mathsf H}}2+\frac{A-A^{\mathsf H}}2,
+\]
+第一项 Hermite，第二项斜 Hermite。
+
+\begin{proposition}[Hermite 矩阵的基本性质]
+若 $A=A^{\mathsf H}$，则：
+\begin{enumerate}
+\item 对任意 $x$，$x^{\mathsf H}Ax\in\R$；
+\item $A$ 的全部特征值为实数；
+\item 不同特征值对应的特征向量正交。
+\end{enumerate}
+\end{proposition}
+\begin{proof}
+标量 $x^{\mathsf H}Ax$ 的共轭为
+\[
+(x^{\mathsf H}Ax)^{\mathsf H}=x^{\mathsf H}A^{\mathsf H}x
+=x^{\mathsf H}Ax,
+\]
+故为实数。若 $Ax=\lambda x$ 且 $x\ne0$，则
+\[
+\lambda=\frac{x^{\mathsf H}Ax}{x^{\mathsf H}x}\in\R.
+\]
+若 $Ax=\lambda x$、$Ay=\mu y$，则
+\[
+\lambda\langle y,x\rangle
+=\langle y,Ax\rangle
+=\langle Ay,x\rangle
+=\overline\mu\langle y,x\rangle.
+\]
+$\lambda,\mu$ 为实数且不相等时，只能有 $\langle y,x\rangle=0$。
+\end{proof}
+
+\begin{definition}[酉矩阵]
+若 $U^{\mathsf H}U=I$，则称 $U$ 为酉矩阵。对方阵，这等价于
+$UU^{\mathsf H}=I$，并有 $U^{-1}=U^{\mathsf H}$。
+\end{definition}
+
+酉矩阵保持内积、长度和夹角：
+\[
+\langle Ux,Uy\rangle=\langle x,y\rangle,
+\qquad
+\lVert Ux\rVert_2=\lVert x\rVert_2.
+\]
+其列向量与行向量都是标准正交基；每个特征值的模为 $1$。
+
+\begin{theorem}[复谱定理]
+复方阵 $A$ 可被酉相似对角化，即存在酉矩阵 $U$ 使
+\[
+U^{\mathsf H}AU=\diag(\lambda_1,\ldots,\lambda_n),
+\]
+当且仅当 $A$ 是正规矩阵。
+
+特别地，Hermite 矩阵可被酉相似对角化，且其特征值均为实数。
+\end{theorem}
+\begin{proof}
+若 $A=U\Lambda U^{\mathsf H}$ 且 $\Lambda$ 对角，则
+\[
+A^{\mathsf H}A
+=U\Lambda^{\mathsf H}\Lambda U^{\mathsf H}
+=U\Lambda\Lambda^{\mathsf H}U^{\mathsf H}
+=AA^{\mathsf H},
+\]
+所以 $A$ 正规。
+
+反向证明对维数归纳。复数域上特征多项式有根，取单位特征向量 $u_1$。正规性保证
+$u_1^\perp$ 是 $A$-不变子空间：若 $x\perp u_1$，则正规矩阵满足
+$\ker(A-\lambda I)=\ker(A^{\mathsf H}-\overline\lambda I)$，从而
+\[
+\langle u_1,Ax\rangle
+=\langle A^{\mathsf H}u_1,x\rangle
+=\lambda\langle u_1,x\rangle=0.
+\]
+限制算子仍正规。由归纳假设，在 $u_1^\perp$ 中存在标准正交特征向量基，与 $u_1$ 合并即得结论。
+\end{proof}
+
+\begin{theorem}[Hermite 正定性的等价判据]
+对 Hermite 矩阵 $A$，下列条件等价：
+\begin{enumerate}
+\item 对任意 $x\ne0$，$x^{\mathsf H}Ax>0$；
+\item $A$ 的全部特征值为正；
+\item 存在可逆矩阵 $B$ 使 $A=B^{\mathsf H}B$；
+\item $A$ 的所有顺序主子式为正。
+\end{enumerate}
+半正定的等价判据包括特征值全非负、$A=B^{\mathsf H}B$（此时 $B$ 不必可逆），以及所有主子式非负。
+\end{theorem}
+
+\begin{theorem}[Hermite 矩阵的 Rayleigh--Ritz 原理]
+设 Hermite 矩阵 $A$ 的特征值按
+\[
+\lambda_1\ge\lambda_2\ge\cdots\ge\lambda_n
+\]
+排列，则
+\[
+\lambda_1=\max_{x\ne0}\frac{x^{\mathsf H}Ax}{x^{\mathsf H}x},
+\qquad
+\lambda_n=\min_{x\ne0}\frac{x^{\mathsf H}Ax}{x^{\mathsf H}x}.
+\]
+更一般地，
+\[
+\lambda_k=max_{\substack{S\subseteq\C^n\\\dim S=k}}
+\min_{\substack{x\in S\\x\ne0}}
+\frac{x^{\mathsf H}Ax}{x^{\mathsf H}x}
+=
+\min_{\substack{L\subseteq\C^n\\\dim L=n-k+1}}
+\max_{\substack{x\in L\\x\ne0}}
+\frac{x^{\mathsf H}Ax}{x^{\mathsf H}x}.
+\]
+\end{theorem}
+\begin{proof}
+由谱定理，取标准正交特征向量基 $u_1,\ldots,u_n$。若
+$x=\sum_i c_iu_i$，则
+\[
+\frac{x^{\mathsf H}Ax}{x^{\mathsf H}x}
+=\frac{\sum_i\lambda_i|c_i|^2}{\sum_i|c_i|^2},
+\]
+它是特征值的加权平均，因此介于 $\lambda_n$ 与 $\lambda_1$ 之间，并分别在
+$u_n,u_1$ 处取到。
+
+对一般 $k$，取 $S_0=\operatorname{span}\{u_1,\ldots,u_k\}$，该空间上 Rayleigh 商的最小值为 $\lambda_k$。任意 $k$ 维子空间 $S$ 与
+$\operatorname{span}\{u_k,\ldots,u_n\}$ 非零相交，在交空间中可找到 Rayleigh 商不超过 $\lambda_k$ 的向量，故第一式成立。第二式同理，取
+$L_0=\operatorname{span}\{u_k,\ldots,u_n\}$ 并作互补的维数相交论证。
+\end{proof}
+
+\begin{theorem}[Schur 酉三角化定理]
+任意复方阵 $A\in\C^{n\times n}$ 都存在酉矩阵 $U$，使
+\[
+U^{\mathsf H}AU=T,
+\]
+其中 $T$ 为上三角矩阵，且其对角元是 $A$ 的全部特征值。
+\end{theorem}
+\begin{proof}
+对 $n$ 归纳。复数域上特征多项式有根，取单位特征向量 $u_1$，并把它扩充为标准正交基，组成酉矩阵 $U_1$。由于 $Au_1=\lambda_1u_1$，
+\[
+U_1^{\mathsf H}AU_1=
+\begin{pmatrix}
+\lambda_1&*\\0&A_1
+\end{pmatrix}.
+\]
+对 $(n-1)$ 阶矩阵 $A_1$ 使用归纳假设，存在酉矩阵 $V$ 使
+$V^{\mathsf H}A_1V$ 上三角。令
+$U=U_1\diag(1,V)$，即得结论。
+\end{proof}
+
+\begin{corollary}[正规矩阵为何可酉对角化]
+若 $A$ 正规，Schur 分解中的上三角矩阵 $T=U^{\mathsf H}AU$ 也正规；正规上三角矩阵必为对角矩阵。因此正规矩阵可酉相似对角化。
+\end{corollary}
+\begin{proof}
+正规性在酉相似下保持。若 $T=(t_{ij})$ 上三角且正规，则比较
+$TT^{\mathsf H}$ 与 $T^{\mathsf H}T$ 的第 $(1,1)$ 项：
+\[
+|t_{11}|^2+\sum_{j>1}|t_{1j}|^2=|t_{11}|^2,
+\]
+故第一行的严格上三角元全为零。删去第一行列后重复此论证，得到全部严格上三角元为零。
+\end{proof}
+
+\begin{theorem}[复矩阵的奇异值分解]
+任意 $A\in\C^{m\times n}$ 都存在酉矩阵
+$U\in\C^{m\times m}$、$V\in\C^{n\times n}$ 与非负矩形对角矩阵
+$\Sigma$，使
+\[
+A=U\Sigma V^{\mathsf H}.
+\]
+奇异值是 $A^{\mathsf H}A$ 的特征值的非负平方根。若
+$r=\rank A$，则紧致 SVD 为
+\[
+A=U_r\Sigma_rV_r^{\mathsf H}
+=\sum_{j=1}^r\sigma_ju_jv_j^{\mathsf H}.
+\]
+\end{theorem}
+\begin{proof}
+$A^{\mathsf H}A$ 是 Hermite 半正定矩阵，可取标准正交特征向量
+$v_j$ 满足
+\[
+A^{\mathsf H}Av_j=\sigma_j^2v_j.
+\]
+对正奇异值定义 $u_j=Av_j/\sigma_j$。则
+\[
+u_i^{\mathsf H}u_j
+=\frac{v_i^{\mathsf H}A^{\mathsf H}Av_j}{\sigma_i\sigma_j}
+=\delta_{ij}.
+\]
+将左右奇异向量分别扩充为标准正交基，便有 $AV=U\Sigma$，右乘
+$V^{\mathsf H}$ 得结论。
+\end{proof}
+
+\begin{theorem}[Hermite 惯性定理]
+若 $A=A^{\mathsf H}$，则存在可逆矩阵 $P$ 使
+\[
+P^{\mathsf H}AP=\diag(I_p,-I_q,0).
+\]
+其中 $p,q$ 分别为 $A$ 的正、负特征值个数，且与 $P$ 的选择无关。两个 Hermite 矩阵合同，当且仅当它们具有相同的正惯性指数、负惯性指数和零度。
+\end{theorem}
+\begin{proof}
+由谱定理，$A=U\diag(\lambda_1,\ldots,\lambda_n)U^{\mathsf H}$。对每个非零特征值按
+$|\lambda_i|^{-1/2}$ 缩放相应特征向量，即可把正特征值归一为 $1$、负特征值归一为 $-1$。
+
+唯一性可由最大正定子空间刻画：$p$ 等于使 $x^{\mathsf H}Ax$ 在其上正定的子空间的最大维数，$q$ 同理。可逆坐标变换保持这些最大维数，故惯性指数是合同不变量。
+\end{proof}
+
+\begin{pitfall}[相似、合同与酉相似]
+$U^{\mathsf H}AU$ 在 $U$ 酉时既是酉相似变换，也是酉合同变换，因为
+$U^{-1}=U^{\mathsf H}$。一般的 $P^{\mathsf H}AP$ 只是合同变换，不能称为相似变换。谱定理保存特征值；合同变换主要保存 Hermite 型的惯性。
+\end{pitfall}
+
+\section{伴随算子}
+
+\begin{definition}[伴随算子]
+设 $T:V\to V$ 是有限维复内积空间上的线性算子。若线性算子 $T^*$ 满足
+\[
+\langle x,Ty\rangle=\langle T^*x,y\rangle
+\]
+对所有 $x,y$ 成立，则称 $T^*$ 为 $T$ 的伴随。
+\end{definition}
+
+\begin{theorem}[伴随的存在唯一性与矩阵表示]
+有限维内积空间中，每个线性算子都有唯一伴随。若在标准正交基下 $T$ 的矩阵为 $A$，则 $T^*$ 的矩阵为 $A^{\mathsf H}$。
+\end{theorem}
+\begin{proof}
+在标准正交基下，若 $x,y$ 的坐标仍记为 $x,y$，则
+\[
+\langle x,Ty\rangle=x^{\mathsf H}Ay
+=(A^{\mathsf H}x)^{\mathsf H}y
+=\langle A^{\mathsf H}x,y\rangle.
+\]
+故 $A^{\mathsf H}$ 给出一个伴随。若 $S_1,S_2$ 都满足定义，则
+$\langle(S_1-S_2)x,y\rangle=0$ 对所有 $y$ 成立。取
+$y=(S_1-S_2)x$ 得该向量为零，故伴随唯一。
+\end{proof}
+
+若基不标准正交，Gram 矩阵为 $G$，则伴随矩阵不是简单的 $A^{\mathsf H}$，而是
+\[
+[T^*]=G^{-1}A^{\mathsf H}G.
+\]
+这一条件是原资料中“给定基下直接取共轭转置”所遗漏的前提。
+
+\section{正交投影、Bessel 不等式与 Parseval 恒等式}
+
+\begin{theorem}[正交投影公式]
+设 $e_1,\ldots,e_r$ 是子空间 $W$ 的一组标准正交基，则
+\[
+P_Wx=\sum_{j=1}^r\langle e_j,x\rangle e_j
+\]
+是 $x$ 在 $W$ 上的正交投影，并且
+$x-P_Wx\perp W$。
+\end{theorem}
+\begin{proof}
+$P_Wx\in W$。对每个 $e_k$，
+\[
+\langle e_k,x-P_Wx\rangle
+=\langle e_k,x\rangle-
+\sum_{j=1}^r\langle e_j,x\rangle\langle e_k,e_j\rangle=0.
+\]
+故残差垂直于 $W$。正交分解的唯一性保证该投影唯一。
+\end{proof}
+
+\begin{theorem}[Bessel 不等式与 Parseval 恒等式]
+若 $e_1,\ldots,e_r$ 是标准正交向量组，则
+\[
+\sum_{j=1}^r|\langle e_j,x\rangle|^2\le\lVert x\rVert^2.
+\]
+若它们构成整个有限维空间的标准正交基，则
+\[
+x=\sum_{j=1}^n\langle e_j,x\rangle e_j,
+\qquad
+\lVert x\rVert^2=sum_{j=1}^n|\langle e_j,x\rangle|^2.
+\]
+\end{theorem}
+\begin{proof}
+由正交投影和勾股定理，
+\[
+\lVert x\rVert^2
+=\lVert P_Wx\rVert^2+\lVert x-P_Wx\rVert^2
+=\sum_{j=1}^r|\langle e_j,x\rangle|^2
++\lVert x-P_Wx\rVert^2.
+\]
+删去非负的残差项得到 Bessel 不等式。若向量组为全空间的基，则 $P_Wx=x$，残差为零，得到 Parseval 恒等式。
+\end{proof}
+
+归一化 Fourier 矩阵的行向量构成 $\C^n$ 的标准正交基，因此有限 DFT 的 Parseval 等式正是上述抽象恒等式的坐标形式。
+
+\section{离散 Fourier 变换与 Fourier 矩阵}
+
+连续 Fourier 变换的一种约定为
+\[
+\widehat f(\xi)=\int_{-\infty}^{\infty}f(t)e^{-2\pi i t\xi}\,\mathrm dt.
+\]
+对有限采样序列 $x_0,\ldots,x_{n-1}$，定义未归一化 DFT：
+\[
+y_j=\sum_{k=0}^{n-1}x_k\omega_n^{jk},
+\qquad
+\omega_n=e^{-2\pi i/n}.
+\]
+
+\begin{definition}[Fourier 矩阵]
+未归一化 Fourier 矩阵定义为
+\[
+F_n=(\omega_n^{jk})_{j,k=0}^{n-1}.
+\]
+于是 DFT 写成 $y=F_nx$。
+\end{definition}
+
+\begin{theorem}[Fourier 矩阵的正交性与逆变换]
+\[
+F_n^{\mathsf H}F_n=nI,
+\qquad
+F_n^{-1}=\frac1nF_n^{\mathsf H}.
+\]
+因此归一化矩阵 $\mathcal F_n=F_n/\sqrt n$ 是酉矩阵，并且
+\[
+x_k=\frac1n\sum_{j=0}^{n-1}y_j\omega_n^{-jk}.
+\]
+\end{theorem}
+\begin{proof}
+$F_n^{\mathsf H}F_n$ 的第 $(a,b)$ 项为
+\[
+\sum_{k=0}^{n-1}\overline{\omega_n^{ka}}\omega_n^{kb}
+=\sum_{k=0}^{n-1}\omega_n^{k(b-a)}.
+\]
+由单位根几何级数求和，当 $a=b$ 时结果为 $n$，否则为 $0$。
+\end{proof}
+
+\begin{pitfall}[Fourier 矩阵的两种归一化]
+若矩阵元素直接取 $\omega_n^{jk}$，则 $F_n^{\mathsf H}F_n=nI$，它本身不是酉矩阵；乘以 $1/\sqrt n$ 后才酉。也可以把 $1/n$ 分配到正变换与逆变换的其他位置，但必须成对保持一致。正指数与负指数约定同样都可使用，它们互为共轭，不能在同一推导中混用。
+\end{pitfall}
+
+\begin{corollary}[Parseval 等式]
+若 $y=F_nx$，则
+\[
+\lVert y\rVert_2^2=n\lVert x\rVert_2^2.
+\]
+若使用归一化 DFT $\widehat x=\mathcal F_nx$，则
+\[
+\lVert\widehat x\rVert_2=\lVert x\rVert_2.
+\]
+\end{corollary}
+
+\begin{proposition}[DFT 的多项式求值解释]
+令
+\[
+p(z)=\sum_{k=0}^{n-1}x_kz^k.
+\]
+则 DFT 输出满足
+\[
+y_j=p(\omega_n^j).
+\]
+因此 DFT 把多项式的系数表示变成它在全部 $n$ 次单位根处的点值表示，逆 DFT 则恢复系数。
+\end{proposition}
+
+\begin{example}[title={四点 DFT}]
+对 $x=(1,2,0,-1)^{\mathsf T}$ 计算四点 DFT。
+\begin{solution}
+$\omega_4=-i$，故
+\[
+F_4=\begin{pmatrix}
+1&1&1&1\\
+1&-i&-1&i\\
+1&-1&1&-1\\
+1&i&-1&-i
+\end{pmatrix}.
+\]
+直接相乘得
+\[
+F_4x=(2,1-3i,0,1+3i)^{\mathsf T}.
+\]
+由于输入为实序列，输出满足共轭对称性 $y_{4-j}=\overline{y_j}$。
+\end{solution}
+\end{example}
+
+\section{DFT 的结构性质与循环卷积}
+
+\begin{proposition}[实序列的共轭对称性]
+若 $x_k\in\R$，且 $y=F_nx$，则
+\[
+y_{n-j}=\overline{y_j}
+\]
+（下标按模 $n$ 理解）。特别地，$y_0$ 为实数；当 $n$ 为偶数时，$y_{n/2}$ 也为实数。
+\end{proposition}
+
+\begin{proposition}[DFT 的循环平移、调制与下标缩放性质]
+下标均按模 $n$ 计算。定义循环平移和调制
+\[
+(T_ax)_k=x_{k-a},
+\qquad
+(M_bx)_k=\omega_n^{bk}x_k.
+\]
+若 $y=F_nx$，则
+\[
+F_n(T_ax)_j=\omega_n^{aj}y_j,
+\qquad
+F_n(M_bx)_j=y_{j+b}.
+\]
+因此时域平移对应频域相位调制，时域调制对应频域循环平移。
+
+若整数 $r$ 与 $n$ 互素，记 $r^{-1}$ 为 $r$ 在模 $n$ 下的乘法逆元，并定义下标缩放
+\[
+(S_rx)_k=x_{rk\bmod n}.
+\]
+则
+\[
+F_n(S_rx)_j=y_{r^{-1}j\bmod n}.
+\]
+这里的“缩放”是循环下标的置换；必须有 $\gcd(r,n)=1$，否则 $k\mapsto rk$ 不是模 $n$ 意义下的双射。
+\end{proposition}
+\begin{proof}
+第一式中令 $\ell=k-a$：
+\[
+\sum_kx_{k-a}\omega_n^{jk}
+=\omega_n^{aj}\sum_\ell x_\ell\omega_n^{j\ell}.
+\]
+第二式直接合并指数：
+\[
+\sum_k\omega_n^{bk}x_k\omega_n^{jk}
+=\sum_kx_k\omega_n^{(j+b)k}=y_{j+b}.
+\]
+对缩放公式，令 $\ell=rk\pmod n$。由于 $r$ 模 $n$ 可逆，这是对全部下标的置换，且 $k=r^{-1}\ell$。因此
+\[
+\sum_{k=0}^{n-1}x_{rk}\omega_n^{jk}
+=\sum_{\ell=0}^{n-1}x_\ell\omega_n^{j r^{-1}\ell}
+=y_{r^{-1}j}.
+\]
+\end{proof}
+
+\begin{definition}[循环卷积]
+对 $x,h\in\C^n$，定义
+\[
+(x\mathbin{\circledast}h)_j
+=\sum_{k=0}^{n-1}x_kh_{j-k\bmod n}.
+\]
+\end{definition}
+
+\begin{theorem}[循环卷积定理]
+在本章未归一化约定下，
+\[
+F_n(x\mathbin{\circledast}h)
+=(F_nx)\odot(F_nh),
+\]
+其中 $\odot$ 表示逐分量乘法。反之，
+\[
+x\mathbin{\circledast}h
+=\frac1nF_n^{\mathsf H}\bigl((F_nx)\odot(F_nh)\bigr).
+\]
+\end{theorem}
+\begin{proof}
+令 $c=x\mathbin{\circledast}h$。交换有限求和次序并作下标代换：
+\begin{align*}
+(F_nc)_r
+&=\sum_{j=0}^{n-1}\sum_{k=0}^{n-1}x_kh_{j-k}\omega_n^{rj}\\
+&=\sum_{k=0}^{n-1}x_k\omega_n^{rk}
+\sum_{\ell=0}^{n-1}h_\ell\omega_n^{r\ell}\\
+&=(F_nx)_r(F_nh)_r.
+\end{align*}
+\end{proof}
+
+\begin{corollary}[循环矩阵的 Fourier 对角化]
+每个循环矩阵都由 Fourier 基酉对角化。若 $C$ 的第一列为 $c$，则在相应下标约定下，其特征向量为 Fourier 向量，特征值由 $F_nc$ 给出。
+\end{corollary}
+
+\section{线性卷积、补零与多项式乘法}
+
+对有限序列 $x=(x_0,\ldots,x_{m-1})$、$h=(h_0,\ldots,h_{\ell-1})$，定义线性卷积
+\[
+(x*h)_r=\sum_kx_kh_{r-k},
+\qquad r=0,\ldots,m+\ell-2,
+\]
+其中越界下标对应的分量视为零。
+
+\begin{theorem}[补零把线性卷积化为循环卷积]
+取 $N\ge m+\ell-1$，把 $x,h$ 在末尾补零为长度 $N$ 的向量
+$\widetilde x,\widetilde h$。则
+\[
+\widetilde x\mathbin{\circledast}\widetilde h
+\]
+的前 $m+\ell-1$ 个分量恰为线性卷积 $x*h$，其余分量为零。因此
+\[
+x*h=\frac1N F_N^{\mathsf H}
+\bigl((F_N\widetilde x)\odot(F_N\widetilde h)\bigr)
+\]
+取前 $m+\ell-1$ 项即可。
+\end{theorem}
+\begin{proof}
+线性卷积的最大可能下标为 $(m-1)+(\ell-1)=m+\ell-2<N$。因此在长度 $N$ 的循环卷积中，所有非零乘积的下标和都不会越过 $N-1$ 后绕回，循环取模不产生混叠，故两种卷积相同。
+\end{proof}
+
+若
+\[
+p(z)=\sum_{j=0}^{m-1}x_jz^j,
+\qquad
+q(z)=\sum_{j=0}^{\ell-1}h_jz^j,
+\]
+则 $pq$ 的系数正是 $x*h$。因此补零、FFT、逐点乘法和逆 FFT 给出多项式乘法的快速算法。
+
+\section{离散不确定性原理}
+
+对向量 $x\in\C^n$，记
+\[
+\operatorname{supp}x=\{k:x_k\ne0\}.
+\]
+
+\begin{theorem}[Donoho--Stark 离散不确定性原理]
+若 $x\ne0$，且 $\widehat x=\mathcal F_nx$ 是归一化 DFT，则
+\[
+|\operatorname{supp}x|\,
+|\operatorname{supp}\widehat x|\ge n.
+\]
+因此非零信号不可能同时只集中在很少的时域坐标和很少的频域坐标上。
+\end{theorem}
+\begin{proof}
+令 $S=\operatorname{supp}x$、$T=\operatorname{supp}\widehat x$，并记对应坐标投影为 $P_S,P_T$。由于
+$x=P_Sx$、$\widehat x=P_T\widehat x$，
+\[
+x=P_S\mathcal F_n^{\mathsf H}P_T\mathcal F_nP_Sx.
+\]
+故算子
+$P_T\mathcal F_nP_S$ 的谱范数至少为 $1$。另一方面，该矩阵只有
+$|T||S|$ 个可能非零元素，而归一化 Fourier 矩阵每个元素的模均为
+$1/\sqrt n$，所以
+\[
+1\le\lVert P_T\mathcal F_nP_S\rVert_2
+\le\lVert P_T\mathcal F_nP_S\rVert_F
+=\sqrt{\frac{|S||T|}{n}}.
+\]
+平方并整理即得结论。
+\end{proof}
+
+\section{快速 Fourier 变换}
+
+设 $n=2m$，把多项式按偶次项与奇次项拆分：
+\[
+p(z)=p_{\mathrm e}(z^2)+zp_{\mathrm o}(z^2),
+\]
+其中
+\[
+p_{\mathrm e}(u)=\sum_{k=0}^{m-1}x_{2k}u^k,
+\qquad
+p_{\mathrm o}(u)=\sum_{k=0}^{m-1}x_{2k+1}u^k.
+\]
+利用
+\[
+\omega_{2m}^2=\omega_m,
+\qquad
+\omega_{2m}^m=-1,
+\]
+得到蝶形公式：对 $j=0,\ldots,m-1$，
+\[
+y_j=y'_j+\omega_{2m}^jy''_j,
+\qquad
+y_{j+m}=y'_j-\omega_{2m}^jy''_j,
+\]
+其中 $y'$、$y''$ 分别是偶下标序列和奇下标序列的 $m$ 点 DFT。
+
+\begin{theorem}[Cooley--Tukey 递归与复杂度]
+当 $n=2^\ell$ 时，基于上述偶奇拆分的 FFT 满足递推式
+\[
+T(n)=2T(n/2)+O(n),
+\]
+因此
+\[
+T(n)=O(n\log n).
+\]
+相比之下，直接按 DFT 定义计算全部输出需要 $O(n^2)$ 次运算。
+\end{theorem}
+\begin{proof}
+每一层递归包含两个规模为 $n/2$ 的 DFT，蝶形合并需要 $O(n)$ 次复数乘加。递归深度为 $\log_2n$，且每一层全部子问题的合并规模总和为 $n$，故总代价为 $O(n\log n)$。
+\end{proof}
+
+\begin{method}[Fourier 题目的约定检查]
+计算前先明确四件事：单位根采用 $e^{-2\pi i/n}$ 还是 $e^{2\pi i/n}$；正变换是否含 $1/\sqrt n$ 或 $1/n$；向量下标从 $0$ 还是从 $1$ 开始；卷积是循环卷积还是补零后的线性卷积。多数符号错误都来自约定没有先固定。
+\end{method}
+
+\begin{summary}[本章知识链]
+复共轭把模长、内积和正交推广到复数域；半双线性型在基下由矩阵 $x^{\mathsf H}Gy$ 表示，换基对应 $P^{\mathsf H}GP$。Hermite 矩阵的 Rayleigh 商与惯性刻画其大小和合同结构；Schur 定理说明任意复矩阵都可酉三角化，正规矩阵恰好进一步酉对角化，复 SVD 则适用于任意矩形矩阵。标准正交展开给出 Bessel 与 Parseval。单位根的正交求和产生 Fourier 矩阵，平移和调制在时频两域互相交换，卷积在 Fourier 域中变为逐点乘法。补零使 FFT 能计算线性卷积与多项式乘法，离散不确定性原理限制信号在时频两域的同时集中，而 FFT 利用偶奇递归把计算量从 $O(n^2)$ 降到 $O(n\log n)$。
+\end{summary}

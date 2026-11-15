@@ -1,0 +1,1024 @@
+% libre-compendium
+%
+% Copyright (C) 2026 Richard Qin
+%
+% This document is dual-licensed under either:
+% - GNU Free Documentation License, Version 1.3 or any later version
+%   published by the Free Software Foundation; with no Invariant Sections,
+%   no Front-Cover Texts, and no Back-Cover Texts (see COPYING.DOC); or
+% - Creative Commons Attribution-ShareAlike 4.0 International License
+%   (see LICENSE-CC-BY-SA-4.0).
+
+\chapter{矩阵微分、广义逆与正交投影}
+
+本章默认所有变量为实变量。向量均写成列向量，标量函数 $f:\R^n\to\R$ 的梯度为列向量，满足
+\[
+df=(\nabla f(x))^{\mathsf T}dx.
+\]
+对矩阵变量 $X\in\R^{m\times n}$，矩阵梯度由
+\[
+df=\tr\!\left((\nabla_Xf)^{\mathsf T}dX\right)
+=\langle\nabla_Xf,dX\rangle_F
+\]
+定义。这两个等式是本章公式方向和维数的最终判定标准。
+
+\section{从全微分到梯度与 Jacobian}
+
+\begin{definition}[方向导数与 Fr\'echet 导数]
+设 $F:\R^n\to\R^m$。若存在线性映射 $L:\R^n\to\R^m$ 使
+\[
+F(x+h)=F(x)+Lh+o(\lVert h\rVert),
+\qquad h\to0,
+\]
+则称 $F$ 在 $x$ 处可微，$L$ 称为 $F$ 在 $x$ 处的导数。在标准基下，$L$ 的矩阵是 Jacobian
+\[
+J_F(x)=\left(\frac{\partial F_i}{\partial x_j}\right)_{m\times n},
+\qquad dF=J_F(x)\,dx.
+\]
+\end{definition}
+
+文献对“分子布局”和“分母布局”的命名并不完全统一。因此，不应只凭布局名称判断公式，而应同时写出矩阵尺寸和微分关系。本章始终使用 $J_F\in\R^{m\times n}$ 且 $dF=J_Fdx$。
+
+\begin{proposition}[链式法则]
+设 $F:\R^n\to\R^m$、$G:\R^m\to\R^p$ 可微，则
+\[
+J_{G\circ F}(x)=J_G(F(x))J_F(x).
+\]
+特别地，若 $f:\R^m\to\R$ 是标量函数，则
+\[
+\nabla_x(f\circ F)=J_F(x)^{\mathsf T}\nabla_yf\big|_{y=F(x)}.
+\]
+\end{proposition}
+\begin{proof}
+由可微性，
+\[
+dF=J_Fdx,
+\qquad
+dG=J_GdF.
+\]
+代入得 $d(G\circ F)=J_GJ_Fdx$。对标量函数，
+\[
+df=(\nabla_yf)^{\mathsf T}dy
+=(\nabla_yf)^{\mathsf T}J_Fdx
+=(J_F^{\mathsf T}\nabla_yf)^{\mathsf T}dx,
+\]
+比较 $dx$ 的系数即得梯度公式。
+\end{proof}
+
+\begin{example}[title={仿射变换后的逐元素函数}]
+设 $a=Wx+b$，$z=\sigma(a)$，其中 $\sigma$ 逐元素作用。求 $z$ 对 $x$ 的 Jacobian。
+\begin{solution}
+有
+\[
+da=Wdx,
+\qquad
+dz=D_\sigma(a)da,
+\]
+其中
+\[
+D_\sigma(a)=\diag\bigl(\sigma'(a_1),\ldots,\sigma'(a_m)\bigr).
+\]
+因此
+\[
+J_z(x)=D_\sigma(a)W.
+\]
+该式的尺寸为 $m\times n$，与 $z\in\R^m$、$x\in\R^n$ 一致。
+\end{solution}
+\end{example}
+
+\section{矩阵微分与迹技巧}
+
+\begin{definition}[矩阵变量的梯度]
+设 $f:\R^{m\times n}\to\R$。若
+\[
+df=\sum_{i,j}\frac{\partial f}{\partial x_{ij}}dx_{ij},
+\]
+则定义
+\[
+\nabla_Xf=\left(\frac{\partial f}{\partial x_{ij}}\right)_{m\times n}.
+\]
+由 Frobenius 内积的定义，
+\[
+df=\tr\!\left((\nabla_Xf)^{\mathsf T}dX\right).
+\]
+\end{definition}
+
+矩阵求导的稳定流程是：先求微分，再利用迹的循环性把 $dX$ 移到末尾，最后与
+$df=\tr(G^{\mathsf T}dX)$ 比较，得到 $G=\nabla_Xf$。
+
+\begin{proposition}[基本微分法则]
+在矩阵乘法尺寸相容时，
+\[
+d(X+Y)=dX+dY,
+\qquad
+d(XY)=(dX)Y+X(dY),
+\]
+\[
+d(X^{\mathsf T})=(dX)^{\mathsf T},
+\qquad
+d\tr(X)=\tr(dX).
+\]
+若 $X$ 可逆，则
+\[
+d(X^{-1})=-X^{-1}(dX)X^{-1}.
+\]
+\end{proposition}
+\begin{proof}
+乘法公式来自
+\[
+(X+dX)(Y+dY)-XY=(dX)Y+X(dY)+(dX)(dY),
+\]
+其中 $(dX)(dY)$ 是二阶小量。对逆矩阵，对 $XX^{-1}=I$ 求微分：
+\[
+(dX)X^{-1}+X\,d(X^{-1})=0.
+\]
+左乘 $X^{-1}$ 即得结论。
+\end{proof}
+
+\begin{proposition}[迹的常用恒等式]
+若尺寸相容，则
+\[
+\tr(AB)=\tr(BA),
+\qquad
+\tr(ABC)=\tr(BCA)=\tr(CAB),
+\]
+\[
+\tr(A^{\mathsf T}B)=\langle A,B\rangle_F,
+\qquad
+\tr(A\,dX^{\mathsf T})=\tr(A^{\mathsf T}dX).
+\]
+迹只能循环换位，不能任意交换两个相邻因子。
+\end{proposition}
+
+\begin{theorem}[常用矩阵梯度]
+设 $A,B,C$ 为常矩阵，则
+\[
+\nabla_X\tr(A^{\mathsf T}X)=A,
+\]
+\[
+\nabla_X\tr(AXB)=A^{\mathsf T}B^{\mathsf T},
+\]
+\[
+\nabla_X\tr(X^{\mathsf T}AX)=(A+A^{\mathsf T})X,
+\]
+而双侧二次型的完整公式是
+\[
+\boxed{\nabla_X\tr(X^{\mathsf T}AXB)=AXB^{\mathsf T}+A^{\mathsf T}XB.}
+\]
+特别地，若 $A,B$ 均对称，则梯度为 $2AXB$。
+\end{theorem}
+\begin{proof}
+以最后一式为例。令 $f=\tr(X^{\mathsf T}AXB)$，则
+\begin{align*}
+df
+&=\tr((dX)^{\mathsf T}AXB)+\tr(X^{\mathsf T}A(dX)B)\\
+&=\tr((AXB^{\mathsf T})^{\mathsf T}dX)
+ +\tr((A^{\mathsf T}XB)^{\mathsf T}dX).
+\end{align*}
+比较系数得
+\[
+\nabla_Xf=AXB^{\mathsf T}+A^{\mathsf T}XB.
+\]
+其余公式均可用同一方法推导。
+\end{proof}
+
+\begin{pitfall}[不要直接套用未经验证的公式]
+矩阵乘法不可交换，对称性也不能默认。例如
+$\nabla_x(x^{\mathsf T}Ax)=(A+A^{\mathsf T})x$，只有 $A=A^{\mathsf T}$ 时才等于 $2Ax$。检查公式时至少应核对尺寸，并通过微分恒等式复核转置位置。
+\end{pitfall}
+
+\section{二次型、Frobenius 范数与最小二乘}
+
+\begin{proposition}[向量二次型]
+对 $f(x)=x^{\mathsf T}Ax+b^{\mathsf T}x+c$，
+\[
+\nabla f(x)=(A+A^{\mathsf T})x+b,
+\qquad
+\nabla^2f(x)=A+A^{\mathsf T}.
+\]
+若 $A$ 对称，则 $f$ 严格凸当且仅当 $A$ 正定。
+\end{proposition}
+
+\begin{theorem}[Frobenius 范数型目标]
+设
+\[
+f(X)=\frac12\lVert AXB-C\rVert_F^2.
+\]
+则
+\[
+\nabla_Xf=A^{\mathsf T}(AXB-C)B^{\mathsf T}.
+\]
+\end{theorem}
+\begin{proof}
+令 $R=AXB-C$，则 $dR=A(dX)B$。由
+$f=\frac12\tr(R^{\mathsf T}R)$，
+\begin{align*}
+df
+&=\tr(R^{\mathsf T}dR)
+=\tr(R^{\mathsf T}A(dX)B)\\
+&=\tr\!\left((A^{\mathsf T}RB^{\mathsf T})^{\mathsf T}dX\right).
+\end{align*}
+因此梯度如上。
+\end{proof}
+
+\begin{corollary}[线性最小二乘的正规方程]
+对
+\[
+f(x)=\frac12\lVert Ax-b\rVert_2^2,
+\]
+有
+\[
+\nabla f(x)=A^{\mathsf T}(Ax-b),
+\qquad
+\nabla^2f=A^{\mathsf T}A.
+\]
+因此任一最小二乘解都满足正规方程
+\[
+A^{\mathsf T}Ax=A^{\mathsf T}b.
+\]
+若 $A$ 列满秩，则 $A^{\mathsf T}A$ 正定，最小二乘解唯一：
+\[
+x_*=(A^{\mathsf T}A)^{-1}A^{\mathsf T}b.
+\]
+\end{corollary}
+
+\begin{remark}
+正规方程在理论推导中自然，但数值计算中会把条件数平方：
+$\kappa_2(A^{\mathsf T}A)=\kappa_2(A)^2$。实际求解常优先使用 QR 分解或 SVD。
+\end{remark}
+
+\section{加权与约束最小二乘}
+
+\begin{definition}[加权最小二乘]
+设 $W\in\R^{m\times m}$ 对称正定。加权最小二乘问题为
+\[
+\min_x\frac12(Ax-b)^{\mathsf T}W(Ax-b)
+=\min_x\frac12\lVert Ax-b\rVert_W^2,
+\]
+其中 $\langle u,v\rangle_W=u^{\mathsf T}Wv$ 是 $\R^m$ 上的内积。
+\end{definition}
+
+\begin{theorem}[加权正规方程]
+加权最小二乘解满足
+\[
+A^{\mathsf T}WAx=A^{\mathsf T}Wb.
+\]
+等价地，残差 $r=b-Ax$ 在 $W$-内积下与 $\operatorname{Im}A$ 正交：
+\[
+A^{\mathsf T}Wr=0.
+\]
+若 $A$ 列满秩，则解唯一，且
+\[
+x_*=(A^{\mathsf T}WA)^{-1}A^{\mathsf T}Wb.
+\]
+\end{theorem}
+\begin{proof}
+令 $f(x)=\frac12(Ax-b)^{\mathsf T}W(Ax-b)$。由 $W=W^{\mathsf T}$，
+\[
+df=(Ax-b)^{\mathsf T}WA,dx,
+\]
+故 $\nabla f=A^{\mathsf T}W(Ax-b)$。驻点条件给出加权正规方程。若 $A$ 列满秩，则对 $h\ne0$，
+\[
+h^{\mathsf T}A^{\mathsf T}WAh=(Ah)^{\mathsf T}W(Ah)>0,
+\]
+所以 $A^{\mathsf T}WA$ 正定可逆。
+\end{proof}
+
+\begin{corollary}[加权正交投影]
+若 $A$ 列满秩，则
+\[
+P_W=A(A^{\mathsf T}WA)^{-1}A^{\mathsf T}W
+\]
+满足 $P_W^2=P_W$，并把 $b$ 投影到 $\operatorname{Im}A$。它一般不满足 $P_W^{\mathsf T}=P_W$，但满足
+\[
+P_W^{\mathsf T}W=WP_W,
+\]
+因而它是 $W$-内积下的正交投影。
+\end{corollary}
+
+\begin{definition}[等式约束最小二乘]
+考虑
+\[
+\min_x\frac12\lVert Ax-b\rVert_2^2,
+\qquad Cx=d.
+\]
+其 Lagrange 函数为
+\[
+\mathcal L(x,\lambda)
+=\frac12\lVert Ax-b\rVert_2^2
++\lambda^{\mathsf T}(Cx-d).
+\]
+\end{definition}
+
+\begin{theorem}[等式约束的 KKT 方程]
+任一约束最小二乘解都与某个乘子 $\lambda$ 一起满足
+\[
+\begin{pmatrix}
+A^{\mathsf T}A&C^{\mathsf T}\\
+C&0
+\end{pmatrix}
+\begin{pmatrix}x\\\lambda\end{pmatrix}
+=
+\begin{pmatrix}A^{\mathsf T}b\\d\end{pmatrix}.
+\]
+若 $C$ 行满秩且
+\[
+\ker A\cap\ker C=\{0\},
+\]
+则 KKT 矩阵可逆，约束最小二乘解唯一。
+\end{theorem}
+\begin{proof}
+对 $x$ 和 $\lambda$ 分别求梯度，得
+\[
+A^{\mathsf T}(Ax-b)+C^{\mathsf T}\lambda=0,
+\qquad Cx=d,
+\]
+这就是所给分块方程。
+
+为证可逆性，设齐次 KKT 方程有解 $(h,\mu)$。左乘第一个方程以 $h^{\mathsf T}$，并利用 $Ch=0$，得
+\[
+\lVert Ah\rVert_2^2=0.
+\]
+因此 $h\in\ker A\cap\ker C$，从而 $h=0$。随后 $C^{\mathsf T}\mu=0$，由 $C$ 行满秩得 $\mu=0$。齐次核为零，故 KKT 矩阵可逆。
+\end{proof}
+
+\section{行列式、逆矩阵与对数行列式}
+
+\begin{theorem}[Jacobi 行列式公式]
+若 $X$ 可逆，则
+\[
+d\det X=\det(X)\tr(X^{-1}dX),
+\]
+从而
+\[
+\nabla_X\det X=\det(X)X^{-\mathsf T}.
+\]
+若 $X$ 正定，则
+\[
+d\log\det X=\tr(X^{-1}dX),
+\qquad
+\nabla_X\log\det X=X^{-\mathsf T}=X^{-1}.
+\]
+\end{theorem}
+\begin{proof}
+对充分小的 $dX$，
+\[
+\det(X+dX)=\det X\,\det(I+X^{-1}dX).
+\]
+而 $\det(I+E)=1+\tr(E)+o(\lVert E\rVert)$，因此
+\[
+\det(X+dX)-\det X
+=\det X\,\tr(X^{-1}dX)+o(\lVert dX\rVert).
+\]
+再用
+$\tr(X^{-1}dX)=\tr((X^{-\mathsf T})^{\mathsf T}dX)$
+读出梯度。
+\end{proof}
+
+\begin{remark}
+$\log\det X$ 在实数范围内通常只对正定矩阵使用。对一般可逆实矩阵，可考虑 $\log|\det X|$，其微分在行列式不过零的连通区域内仍为 $\tr(X^{-1}dX)$。
+\end{remark}
+
+\begin{example}[title={带对数行列式的梯度}]
+设 $X$ 正定，
+\[
+f(X)=\tr(CX^{-1})-\alpha\log\det X.
+\]
+求 $\nabla_Xf$。
+\begin{solution}
+由逆矩阵微分公式，
+\begin{align*}
+d\tr(CX^{-1})
+&=-\tr(CX^{-1}(dX)X^{-1})\\
+&=-\tr(X^{-1}CX^{-1}dX).
+\end{align*}
+因此
+\[
+\nabla_Xf
+=-X^{-\mathsf T}C^{\mathsf T}X^{-\mathsf T}
+-\alpha X^{-\mathsf T}.
+\]
+若 $X,C$ 均对称，则化为
+$-X^{-1}CX^{-1}-\alpha X^{-1}$。
+\end{solution}
+\end{example}
+
+\section{对称矩阵特征值的微分}
+
+\begin{theorem}[简单特征值的一阶扰动]
+设 $A=A^{\mathsf T}$，$\lambda_i$ 是 $A$ 的单重特征值，$u_i$ 是对应的单位特征向量。对对称扰动 $dA$，
+\[
+d\lambda_i=u_i^{\mathsf T}(dA)u_i
+=\tr(u_iu_i^{\mathsf T}dA).
+\]
+因此在对称矩阵空间中
+\[
+\nabla_A\lambda_i=u_iu_i^{\mathsf T}.
+\]
+\end{theorem}
+\begin{proof}
+对特征方程 $Au_i=\lambda_iu_i$ 求微分：
+\[
+(dA)u_i+A,du_i
+=(d\lambda_i)u_i+\lambda_i,du_i.
+\]
+左乘 $u_i^{\mathsf T}$。由 $A$ 对称，
+$u_i^{\mathsf T}A=\lambda_i u_i^{\mathsf T}$，两边含 $du_i$ 的项相消；再用 $u_i^{\mathsf T}u_i=1$，得
+\[
+d\lambda_i=u_i^{\mathsf T}(dA)u_i.
+\]
+\end{proof}
+
+\begin{pitfall}[重特征值处不能指定唯一梯度]
+当 $\lambda$ 是重特征值时，特征子空间内的单位特征向量不唯一，$uu^{\mathsf T}$ 也随选择改变。例如最大特征值函数在顶部特征值重复时一般不可微；此时应使用特征子空间上的扰动分析或次梯度。
+\end{pitfall}
+
+\begin{corollary}[最大特征值的梯度]
+若 $A=A^{\mathsf T}$ 的最大特征值 $\lambda_{\max}(A)$ 为单重，对应单位特征向量为 $u$，则
+\[
+\nabla_A\lambda_{\max}(A)=uu^{\mathsf T}.
+\]
+\end{corollary}
+
+\section{Vec 算子、Kronecker 积与矩阵 Jacobian}
+
+\begin{definition}[Vec 与 Kronecker 积]
+对 $X=(x_1,\ldots,x_n)\in\R^{m\times n}$，定义按列展开
+\[
+\operatorname{vec}(X)
+=(x_1^{\mathsf T},\ldots,x_n^{\mathsf T})^{\mathsf T}\in\R^{mn}.
+\]
+对 $A=(a_{ij})\in\R^{p\times q}$、$B\in\R^{r\times s}$，定义
+\[
+A\otimes B=(a_{ij}B)\in\R^{pr\times qs}.
+\]
+\end{definition}
+
+\begin{theorem}[Vec 恒等式]
+若尺寸相容，则
+\[
+\boxed{\operatorname{vec}(AXB)
+=(B^{\mathsf T}\otimes A)\operatorname{vec}(X).}
+\]
+因此对 $Y=AXB+C$，
+\[
+\frac{\partial\operatorname{vec}(Y)}
+{\partial\operatorname{vec}(X)^{\mathsf T}}
+=B^{\mathsf T}\otimes A.
+\]
+\end{theorem}
+\begin{proof}
+记 $B=(b_1,\ldots,b_s)$。$AXB$ 的第 $j$ 列为
+\[
+AXb_j=\sum_{k=1}^q b_{kj}Ax_k.
+\]
+把所有列依次堆叠，每一个块对 $x_k$ 的系数正是 $b_{kj}A$，这与 $B^{\mathsf T}\otimes A$ 的块结构一致。
+\end{proof}
+
+\begin{corollary}[Sylvester 方程的向量化]
+矩阵方程
+\[
+AX+XB=C
+\]
+等价于
+\[
+\bigl(I\otimes A+B^{\mathsf T}\otimes I\bigr)
+\operatorname{vec}(X)=\operatorname{vec}(C).
+\]
+因此，若 $A$ 的任一特征值与 $-B$ 的任一特征值都不相同，则 Sylvester 方程有唯一解。
+\end{corollary}
+
+\section{对称矩阵变量的约束微分}
+
+若 $X$ 被限制为对称矩阵，则允许的扰动必须满足 $dX=dX^{\mathsf T}$。假设先把 $X$ 当作一般矩阵求得
+\[
+df=\tr(G^{\mathsf T}dX),
+\]
+则对称约束下
+\[
+df=\tr\!\left(\left(\frac{G+G^{\mathsf T}}2\right)^{\mathsf T}dX\right).
+\]
+因此只有 $G$ 的对称部分会作用在可行方向上。
+
+\begin{pitfall}[对称约束与独立参数求导不是同一种记号]
+把 $X$ 视为对称矩阵时，$x_{ij}$ 与 $x_{ji}$ 不是两个独立变量。若改用上三角元素组成的参数向量，非对角参数的系数会合并两个对称位置的贡献。因此必须先说明是“Frobenius 内积下的可行梯度”，还是“对独立上三角参数的偏导数”。
+\end{pitfall}
+
+\section{一般广义逆}
+
+\begin{definition}[一般广义逆]
+对 $A\in\R^{m\times n}$，若 $G\in\R^{n\times m}$ 满足
+\[
+AGA=A,
+\]
+则称 $G$ 是 $A$ 的一个广义逆，常记为 $A^{-}$。一般广义逆通常不唯一。
+\end{definition}
+
+\begin{theorem}[广义逆的存在性]
+每个实矩阵都存在广义逆。
+\end{theorem}
+\begin{proof}
+设 $\rank A=r$。由矩阵等价标准形，存在可逆矩阵 $P,Q$ 使
+\[
+A=PE_{m,n}Q,
+\qquad
+E_{m,n}=\begin{pmatrix}I_r&0\\0&0\end{pmatrix}\in\R^{m\times n}.
+\]
+令
+\[
+G=Q^{-1}E_{n,m}P^{-1},
+\qquad E_{n,m}=E_{m,n}^{\mathsf T},
+\]
+则直接相乘得 $AGA=A$。
+\end{proof}
+
+\begin{theorem}[相容线性方程的通解]
+若 $Ax=b$ 有解，$A^{-}$ 是 $A$ 的任意广义逆，则
+\[
+x=A^{-}b+(I-A^{-}A)z,
+\qquad z\in\R^n,
+\]
+给出 $Ax=b$ 的全部解。
+\end{theorem}
+\begin{proof}
+由 $b\in\operatorname{Im}A$，可写成 $b=Au$。因此
+\[
+AA^{-}b=AA^{-}Au=Au=b.
+\]
+对任意 $z$，
+\[
+A\bigl(A^{-}b+(I-A^{-}A)z\bigr)
+=b+(A-AA^{-}A)z=b.
+\]
+反之，若 $Ax=b$，则
+\[
+x=A^{-}Ax+(I-A^{-}A)x
+=A^{-}b+(I-A^{-}A)x,
+\]
+所以取 $z=x$ 即可包含任意解。
+\end{proof}
+
+\begin{remark}
+条件“$Ax=b$ 有解”不能删去。对不相容方程，$A^{-}b$ 未必是最小二乘解，甚至 $AA^{-}b$ 也未必等于 $b$。要得到唯一且具有正交几何意义的逆，需要 Moore--Penrose 条件。
+\end{remark}
+
+\section{Moore--Penrose 逆与 SVD 构造}
+
+\begin{definition}[Moore--Penrose 逆]
+矩阵 $A\in\R^{m\times n}$ 的 Moore--Penrose 逆是满足
+\[
+AA^+A=A,
+\qquad
+A^+AA^+=A^+,
+\]
+\[
+(AA^+)^{\mathsf T}=AA^+,
+\qquad
+(A^+A)^{\mathsf T}=A^+A
+\]
+的矩阵 $A^+\in\R^{n\times m}$。
+\end{definition}
+
+\begin{theorem}[Moore--Penrose 逆的存在唯一性与 SVD 公式]
+若
+\[
+A=U\Sigma V^{\mathsf T}
+\]
+是 $A$ 的 SVD，且非零奇异值为
+$\sigma_1,\ldots,\sigma_r$，则
+\[
+A^+=V\Sigma^+U^{\mathsf T},
+\]
+其中 $\Sigma^+$ 把每个非零奇异值换成倒数，并转置矩形尺寸。该矩阵是唯一的。
+\end{theorem}
+\begin{proof}
+对角块上有
+\[
+\Sigma\Sigma^+\Sigma=\Sigma,
+\qquad
+\Sigma^+\Sigma\Sigma^+=\Sigma^+,
+\]
+并且 $\Sigma\Sigma^+$、$\Sigma^+\Sigma$ 都是对称对角投影。利用 $U,V$ 正交，四个 Penrose 方程立即成立。
+
+为证唯一性，设 $G$ 也满足四个方程。$AG$ 是对称幂等矩阵，且它在 $\operatorname{Im}A$ 上为恒等映射，故它是到 $\operatorname{Im}A$ 的唯一正交投影，从而
+$AG=AA^+$。同理 $GA=A^+A$。因此
+\[
+G=GAG=GAA^+=A^+AA^+=A^+.
+\]
+\end{proof}
+
+\begin{corollary}[满秩情形]
+若 $A$ 列满秩，则
+\[
+A^+=(A^{\mathsf T}A)^{-1}A^{\mathsf T}.
+\]
+若 $A$ 行满秩，则
+\[
+A^+=A^{\mathsf T}(AA^{\mathsf T})^{-1}.
+\]
+若 $A$ 是可逆方阵，则 $A^+=A^{-1}$。
+\end{corollary}
+
+\begin{proposition}[伪逆的基本性质]
+\[
+(A^+)^+=A,
+\qquad
+(A^{\mathsf T})^+=(A^+)^{\mathsf T},
+\qquad
+\rank(A^+)=\rank(A),
+\]
+\[
+(A^{\mathsf T}A)^+=A^+(A^+)^{\mathsf T},
+\qquad
+A^+=(A^{\mathsf T}A)^+A^{\mathsf T}
+=A^{\mathsf T}(AA^{\mathsf T})^+.
+\]
+一般情况下 $(AB)^+\ne B^+A^+$；只有在额外秩或子空间条件下才能使用逆序律。
+\end{proposition}
+
+\section{伪逆的四个投影与基本子空间}
+
+\begin{theorem}[伪逆投影]
+对 $A\in\R^{m\times n}$，
+\[
+AA^+=P_{\operatorname{Im}A},
+\qquad
+A^+A=P_{\operatorname{Im}A^{\mathsf T}},
+\]
+分别是到列空间和行空间的正交投影。同时
+\[
+I-AA^+=P_{\ker A^{\mathsf T}},
+\qquad
+I-A^+A=P_{\ker A}.
+\]
+\end{theorem}
+\begin{proof}
+由 Penrose 方程，
+\[
+(AA^+)^2=AA^+AA^+=AA^+,
+\qquad
+(AA^+)^{\mathsf T}=AA^+.
+\]
+所以 $AA^+$ 是正交投影。又
+$\operatorname{Im}(AA^+)\subseteq\operatorname{Im}A$，而对任意 $y=Ax$，
+\[
+AA^+y=AA^+Ax=Ax=y,
+\]
+故其像空间正是 $\operatorname{Im}A$。其余结论同理，或利用正交补关系
+$(\operatorname{Im}A)^\perp=\ker A^{\mathsf T}$。
+\end{proof}
+
+\begin{pitfall}[幂等投影与正交投影]
+$P^2=P$ 只说明 $P$ 是沿某个补空间的投影，这种投影可能是斜投影。只有再满足 $P^{\mathsf T}=P$ 时，$P$ 才是正交投影。给定像空间后，一般投影不唯一，但正交投影唯一。
+\end{pitfall}
+
+\begin{proposition}[投影矩阵的谱、秩与迹]
+若 $P^2=P$，则：
+\begin{enumerate}[label=(\arabic*)]
+\item $P$ 的特征值只能是 $0$ 或 $1$；
+\item $P$ 可对角化；
+\item $\rank P=\tr P$；
+\item $\det P\in\{0,1\}$，且 $\det P=1$ 当且仅当 $P=I$。
+\end{enumerate}
+若 $P\ne0$ 还是正交投影，则 $\lVert P\rVert_2=1$。
+\end{proposition}
+\begin{proof}
+若 $Pv=\lambda v$ 且 $v\ne0$，则
+\[
+\lambda^2v=P^2v=Pv=\lambda v,
+\]
+故 $\lambda\in\{0,1\}$。最小多项式整除 $t(t-1)$，其无重根，故 $P$ 可对角化。对角形中 $1$ 的个数同时等于秩和迹，其余结论随即得到。对非零正交投影，其奇异值也只能是 $0,1$，且至少有一个 $1$，故谱范数为 $1$。
+\end{proof}
+
+\begin{remark}
+非零斜投影仍有谱半径 $1$，但其谱范数可以大于 $1$。这表明特征值不能衡量非正规投影在欧氏范数下的放大效应。
+\end{remark}
+
+\section{最小二乘解、最小范数解与解集结构}
+
+\begin{theorem}[全部最小二乘解]
+对任意 $A\in\R^{m\times n}$、$b\in\R^m$，最小化问题
+\[
+\min_x\lVert Ax-b\rVert_2
+\]
+的全部解为
+\[
+\boxed{x=A^+b+(I-A^+A)z,
+\qquad z\in\R^n.}
+\]
+所有最小二乘解给出同一预测向量
+\[
+Ax=AA^+b=P_{\operatorname{Im}A}b.
+\]
+其中唯一范数最小的解是
+\[
+x_*=A^+b.
+\]
+\end{theorem}
+\begin{proof}
+最小二乘的几何条件是残差与列空间正交，即
+\[
+Ax=P_{\operatorname{Im}A}b=AA^+b.
+\]
+因此
+\[
+A(x-A^+b)=0,
+\]
+所以 $x-A^+b\in\ker A$。由
+$I-A^+A=P_{\ker A}$，得到全部解的表示。
+
+又 $A^+b\in\operatorname{Im}A^{\mathsf T}=(\ker A)^\perp$，因此
+\[
+\lVert A^+b+(I-A^+A)z\rVert_2^2
+=\lVert A^+b\rVert_2^2
+ +\lVert(I-A^+A)z\rVert_2^2.
+\]
+右端在零空间分量为零时唯一取得最小值，故最小范数解为 $A^+b$。
+\end{proof}
+
+\begin{corollary}[相容方程的最小范数解]
+若 $Ax=b$ 有解，则 $A^+b$ 是全部精确解中范数最小的唯一解。
+\end{corollary}
+
+\begin{example}[title={秩不足最小二乘}]
+设
+\[
+A=\begin{pmatrix}1&1\\2&2\\0&0\end{pmatrix},
+\qquad
+b=\begin{pmatrix}1\\0\\1\end{pmatrix}.
+\]
+求全部最小二乘解及最小范数解。
+\begin{solution}
+写成 $A=uv^{\mathsf T}$，其中
+\[
+u=(1,2,0)^{\mathsf T},
+\qquad
+v=(1,1)^{\mathsf T}.
+\]
+秩一矩阵的伪逆为
+\[
+A^+=\frac{vu^{\mathsf T}}{\lVert u\rVert^2\lVert v\rVert^2}
+=\frac1{10}\begin{pmatrix}1&2&0\\1&2&0\end{pmatrix}.
+\]
+因此
+\[
+A^+b=\frac1{10}(1,1)^{\mathsf T}.
+\]
+又 $\ker A=\operatorname{span}\{(1,-1)^{\mathsf T}\}$，故全部最小二乘解为
+\[
+x=\begin{pmatrix}1/10\\1/10\end{pmatrix}
++t\begin{pmatrix}1\\-1\end{pmatrix},
+\qquad t\in\R.
+\]
+最小范数解对应 $t=0$。
+\end{solution}
+\end{example}
+
+\section{正则化与伪逆的极限表示}
+
+\begin{theorem}[Tikhonov 正则化]
+对 $\lambda>0$，问题
+\[
+\min_x\left(\lVert Ax-b\rVert_2^2
++\lambda\lVert x\rVert_2^2\right)
+\]
+有唯一解
+\[
+x_\lambda=(A^{\mathsf T}A+\lambda I)^{-1}A^{\mathsf T}b.
+\]
+并且
+\[
+\lim_{\lambda\downarrow0}x_\lambda=A^+b.
+\]
+\end{theorem}
+\begin{proof}
+目标函数的 Hessian 为
+$2(A^{\mathsf T}A+\lambda I)$，其正定，故驻点唯一且是全局最小点。对 $A=U\Sigma V^{\mathsf T}$，
+\[
+x_\lambda
+=V\diag\!\left(
+\frac{\sigma_i}{\sigma_i^2+\lambda}
+\right)U^{\mathsf T}b.
+\]
+当 $\lambda\downarrow0$ 时，非零奇异值对应系数趋于 $1/\sigma_i$，零奇异值对应系数始终为零，因此极限为 $A^+b$。
+\end{proof}
+
+\section{伪逆的稳定性、条件数与逆序律}
+
+\begin{proposition}[伪逆范数]
+若 $A$ 的最小非零奇异值为 $\sigma_r(A)$，则
+\[
+\lVert A^+\rVert_2=\frac1{\sigma_r(A)}.
+\]
+因此对数据扰动 $b\mapsto b+\delta b$，最小范数解的变化满足
+\[
+\lVert A^+\delta b\rVert_2
+\le\frac{\lVert\delta b\rVert_2}{\sigma_r(A)}.
+\]
+\end{proposition}
+\begin{proof}
+$A^+$ 的非零奇异值是
+$1/\sigma_1(A),\ldots,1/\sigma_r(A)$。谱范数是最大奇异值，故等于 $1/\sigma_r(A)$。第二式由谱范数的定义立即得到。
+\end{proof}
+
+\begin{theorem}[伪逆的连续性边界]
+在秩固定的矩阵集合上，映射 $A\mapsto A^+$ 是连续的。但当秩发生变化时，伪逆一般不连续。
+\end{theorem}
+
+例如
+\[
+A_\varepsilon=\begin{pmatrix}1&0\\0&\varepsilon\end{pmatrix}
+\longrightarrow
+A_0=\begin{pmatrix}1&0\\0&0\end{pmatrix},
+\]
+但对 $\varepsilon\ne0$，
+\[
+A_\varepsilon^+
+=\begin{pmatrix}1&0\\0&1/\varepsilon\end{pmatrix},
+\]
+其范数趋于无穷，而
+$A_0^+=\diag(1,0)$。该例也说明，接近零的奇异值会使伪逆极度敏感。
+
+\begin{proposition}[伪逆的逆序律]
+一般地，
+\[
+(AB)^+\ne B^+A^+.
+\]
+若 $A\in\R^{m\times n}$ 列满秩，而
+$B\in\R^{n\times p}$ 行满秩，则
+\[
+(AB)^+=B^+A^+.
+\]
+\end{proposition}
+\begin{proof}
+在满秩假设下，
+\[
+A^+A=I_n,
+\qquad
+BB^+=I_n.
+\]
+令 $G=B^+A^+$。则
+\[
+(AB)G(AB)=A(BB^+)(A^+A)B=AB,
+\]
+\[
+G(AB)G=B^+(A^+A)(BB^+)A^+=G.
+\]
+又
+\[
+(AB)G=AA^+,
+\qquad
+G(AB)=B^+B
+\]
+均为对称正交投影，故 $G$ 满足四个 Penrose 方程。
+
+反例可取
+\[
+A=\begin{pmatrix}1&1\end{pmatrix},
+\qquad
+B=\begin{pmatrix}1\\0\end{pmatrix}.
+\]
+此时 $AB=(1)$，故 $(AB)^+=(1)$，而
+\[
+B^+A^+
+=\begin{pmatrix}1&0\end{pmatrix}
+\frac12\begin{pmatrix}1\\1\end{pmatrix}
+=\frac12.
+\]
+\end{proof}
+
+\section{秩分解与伪逆的紧致构造}
+
+\begin{definition}[秩分解]
+若 $A\in\R^{m\times n}$ 的秩为 $r$，且
+\[
+A=FG,
+\]
+其中 $F\in\R^{m\times r}$ 列满秩，
+$G\in\R^{r\times n}$ 行满秩，则称 $A=FG$ 为 $A$ 的秩分解。
+\end{definition}
+
+可从 $A$ 中选取 $r$ 个线性无关列作为 $F$ 的列。由于 $F$ 的列张成 $A$ 的列空间，$A$ 的每一列都可用 $F$ 的列唯一线性表示；把这些坐标依次排成列，即得 $G$。
+
+\begin{theorem}[秩分解给出的伪逆公式]
+若 $A=FG$ 是秩分解，则
+\[
+\boxed{
+A^+=G^{\mathsf T}(GG^{\mathsf T})^{-1}
+(F^{\mathsf T}F)^{-1}F^{\mathsf T}.}
+\]
+\end{theorem}
+\begin{proof}
+由 $F$ 列满秩、$G$ 行满秩，
+\[
+F^+=(F^{\mathsf T}F)^{-1}F^{\mathsf T},
+\qquad
+G^+=G^{\mathsf T}(GG^{\mathsf T})^{-1}.
+\]
+令 $H=G^+F^+$。利用
+$F^+F=I_r$、$GG^+=I_r$，
+\[
+AHA=FGG^+F^+FG=FG=A,
+\]
+\[
+HAH=G^+F^+FGG^+F^+=G^+F^+=H.
+\]
+又
+\[
+AH=FF^+,
+\qquad
+HA=G^+G,
+\]
+二者分别是到 $\operatorname{Im}F$和
+$\operatorname{Im}G^{\mathsf T}$ 的正交投影，因而对称。故 $H$ 满足四个 Penrose 方程，即 $H=A^+$。
+\end{proof}
+
+\begin{remark}
+秩分解只使用 $r\times r$ 矩阵
+$F^{\mathsf T}F$ 和 $GG^{\mathsf T}$ 的逆，因而很适合手算低秩矩阵的伪逆。数值计算中仍应避免在病态问题上直接形成 Gram 矩阵，此时 SVD 更稳定。
+\end{remark}
+
+\section{参数线性方程的微分}
+
+\begin{theorem}[隐式线性方程的微分]
+设 $A=A(\theta)$ 在所考察参数附近可逆，
+$b=b(\theta)$，且 $x=x(\theta)$ 由
+\[
+A(\theta)x(\theta)=b(\theta)
+\]
+唯一确定。则
+\[
+\boxed{dx=A^{-1}(db-(dA)x).}
+\]
+若 $b$ 为常向量，则
+\[
+dx=-A^{-1}(dA)x.
+\]
+\end{theorem}
+\begin{proof}
+对 $Ax=b$ 求微分，由乘积法则得
+\[
+(dA)x+A\,dx=db.
+\]
+移项后左乘 $A^{-1}$，得
+\[
+dx=A^{-1}db-A^{-1}(dA)x.
+\]
+\end{proof}
+
+\begin{corollary}[具体参数的导数]
+若 $A(t)x(t)=b(t)$，则
+\[
+x'(t)=A(t)^{-1}\bigl(b'(t)-A'(t)x(t)\bigr).
+\]
+该公式不需要先把 $x(t)=A(t)^{-1}b(t)$ 展开后再对逆矩阵求导。
+\end{corollary}
+
+\begin{pitfall}[可逆性是公式的关键条件]
+若 $A(\theta)$ 在某点奇异，方程的解可能不存在、不唯一或对参数不连续，上述公式不能直接使用。使用伪逆进行求导还需要秩在邻域内保持不变，属于更高级的矩阵扰动问题。
+\end{pitfall}
+
+\section{一般广义逆的全部参数化}
+
+\begin{theorem}[所有内逆的参数化]
+固定 $A$ 的一个反身广义逆 $R$，即
+\[
+ARA=A,
+\qquad
+RAR=R.
+\]
+例如可取 $R=A^+$。则所有满足 $AGA=A$ 的矩阵 $G$ 恰好可表为
+\[
+\boxed{G=R+Y-RAYAR,}
+\]
+其中 $Y\in\R^{n\times m}$ 任意。
+\end{theorem}
+\begin{proof}
+对任意 $Y$，
+\begin{align*}
+AGA
+&=ARA+AYA-ARAYARA\\
+&=A+AYA-AYA=A,
+\end{align*}
+其中使用了 $ARA=A$。因此公式中的每个 $G$ 都是广义逆。
+
+反之，设 $G$ 满足 $AGA=A$。在参数公式中取 $Y=G$，则
+\[
+R+G-RAGAR
+=R+G-R(AGA)R
+=R+G-RAR=G.
+\]
+故任意广义逆都被该参数化包含。
+\end{proof}
+
+\begin{remark}
+参数矩阵 $Y$ 不唯一；该公式的作用是刻画全部广义逆的集合，而不是给每个 $G$ 分配唯一坐标。若基准矩阵只满足 $ARA=A$ 而不满足 $RAR=R$，上述反向覆盖证明不再成立。
+\end{remark}
+
+\begin{method}[矩阵求导与伪逆题的方法选择]
+标量对矩阵求导时，优先用 $df=\tr((\nabla_Xf)^{\mathsf T}dX)$；复合映射则先写每一层的微分。参数方程 $Ax=b$ 可直接对等式求微分，避免展开逆矩阵。求伪逆时，一般矩阵用 SVD，低秩手算可用秩分解，满列秩或满行秩时再使用简化公式。求最小二乘解集时，先写 $A^+b$，再加上 $\ker A$ 分量；要求最小范数时，去掉零空间分量。
+\end{method}
+
+\begin{summary}[本章知识链]
+全微分把非线性变化的一阶部分表示为线性映射；迹和 Frobenius 内积把标量对矩阵的导数统一成矩阵梯度。Vec 与 Kronecker 积则把矩阵映射还原为普通线性映射，特征值扰动公式把谱量的变化与特征投影相联系，参数方程微分则把逆矩阵扰动化为线性方程。加权和约束最小二乘将正规方程推广到非标准内积与可行集上。一般广义逆解决非方阵和奇异矩阵的代数反解问题，秩分解和全部参数化分别给出紧致构造与不唯一性的完整描述；Moore--Penrose 逆则通过对称性选出唯一的正交几何解。最小非零奇异值同时控制伪逆范数、扰动放大和秩变化附近的不稳定性。
+\end{summary}

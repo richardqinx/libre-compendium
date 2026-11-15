@@ -1,0 +1,467 @@
+% libre-compendium
+%
+% Copyright (C) 2026 Richard Qin
+%
+% This document is dual-licensed under either:
+% - GNU Free Documentation License, Version 1.3 or any later version
+%   published by the Free Software Foundation; with no Invariant Sections,
+%   no Front-Cover Texts, and no Back-Cover Texts (see COPYING.DOC); or
+% - Creative Commons Attribution-ShareAlike 4.0 International License
+%   (see LICENSE-CC-BY-SA-4.0).
+
+% Exercises migrated from problems01.tex and solutions01.tex.
+\begin{exercise}[level=basic]
+写出二次型
+\[
+Q=4x_1^2+x_2^2-3x_3^2+6x_1x_2-2x_1x_3+8x_2x_3
+\]
+的对称矩阵。
+\begin{solution}
+对应矩阵为
+\[
+\begin{pmatrix}4&3&-1\\3&1&4\\-1&4&-3\end{pmatrix}.
+\]
+交叉项系数依次折半为 $3,-1,4$。
+\end{solution}
+\end{exercise}
+
+\begin{exercise}[level=basic]
+设 $A=\begin{pmatrix}1&2\\2&-1\end{pmatrix}$。写出 $Q(x)=x^{\mathsf T}Ax$ 及 $B(x,y)=x^{\mathsf T}Ay$。
+\begin{solution}
+\[
+Q=x_1^2+4x_1x_2-x_2^2,
+\]
+\[
+B(x,y)=x_1y_1+2x_1y_2+2x_2y_1-x_2y_2.
+\]
+\end{solution}
+\end{exercise}
+
+\begin{exercise}[level=basic]
+证明对任意实反对称矩阵 $K$，恒有 $x^{\mathsf T}Kx=0$。
+\begin{solution}
+$x^{\mathsf T}Kx$ 是 $1\times1$ 矩阵，故等于其转置；另一方面
+\[
+(x^{\mathsf T}Kx)^{\mathsf T}=x^{\mathsf T}K^{\mathsf T}x=-x^{\mathsf T}Kx.
+\]
+因此它等于自身的相反数，只能为零。
+\end{solution}
+\end{exercise}
+
+\begin{exercise}[level=basic]
+判断下列映射是否为双线性型；若是，再判断是否对称：
+\begin{enumerate}[label=(\arabic*)]
+\item $B(x,y)=x_1y_1+x_1y_2$，$x,y\in\R^2$；
+\item $B(x,y)=x_1y_1+3$；
+\item $B(X,Y)=\tr(XY)$，$X,Y\in\R^{n\times n}$。
+\end{enumerate}
+\begin{solution}
+(1) 是双线性型，矩阵为 $\begin{pmatrix}1&1\\0&0\end{pmatrix}$，不对称。(2) 不是双线性型，因为 $B(0,y)=3\ne0$。(3) 是双线性型，并且
+\[
+\tr(XY)=\tr(YX),
+\]
+故对称。这里使用的是方阵乘积迹的循环性质。
+\end{solution}
+\end{exercise}
+
+\begin{exercise}[level=basic]
+用极化公式由 $Q(x_1,x_2)=x_1^2+4x_1x_2+7x_2^2$ 求对应的对称双线性型。
+\begin{solution}
+矩阵为 $A=\begin{pmatrix}1&2\\2&7\end{pmatrix}$，故
+\[
+B(x,y)=x_1y_1+2x_1y_2+2x_2y_1+7x_2y_2.
+\]
+也可把 $x+y$ 代入 $Q$ 后按 $[Q(x+y)-Q(x)-Q(y)]/2$ 展开。
+\end{solution}
+\end{exercise}
+
+\begin{exercise}[level=basic]
+证明矩阵相合是等价关系。
+\begin{solution}
+自反性：$A=I^{\mathsf T}AI$。对称性：若 $B=P^{\mathsf T}AP$，则 $A=(P^{-1})^{\mathsf T}BP^{-1}$。传递性：若另有 $C=Q^{\mathsf T}BQ$，则 $C=(PQ)^{\mathsf T}A(PQ)$。
+\end{solution}
+\end{exercise}
+
+\begin{exercise}[level=basic]
+将 $Q=3x_1^2+6x_1x_2+2x_2^2$ 用配方法化为对角形，并求正、负惯性指数。
+\begin{solution}
+\[
+Q=3(x_1+x_2)^2-x_2^2.
+\]
+令 $y_1=x_1+x_2,y_2=x_2$，得 $Q=3y_1^2-y_2^2$，故正、负惯性指数均为 $1$。
+\end{solution}
+\end{exercise}
+
+\begin{exercise}[level=basic]
+判断 $\diag(2,0,3)$、$\diag(-1,-2)$、$\diag(1,-1,0)$ 分别属于正定、半正定、负定、半负定或不定中的哪一类。
+\begin{solution}
+$\diag(2,0,3)$ 半正定但不正定；$\diag(-1,-2)$ 负定；$\diag(1,-1,0)$ 不定。
+\end{solution}
+\end{exercise}
+
+\begin{exercise}[level=standard]
+将
+\[
+Q=2x_1x_2+2x_1x_3+2x_2x_3
+\]
+化为规范形，并求秩和惯性指数。
+\begin{solution}
+令 $u=x_1+x_2$、$v=x_1-x_2$，则 $2x_1x_2=(u^2-v^2)/2$，而 $x_1+x_2=u$，故
+\[
+Q=\frac12u^2-\frac12v^2+2ux_3
+=\frac12(u+2x_3)^2-\frac12v^2-2x_3^2.
+\]
+三个非零平方项中一个为正、两个为负。规范形为 $z_1^2-z_2^2-z_3^2$，故 $\rank A=3$，$(p,q)=(1,2)$。
+\end{solution}
+\end{exercise}
+
+\begin{exercise}[level=standard]
+求实数 $a$ 的范围，使
+\[
+A=\begin{pmatrix}1&a&a\\a&1&a\\a&a&1\end{pmatrix}
+\]
+正定。
+\begin{solution}
+顺序主子式为
+\[
+\Delta_1=1,\qquad \Delta_2=1-a^2,\qquad
+\Delta_3=(1-a)^2(1+2a).
+\]
+要求 $|a|<1$ 且 $1+2a>0$；在 $|a|<1$ 时 $(1-a)^2>0$。故
+\[
+-\frac12<a<1.
+\]
+\end{solution}
+\end{exercise}
+
+\begin{exercise}[level=standard]
+设 $A$ 为实对称矩阵。证明若 $A>0$，则 $A^{-1}>0$。
+\begin{solution}
+对任意 $x\ne0$，令 $y=A^{-1}x\ne0$，则
+\[
+x^{\mathsf T}A^{-1}x=(Ay)^{\mathsf T}A^{-1}(Ay)=y^{\mathsf T}Ay>0,
+\]
+其中使用了 $A^{\mathsf T}=A$。故 $A^{-1}>0$。
+\end{solution}
+\end{exercise}
+
+\begin{exercise}[level=standard]
+设 $A>0$，$B>0$。判断 $AB$ 是否一定为对称正定矩阵；同时证明 $AB$ 的全部特征值均为正实数。
+\begin{solution}
+$AB$ 不一定对称，因为 $(AB)^{\mathsf T}=BA$，只有 $AB=BA$ 时才对称。由于 $A>0$，存在正定平方根 $A^{1/2}$。矩阵
+\[
+AB=A^{1/2}(A^{1/2}BA^{1/2})A^{-1/2}
+\]
+与对称正定矩阵 $A^{1/2}BA^{1/2}$ 相似，故 $AB$ 可对角化且所有特征值均为正实数。
+\end{solution}
+\end{exercise}
+
+\begin{exercise}[level=standard]
+在多项式空间 $P_2(\R)$ 上定义
+\[
+B(f,g)=f(0)g(0)+f(1)g(1)+f(-1)g(-1).
+\]
+求其在基 $(1,t,t^2)$ 下的 Gram 矩阵，并判断 $B$ 是否为内积。
+\begin{solution}
+在 $0,1,-1$ 三点上计算基函数值，得
+\[
+G=\begin{pmatrix}
+3&0&2\\
+0&2&0\\
+2&0&2
+\end{pmatrix}.
+\]
+其顺序主子式为 $3,6,4$，均为正，故 $G>0$，$B$ 为内积。也可直接说明：若 $B(f,f)=0$，则次数不超过 $2$ 的多项式在三个不同点均为零，只能是零多项式。
+\end{solution}
+\end{exercise}
+
+\begin{exercise}[level=standard]
+设双线性型在基 $\mathcal E$ 下的矩阵为
+\[
+G=\begin{pmatrix}2&1\\1&2\end{pmatrix},
+\]
+新基满足 $\widetilde{\mathcal E}=\mathcal E P$，其中
+\[
+P=\begin{pmatrix}1&1\\0&1\end{pmatrix}.
+\]
+求新基下的矩阵，并写出旧坐标与新坐标的关系。
+\begin{solution}
+\[
+\widetilde G=P^{\mathsf T}GP
+=\begin{pmatrix}2&3\\3&6\end{pmatrix}.
+\]
+若旧坐标为 $x$、新坐标为 $\widetilde x$，则
+\[
+x=P\widetilde x,\qquad \widetilde x=P^{-1}x.
+\]
+\end{solution}
+\end{exercise}
+
+\begin{exercise}[level=standard]
+设实对称矩阵 $A,B$ 相合。证明 $\rank A=\rank B$，并说明它们的行列式是否一定相等。
+\begin{solution}
+若 $B=P^{\mathsf T}AP$，则左右乘可逆矩阵不改变秩，故 $\rank B=\rank A$。行列式满足
+\[
+\det B=(\det P)^2\det A,
+\]
+因此不一定相等，但其是否为零以及非零时的符号保持不变。
+\end{solution}
+\end{exercise}
+
+\begin{exercise}[level=standard]
+不用求特征值，判断
+\[
+A=\begin{pmatrix}2&-1&0\\-1&2&-1\\0&-1&2\end{pmatrix}
+\]
+是否正定。
+\begin{solution}
+顺序主子式为
+\[
+\Delta_1=2,\qquad \Delta_2=3,\qquad \Delta_3=4.
+\]
+全部为正，故 $A$ 正定。
+\end{solution}
+\end{exercise}
+
+\begin{exercise}[level=advanced]
+证明：若二次型 $Q$ 的正惯性指数为 $p$，则满足 $Q|_{W\setminus\{0\}}>0$ 的子空间 $W$ 的最大维数恰为 $p$。
+\begin{solution}
+惯性定理给出坐标，使
+\[
+Q=y_1^2+\cdots+y_p^2-y_{p+1}^2-\cdots-y_{p+q}^2.
+\]
+前 $p$ 个坐标张成的子空间上 $Q$ 正定，故最大维数至少为 $p$。若 $W$ 的维数大于 $p$，从 $W$ 到前 $p$ 个坐标空间的投影必有非零核向量；该向量前 $p$ 个坐标全零，故 $Q\le0$，与 $Q|_{W\setminus\{0\}}>0$ 矛盾。因此最大维数恰为 $p$。
+\end{solution}
+\end{exercise}
+
+\begin{exercise}[level=advanced]
+设 $A$ 为 $m\times n$ 实矩阵。证明 $A^{\mathsf T}A$ 半正定，并证明
+\[
+\ker(A^{\mathsf T}A)=\ker A,\qquad \rank(A^{\mathsf T}A)=\rank A.
+\]
+何时 $A^{\mathsf T}A$ 正定？
+\begin{solution}
+对任意 $x$，
+\[
+x^{\mathsf T}A^{\mathsf T}Ax=\lVert Ax\rVert^2\ge0,
+\]
+故半正定。并且
+\[
+A^{\mathsf T}Ax=0\Rightarrow x^{\mathsf T}A^{\mathsf T}Ax=0
+\Rightarrow \lVert Ax\rVert^2=0\Rightarrow Ax=0.
+\]
+反向包含显然，故两核相等。由秩零度定理可得秩相等。$A^{\mathsf T}A$ 正定当且仅当 $\ker A=\{0\}$，即 $A$ 的列向量线性无关，亦即 $\rank A=n$。
+\end{solution}
+\end{exercise}
+
+\begin{exercise}[level=advanced]
+设 $A=A^{\mathsf T}$。证明存在可逆矩阵 $P$ 使 $P^{\mathsf T}AP=A$ 的矩阵构成一个群。若 $A=I_n$，该群是什么？
+\begin{solution}
+记
+\[
+O(A)=\{P\in GL_n(\R):P^{\mathsf T}AP=A\}.
+\]
+$I\in O(A)$。若 $P,Q\in O(A)$，则
+\[
+(PQ)^{\mathsf T}A(PQ)=Q^{\mathsf T}(P^{\mathsf T}AP)Q=Q^{\mathsf T}AQ=A.
+\]
+若 $P\in O(A)$，由 $P^{\mathsf T}AP=A$ 左右乘相应逆矩阵得 $(P^{-1})^{\mathsf T}AP^{-1}=A$。故它对乘法构成群。$A=I_n$ 时得到正交群 $O(n)$。
+\end{solution}
+\end{exercise}
+
+\begin{exercise}[level=advanced]
+设
+\[
+A(t)=\begin{pmatrix}
+1&t&0\\
+t&1&t\\
+0&t&1
+\end{pmatrix}.
+\]
+随参数 $t$ 的变化，求 $A(t)$ 的正、负、零惯性指数。
+\begin{solution}
+顺序主子式为
+\[
+\Delta_1=1,\qquad \Delta_2=1-t^2,\qquad \Delta_3=1-2t^2.
+\]
+也可直接求特征值 $1,1+\sqrt2t,1-\sqrt2t$。因此：
+\begin{enumerate}[label=(\arabic*)]
+\item $|t|<1/\sqrt2$ 时，惯性为 $(3,0,0)$；
+\item $|t|=1/\sqrt2$ 时，惯性为 $(2,0,1)$；
+\item $|t|>1/\sqrt2$ 时，一个特征值为负、两个为正，惯性为 $(2,1,0)$。
+\end{enumerate}
+\end{solution}
+\end{exercise}
+
+\begin{exercise}[level=advanced]
+给出一个 $3$ 阶实对称矩阵，使其所有对角元均为正，但矩阵不正定；并解释为什么只检查对角元不能判定正定性。
+\begin{solution}
+例如
+\[
+A=\begin{pmatrix}1&2&0\\2&1&0\\0&0&1\end{pmatrix}.
+\]
+其对角元均为正，但左上 $2$ 阶顺序主子式为 $1-4=-3<0$，故不正定；事实上取 $x=(1,-1,0)^{\mathsf T}$，有 $x^{\mathsf T}Ax=-2<0$。对角元只记录坐标轴方向上的取值，不能控制不同坐标同时非零时交叉项造成的符号变化。
+\end{solution}
+\end{exercise}
+
+\begin{exercise}[level=advanced]
+设 $B$ 是有限维实线性空间上的对称双线性型。证明：$B$ 非退化当且仅当它在任意一组基下的 Gram 矩阵可逆；并说明该性质为何与基无关。
+\begin{solution}
+定义线性映射 $T_B:V\to V^*$，$T_B(u)=B(u,\cdot)$。$B$ 非退化是指 $\ker T_B=\{0\}$。在任一组基及其对偶基下，$T_B$ 的矩阵正是 Gram 矩阵 $G$，故非退化等价于 $G$ 可逆。换基后 $\widetilde G=P^{\mathsf T}GP$，于是
+\[
+\det\widetilde G=(\det P)^2\det G.
+\]
+因 $P$ 可逆，$\det\widetilde G=0$ 当且仅当 $\det G=0$，故该性质与基无关。
+\end{solution}
+\end{exercise}
+
+\begin{exercise}[level=advanced]
+利用 Jacobi 惯性判据求矩阵
+\[
+A=\begin{pmatrix}
+1&2&0\\
+2&1&1\\
+0&1&-2
+\end{pmatrix}
+\]
+的正、负惯性指数。
+\begin{solution}
+顺序主子式为
+\[
+\Delta_0=1,\qquad \Delta_1=1,\qquad
+\Delta_2=-3,\qquad \Delta_3=5.
+\]
+数列 $1,1,-3,5$ 中有一次同号、两次异号，因此正惯性指数为 $1$，负惯性指数为 $2$。
+\end{solution}
+\end{exercise}
+
+\begin{exercise}[level=advanced]
+判断矩阵
+\[
+A=\begin{pmatrix}
+1&a\\
+a&b
+\end{pmatrix}
+\]
+半正定的充要条件。
+\begin{solution}
+二阶实对称矩阵半正定，当且仅当所有主子式非负。因此必须且只需
+\[
+1\ge0,\qquad b\ge0,\qquad b-a^2\ge0.
+\]
+第一个条件恒成立，而 $b-a^2\ge0$ 已蕴含 $b\ge0$，故充要条件为
+\[
+b\ge a^2.
+\]
+\end{solution}
+\end{exercise}
+
+\begin{exercise}[level=advanced]
+设 $B>0$，证明分块对称矩阵
+\[
+\begin{pmatrix}
+B&C\\
+C^{\mathsf T}&D
+\end{pmatrix}
+\]
+正定，当且仅当 $D-C^{\mathsf T}B^{-1}C>0$。
+\begin{solution}
+取
+\[
+P=\begin{pmatrix}I&-B^{-1}C\\0&I\end{pmatrix}.
+\]
+由于 $B>0$，矩阵 $B$ 可逆。直接计算得
+\[
+P^{\mathsf T}
+\begin{pmatrix}B&C\\C^{\mathsf T}&D\end{pmatrix}
+P
+=
+\begin{pmatrix}
+B&0\\
+0&D-C^{\mathsf T}B^{-1}C
+\end{pmatrix}.
+\]
+相合保持正定性，而右端分块对角矩阵正定当且仅当两个对角块均正定。已知 $B>0$，故原矩阵正定恰等价于其 Schur 补正定。
+\end{solution}
+\end{exercise}
+
+\begin{exercise}[level=advanced]
+在 $P_2(\R)$ 上定义
+\[
+B(f,g)=f(0)g(0)+f'(0)g'(0).
+\]
+求 $B$ 在基 $(1,t,t^2)$ 下的 Gram 矩阵、秩与根空间，并判断是否非退化。
+\begin{solution}
+设 $f=x_1+x_2t+x_3t^2$、$g=y_1+y_2t+y_3t^2$，则
+\[
+B(f,g)=x_1y_1+x_2y_2.
+\]
+故 Gram 矩阵为
+\[
+G=\diag(1,1,0).
+\]
+因此 $\rank B=2$。根空间对应 $\ker G$，所以
+\[
+\operatorname{rad}B=\operatorname{span}\{t^2\}.
+\]
+根空间非零，故 $B$ 退化。
+\end{solution}
+\end{exercise}
+
+\begin{exercise}[level=advanced]
+设 $A=A^{\mathsf T}\ge0$。证明
+\[
+\ker A=\ker A^{1/2},
+\qquad
+\rank A=\rank A^{1/2}.
+\]
+\begin{solution}
+由谱分解，存在正交矩阵 $U$ 使
+\[
+A=U\diag(\lambda_1,\ldots,\lambda_n)U^{\mathsf T},
+\quad
+A^{1/2}=U\diag(\sqrt{\lambda_1},\ldots,\sqrt{\lambda_n})U^{\mathsf T}.
+\]
+$\lambda_i=0$ 当且仅当 $\sqrt{\lambda_i}=0$，所以两个矩阵具有相同的零特征子空间，故核相同。由秩零度定理，它们的秩也相同。
+\end{solution}
+\end{exercise}
+
+\begin{exercise}[level=advanced]
+设
+\[
+A=\begin{pmatrix}2&1\\1&2\end{pmatrix}.
+\]
+求 Rayleigh 商的取值范围，并说明何时取得端点。
+\begin{solution}
+$A$ 的特征值为 $1,3$，对应特征向量可分别取 $(1,-1)^{\mathsf T}$ 与 $(1,1)^{\mathsf T}$。因此
+\[
+1\le R_A(x)\le3.
+\]
+当 $x$ 是 $(1,-1)^{\mathsf T}$ 的非零倍数时取最小值；当 $x$ 是 $(1,1)^{\mathsf T}$ 的非零倍数时取最大值。
+\end{solution}
+\end{exercise}
+
+\begin{exercise}[level=advanced]
+在 $\R^3$ 上定义
+\[
+B(x,y)=x_1y_1+x_2y_2-x_3y_3.
+\]
+取 $W=\operatorname{span}\{(1,0,1)^{\mathsf T}\}$，求 $W^{\perp_B}$，并判断 $V$ 是否等于 $W\oplus W^{\perp_B}$。
+\begin{solution}
+设 $v=(a,b,c)^{\mathsf T}$。条件 $v\in W^{\perp_B}$ 等价于
+\[
+B\bigl(v,(1,0,1)^{\mathsf T}\bigr)=a-c=0.
+\]
+故
+\[
+W^{\perp_B}
+=\operatorname{span}\{(1,0,1)^{\mathsf T},(0,1,0)^{\mathsf T}\}.
+\]
+可见 $W\subseteq W^{\perp_B}$，所以交集不为零，不能构成直和。这里
+\[
+B((1,0,1)^{\mathsf T},(1,0,1)^{\mathsf T})=0,
+\]
+即 $B$ 在 $W$ 上的限制是退化的。
+\end{solution}
+\end{exercise}
+

@@ -1,0 +1,338 @@
+% libre-compendium
+%
+% Copyright (C) 2026 Richard Qin
+%
+% This document is dual-licensed under either:
+% - GNU Free Documentation License, Version 1.3 or any later version
+%   published by the Free Software Foundation; with no Invariant Sections,
+%   no Front-Cover Texts, and no Back-Cover Texts (see COPYING.DOC); or
+% - Creative Commons Attribution-ShareAlike 4.0 International License
+%   (see LICENSE-CC-BY-SA-4.0).
+
+\chapter{非线性模型、梯度优化与全连接神经网络}
+
+本章只整理机器学习部分所需的基本数学结构。记训练数据为
+\[
+\{(x_i,y_i)\}_{i=1}^N,
+\qquad x_i\in\R^d.
+\]
+模型 $f_\theta$ 由参数 $\theta$ 决定，学习过程是通过最小化经验风险选择参数。
+
+\section{参数化模型、损失函数与经验风险}
+
+\begin{definition}[经验风险]
+若单个样本的损失为 $\ell(f_\theta(x_i),y_i)$，则经验风险为
+\[
+L(\theta)=\frac1N\sum_{i=1}^N
+\ell(f_\theta(x_i),y_i).
+\]
+带正则项的目标常写为
+\[
+L_\lambda(\theta)=L(\theta)+\lambda\Omega(\theta),
+\qquad \lambda\ge0.
+\]
+\end{definition}
+
+回归任务的平方损失是
+\[
+\ell(\widehat y,y)=\frac12(\widehat y-y)^2.
+\]
+对二分类，令
+\[
+p_\theta(y=1\mid x)=\sigma(z),
+\qquad
+z=w^{\mathsf T}x+b,
+\qquad
+\sigma(z)=\frac1{1+e^{-z}}.
+\]
+对 $y\in\{0,1\}$，负对数似然即二元交叉熵：
+\[
+\ell(z,y)
+=-y\log\sigma(z)-(1-y)\log(1-\sigma(z)).
+\]
+
+\begin{proposition}[Logistic 交叉熵的梯度]
+\[
+\frac{\partial\ell}{\partial z}=\sigma(z)-y.
+\]
+因此
+\[
+\nabla_w\ell=(\sigma(z)-y)x,
+\qquad
+\frac{\partial\ell}{\partial b}=\sigma(z)-y.
+\]
+\end{proposition}
+\begin{proof}
+$\sigma'(z)=\sigma(z)(1-\sigma(z))$。因此
+\begin{align*}
+\frac{\partial\ell}{\partial z}
+&=-\frac{y}{\sigma(z)}\sigma'(z)
++\frac{1-y}{1-\sigma(z)}\sigma'(z)\\
+&=-y(1-\sigma(z))+(1-y)\sigma(z)\\
+&=\sigma(z)-y.
+\end{align*}
+再使用 $\nabla_wz=x$、$\partial z/\partial b=1$ 即得。
+\end{proof}
+
+\section{Softmax 回归与多分类交叉熵}
+
+\begin{definition}[Softmax]
+对 $z\in\R^K$，定义
+\[
+\widehat y_k
+=\operatorname{softmax}(z)_k
+=\frac{e^{z_k}}{\sum_{j=1}^Ke^{z_j}}.
+\]
+若真实标签用 one-hot 向量 $y$ 表示，则交叉熵为
+\[
+\ell(z,y)=-\sum_{k=1}^Ky_k\log\widehat y_k.
+\]
+\end{definition}
+
+\begin{proposition}[Softmax 的 Jacobian]
+\[
+\frac{\partial\widehat y_i}{\partial z_j}
+=\widehat y_i(\delta_{ij}-\widehat y_j).
+\]
+矩阵形式为
+\[
+J_{\mathrm{softmax}}(z)
+=\diag(\widehat y)-\widehat y\widehat y^{\mathsf T}.
+\]
+\end{proposition}
+
+\begin{theorem}[Softmax 与交叉熵的合成梯度]
+若 $\sum_ky_k=1$，则
+\[
+\boxed{\nabla_z\ell=\widehat y-y.}
+\]
+\end{theorem}
+\begin{proof}
+由
+\[
+\log\widehat y_k=z_k-
+\log\left(\sum_je^{z_j}\right),
+\]
+有
+\[
+\ell=-y^{\mathsf T}z+
+\log\left(\sum_je^{z_j}\right).
+\]
+第二项对 $z$ 的梯度是 $\widehat y$，故结论成立。
+\end{proof}
+
+\begin{pitfall}[Softmax 的数值稳定计算]
+直接计算 $e^{z_k}$ 可能溢出。Softmax 对所有分量同时加上同一常数不变，因此应使用
+\[
+\widehat y_k
+=\frac{e^{z_k-c}}{\sum_je^{z_j-c}},
+\qquad c=\max_jz_j.
+\]
+\end{pitfall}
+
+\section{梯度下降与随机梯度下降}
+
+\begin{definition}[梯度下降]
+对可微目标 $L(\theta)$，梯度下降迭代为
+\[
+\theta_{t+1}=\theta_t-\eta_t\nabla L(\theta_t),
+\]
+其中 $\eta_t>0$ 为学习率。
+\end{definition}
+
+负梯度是单位长度下的最速下降方向。对 $\lVert d\rVert_2=1$，方向导数为
+\[
+D_dL(\theta)=\nabla L(\theta)^{\mathsf T}d.
+\]
+由 Cauchy--Schwarz 不等式，它的最小值在
+$d=-\nabla L/\lVert\nabla L\rVert$ 时取到。
+
+\begin{theorem}[光滑函数的下降引理]
+若 $\nabla L$ 是 $\beta$-Lipschitz 的，即
+\[
+\lVert\nabla L(u)-\nabla L(v)\rVert
+\le\beta\lVert u-v\rVert,
+\]
+则
+\[
+L(v)\le L(u)+\nabla L(u)^{\mathsf T}(v-u)
++\frac\beta2\lVert v-u\rVert^2.
+\]
+取 $v=u-\eta\nabla L(u)$，得
+\[
+L(v)\le L(u)-\eta\left(1-\frac{\beta\eta}{2}\right)
+\lVert\nabla L(u)\rVert^2.
+\]
+因此 $0<\eta<2/\beta$ 时，非驻点上保证一步下降。
+\end{theorem}
+
+\begin{definition}[小批量随机梯度下降]
+从样本中抽取小批量 $B_t$，令
+\[
+g_t=\frac1{|B_t|}\sum_{i\in B_t}\nabla\ell_i(\theta_t),
+\qquad
+\theta_{t+1}=\theta_t-\eta_tg_t.
+\]
+若样本均匀抽取，则在给定 $\theta_t$ 时
+\[
+\mathbb E[g_t\mid\theta_t]=\nabla L(\theta_t).
+\]
+\end{definition}
+
+随机梯度的方差使单步损失不必单调下降，因此不能把确定性梯度下降的每步下降结论直接套用于 SGD。
+
+\section{人工神经元与激活函数}
+
+\begin{definition}[人工神经元]
+神经元先计算仿射变换
+\[
+z=w^{\mathsf T}x+b,
+\]
+再输出 $a=\phi(z)$，其中 $\phi$ 是激活函数。
+\end{definition}
+
+常见激活函数包括
+\[
+\sigma(z)=\frac1{1+e^{-z}},
+\qquad
+\tanh z=\frac{e^z-e^{-z}}{e^z+e^{-z}},
+\]
+\[
+\operatorname{ReLU}(z)=\max\{0,z\},
+\qquad
+\operatorname{LeakyReLU}(z)=\max\{\alpha z,z\},
+\quad 0<\alpha<1.
+\]
+Sigmoid 和 $\tanh$ 在大绝对值区域导数趋近零，深层网络中可能造成梯度消失。ReLU 在 $z=0$ 处不可导，优化中通常选定一个次梯度值；它在负半轴导数为零，可能产生长期不激活的神经元。
+
+\begin{proposition}[非线性激活的必要性]
+若多层网络的每一层都不使用非线性激活，则整个网络仍只是一个仿射变换。
+\end{proposition}
+\begin{proof}
+两层仿射变换的复合为
+\[
+W_2(W_1x+b_1)+b_2
+=(W_2W_1)x+(W_2b_1+b_2),
+\]
+仍为仿射变换。对层数归纳即得一般结论。
+\end{proof}
+
+\section{全连接前馈网络}
+
+设第 $0$ 层为输入 $a^{(0)}=x$。对 $\ell=1,\ldots,L$，定义
+\[
+z^{(\ell)}=W^{(\ell)}a^{(\ell-1)}+b^{(\ell)},
+\qquad
+a^{(\ell)}=\phi_\ell(z^{(\ell)}).
+\]
+若每个层内单元与前一层的所有输出相连，则称为全连接前馈网络。对一批样本，可把样本作为矩阵的列，使用
+\[
+Z^{(\ell)}=W^{(\ell)}A^{(\ell-1)}
++b^{(\ell)}\mathbf1^{\mathsf T}
+\]
+同时计算整个小批量。
+
+\begin{theorem}[通用逼近定理，非严格表述]
+在适当的非线性激活函数条件下，含有一个隐藏层且神经元数允许充分大的前馈网络，可在紧集上以任意给定精度逼近连续函数。
+\end{theorem}
+
+该定理只是表达性结论，不保证所需神经元数较少，也不保证梯度方法能找到相应参数。深度的主要作用在于用逐层复合表示具有层次结构的函数。
+
+\section{反向传播}
+
+反向传播是链式法则在计算图上的高效组织方式。对单个样本，定义
+\[
+\delta^{(\ell)}
+=\frac{\partial\mathcal L}{\partial z^{(\ell)}}.
+\]
+
+\begin{theorem}[全连接网络的反向传播公式]
+若激活函数逐元素作用，则对
+$\ell=L-1,\ldots,1$，
+\[
+\delta^{(\ell)}
+=\left((W^{(\ell+1)})^{\mathsf T}
+\delta^{(\ell+1)}\right)
+\odot\phi_\ell'(z^{(\ell)}),
+\]
+并且
+\[
+\frac{\partial\mathcal L}{\partial W^{(\ell)}}
+=\delta^{(\ell)}(a^{(\ell-1)})^{\mathsf T},
+\qquad
+\frac{\partial\mathcal L}{\partial b^{(\ell)}}
+=\delta^{(\ell)}.
+\]
+其中 $\odot$ 表示逐元素乘法。
+\end{theorem}
+\begin{proof}
+由
+$z^{(\ell+1)}=W^{(\ell+1)}a^{(\ell)}+b^{(\ell+1)}$，
+\[
+\frac{\partial\mathcal L}{\partial a^{(\ell)}}
+=(W^{(\ell+1)})^{\mathsf T}\delta^{(\ell+1)}.
+\]
+又 $a^{(\ell)}=\phi_\ell(z^{(\ell)})$，其 Jacobian 为对角矩阵，故得到 $\delta^{(\ell)}$ 的递推式。对参数，
+\[
+dz^{(\ell)}=(dW^{(\ell)})a^{(\ell-1)}+db^{(\ell)}.
+\]
+将 $d\mathcal L=(\delta^{(\ell)})^{\mathsf T}dz^{(\ell)}$ 改写为迹内积形式，即得参数梯度。
+\end{proof}
+
+\begin{example}[title={两层网络的梯度}]
+设
+\[
+z^{(1)}=W^{(1)}x+b^{(1)},
+\quad
+a^{(1)}=\phi(z^{(1)}),
+\quad
+z^{(2)}=W^{(2)}a^{(1)}+b^{(2)},
+\]
+输出经 Softmax 后使用交叉熵。写出梯度。
+\begin{solution}
+输出层有
+\[
+\delta^{(2)}=\widehat y-y.
+\]
+隐藏层有
+\[
+\delta^{(1)}
+=((W^{(2)})^{\mathsf T}\delta^{(2)})
+\odot\phi'(z^{(1)}).
+\]
+因此
+\[
+\nabla_{W^{(2)}}\mathcal L
+=\delta^{(2)}(a^{(1)})^{\mathsf T},
+\qquad
+\nabla_{b^{(2)}}\mathcal L=\delta^{(2)},
+\]
+\[
+\nabla_{W^{(1)}}\mathcal L
+=\delta^{(1)}x^{\mathsf T},
+\qquad
+\nabla_{b^{(1)}}\mathcal L=\delta^{(1)}.
+\]
+\end{solution}
+\end{example}
+
+\section{初始化、梯度消失与过拟合}
+
+反向传播中连续出现权重矩阵转置和激活导数的乘积。若这些因子的典型奇异值持续小于 $1$，梯度可能指数衰减；持续大于 $1$ 则可能爆炸。
+
+对输入维数为 $n_{\mathrm{in}}$ 的层，常见初始化使权重方差与输入维数成反比：
+\[
+\operatorname{Var}(W_{ij})\approx\frac{2}{n_{\mathrm{in}}+n_{\mathrm{out}}}
+\quad\text{(Xavier)},
+\]
+\[
+\operatorname{Var}(W_{ij})\approx\frac{2}{n_{\mathrm{in}}}
+\quad\text{(He，常用于 ReLU)}.
+\]
+这些尺度的目的是让前向激活和反向梯度的方差不至于层层放大或缩小。
+
+参数量大于样本量不意味着必然过拟合。泛化行为还受数据结构、模型结构、显式正则化、数据增强、早停以及优化算法的隐式偏置影响。同时，训练误差较小也不能单独证明泛化性能较好，必须使用独立验证集或测试集评估。
+
+\begin{summary}[本章知识链]
+参数化模型把预测问题转化为经验风险最小化；交叉熵与 Logistic、Softmax 的组合产生简洁的输出梯度。梯度下降使用局部一阶信息更新参数，SGD 用有噪声的无偏估计降低单步代价。全连接网络由仿射变换和非线性激活逐层复合，反向传播则把链式法则组织成从输出层到输入层的递推计算。
+\end{summary}

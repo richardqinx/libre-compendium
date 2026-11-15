@@ -1,0 +1,677 @@
+% libre-compendium
+%
+% Copyright (C) 2026 Richard Qin
+%
+% This document is dual-licensed under either:
+% - GNU Free Documentation License, Version 1.3 or any later version
+%   published by the Free Software Foundation; with no Invariant Sections,
+%   no Front-Cover Texts, and no Back-Cover Texts (see COPYING.DOC); or
+% - Creative Commons Attribution-ShareAlike 4.0 International License
+%   (see LICENSE-CC-BY-SA-4.0).
+
+% Exercises migrated from problems05.tex and solutions05.tex.
+\begin{exercise}[level=basic]
+设 $f(x)=x^{\mathsf T}Ax+b^{\mathsf T}x+c$，不假设 $A$ 对称。求 $\nabla f(x)$ 和 Hessian。
+\begin{solution}
+对标量求微分：
+\begin{align*}
+df
+&=(dx)^{\mathsf T}Ax+x^{\mathsf T}A(dx)+b^{\mathsf T}dx\\
+&=x^{\mathsf T}A^{\mathsf T}dx+x^{\mathsf T}A,dx+b^{\mathsf T}dx.
+\end{align*}
+因此
+\[
+\nabla f(x)=(A+A^{\mathsf T})x+b,
+\qquad
+\nabla^2f=A+A^{\mathsf T}.
+\]
+\end{solution}
+\end{exercise}
+
+\begin{exercise}[level=basic]
+设 $f(X)=\tr(A^{\mathsf T}X)+\frac12\lVert X\rVert_F^2$。求 $\nabla_Xf$，并求使 $f$ 最小的 $X$。
+\begin{solution}
+\[
+df=\tr(A^{\mathsf T}dX)+\tr(X^{\mathsf T}dX)
+=\tr((A+X)^{\mathsf T}dX),
+\]
+故 $\nabla_Xf=A+X$。令梯度为零得 $X=-A$。由于二次项为
+$\frac12\lVert X\rVert_F^2$，目标函数严格凸，故这是唯一最小点。
+\end{solution}
+\end{exercise}
+
+\begin{exercise}[level=basic]
+对 $f(x)=\frac12\lVert Ax-b\rVert_2^2$，从微分定义推导梯度和 Hessian，并说明 $A$ 列满秩时为何存在唯一最小点。
+\begin{solution}
+令 $r=Ax-b$，则 $dr=A,dx$，从而
+\[
+df=r^{\mathsf T}dr=(Ax-b)^{\mathsf T}A,dx.
+\]
+故
+\[
+\nabla f=A^{\mathsf T}(Ax-b),
+\qquad
+\nabla^2f=A^{\mathsf T}A.
+\]
+若 $A$ 列满秩，则对 $h\ne0$，
+\[
+h^{\mathsf T}A^{\mathsf T}Ah=\lVert Ah\rVert^2>0.
+\]
+因此 Hessian 正定，$f$ 严格凸，正规方程的解是唯一最小点。
+\end{solution}
+\end{exercise}
+
+\begin{exercise}[level=basic]
+设 $Y=AXB+C$。写出 $\operatorname{vec}(Y)$ 关于 $\operatorname{vec}(X)$ 的 Jacobian，并标明它的尺寸。
+\begin{solution}
+若 $A\in\R^{p\times m}$、$X\in\R^{m\times n}$、$B\in\R^{n\times q}$，则
+\[
+\operatorname{vec}(Y)
+=(B^{\mathsf T}\otimes A)\operatorname{vec}(X)
++\operatorname{vec}(C).
+\]
+因此 Jacobian 为
+\[
+B^{\mathsf T}\otimes A\in\R^{pq\times mn}.
+\]
+\end{solution}
+\end{exercise}
+
+\begin{exercise}[level=basic]
+设
+\[
+A=\begin{pmatrix}1&0\\0&0\end{pmatrix}.
+\]
+验证
+\[
+G=\begin{pmatrix}1&a\\b&c\end{pmatrix}
+\]
+对任意 $a,b,c\in\R$ 都是 $A$ 的一般广义逆。求其中唯一的 Moore--Penrose 逆。
+\begin{solution}
+直接计算
+\[
+AGA
+=\begin{pmatrix}1&0\\0&0\end{pmatrix}
+\begin{pmatrix}1&a\\b&c\end{pmatrix}
+\begin{pmatrix}1&0\\0&0\end{pmatrix}
+=A.
+\]
+因此所给 $G$ 都是一般广义逆。由 $A$ 已是奇异值对角形，其 Moore--Penrose 逆为
+\[
+A^+=\begin{pmatrix}1&0\\0&0\end{pmatrix}.
+\]
+也可由 Penrose 方程推出 $a=b=c=0$。
+\end{solution}
+\end{exercise}
+
+\begin{exercise}[level=basic]
+求
+\[
+A=\begin{pmatrix}1&1\\1&1\end{pmatrix}
+\]
+的 Moore--Penrose 逆，并计算 $AA^+$ 和 $A^+A$。
+\begin{solution}
+写成 $A=uu^{\mathsf T}$，其中 $u=(1,1)^{\mathsf T}$。秩一矩阵公式给出
+\[
+A^+=\frac{uu^{\mathsf T}}{\lVert u\rVert^4}
+=\frac14\begin{pmatrix}1&1\\1&1\end{pmatrix}.
+\]
+从而
+\[
+AA^+=A^+A
+=\frac12\begin{pmatrix}1&1\\1&1\end{pmatrix},
+\]
+它是到 $\operatorname{span}\{(1,1)^{\mathsf T}\}$ 的正交投影。
+\end{solution}
+\end{exercise}
+
+\begin{exercise}[level=standard]
+设
+\[
+f(X)=\frac12\lVert AXB-C\rVert_F^2
++\frac\lambda2\lVert X\rVert_F^2,
+\qquad \lambda>0.
+\]
+求 $\nabla_Xf$，并写出驻点满足的矩阵方程。
+\begin{solution}
+令 $R=AXB-C$。由 $dR=A(dX)B$，
+\[
+df=\tr(R^{\mathsf T}A(dX)B)
++\lambda\tr(X^{\mathsf T}dX).
+\]
+因此
+\[
+\nabla_Xf=A^{\mathsf T}(AXB-C)B^{\mathsf T}+\lambda X.
+\]
+驻点满足
+\[
+A^{\mathsf T}AXB B^{\mathsf T}+\lambda X
+=A^{\mathsf T}CB^{\mathsf T}.
+\]
+\end{solution}
+\end{exercise}
+
+\begin{exercise}[level=standard]
+设 $X$ 可逆，
+\[
+f(X)=\log|\det X|+\tr(CX^{-1}).
+\]
+求 $\nabla_Xf$。
+\begin{solution}
+\[
+d\log|\det X|=\tr(X^{-1}dX).
+\]
+又
+\[
+d\tr(CX^{-1})
+=-\tr(CX^{-1}(dX)X^{-1})
+=-\tr(X^{-1}CX^{-1}dX).
+\]
+故
+\[
+\nabla_Xf
+=X^{-\mathsf T}-X^{-\mathsf T}C^{\mathsf T}X^{-\mathsf T}.
+\]
+\end{solution}
+\end{exercise}
+
+\begin{exercise}[level=standard]
+设 $A,B,C$ 为给定方阵。把 Sylvester 方程
+\[
+AX+XB=C
+\]
+化为关于 $\operatorname{vec}(X)$ 的线性方程组。
+\begin{solution}
+利用 Vec 恒等式，
+\[
+\operatorname{vec}(AX)=(I\otimes A)\operatorname{vec}(X),
+\]
+\[
+\operatorname{vec}(XB)=(B^{\mathsf T}\otimes I)\operatorname{vec}(X).
+\]
+因此
+\[
+\bigl(I\otimes A+B^{\mathsf T}\otimes I\bigr)
+\operatorname{vec}(X)=\operatorname{vec}(C).
+\]
+\end{solution}
+\end{exercise}
+
+\begin{exercise}[level=standard]
+求方程
+\[
+\begin{pmatrix}1&1&0\\0&1&1\end{pmatrix}x
+=\begin{pmatrix}1\\1\end{pmatrix}
+\]
+的最小范数解。
+\begin{solution}
+矩阵 $A$ 行满秩，所以最小范数解为
+\[
+x_*=A^{\mathsf T}(AA^{\mathsf T})^{-1}b.
+\]
+计算
+\[
+AA^{\mathsf T}=\begin{pmatrix}2&1\\1&2\end{pmatrix},
+\qquad
+(AA^{\mathsf T})^{-1}b
+=\frac13\begin{pmatrix}2&-1\\-1&2\end{pmatrix}
+\begin{pmatrix}1\\1\end{pmatrix}
+=\begin{pmatrix}1/3\\1/3\end{pmatrix}.
+\]
+因此
+\[
+x_*=\begin{pmatrix}1/3\\2/3\\1/3\end{pmatrix}.
+\]
+\end{solution}
+\end{exercise}
+
+\begin{exercise}[level=standard]
+设
+\[
+A=\begin{pmatrix}1&0\\0&0\\0&0\end{pmatrix},
+\qquad
+b=\begin{pmatrix}2\\1\\-1\end{pmatrix}.
+\]
+求全部最小二乘解、最小范数最小二乘解和最小残差。
+\begin{solution}
+\[
+A^+=\begin{pmatrix}1&0&0\\0&0&0\end{pmatrix},
+\qquad
+A^+b=\begin{pmatrix}2\\0\end{pmatrix}.
+\]
+又 $\ker A=\operatorname{span}\{(0,1)^{\mathsf T}\}$，故全部最小二乘解为
+\[
+x=\begin{pmatrix}2\\t\end{pmatrix},
+\qquad t\in\R.
+\]
+其中最小范数解为 $(2,0)^{\mathsf T}$。投影预测为
+\[
+AA^+b=(2,0,0)^{\mathsf T},
+\]
+残差为 $(0,-1,1)^{\mathsf T}$，最小残差范数为 $\sqrt2$。
+\end{solution}
+\end{exercise}
+
+\begin{exercise}[level=standard]
+设 $P^2=P$。证明
+\[
+\R^n=\operatorname{Im}P\oplus\ker P.
+\]
+再证明 $P$ 是正交投影当且仅当 $P=P^{\mathsf T}$。
+\begin{solution}
+对任意 $x$，
+\[
+x=Px+(I-P)x.
+\]
+其中 $Px\in\operatorname{Im}P$，而
+\[
+P(I-P)x=(P-P^2)x=0,
+\]
+故 $(I-P)x\in\ker P$。若 $y\in\operatorname{Im}P\cap\ker P$，则 $y=Pz$ 且 $Py=0$，但
+$Py=P^2z=Pz=y$，故 $y=0$。因此直和成立。
+
+若 $P=P^{\mathsf T}$，对 $u=Px\in\operatorname{Im}P$、$v\in\ker P$，
+\[
+u^{\mathsf T}v=x^{\mathsf T}P^{\mathsf T}v=x^{\mathsf T}Pv=0,
+\]
+故两个子空间正交，$P$ 为正交投影。反之，正交投影在标准正交基下可写成 $Q\diag(I_r,0)Q^{\mathsf T}$，因而对称。
+\end{solution}
+\end{exercise}
+
+\begin{exercise}[level=standard]
+设 $A\in\R^{m\times n}$。证明
+\[
+\operatorname{Im}A^+=\operatorname{Im}A^{\mathsf T},
+\qquad
+\ker A^+=\ker A^{\mathsf T}.
+\]
+\begin{solution}
+由 SVD $A=U\Sigma V^{\mathsf T}$，
+\[
+A^+=V\Sigma^+U^{\mathsf T}.
+\]
+$A^+$ 的像空间由 $V$ 中对应非零奇异值的右奇异向量张成，这正是 $\operatorname{Im}A^{\mathsf T}$。$A^+$ 的核由 $U$ 中对应零奇异值的向量张成，这正是
+$\ker A^{\mathsf T}$。
+\end{solution}
+\end{exercise}
+
+\begin{exercise}[level=standard]
+设 $A$ 列满秩。证明
+\[
+P=A(A^{\mathsf T}A)^{-1}A^{\mathsf T}
+\]
+是到 $\operatorname{Im}A$ 的正交投影，并证明该正交投影与 $\operatorname{Im}A$ 的基的选择无关。
+\begin{solution}
+计算
+\[
+P^2=A(A^{\mathsf T}A)^{-1}A^{\mathsf T}A
+(A^{\mathsf T}A)^{-1}A^{\mathsf T}=P,
+\]
+且 $P^{\mathsf T}=P$，故 $P$ 是正交投影。其像包含于 $\operatorname{Im}A$，而对 $y=Ac$，
+\[
+Py=A(A^{\mathsf T}A)^{-1}A^{\mathsf T}Ac=Ac=y,
+\]
+故像正是 $\operatorname{Im}A$。若 $B=AR$ 是同一列空间的另一组基，$R$ 可逆，则
+\[
+B(B^{\mathsf T}B)^{-1}B^{\mathsf T}
+=AR(R^{\mathsf T}A^{\mathsf T}AR)^{-1}R^{\mathsf T}A^{\mathsf T}
+=A(A^{\mathsf T}A)^{-1}A^{\mathsf T}.
+\]
+\end{solution}
+\end{exercise}
+
+\begin{exercise}[level=advanced]
+设 $A=U\Sigma V^{\mathsf T}$ 为 SVD。不直接引用结论，验证
+$A^+=V\Sigma^+U^{\mathsf T}$ 满足四个 Penrose 方程。
+\begin{solution}
+利用 $U^{\mathsf T}U=I$、$V^{\mathsf T}V=I$，
+\[
+AA^+A
+=U\Sigma\Sigma^+\Sigma V^{\mathsf T}
+=U\Sigma V^{\mathsf T}=A,
+\]
+\[
+A^+AA^+
+=V\Sigma^+\Sigma\Sigma^+U^{\mathsf T}=A^+.
+\]
+又
+\[
+AA^+=U(\Sigma\Sigma^+)U^{\mathsf T},
+\qquad
+A^+A=V(\Sigma^+\Sigma)V^{\mathsf T}.
+\]
+$\Sigma\Sigma^+$ 和 $\Sigma^+\Sigma$ 均为只含 $0,1$ 的对角矩阵，所以上述两矩阵均对称。四个 Penrose 方程全部成立。
+\end{solution}
+\end{exercise}
+
+\begin{exercise}[level=advanced]
+证明对任意 $b$，正规方程
+\[
+A^{\mathsf T}Ax=A^{\mathsf T}b
+\]
+总有解，并证明它的解集正是最小二乘解集。
+\begin{solution}
+$A^{\mathsf T}Ax=A^{\mathsf T}b$ 等价于
+\[
+A^{\mathsf T}(b-Ax)=0,
+\]
+即残差 $b-Ax$ 与 $\operatorname{Im}A$ 正交。正交投影定理保证存在 $y=P_{\operatorname{Im}A}b\in\operatorname{Im}A$，因此可取 $x$ 使 $Ax=y$，这证明正规方程总有解。
+
+对任意 $x$，把残差分解为
+\[
+b-Ax=(b-y)+(y-Ax),
+\]
+其中第一项属于 $(\operatorname{Im}A)^\perp$，第二项属于 $\operatorname{Im}A$。故
+\[
+\lVert b-Ax\rVert^2
+=\lVert b-y\rVert^2+\lVert y-Ax\rVert^2.
+\]
+最小值当且仅当 $Ax=y$，即当且仅当正规方程成立时取到。
+\end{solution}
+\end{exercise}
+
+\begin{exercise}[level=advanced]
+设 $A$ 的非零奇异值为 $\sigma_1,\ldots,\sigma_r$。证明 Tikhonov 解
+\[
+x_\lambda=(A^{\mathsf T}A+\lambda I)^{-1}A^{\mathsf T}b
+\]
+在 $\lambda\downarrow0$ 时收敛到 $A^+b$，并解释系数
+$\sigma_i/(\sigma_i^2+\lambda)$ 如何抑制小奇异值方向。
+\begin{solution}
+由 SVD，
+\[
+x_\lambda
+=V\diag\left(
+\frac{\sigma_1}{\sigma_1^2+\lambda},\ldots,
+\frac{\sigma_r}{\sigma_r^2+\lambda},0,\ldots,0
+\right)U^{\mathsf T}b.
+\]
+对每个 $\sigma_i>0$，
+\[
+\frac{\sigma_i}{\sigma_i^2+\lambda}
+\longrightarrow\frac1{\sigma_i},
+\]
+故 $x_\lambda\to V\Sigma^+U^{\mathsf T}b=A^+b$。与伪逆系数 $1/\sigma_i$ 相比，
+\[
+\frac{\sigma_i}{\sigma_i^2+\lambda}
+=\frac1{\sigma_i}\frac{\sigma_i^2}{\sigma_i^2+\lambda}.
+\]
+当 $\sigma_i^2\ll\lambda$ 时，后一因子很小，因而对容易放大噪声的小奇异值方向进行衰减。
+\end{solution}
+\end{exercise}
+
+\begin{exercise}[level=advanced]
+给出一个满足 $P^2=P$ 但 $P\ne P^{\mathsf T}$ 的 $2\times2$ 矩阵，说明它的像空间和核空间，并解释为何它不是正交投影。
+\begin{solution}
+可取
+\[
+P=\begin{pmatrix}1&1\\0&0\end{pmatrix}.
+\]
+有 $P^2=P$，但 $P\ne P^{\mathsf T}$。其像空间为
+$\operatorname{span}\{(1,0)^{\mathsf T}\}$，核空间由方程 $x_1+x_2=0$ 给出，即
+$\operatorname{span}\{(1,-1)^{\mathsf T}\}$。这两个子空间不正交，所以 $P$ 是沿核空间方向的斜投影，不是正交投影。
+\end{solution}
+\end{exercise}
+
+\begin{exercise}[level=advanced]
+设
+\[
+A=\begin{pmatrix}1\\1\end{pmatrix},
+\quad b=\begin{pmatrix}1\\3\end{pmatrix},
+\quad W=\begin{pmatrix}1&0\\0&4\end{pmatrix}.
+\]
+求 $\min_x(Ax-b)^{\mathsf T}W(Ax-b)$ 的解，并验证残差与 $\operatorname{Im}A$ 在 $W$-内积下正交。
+\begin{solution}
+加权正规方程为
+\[
+A^{\mathsf T}WAx=A^{\mathsf T}Wb.
+\]
+由 $A^{\mathsf T}WA=5$、$A^{\mathsf T}Wb=13$，得
+$x_*=13/5$。取残差 $r=b-Ax_*$，则
+\[
+r=\begin{pmatrix}-8/5\\2/5\end{pmatrix},
+\qquad
+A^{\mathsf T}Wr
+=\begin{pmatrix}1&1\end{pmatrix}
+\begin{pmatrix}1&0\\0&4\end{pmatrix}
+\begin{pmatrix}-8/5\\2/5\end{pmatrix}=0.
+\]
+故 $r$ 与列空间在 $W$-内积下正交。
+\end{solution}
+\end{exercise}
+
+\begin{exercise}[level=advanced]
+用 KKT 方程求解
+\[
+\min_{x\in\R^2}\frac12\lVert x\rVert_2^2,
+\qquad x_1+x_2=1.
+\]
+\begin{solution}
+KKT 方程为
+\[
+\begin{pmatrix}1&0&1\\0&1&1\\1&1&0\end{pmatrix}
+\begin{pmatrix}x_1\\x_2\\\lambda\end{pmatrix}
+=\begin{pmatrix}0\\0\\1\end{pmatrix}.
+\]
+前两式给出 $x_1=x_2=-\lambda$，代入约束得
+\[
+x_1=x_2=\frac12,
+\qquad \lambda=-\frac12.
+\]
+\end{solution}
+\end{exercise}
+
+\begin{exercise}[level=advanced]
+设 $P^2=P$。证明 $P$ 的特征值只能为 $0,1$，并推出
+$\rank P=\tr P$。
+\begin{solution}
+若 $Pv=\lambda v$ 且 $v\ne0$，则
+\[
+\lambda^2v=P^2v=Pv=\lambda v,
+\]
+故 $\lambda\in\{0,1\}$。又 $P$ 的最小多项式整除 $t(t-1)$，所以 $P$ 可对角化。对角形中 $1$ 的个数同时等于秩和迹，因此
+$\rank P=\tr P$。
+\end{solution}
+\end{exercise}
+
+\begin{exercise}[level=advanced]
+设 $A=A^{\mathsf T}$ 的单重最大特征值为 $\lambda_1$，对应单位特征向量为 $u_1$。证明
+\[
+\left.\frac{d}{dt}\lambda_{\max}(A+tE)\right|_{t=0}
+=u_1^{\mathsf T}Eu_1.
+\]
+并对
+\[
+A=\begin{pmatrix}2&0\\0&1\end{pmatrix},
+\qquad E=\begin{pmatrix}1&2\\2&0\end{pmatrix}
+\]
+计算该导数。
+\begin{solution}
+对 $(A+tE)u(t)=\lambda(t)u(t)$ 在 $t=0$ 处求导：
+\[
+Eu_1+Au'(0)=\lambda'(0)u_1+\lambda_1u'(0).
+\]
+左乘 $u_1^{\mathsf T}$，利用
+$u_1^{\mathsf T}A=\lambda_1u_1^{\mathsf T}$，得
+\[
+\lambda'(0)=u_1^{\mathsf T}Eu_1.
+\]
+题给矩阵的 $u_1=(1,0)^{\mathsf T}$，故导数为
+$E_{11}=1$。
+\end{solution}
+\end{exercise}
+
+\begin{exercise}[level=advanced]
+考察 $A_\varepsilon=\diag(1,\varepsilon)$。求 $A_\varepsilon^+$，并说明为何 $A\mapsto A^+$ 在秩发生变化时可能不连续。
+\begin{solution}
+当 $\varepsilon\ne0$ 时，
+\[
+A_\varepsilon^+=A_\varepsilon^{-1}
+=\diag(1,1/\varepsilon).
+\]
+当 $\varepsilon=0$ 时，$A_0^+=\diag(1,0)$。虽然
+$A_\varepsilon\to A_0$，但
+\[
+\lVert A_\varepsilon^+\rVert_2
+=\max\{1,1/|\varepsilon|\}\to\infty.
+\]
+因此伪逆不收敛到 $A_0^+$。极限处秩从 $2$ 降为 $1$，这正是不连续的来源。
+\end{solution}
+\end{exercise}
+
+\begin{exercise}[level=advanced]
+取
+\[
+A=\begin{pmatrix}1&1\end{pmatrix},
+\qquad B=\begin{pmatrix}1\\0\end{pmatrix}.
+\]
+计算 $(AB)^+$ 与 $B^+A^+$，证明伪逆的逆序律一般不成立。
+\begin{solution}
+$AB=(1)$，故 $(AB)^+=(1)$。另一方面，
+\[
+A^+=\frac12\begin{pmatrix}1\\1\end{pmatrix},
+\qquad B^+=\begin{pmatrix}1&0\end{pmatrix},
+\]
+因此
+\[
+B^+A^+=\frac12\ne1=(AB)^+.
+\]
+\end{solution}
+\end{exercise}
+
+\begin{exercise}[level=advanced]
+设 $A$ 的最小非零奇异值为 $\sigma_r$。对
+\[
+x_*=A^+b,
+\qquad \widetilde x_*=A^+(b+\delta b),
+\]
+证明
+\[
+\lVert\widetilde x_*-x_*\rVert_2
+\le\frac{\lVert\delta b\rVert_2}{\sigma_r},
+\]
+并构造使等号成立的 $\delta b$。
+\begin{solution}
+\[
+\widetilde x_*-x_*=A^+\delta b.
+\]
+由 $\lVert A^+\rVert_2=1/\sigma_r$，
+\[
+\lVert\widetilde x_*-x_*\rVert_2
+\le\lVert A^+\rVert_2\lVert\delta b\rVert_2
+=\frac{\lVert\delta b\rVert_2}{\sigma_r}.
+\]
+若 $u_r,v_r$ 是对应 $\sigma_r$ 的左、右奇异向量，取
+$\delta b=cu_r$，则
+\[
+A^+\delta b=\frac{c}{\sigma_r}v_r.
+\]
+因此当 $c\ne0$ 时上述不等式取到等号。
+\end{solution}
+\end{exercise}
+
+\begin{exercise}[level=advanced]
+对
+\[
+A=\begin{pmatrix}1&2\\2&4\\1&2\end{pmatrix},
+\]
+选取一个秩分解 $A=FG$，并利用
+\[
+A^+=G^{\mathsf T}(GG^{\mathsf T})^{-1}
+(F^{\mathsf T}F)^{-1}F^{\mathsf T}
+\]
+计算 $A^+$。
+\begin{solution}
+$A$ 的第二列是第一列的 $2$ 倍，故可取
+\[
+F=\begin{pmatrix}1\\2\\1\end{pmatrix},
+\qquad
+G=\begin{pmatrix}1&2\end{pmatrix}.
+\]
+此时
+\[
+F^{\mathsf T}F=6,
+\qquad
+GG^{\mathsf T}=5.
+\]
+因此
+\begin{align*}
+A^+
+&=G^{\mathsf T}\frac15\frac16F^{\mathsf T}\\
+&=\frac1{30}
+\begin{pmatrix}1\\2\end{pmatrix}
+\begin{pmatrix}1&2&1\end{pmatrix}\\
+&=\frac1{30}
+\begin{pmatrix}1&2&1\\2&4&2\end{pmatrix}.
+\end{align*}
+\end{solution}
+\end{exercise}
+
+\begin{exercise}[level=advanced]
+设
+\[
+A(t)=\begin{pmatrix}1&t\\0&1\end{pmatrix},
+\qquad
+b(t)=\begin{pmatrix}t\\1\end{pmatrix},
+\qquad
+A(t)x(t)=b(t).
+\]
+不先显式求出 $A(t)^{-1}$，利用参数线性方程微分公式求 $x'(0)$。
+\begin{solution}
+在 $t=0$ 时，
+\[
+A(0)=I,
+\qquad
+b(0)=\begin{pmatrix}0\\1\end{pmatrix},
+\qquad
+x(0)=b(0).
+\]
+又
+\[
+A'(0)=\begin{pmatrix}0&1\\0&0\end{pmatrix},
+\qquad
+b'(0)=\begin{pmatrix}1\\0\end{pmatrix}.
+\]
+利用
+$x'=A^{-1}(b'-A'x)$，得
+\[
+x'(0)
+=\begin{pmatrix}1\\0\end{pmatrix}
+-\begin{pmatrix}0&1\\0&0\end{pmatrix}
+\begin{pmatrix}0\\1\end{pmatrix}
+=\begin{pmatrix}0\\0\end{pmatrix}.
+\]
+\end{solution}
+\end{exercise}
+
+\begin{exercise}[level=advanced]
+设
+\[
+A=\begin{pmatrix}1&0\\0&0\end{pmatrix},
+\qquad R=A^+.
+\]
+令 $Y=(y_{ij})$ 为任意 $2\times2$ 矩阵。展开
+\[
+G=R+Y-RAYAR,
+\]
+并证明得到的恰是 $A$ 的全部一般广义逆。
+\begin{solution}
+此时 $R=A$，且 $ARA=A$、$RAR=R$。对
+\[
+Y=\begin{pmatrix}y_{11}&y_{12}\\y_{21}&y_{22}\end{pmatrix},
+\]
+有
+\[
+RAYAR=AYAYA
+=\begin{pmatrix}y_{11}&0\\0&0\end{pmatrix}.
+\]
+因此
+\[
+G=R+Y-RAYAR
+=\begin{pmatrix}1&y_{12}\\y_{21}&y_{22}\end{pmatrix}.
+\]
+直接计算得 $AGA=A$，所以它们都是广义逆。反之，任意满足 $AGA=A$ 的
+$G=(g_{ij})$ 必满足 $g_{11}=1$，其余三个元素任意。因此上述参数化恰好覆盖全部一般广义逆。
+\end{solution}
+\end{exercise}
+

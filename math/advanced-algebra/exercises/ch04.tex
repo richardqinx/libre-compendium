@@ -1,0 +1,729 @@
+% libre-compendium
+%
+% Copyright (C) 2026 Richard Qin
+%
+% This document is dual-licensed under either:
+% - GNU Free Documentation License, Version 1.3 or any later version
+%   published by the Free Software Foundation; with no Invariant Sections,
+%   no Front-Cover Texts, and no Back-Cover Texts (see COPYING.DOC); or
+% - Creative Commons Attribution-ShareAlike 4.0 International License
+%   (see LICENSE-CC-BY-SA-4.0).
+
+% Exercises migrated from problems04.tex and solutions04.tex.
+\begin{exercise}[level=basic]
+设 $z=1-\sqrt3i$。求 $|z|$、一个幅角、指数形式及 $z^{-1}$。
+\begin{solution}
+$|z|=2$，可取幅角 $-\pi/3$，故
+\[
+z=2e^{-i\pi/3}.
+\]
+并且
+\[
+z^{-1}=\frac{\overline z}{|z|^2}
+=\frac{1+\sqrt3i}{4}.
+\]
+\end{solution}
+\end{exercise}
+
+\begin{exercise}[level=basic]
+求方程 $z^4=-16$ 的全部复根。
+\begin{solution}
+$-16=16e^{i(\pi+2k\pi)}$，故四次根为
+\[
+z_k=2e^{i(\pi/4+k\pi/2)},
+\qquad k=0,1,2,3.
+\]
+\end{solution}
+\end{exercise}
+
+\begin{exercise}[level=basic]
+令 $\omega=e^{-2\pi i/5}$。计算
+\[
+1+\omega^2+\omega^4+\omega^6+\omega^8.
+\]
+\begin{solution}
+指数按模 $5$ 化简后，和为
+\[
+1+\omega^2+\omega^4+\omega+\omega^3
+=1+\omega+\omega^2+\omega^3+\omega^4=0.
+\]
+\end{solution}
+\end{exercise}
+
+\begin{exercise}[level=basic]
+设
+\[
+A=\begin{pmatrix}1+i&2\\-i&3-i\end{pmatrix}.
+\]
+求 $A^{\mathsf H}$，并验证 $(A^{\mathsf H})^{\mathsf H}=A$。
+\begin{solution}
+\[
+A^{\mathsf H}
+=\begin{pmatrix}1-i&i\\2&3+i\end{pmatrix}.
+\]
+再次共轭转置，元素共轭两次并转置两次，恢复 $A$。
+\end{solution}
+\end{exercise}
+
+\begin{exercise}[level=basic]
+在 $\C^2$ 的标准内积下，计算
+\[
+x=(1+i,2)^{\mathsf T},\qquad y=(i,1-i)^{\mathsf T}
+\]
+的 $\langle x,y\rangle$、$\lVert x\rVert_2$，并判断是否正交。
+\begin{solution}
+\[
+\langle x,y\rangle
+=(1-i)i+2(1-i)=1+i+2-2i=3-i.
+\]
+且
+\[
+\lVert x\rVert_2=\sqrt{|1+i|^2+|2|^2}=\sqrt6.
+\]
+内积不为零，所以不正交。
+\end{solution}
+\end{exercise}
+
+\begin{exercise}[level=basic]
+判断矩阵
+\[
+A=\begin{pmatrix}2&i\\-i&3\end{pmatrix},
+\qquad
+B=\begin{pmatrix}0&i\\i&0\end{pmatrix}
+\]
+是否为 Hermite 矩阵。
+\begin{solution}
+$A^{\mathsf H}=A$，所以 $A$ 为 Hermite 矩阵。$B^{\mathsf H}=-B\ne B$，所以 $B$ 不是 Hermite 矩阵，而是斜 Hermite 矩阵。
+\end{solution}
+\end{exercise}
+
+\begin{exercise}[level=basic]
+把复方程组
+\[
+\begin{pmatrix}1&i\\2-i&1\end{pmatrix}x
+=\begin{pmatrix}1+i\\2\end{pmatrix}
+\]
+写成四元实线性方程组。
+\begin{solution}
+写 $A=A_1+iA_2$，其中
+\[
+A_1=\begin{pmatrix}1&0\\2&1\end{pmatrix},
+\qquad
+A_2=\begin{pmatrix}0&1\\-1&0\end{pmatrix}.
+\]
+若 $x=x_1+ix_2$，则实数化方程为
+\[
+\begin{pmatrix}
+1&0&0&-1\\
+2&1&1&0\\
+0&1&1&0\\
+-1&0&2&1
+\end{pmatrix}
+\begin{pmatrix}\operatorname{Re}x_1\\\operatorname{Re}x_2\\
+\operatorname{Im}x_1\\\operatorname{Im}x_2\end{pmatrix}
+=\begin{pmatrix}1\\2\\1\\0\end{pmatrix}.
+\]
+\end{solution}
+\end{exercise}
+
+\begin{exercise}[level=basic]
+写出未归一化 Fourier 矩阵 $F_2$ 和 $F_4$，并验证 $F_2^{\mathsf H}F_2=2I$。
+\begin{solution}
+\[
+F_2=\begin{pmatrix}1&1\\1&-1\end{pmatrix},
+\qquad
+F_4=\begin{pmatrix}
+1&1&1&1\\1&-i&-1&i\\1&-1&1&-1\\1&i&-1&-i
+\end{pmatrix}.
+\]
+直接计算 $F_2^{\mathsf H}F_2=F_2^2=2I$。
+\end{solution}
+\end{exercise}
+
+\begin{exercise}[level=standard]
+使用复 Gram--Schmidt 方法把
+\[
+v_1=(1,i,0)^{\mathsf T},\qquad
+v_2=(1,0,1)^{\mathsf T}
+\]
+正交归一化。
+\begin{solution}
+先取
+\[
+e_1=\frac1{\sqrt2}(1,i,0)^{\mathsf T}.
+\]
+因 $\langle e_1,v_2\rangle=1/\sqrt2$，
+\[
+w_2=v_2-\frac1{\sqrt2}e_1
+=\left(\frac12,-\frac i2,1\right)^{\mathsf T}.
+\]
+$\lVert w_2\rVert^2=3/2$，故
+\[
+e_2=\frac1{\sqrt6}(1,-i,2)^{\mathsf T}.
+\]
+\end{solution}
+\end{exercise}
+
+\begin{exercise}[level=standard]
+设 Hermite 型在标准基下的矩阵为
+\[
+G=\begin{pmatrix}2&i\\-i&1\end{pmatrix}.
+\]
+计算 $g(x,y)$，其中
+$x=(1,i)^{\mathsf T}$、$y=(1,1)^{\mathsf T}$，并计算 $H(x)=g(x,x)$。
+\begin{solution}
+\[
+Gy=\begin{pmatrix}2+i\\1-i\end{pmatrix},
+\qquad
+x^{\mathsf H}=(1,-i).
+\]
+所以
+\[
+g(x,y)=x^{\mathsf H}Gy=1.
+\]
+又
+\[
+Gx=\begin{pmatrix}1\\0\end{pmatrix},
+\qquad H(x)=x^{\mathsf H}Gx=1.
+\]
+\end{solution}
+\end{exercise}
+
+\begin{exercise}[level=standard]
+设新基满足 $\widetilde{\mathcal E}=\mathcal EP$，其中
+\[
+G=\begin{pmatrix}1&0\\0&2\end{pmatrix},\qquad
+P=\begin{pmatrix}1&i\\0&1\end{pmatrix}.
+\]
+求 Hermite 型在新基下的矩阵。
+\begin{solution}
+\[
+\widetilde G=P^{\mathsf H}GP
+=\begin{pmatrix}1&0\\-i&1\end{pmatrix}
+\begin{pmatrix}1&i\\0&2\end{pmatrix}
+=\begin{pmatrix}1&i\\-i&3\end{pmatrix}.
+\]
+\end{solution}
+\end{exercise}
+
+\begin{exercise}[level=standard]
+设
+\[
+A=\begin{pmatrix}2&1-i\\1+i&3\end{pmatrix}.
+\]
+求其特征值，验证特征值为实数，并求一组标准正交特征向量。
+\begin{solution}
+特征多项式为
+\[
+(\lambda-2)(\lambda-3)-|1-i|^2
+=\lambda^2-5\lambda+4,
+\]
+故特征值为 $4,1$。对应特征向量可分别取
+\[
+v_4=(1-i,2)^{\mathsf T},
+\qquad
+v_1=(-2,1+i)^{\mathsf T}.
+\]
+二者内积为零，范数均为 $\sqrt6$，除以 $\sqrt6$ 得标准正交特征向量。
+\end{solution}
+\end{exercise}
+
+\begin{exercise}[level=standard]
+证明复方阵 $U$ 为酉矩阵，当且仅当它的列向量构成 $\C^n$ 的一组标准正交基。
+\begin{solution}
+设 $U=(u_1,\ldots,u_n)$。矩阵 $U^{\mathsf H}U$ 的第 $(i,j)$ 项为
+$u_i^{\mathsf H}u_j=\langle u_i,u_j\rangle$。因此
+$U^{\mathsf H}U=I$ 当且仅当各列标准正交。$n$ 个标准正交向量线性无关，故构成 $\C^n$ 的基。
+\end{solution}
+\end{exercise}
+
+\begin{exercise}[level=standard]
+判断下列矩阵是否正规，并说明能否酉相似对角化：
+\[
+A=\begin{pmatrix}1&1\\0&1\end{pmatrix},
+\qquad
+B=\begin{pmatrix}0&-1\\1&0\end{pmatrix}.
+\]
+\begin{solution}
+对 $A$，
+\[
+A^{\mathsf H}A=\begin{pmatrix}1&1\\1&2\end{pmatrix},
+\qquad
+AA^{\mathsf H}=\begin{pmatrix}2&1\\1&1\end{pmatrix},
+\]
+二者不等，所以 $A$ 不正规，不能酉相似对角化。$B$ 是实正交矩阵，满足
+$B^{\mathsf H}B=BB^{\mathsf H}=I$，故正规，可以酉相似对角化；其特征值为 $i,-i$。
+\end{solution}
+\end{exercise}
+
+\begin{exercise}[level=standard]
+判断 Hermite 矩阵
+\[
+A=\begin{pmatrix}2&i\\-i&2\end{pmatrix}
+\]
+是否正定，并给出一种 $A=B^{\mathsf H}B$ 分解。
+\begin{solution}
+特征值为 $3,1$，均为正，所以 $A$ 正定。可取 Cholesky 分解
+\[
+B=\begin{pmatrix}\sqrt2&i/\sqrt2\\0&\sqrt{3/2}\end{pmatrix},
+\]
+则直接计算得 $B^{\mathsf H}B=A$。
+\end{solution}
+\end{exercise}
+
+\begin{exercise}[level=standard]
+对序列 $x=(1,0,-1,0)^{\mathsf T}$ 计算四点 DFT，并用逆 DFT 恢复 $x$。
+\begin{solution}
+用 $F_4$ 相乘得
+\[
+y=(0,2,0,2)^{\mathsf T}.
+\]
+逆变换为
+\[
+x=\frac14F_4^{\mathsf H}y
+=(1,0,-1,0)^{\mathsf T}.
+\]
+\end{solution}
+\end{exercise}
+
+\begin{exercise}[level=standard]
+设 $x=(1,2,0)^{\mathsf T}$、$h=(1,-1,0)^{\mathsf T}$。计算三点循环卷积，并验证卷积定理。
+\begin{solution}
+按模 $3$ 计算：
+\[
+x\mathbin{\circledast}h=(1,1,-2)^{\mathsf T}.
+\]
+令 $\omega=e^{-2\pi i/3}$，则
+\[
+F_3x=(3,1+2\omega,1+2\omega^2)^{\mathsf T},
+\]
+\[
+F_3h=(0,1-\omega,1-\omega^2)^{\mathsf T}.
+\]
+逐项相乘并利用 $1+\omega+\omega^2=0$，所得正是
+$F_3(1,1,-2)^{\mathsf T}$。
+\end{solution}
+\end{exercise}
+
+\begin{exercise}[level=advanced]
+证明复极化恒等式，并用它从
+$H(x)=x^{\mathsf H}Gx$ 恢复 $g(x,y)=x^{\mathsf H}Gy$。
+\begin{solution}
+展开
+\[
+H(x+y)-H(x-y)=4\operatorname{Re}g(x,y),
+\]
+以及
+\[
+H(x-iy)-H(x+iy)=4\operatorname{Im}g(x,y).
+\]
+两式按“实部加 $i$ 倍虚部”合并，得到
+\[
+g(x,y)=\frac14\bigl(H(x+y)-H(x-y)
++iH(x-iy)-iH(x+iy)\bigr).
+\]
+代入 $H(z)=z^{\mathsf H}Gz$，展开后交叉项恰合并为 $x^{\mathsf H}Gy$。
+\end{solution}
+\end{exercise}
+
+\begin{exercise}[level=advanced]
+设 $A$ 为复方阵。证明
+\[
+\ker A=\ker(A^{\mathsf H}A),
+\qquad
+\operatorname{Im}A^{\mathsf H}=(\ker A)^\perp.
+\]
+\begin{solution}
+若 $Ax=0$，则 $A^{\mathsf H}Ax=0$。反之，若 $A^{\mathsf H}Ax=0$，则
+\[
+0=x^{\mathsf H}A^{\mathsf H}Ax=\lVert Ax\rVert_2^2,
+\]
+故 $Ax=0$。又对任意 $y$，
+\[
+y\perp\operatorname{Im}A^{\mathsf H}
+\iff \langle A^{\mathsf H}x,y\rangle=0\ \forall x
+\iff \langle x,Ay\rangle=0\ \forall x
+\iff Ay=0.
+\]
+所以 $(\operatorname{Im}A^{\mathsf H})^\perp=\ker A$，取正交补得结论。
+\end{solution}
+\end{exercise}
+
+\begin{exercise}[level=advanced]
+设内积在某组基下的 Gram 矩阵为正定 Hermite 矩阵 $G$，算子 $T$ 的矩阵为 $A$。证明伴随算子的矩阵为
+\[
+G^{-1}A^{\mathsf H}G.
+\]
+\begin{solution}
+该基下内积为 $\langle x,y\rangle=x^{\mathsf H}Gy$。若伴随矩阵为 $B$，则
+\[
+x^{\mathsf H}GAy=(Bx)^{\mathsf H}Gy
+=x^{\mathsf H}B^{\mathsf H}Gy
+\]
+对所有 $x,y$ 成立，故 $GA=B^{\mathsf H}G$。取共轭转置得
+$A^{\mathsf H}G=GB$，所以
+\[
+B=G^{-1}A^{\mathsf H}G.
+\]
+\end{solution}
+\end{exercise}
+
+\begin{exercise}[level=advanced]
+证明正规矩阵 $A$ 满足
+\[
+\lVert Ax\rVert_2=\lVert A^{\mathsf H}x\rVert_2
+\]
+对所有 $x$ 成立，并推出
+$\ker(A-\lambda I)=\ker(A^{\mathsf H}-\overline\lambda I)$。
+\begin{solution}
+正规性给出
+\[
+\lVert Ax\rVert_2^2=x^{\mathsf H}A^{\mathsf H}Ax
+=x^{\mathsf H}AA^{\mathsf H}x
+=\lVert A^{\mathsf H}x\rVert_2^2.
+\]
+$A-\lambda I$ 仍正规，因此
+\[
+\lVert(A-\lambda I)x\rVert
+=\lVert(A^{\mathsf H}-\overline\lambda I)x\rVert.
+\]
+一边为零当且仅当另一边为零，故两核相等。
+\end{solution}
+\end{exercise}
+
+\begin{exercise}[level=advanced]
+证明未归一化 Fourier 矩阵满足
+\[
+F_n^2=nJ,
+\]
+其中 $Jx$ 把序列下标变为相反数，即 $(Jx)_j=x_{-j\bmod n}$。由此求 $F_n^4$。
+\begin{solution}
+对任意 $x$，
+\begin{align*}
+(F_n^2x)_j
+&=\sum_{k=0}^{n-1}\omega_n^{jk}
+\sum_{\ell=0}^{n-1}\omega_n^{k\ell}x_\ell\\
+&=\sum_{\ell=0}^{n-1}x_\ell
+\sum_{k=0}^{n-1}\omega_n^{k(j+\ell)}.
+\end{align*}
+内层和仅在 $j+\ell\equiv0\pmod n$ 时为 $n$，故
+$F_n^2x=nJx$。又 $J^2=I$，所以
+\[
+F_n^4=n^2I.
+\]
+\end{solution}
+\end{exercise}
+
+\begin{exercise}[level=advanced]
+设 $C$ 是第一列为 $c=(c_0,\ldots,c_{n-1})^{\mathsf T}$ 的循环矩阵。证明 Fourier 向量是 $C$ 的特征向量，并写出特征值。
+\begin{solution}
+令
+\[
+v^{(j)}=(1,\omega_n^{-j},\ldots,\omega_n^{-(n-1)j})^{\mathsf T}.
+\]
+循环移位使每一行的求和只差相位因子。直接作模 $n$ 下标代换可得
+\[
+Cv^{(j)}=\lambda_jv^{(j)},
+\qquad
+\lambda_j=\sum_{k=0}^{n-1}c_k\omega_n^{jk}=(F_nc)_j.
+\]
+因此 Fourier 向量构成循环矩阵的一组特征向量基。
+\end{solution}
+\end{exercise}
+
+\begin{exercise}[level=advanced]
+利用一次偶奇拆分计算 $x=(1,2,3,4)^{\mathsf T}$ 的四点 DFT，并明确写出两个二点 DFT 与蝶形合并过程。
+\begin{solution}
+偶下标序列为 $(1,3)$，奇下标序列为 $(2,4)$。两个二点 DFT 分别为
+\[
+y'=(4,-2),
+\qquad
+y''=(6,-2).
+\]
+$\omega_4=-i$。蝶形合并给出
+\[
+y_0=4+6=10,
+\quad y_2=4-6=-2,
+\]
+\[
+y_1=-2+(-i)(-2)=-2+2i,
+\quad y_3=-2-(-i)(-2)=-2-2i.
+\]
+故四点 DFT 为
+$(10,-2+2i,-2,-2-2i)^{\mathsf T}$。
+\end{solution}
+\end{exercise}
+
+\begin{exercise}[level=advanced]
+设 Hermite 矩阵
+\[
+A=\begin{pmatrix}2&i\\-i&2\end{pmatrix}.
+\]
+求 Rayleigh 商
+\[
+R_A(x)=\frac{x^{\mathsf H}Ax}{x^{\mathsf H}x}\qquad(x\ne0)
+\]
+的最大值和最小值，并写出取到两个极值的全部非零向量。
+\begin{solution}
+特征多项式为
+\[
+\det(\lambda I-A)
+=(\lambda-2)^2-1=(\lambda-3)(\lambda-1),
+\]
+所以特征值为 $3$ 和 $1$。由 Rayleigh--Ritz 原理，
+\[
+\max_{x\ne0}R_A(x)=3,
+\qquad
+\min_{x\ne0}R_A(x)=1.
+\]
+对 $\lambda=3$，方程 $(A-3I)x=0$ 给出 $x_1=ix_2$，故最大值在
+\[
+x=c(i,1)^{\mathsf T}\qquad(c\in\C,\ c\ne0)
+\]
+时取到。对 $\lambda=1$，有 $x_1=-ix_2$，故最小值在
+\[
+x=c(-i,1)^{\mathsf T}\qquad(c\in\C,\ c\ne0)
+\]
+时取到。
+\end{solution}
+\end{exercise}
+
+\begin{exercise}[level=advanced]
+对矩阵
+\[
+A=\begin{pmatrix}1&1\\0&2\end{pmatrix}
+\]
+给出一个 Schur 酉三角分解 $A=UTU^{\mathsf H}$，并证明 $A$ 不能酉相似对角化。由此说明 Schur 酉三角化与酉对角化的适用范围有何不同。
+\begin{solution}
+矩阵 $A$ 本身已是上三角矩阵，因而可取
+\[
+U=I_2,
+\qquad
+T=A,
+\qquad
+A=UTU^{\mathsf H}.
+\]
+这已是一个 Schur 分解。但
+\[
+A^{\mathsf H}A
+=\begin{pmatrix}1&1\\1&5\end{pmatrix},
+\qquad
+AA^{\mathsf H}
+=\begin{pmatrix}2&2\\2&4\end{pmatrix},
+\]
+二者不等，所以 $A$ 不正规。若 $A$ 能酉相似对角化，则 $A=UDU^{\mathsf H}$，而对角矩阵 $D$ 正规，从而 $A$ 也必正规，矛盾。因此，每个复方阵都能 Schur 酉三角化，但只有正规矩阵才能酉对角化。
+\end{solution}
+\end{exercise}
+
+\begin{exercise}[level=advanced]
+求复矩阵
+\[
+A=\begin{pmatrix}1&i\\1&-i\end{pmatrix}
+\]
+的一个奇异值分解 $A=U\Sigma V^{\mathsf H}$，并验证 $U,V$ 均为酉矩阵。
+\begin{solution}
+先计算
+\[
+A^{\mathsf H}A
+=\begin{pmatrix}1&1\\-i&i\end{pmatrix}
+\begin{pmatrix}1&i\\1&-i\end{pmatrix}
+=2I_2.
+\]
+因此两个奇异值都为 $\sqrt2$。可取
+\[
+V=I_2,
+\qquad
+\Sigma=\sqrt2 I_2,
+\qquad
+U=\frac1{\sqrt2}A
+=\frac1{\sqrt2}\begin{pmatrix}1&i\\1&-i\end{pmatrix}.
+\]
+此时
+\[
+U^{\mathsf H}U=\frac12A^{\mathsf H}A=I_2,
+\qquad
+V^{\mathsf H}V=I_2,
+\]
+故 $U,V$ 均为酉矩阵，且
+$U\Sigma V^{\mathsf H}=A$。
+\end{solution}
+\end{exercise}
+
+\begin{exercise}[level=advanced]
+求 Hermite 矩阵
+\[
+A=\begin{pmatrix}0&1+i\\1-i&0\end{pmatrix}
+\]
+的惯性指数 $(n_+,n_-,n_0)$，并判断二次型 $x^{\mathsf H}Ax$ 是正定、负定、半正定还是不定。
+\begin{solution}
+特征多项式为
+\[
+\det(\lambda I-A)
+=\lambda^2-(1+i)(1-i)
+=\lambda^2-2,
+\]
+所以特征值为 $\sqrt2$ 和 $-\sqrt2$，且没有零特征值。因此
+\[
+(n_+,n_-,n_0)=(1,1,0).
+\]
+Hermite 二次型在与正特征值对应的特征向量上取正值，在与负特征值对应的特征向量上取负值，故 $x^{\mathsf H}Ax$ 是不定的。
+\end{solution}
+\end{exercise}
+
+\begin{exercise}[level=advanced]
+在 $\C^3$ 的标准内积下，令
+\[
+e_1=\frac1{\sqrt2}(1,i,0)^{\mathsf T},\qquad
+e_2=(0,0,1)^{\mathsf T},\qquad
+x=(1,1,2)^{\mathsf T}.
+\]
+求 $x$ 在 $W=\operatorname{span}\{e_1,e_2\}$ 上的正交投影，并通过直接计算验证 Bessel 不等式以及正交分解的 Parseval 等式。
+\begin{solution}
+先有 $\langle e_1,e_2\rangle=0$ 且
+$\lVert e_1\rVert=\lVert e_2\rVert=1$，所以 $e_1,e_2$ 是 $W$ 的标准正交基。投影系数为
+\[
+\langle e_1,x\rangle=\frac{1-i}{\sqrt2},
+\qquad
+\langle e_2,x\rangle=2.
+\]
+因而
+\[
+P_Wx
+=\frac{1-i}{\sqrt2}e_1+2e_2
+=\begin{pmatrix}(1-i)/2\\(1+i)/2\\2\end{pmatrix}.
+\]
+Bessel 不等式的左端为
+\[
+|\langle e_1,x\rangle|^2+|\langle e_2,x\rangle|^2
+=1+4=5\le6=\lVert x\rVert^2.
+\]
+余向量为
+\[
+x-P_Wx
+=\begin{pmatrix}(1+i)/2\\(1-i)/2\\0\end{pmatrix},
+\qquad
+\lVert x-P_Wx\rVert^2=1.
+\]
+又 $\lVert P_Wx\rVert^2=5$，故
+\[
+\lVert x\rVert^2
+=\lVert P_Wx\rVert^2+\lVert x-P_Wx\rVert^2
+=5+1=6,
+\]
+验证了正交分解的 Parseval 等式。
+\end{solution}
+\end{exercise}
+
+\begin{exercise}[level=advanced]
+采用未归一化 DFT，令 $\omega_4=-i$，并设
+\[
+x=(1,2,0,-1)^{\mathsf T},\qquad
+y=F_4x=(2,1-3i,0,1+3i)^{\mathsf T}.
+\]
+分别求循环移位 $(T_1x)_k=x_{k-1\bmod4}$、调制
+$(M_1x)_k=\omega_4^kx_k$ 和下标缩放 $(S_3x)_k=x_{3k\bmod4}$ 的 DFT，并验证移位、调制与缩放性质。
+\begin{solution}
+循环移位后
+\[
+T_1x=(-1,1,2,0)^{\mathsf T}.
+\]
+移位性质给出
+\[
+F_4(T_1x)_j=\omega_4^j y_j,
+\]
+因而
+\[
+F_4(T_1x)
+=\bigl(2,-3-i,0,-3+i\bigr)^{\mathsf T}.
+\]
+另一方面，
+\[
+M_1x=(1,-2i,0,-i)^{\mathsf T}.
+\]
+调制性质给出
+\[
+F_4(M_1x)_j=y_{j+1\bmod4},
+\]
+故
+\[
+F_4(M_1x)
+=\bigl(1-3i,0,1+3i,2\bigr)^{\mathsf T}.
+\]
+最后，$3^{-1}\equiv3\pmod4$，且
+\[
+S_3x=(1,-1,0,2)^{\mathsf T}.
+\]
+缩放性质给出
+\[
+F_4(S_3x)_j=y_{3j\bmod4},
+\]
+从而
+\[
+F_4(S_3x)
+=\bigl(2,1+3i,0,1-3i\bigr)^{\mathsf T}.
+\]
+三个结果都可直接与 $F_4$ 相乘复核。
+\end{solution}
+\end{exercise}
+
+\begin{exercise}[level=advanced]
+设有限序列 $x=(1,2)$、$h=(1,-1,1)$。先计算它们的线性卷积，再将两序列补零到长度 $4$，验证补零后的四点循环卷积与线性卷积相同。说明为什么长度 $3$ 不足以避免混叠。
+\begin{solution}
+线性卷积长度为 $2+3-1=4$，逐项计算得
+\[
+x*h=(1,1,-1,2).
+\]
+补零为
+\[
+\widetilde x=(1,2,0,0),
+\qquad
+\widetilde h=(1,-1,1,0).
+\]
+四点循环卷积为
+\begin{align*}
+c_0&=1\cdot1+2\cdot0=1,\\
+c_1&=1\cdot(-1)+2\cdot1=1,\\
+c_2&=1\cdot1+2\cdot(-1)=-1,\\
+c_3&=1\cdot0+2\cdot1=2.
+\end{align*}
+因此 $\widetilde x\mathbin{\circledast}\widetilde h=(1,1,-1,2)$，与线性卷积一致。
+
+若只补到长度 $3$，线性卷积的第 $3$ 项会按模 $3$ 回卷并叠加到第 $0$ 项，得到三点循环卷积
+\[
+(3,1,-1),
+\]
+而不是完整的线性卷积。因此要避免混叠，长度至少应为 $4$。
+\end{solution}
+\end{exercise}
+
+\begin{exercise}[level=advanced]
+在 $n=4$ 时取 $x=(1,0,1,0)^{\mathsf T}$。求 $F_4x$，并验证离散不确定性估计
+\[
+|\operatorname{supp}x|\,|\operatorname{supp}(F_4x)|\ge4.
+\]
+另说明单位脉冲序列与非零常数序列也都取到等号。
+\begin{solution}
+直接计算得
+\[
+F_4x=(2,0,2,0)^{\mathsf T}.
+\]
+因而
+\[
+|\operatorname{supp}x|=2,
+\qquad
+|\operatorname{supp}(F_4x)|=2,
+\]
+从而乘积为 $4$，不确定性估计中等号成立。
+
+若 $x=ce_r$ 是非零单位脉冲序列，则 $|\operatorname{supp}x|=1$，而
+\[
+(F_nx)_j=c\omega_n^{jr}\ne0
+\]
+对每个 $j$ 都成立，故 Fourier 支集大小为 $n$。若 $x=(c,\ldots,c)^{\mathsf T}$ 且 $c\ne0$，则它的支集大小为 $n$，而
+\[
+F_nx=(nc,0,\ldots,0)^{\mathsf T}
+\]
+的支集大小为 $1$。两种情形的支集大小乘积都为 $n$。
+\end{solution}
+\end{exercise}
+

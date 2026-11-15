@@ -1,0 +1,580 @@
+% libre-compendium
+%
+% Copyright (C) 2026 Richard Qin
+%
+% This document is dual-licensed under either:
+% - GNU Free Documentation License, Version 1.3 or any later version
+%   published by the Free Software Foundation; with no Invariant Sections,
+%   no Front-Cover Texts, and no Back-Cover Texts (see COPYING.DOC); or
+% - Creative Commons Attribution-ShareAlike 4.0 International License
+%   (see LICENSE-CC-BY-SA-4.0).
+
+% Exercises migrated from problems03.tex and solutions03.tex.
+\begin{exercise}[level=basic]
+验证 $\lVert x\rVert_\infty=\max_i|x_i|$ 满足范数的三条公理。
+\begin{solution}
+非负性显然，且最大绝对值为零当且仅当每个分量均为零。又有
+\[
+\lVert ax\rVert_\infty=\max_i|ax_i|=|a|\max_i|x_i|.
+\]
+由 $|x_i+y_i|\le|x_i|+|y_i|$，
+\[
+\lVert x+y\rVert_\infty
+\le\max_i|x_i|+\max_i|y_i|
+=\lVert x\rVert_\infty+\lVert y\rVert_\infty.
+\]
+\end{solution}
+\end{exercise}
+
+\begin{exercise}[level=basic]
+设
+\[
+A=\begin{pmatrix}1&-2\\3&4\end{pmatrix}.
+\]
+求 $\lVert A\rVert_1$、$\lVert A\rVert_\infty$ 与 $\lVert A\rVert_F$。
+\begin{solution}
+两列绝对值和分别为 $4,6$，两行绝对值和分别为 $3,7$，故
+\[
+\lVert A\rVert_1=6,
+\qquad
+\lVert A\rVert_\infty=7.
+\]
+此外
+\[
+\lVert A\rVert_F=\sqrt{1+4+9+16}=\sqrt{30}.
+\]
+\end{solution}
+\end{exercise}
+
+\begin{exercise}[level=basic]
+证明 $\lVert Ax\rVert_2\le\lVert A\rVert_F\lVert x\rVert_2$，并说明何时可达到等号。
+\begin{solution}
+把 $A$ 的行记为 $a_i^{\mathsf T}$。由 Cauchy--Schwarz 不等式，
+\[
+\lVert Ax\rVert_2^2
+=\sum_i(a_i^{\mathsf T}x)^2
+\le\sum_i\lVert a_i\rVert_2^2\lVert x\rVert_2^2
+=\lVert A\rVert_F^2\lVert x\rVert_2^2.
+\]
+若 $A$ 的秩为 $1$，取 $x$ 为其右奇异向量可达到等号。一般地，等号等价于
+$\lVert A\rVert_2=\lVert A\rVert_F$，也就是 $A$ 至多只有一个非零奇异值，即 $\rank A\le1$。
+\end{solution}
+\end{exercise}
+
+\begin{exercise}[level=basic]
+设 $u\in\R^m,v\in\R^n$ 均非零。求秩一矩阵 $uv^{\mathsf T}$ 的非零奇异值及对应左右奇异向量。
+\begin{solution}
+取
+\[
+\widehat u=\frac u{\lVert u\rVert_2},
+\qquad
+\widehat v=\frac v{\lVert v\rVert_2}.
+\]
+则
+\[
+uv^{\mathsf T}widehat v
+=\lVert u\rVert_2\lVert v\rVert_2\widehat u.
+\]
+故唯一非零奇异值为 $\lVert u\rVert_2\lVert v\rVert_2$，对应左右奇异向量可取 $\widehat v,\widehat u$。
+\end{solution}
+\end{exercise}
+
+\begin{exercise}[level=basic]
+设中心化数据矩阵
+\[
+Y=\begin{pmatrix}1&-1&0\\0&1&-1\end{pmatrix}.
+\]
+采用 $C=YY^{\mathsf T}/3$，求协方差矩阵、主方向与两个方差。
+\begin{solution}
+\[
+C=\frac13YY^{\mathsf T}
+=\frac13\begin{pmatrix}2&-1\\-1&2\end{pmatrix}.
+\]
+矩阵 $\begin{pmatrix}2&-1\\-1&2\end{pmatrix}$ 的特征值为 $3,1$，对应单位特征向量可取
+\[
+q_1=\frac1{\sqrt2}(1,-1)^{\mathsf T},
+\qquad
+q_2=\frac1{\sqrt2}(1,1)^{\mathsf T}.
+\]
+故两个方差为 $1$ 与 $1/3$。
+\end{solution}
+\end{exercise}
+
+\begin{exercise}[level=basic]
+设 $A=\diag(4,2,1)$。写出最佳秩 $1$、秩 $2$ 逼近，并分别求谱范数和 Frobenius 范数误差。
+\begin{solution}
+最佳秩 $1$ 逼近为 $A_1=\diag(4,0,0)$，误差为
+\[
+\lVert A-A_1\rVert_2=2,
+\qquad
+\lVert A-A_1\rVert_F=\sqrt5.
+\]
+最佳秩 $2$ 逼近为 $A_2=\diag(4,2,0)$，两种误差均为 $1$。
+\end{solution}
+\end{exercise}
+
+\begin{exercise}[level=basic]
+设 $A=U\Sigma V^{\mathsf T}$ 是 SVD。证明 $A^{\mathsf T}=V\Sigma^{\mathsf T}U^{\mathsf T}$ 是 $A^{\mathsf T}$ 的 SVD，且 $A$ 与 $A^{\mathsf T}$ 有相同的非零奇异值。
+\begin{solution}
+$U,V$ 正交，$\Sigma^{\mathsf T}$ 仍为矩形对角矩阵，其非零对角元不变。因此
+\[
+A^{\mathsf T}=(U\Sigma V^{\mathsf T})^{\mathsf T}
+=V\Sigma^{\mathsf T}U^{\mathsf T}
+\]
+满足 SVD 的定义。故转置只交换左右奇异向量，不改变非零奇异值。
+\end{solution}
+\end{exercise}
+
+\begin{exercise}[level=basic]
+设 $A$ 的奇异值为 $7,4,2,0$。求 $\rank A$、$\lVert A\rVert_2$、$\lVert A\rVert_F$；若 $A$ 为可逆方阵，再判断其 $2$-条件数。
+\begin{solution}
+正奇异值有三个，所以 $\rank A=3$。并且
+\[
+\lVert A\rVert_2=7,
+\qquad
+\lVert A\rVert_F=\sqrt{49+16+4}=\sqrt{69}.
+\]
+题设奇异值中含零，若 $A$ 是方阵则它不可逆，因此“若为可逆方阵”与所给数据矛盾，条件数按约定为无穷。
+\end{solution}
+\end{exercise}
+
+\begin{exercise}[level=standard]
+求矩阵
+\[
+A=\begin{pmatrix}3&0\\0&-2\end{pmatrix}
+\]
+的一个 SVD，并说明它与正交特征分解的区别。
+\begin{solution}
+可取
+\[
+U=\begin{pmatrix}1&0\\0&-1\end{pmatrix},
+\quad
+\Sigma=\begin{pmatrix}3&0\\0&2\end{pmatrix},
+\quad
+V=I_2.
+\]
+于是 $A=U\Sigma V^{\mathsf T}$。特征分解保留带符号的特征值 $3,-2$，而 SVD 把伸缩量写成非负奇异值 $3,2$，负号吸收到正交因子中。
+\end{solution}
+\end{exercise}
+
+\begin{exercise}[level=standard]
+求矩阵
+\[
+A=\begin{pmatrix}1&1\\0&0\end{pmatrix}
+\]
+的紧致 SVD、伪逆 $A^+$、列空间和零空间。
+\begin{solution}
+\[
+A^{\mathsf T}A=\begin{pmatrix}1&1\\1&1\end{pmatrix}
+\]
+的非零特征值为 $2$，对应单位特征向量 $v_1=(1,1)^{\mathsf T}/\sqrt2$。于是 $\sigma_1=\sqrt2$，
+\[
+u_1=Av_1/\sqrt2=(1,0)^{\mathsf T}.
+\]
+紧致 SVD 为 $A=u_1\sqrt2v_1^{\mathsf T}$，且
+\[
+A^+=v_1\frac1{\sqrt2}u_1^{\mathsf T}
+=\begin{pmatrix}1/2&0\\1/2&0\end{pmatrix}.
+\]
+列空间为 $\operatorname{span}\{(1,0)^{\mathsf T}\}$，零空间为 $\operatorname{span}\{(1,-1)^{\mathsf T}\}$。
+\end{solution}
+\end{exercise}
+
+\begin{exercise}[level=standard]
+设中心化数据的协方差矩阵为
+\[
+C=\begin{pmatrix}4&0&0\\0&2&0\\0&0&1\end{pmatrix}.
+\]
+若要求累计方差贡献率不低于 $80\%$，至少应保留几个主成分？相应的平均平方重构误差是多少？
+\begin{solution}
+总方差为 $7$。保留一个主成分的贡献率为 $4/7<80\%$；保留两个时为 $6/7>80\%$。故至少保留两个，平均平方重构误差为舍去特征值之和 $1$。
+\end{solution}
+\end{exercise}
+
+\begin{exercise}[level=standard]
+证明协方差矩阵 $C=YY^{\mathsf T}/N$ 的零空间满足
+\[
+\ker C=\ker Y^{\mathsf T}.
+\]
+并解释这一结论的数据含义。
+\begin{solution}
+若 $Y^{\mathsf T}x=0$，则 $Cx=YY^{\mathsf T}x/N=0$。反之，若 $Cx=0$，则
+\[
+0=x^{\mathsf T}Cx=\frac1N\lVert Y^{\mathsf T}x\rVert_2^2,
+\]
+故 $Y^{\mathsf T}x=0$。这表示零方差方向恰好是所有中心化样本都没有投影分量的方向。
+\end{solution}
+\end{exercise}
+
+\begin{exercise}[level=standard]
+设 $A$ 的奇异值为 $6,3,3,1$。求最佳秩 $2$ 逼近的两种范数误差，并判断最优逼近是否唯一。
+\begin{solution}
+秩 $2$ 截断后的谱范数误差为第三奇异值 $3$，Frobenius 误差为
+\[
+\sqrt{3^2+1^2}=\sqrt{10}.
+\]
+由于 $\sigma_2=\sigma_3=3$，截断边界处有重奇异值，最优秩 $2$ 逼近一般不唯一。
+\end{solution}
+\end{exercise}
+
+\begin{exercise}[level=standard]
+设 $A\in\R^{m\times n}$ 的紧致 SVD 为 $U_r\Sigma_rV_r^{\mathsf T}$。证明
+\[
+AA^+=U_rU_r^{\mathsf T},
+\qquad
+A^+A=V_rV_r^{\mathsf T}.
+\]
+\begin{solution}
+由定义直接计算：
+\[
+AA^+
+=U_r\Sigma_rV_r^{\mathsf T}V_r\Sigma_r^{-1}U_r^{\mathsf T}
+=U_rU_r^{\mathsf T},
+\]
+\[
+A^+A
+=V_r\Sigma_r^{-1}U_r^{\mathsf T}U_r\Sigma_rV_r^{\mathsf T}
+=V_rV_r^{\mathsf T}.
+\]
+二者分别是列空间和行空间上的正交投影。
+\end{solution}
+\end{exercise}
+
+\begin{exercise}[level=standard]
+求最小二乘问题
+\[
+\min_{x\in\R^2}\left\lVert
+\begin{pmatrix}1&0\\0&1\\1&1\end{pmatrix}x-
+\begin{pmatrix}1\\1\\3\end{pmatrix}
+\right\rVert_2
+\]
+的解及最小残差。
+\begin{solution}
+正规方程为
+\[
+\begin{pmatrix}2&1\\1&2\end{pmatrix}x
+=\begin{pmatrix}4\\4\end{pmatrix},
+\]
+解得 $x=(4/3,4/3)^{\mathsf T}$。此时
+\[
+Ax-b=(1/3,1/3,-1/3)^{\mathsf T},
+\]
+故最小残差范数为 $\sqrt3/3$。
+\end{solution}
+\end{exercise}
+
+\begin{exercise}[level=standard]
+设 $A$ 为可逆方阵，证明其极分解中的
+\[
+H=(A^{\mathsf T}A)^{1/2},
+\qquad Q=AH^{-1}
+\]
+满足 $Q^{\mathsf T}Q=I$。
+\begin{solution}
+$H$ 对称且 $H^2=A^{\mathsf T}A$。因此
+\[
+Q^{\mathsf T}Q
+=H^{-\mathsf T}A^{\mathsf T}AH^{-1}
+=H^{-1}H^2H^{-1}=I.
+\]
+这里使用了可逆性以保证 $H^{-1}$ 存在。
+\end{solution}
+\end{exercise}
+
+\begin{exercise}[level=standard]
+设 $T(x)=Bx+c$，其中
+\[
+B=\begin{pmatrix}1/4&0\\1/5&1/4\end{pmatrix},
+\qquad c=\begin{pmatrix}1\\0\end{pmatrix}.
+\]
+使用 $\infty$-范数证明 $T$ 为压缩映射，并求唯一不动点。
+\begin{solution}
+诱导无穷范数等于最大行绝对值和：
+\[
+\lVert B\rVert_\infty=\max\{1/4,1/5+1/4\}=9/20<1.
+\]
+故 $T$ 是压缩映射。不动点满足
+\[
+(I-B)x=c,
+\qquad
+\begin{pmatrix}3/4&0\\-1/5&3/4\end{pmatrix}x
+=\begin{pmatrix}1\\0\end{pmatrix}.
+\]
+解得 $x_*=(4/3,16/45)^{\mathsf T}$。
+\end{solution}
+\end{exercise}
+
+\begin{exercise}[level=advanced]
+证明对任意 $A\in\R^{m\times n}$，
+\[
+\lVert A\rVert_2\le\lVert A\rVert_F
+\le\sqrt{\rank A}\,\lVert A\rVert_2.
+\]
+讨论等号成立条件。
+\begin{solution}
+若非零奇异值为 $\sigma_1\ge\cdots\ge\sigma_r>0$，则
+\[
+\lVert A\rVert_F^2=\sum_{i=1}^r\sigma_i^2.
+\]
+故
+\[
+\sigma_1^2\le\sum_i\sigma_i^2\le r\sigma_1^2.
+\]
+开平方即得结论。左侧等号当且仅当至多一个奇异值非零；右侧等号当且仅当所有非零奇异值相等。
+\end{solution}
+\end{exercise}
+
+\begin{exercise}[level=advanced]
+设 $A$ 为实对称矩阵，特征值按
+\[
+|\lambda_1|\ge\cdots\ge|\lambda_n|
+\]
+排列。证明 $A$ 的奇异值为 $|\lambda_i|$，并由此说明按特征值绝对值截断才能得到最佳低秩逼近。
+\begin{solution}
+设 $A=Q\Lambda Q^{\mathsf T}$，则
+\[
+A^{\mathsf T}A=A^2=Q\Lambda^2Q^{\mathsf T}.
+\]
+因此 $A^{\mathsf T}A$ 的特征值为 $\lambda_i^2$，奇异值为 $|\lambda_i|$。最佳低秩逼近保留最大的奇异值，故必须按 $|\lambda_i|$ 而不是按带符号的大小排序。
+\end{solution}
+\end{exercise}
+
+\begin{exercise}[level=advanced]
+不用直接引用 Eckart--Young--Mirsky 定理，证明任意秩不超过 $k$ 的矩阵 $B$ 都满足
+\[
+\lVert A-B\rVert_2\ge\sigma_{k+1}(A).
+\]
+\begin{solution}
+令 $S=\operatorname{span}\{v_1,\ldots,v_{k+1}\}$。由于 $\dim S=k+1$ 而 $\rank(B|_S)\le k$，存在单位向量 $x\in S$ 使 $Bx=0$。写 $x=\sum_{i=1}^{k+1}\alpha_iv_i$，则
+\[
+\lVert(A-B)x\rVert_2^2
+=\sum_{i=1}^{k+1}\sigma_i^2\alpha_i^2
+\ge\sigma_{k+1}^2\sum_i\alpha_i^2
+=\sigma_{k+1}^2.
+\]
+所以 $\lVert A-B\rVert_2\ge\sigma_{k+1}$。
+\end{solution}
+\end{exercise}
+
+\begin{exercise}[level=advanced]
+设 $Y$ 为中心化数据矩阵，$P$ 是秩为 $k$ 的正交投影。证明
+\[
+\lVert Y-PY\rVert_F^2
+=\lVert Y\rVert_F^2-\lVert PY\rVert_F^2,
+\]
+并由此推导 PCA 的最大方差与最小重构误差等价性。
+\begin{solution}
+$P$ 为正交投影，故 $PY$ 与 $(I-P)Y$ 的每一对对应列正交。逐列使用勾股定理并求和：
+\[
+\lVert Y\rVert_F^2
+=\lVert PY\rVert_F^2+\lVert(I-P)Y\rVert_F^2.
+\]
+而
+\[
+\lVert PY\rVert_F^2
+=\tr(Y^{\mathsf T}PY)
+=N\tr(PC),
+\]
+所以最大化保留方差 $\tr(PC)$ 等价于最小化重构误差 $\lVert(I-P)Y\rVert_F^2/N$。
+\end{solution}
+\end{exercise}
+
+\begin{exercise}[level=advanced]
+设 $A$ 满列秩。证明
+\[
+A^+=(A^{\mathsf T}A)^{-1}A^{\mathsf T},
+\]
+并证明 $A^+b$ 是正规方程 $A^{\mathsf T}Ax=A^{\mathsf T}b$ 的唯一解。
+\begin{solution}
+满列秩时紧致 SVD 中 $V$ 为 $n$ 阶正交矩阵，且
+\[
+A^{\mathsf T}A=V\Sigma^2V^{\mathsf T}.
+\]
+因此
+\[
+(A^{\mathsf T}A)^{-1}A^{\mathsf T}
+=V\Sigma^{-2}V^{\mathsf T}V\Sigma U^{\mathsf T}
+=V\Sigma^{-1}U^{\mathsf T}=A^+.
+\]
+$A^{\mathsf T}A$ 正定可逆，故正规方程有唯一解
+$x=(A^{\mathsf T}A)^{-1}A^{\mathsf T}b=A^+b$。
+\end{solution}
+\end{exercise}
+
+\begin{exercise}[level=advanced]
+设 $A$ 为奇异方阵。说明极分解中的半正定因子 $H$ 唯一，但给出一个正交因子不唯一的具体例子。
+\begin{solution}
+若 $A=QH$ 且 $Q$ 正交，则
+\[
+A^{\mathsf T}A=H Q^{\mathsf T}QH=H^2.
+\]
+正半定平方根唯一，故 $H=(A^{\mathsf T}A)^{1/2}$ 唯一。取
+\[
+A=\begin{pmatrix}1&0\\0&0\end{pmatrix},
+\qquad H=A.
+\]
+则 $Q_1=I$ 与 $Q_2=\diag(1,-1)$ 都正交，并且
+\[
+Q_1H=Q_2H=A.
+\]
+所以正交因子不唯一。
+\end{solution}
+\end{exercise}
+
+\begin{exercise}[level=advanced]
+设 $T:X\to X$ 为压缩映射，压缩常数为 $q$。若迭代中已经得到 $x_{n-1},x_n$，证明后验误差估计
+\[
+\lVert x_n-x_*\rVert\le\frac q{1-q}\lVert x_n-x_{n-1}\rVert.
+\]
+并给出保证误差不超过 $\varepsilon$ 的停止准则。
+\begin{solution}
+由压缩性，$j\ge n$ 时
+\[
+\lVert x_{j+1}-x_j\rVert
+\le q^{j-n+1}\lVert x_n-x_{n-1}\rVert.
+\]
+令 $m\to\infty$，则
+\begin{align*}
+\lVert x_*-x_n\rVert
+&\le\sum_{j=n}^{\infty}\lVert x_{j+1}-x_j\rVert\\
+&\le\frac q{1-q}\lVert x_n-x_{n-1}\rVert.
+\end{align*}
+因此可使用停止准则
+\[
+\lVert x_n-x_{n-1}\rVert\le\frac{1-q}{q}\varepsilon.
+\]
+当 $q=0$ 时一次迭代即到达不动点，可单独处理。
+\end{solution}
+\end{exercise}
+
+\begin{exercise}[level=advanced]
+设 $A=\diag(5,3,1)$。分别利用奇异值的两个极小极大公式解释为什么第二奇异值等于 $3$。
+\begin{solution}
+取 $S=\operatorname{span}\{e_1,e_2\}$。单位向量 $x=ae_1+be_2$ 满足
+\[
+\lVert Ax\rVert_2^2=25a^2+9b^2\ge9,
+\]
+并在 $x=e_2$ 时取等号。任何二维子空间都与
+$\operatorname{span}\{e_2,e_3\}$ 非零相交，在该交方向上的伸缩不超过 $3$，故第一极小极大式给出 $\sigma_2=3$。
+
+取 $L=\operatorname{span}\{e_2,e_3\}$，其最大伸缩为 $3$。任何二维子空间都与
+$\operatorname{span}\{e_1,e_2\}$ 非零相交，在该交方向上的伸缩至少为 $3$，故第二极小极大式也给出 $\sigma_2=3$。
+\end{solution}
+\end{exercise}
+
+\begin{exercise}[level=advanced]
+设 $A=\diag(3,1)$。描述单位圆在 $A$ 作用下的像，并指出右奇异向量、左奇异向量和奇异值的几何含义。
+\begin{solution}
+单位圆参数化为 $x=(\cos\theta,\sin\theta)^{\mathsf T}$，其像为
+\[
+Ax=(3\cos\theta,\sin\theta)^{\mathsf T},
+\]
+满足 $y_1^2/9+y_2^2=1$。像是半轴长为 $3,1$ 的椭圆。右奇异向量 $e_1,e_2$ 是输入主方向，左奇异向量仍为 $e_1,e_2$，是输出椭圆的半轴方向，奇异值 $3,1$ 是相应伸缩倍数。
+\end{solution}
+\end{exercise}
+
+\begin{exercise}[level=advanced]
+设 $A$ 为可逆 $n$ 阶矩阵，$Q,R$ 为正交矩阵。证明
+\[
+\kappa_2(QAR)=\kappa_2(A),
+\qquad
+\kappa_2(A^{-1})=\kappa_2(A).
+\]
+\begin{solution}
+正交乘法不改变奇异值，故
+\[
+\kappa_2(QAR)=\frac{\sigma_1(A)}{\sigma_n(A)}=\kappa_2(A).
+\]
+$A^{-1}$ 的奇异值按降序为
+$1/\sigma_n(A),\ldots,1/\sigma_1(A)$，所以
+\[
+\kappa_2(A^{-1})
+=\frac{1/\sigma_n(A)}{1/\sigma_1(A)}
+=\kappa_2(A).
+\]
+\end{solution}
+\end{exercise}
+
+\begin{exercise}[level=advanced]
+某两个变量的协方差矩阵为
+\[
+C=\begin{pmatrix}9&3\\3&4\end{pmatrix}.
+\]
+求相关系数矩阵，并说明协方差 PCA 与相关系数 PCA 的主方向为什么一般不同。
+\begin{solution}
+$D=\diag(9,4)$，故
+\[
+R=D^{-1/2}CD^{-1/2}
+=\begin{pmatrix}1&1/2\\1/2&1\end{pmatrix}.
+\]
+$C$ 的特征方向同时受原方差和协方差影响，而 $R$ 已把两个变量的方差都调整为 $1$。二者一般不相似，所以特征向量通常不同。
+\end{solution}
+\end{exercise}
+
+\begin{exercise}[level=advanced]
+设中心化随机向量的协方差矩阵为
+\[
+C=\begin{pmatrix}2&1\\1&2\end{pmatrix}.
+\]
+构造一个 PCA 白化变换，并验证白化后的协方差为 $I_2$。
+\begin{solution}
+$C$ 的单位特征向量可取
+\[
+q_1=\frac1{\sqrt2}(1,1)^{\mathsf T},
+\qquad
+q_2=\frac1{\sqrt2}(1,-1)^{\mathsf T},
+\]
+对应特征值为 $3,1$。令
+\[
+Q=(q_1,q_2),\quad \Lambda=\diag(3,1),
+\quad W=\Lambda^{-1/2}Q^{\mathsf T}.
+\]
+白化变量 $z=Wy$ 的协方差为
+\[
+WCW^{\mathsf T}
+=\Lambda^{-1/2}Q^{\mathsf T}Q\Lambda Q^{\mathsf T}Q\Lambda^{-1/2}
+=I_2.
+\]
+\end{solution}
+\end{exercise}
+
+\begin{exercise}[level=advanced]
+为下列任务选择最直接的矩阵分解，并说明理由：
+\begin{enumerate}[label=(\arabic*)]
+\item 求矩形矩阵的最佳秩 $k$ 逼近；
+\item 稳定求解满列秩最小二乘问题；
+\item 计算实对称矩阵的矩阵函数；
+\item 把可逆线性变换分成正定伸缩与正交变换。
+\end{enumerate}
+\begin{solution}
+(1) 选 SVD，截断 SVD 直接给出最佳秩 $k$ 逼近。
+
+(2) 选 QR 分解。若 $A=QR$，最小二乘问题可化为上三角方程 $Rx=Q^{\mathsf T}b$，无需形成正规方程。
+
+(3) 选正交特征分解。若 $A=Q\Lambda Q^{\mathsf T}$，则 $f(A)=Qf(\Lambda)Q^{\mathsf T}$。
+
+(4) 选极分解 $A=QH$，其中 $H$ 正定，$Q$ 正交。
+\end{solution}
+\end{exercise}
+
+\begin{exercise}[level=advanced]
+对
+\[
+C=\diag(4,1),
+\qquad q^{(0)}=\frac1{\sqrt2}(1,1)^{\mathsf T}
+\]
+执行幂迭代。写出 $q^{(t)}$ 的方向表达式，并估计第二方向分量相对于第一方向分量的衰减率。
+\begin{solution}
+未归一化向量为
+\[
+C^tq^{(0)}=\frac1{\sqrt2}(4^t,1)^{\mathsf T}.
+\]
+因此
+\[
+q^{(t)}=\frac{(4^t,1)^{\mathsf T}}{\sqrt{16^t+1}}.
+\]
+第二坐标与第一坐标的比值为 $4^{-t}$，每次迭代缩小为原来的 $1/4$，与
+$\lambda_2/\lambda_1=1/4$ 一致，故 $q^{(t)}\to e_1$。
+\end{solution}
+\end{exercise}
+

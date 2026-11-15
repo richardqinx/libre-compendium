@@ -1,0 +1,1217 @@
+% libre-compendium
+%
+% Copyright (C) 2026 Richard Qin
+%
+% This document is dual-licensed under either:
+% - GNU Free Documentation License, Version 1.3 or any later version
+%   published by the Free Software Foundation; with no Invariant Sections,
+%   no Front-Cover Texts, and no Back-Cover Texts (see COPYING.DOC); or
+% - Creative Commons Attribution-ShareAlike 4.0 International License
+%   (see LICENSE-CC-BY-SA-4.0).
+
+\chapter{线性映射、矩阵表示与空间的直和分解}
+
+\section{线性映射的定义与基本性质}
+
+以下设 $V,W,U$ 为数域 $\F$ 上的线性空间。若涉及维数、矩阵秩或特征值，则另行假设空间有限维。
+
+\begin{definition}[线性映射与线性变换]
+映射 $T:V\to W$ 若满足：对任意 $x,y\in V$ 与任意 $a,b\in\F$，
+\[
+T(ax+by)=aT(x)+bT(y),
+\]
+则称 $T$ 为从 $V$ 到 $W$ 的线性映射。若定义域和值域相同，即 $T:V\to V$，则常称 $T$ 为 $V$ 上的线性变换或线性算子。
+\end{definition}
+
+定义中的一个等式同时包含加法性与齐次性。分别取 $(a,b)=(1,1)$ 与 $y=0$，可恢复
+\[
+T(x+y)=T(x)+T(y),\qquad T(ax)=aT(x).
+\]
+
+\begin{proposition}[有限线性组合的保持性]
+若 $T:V\to W$ 线性，则对任意 $x_1,\ldots,x_s\in V$ 与 $a_1,\ldots,a_s\in\F$，
+\[
+T\left(\sum_{i=1}^s a_ix_i\right)
+=\sum_{i=1}^s a_iT(x_i).
+\]
+特别地，$T(0)=0$ 且 $T(-x)=-T(x)$。
+\end{proposition}
+\begin{proof}
+$s=2$ 时就是定义。假设结论对 $s-1$ 项成立，则
+\begin{align*}
+T\left(\sum_{i=1}^s a_ix_i\right)
+&=T\left(\sum_{i=1}^{s-1}a_ix_i+a_sx_s\right)\\
+&=T\left(\sum_{i=1}^{s-1}a_ix_i\right)+a_sT(x_s)\\
+&=\sum_{i=1}^s a_iT(x_i).
+\end{align*}
+由归纳法结论成立。取所有系数为零得 $T(0)=0$；再由
+\[
+0=T(0)=T(x-x)=T(x)+T(-x)
+\]
+得到 $T(-x)=-T(x)$。
+\end{proof}
+
+\begin{example}[title={典型线性映射与非线性映射}]
+\begin{enumerate}
+\item 固定矩阵 $A\in\F^{m\times n}$，映射 $T_A:\F^n\to\F^m$，$T_A(x)=Ax$ 线性。
+\item 微分映射 $D:P_n(\F)\to P_{n-1}(\F)$，$D(f)=f'$ 线性。
+\item 取值映射 $E_c:P_n(\F)\to\F$，$E_c(f)=f(c)$ 线性。
+\item 范数映射 $N:\R^n\to\R$，$N(x)=\lVert x\rVert$ 不线性，因为通常 $N(-x)=N(x)\ne-N(x)$。
+\item 平移映射 $F(x)=Ax+b$ 在 $b\ne0$ 时不是线性映射，因为 $F(0)=b\ne0$。
+\end{enumerate}
+\end{example}
+
+\begin{proposition}[线性映射的复合]
+若 $T:V\to W$、$S:W\to U$ 均线性，则 $S\circ T:V\to U$ 线性。
+\end{proposition}
+\begin{proof}
+对任意 $x,y\in V$ 与 $a,b\in\F$，
+\begin{align*}
+(S\circ T)(ax+by)
+&=S\bigl(T(ax+by)\bigr)\\
+&=S\bigl(aT(x)+bT(y)\bigr)\\
+&=aS(T(x))+bS(T(y)).
+\end{align*}
+\end{proof}
+
+\section{核、像与原像}
+
+\begin{definition}[核与像]
+设 $T:V\to W$ 线性。定义
+\[
+\ker T=\{x\in V:T(x)=0\},
+\qquad
+\operatorname{Im}T=\{T(x):x\in V\}.
+\]
+$\ker T$ 是定义域 $V$ 的子集；$\operatorname{Im}T$ 是陪域 $W$ 的子集。
+\end{definition}
+
+\begin{proposition}[核与像是子空间]
+$\ker T$ 是 $V$ 的子空间，$\operatorname{Im}T$ 是 $W$ 的子空间。
+\end{proposition}
+\begin{proof}
+$0\in\ker T$。若 $x_1,x_2\in\ker T$，则对任意 $a,b\in\F$，
+\[
+T(ax_1+bx_2)=aT(x_1)+bT(x_2)=0,
+\]
+故 $ax_1+bx_2\in\ker T$。
+
+$0=T(0)\in\operatorname{Im}T$。若 $y_1=T(x_1)$、$y_2=T(x_2)$ 属于像空间，则
+\[
+ay_1+by_2=T(ax_1+bx_2)\in\operatorname{Im}T.
+\]
+故像空间是 $W$ 的子空间，而不是定义域 $V$ 的子空间。
+\end{proof}
+
+\begin{definition}[秩与零化度]
+若 $V,W$ 有限维，定义
+\[
+\rank T=\dim\operatorname{Im}T,
+\qquad
+\operatorname{nullity}T=\dim\ker T.
+\]
+\end{definition}
+
+\begin{theorem}[非空原像是核的仿射陪集]
+给定 $y\in W$。若方程 $T(x)=y$ 无解，则 $T^{-1}(\{y\})=\varnothing$；若 $x_0$ 是一个特解，则
+\[
+T^{-1}(\{y\})=x_0+\ker T
+=\{x_0+z:z\in\ker T\}.
+\]
+\end{theorem}
+\begin{proof}
+若 $z\in\ker T$，则
+\[
+T(x_0+z)=T(x_0)+T(z)=y,
+\]
+故 $x_0+\ker T$ 中每个元素都是原方程的解。
+
+反之，若 $x$ 也是解，则
+\[
+T(x-x_0)=T(x)-T(x_0)=y-y=0,
+\]
+所以 $x-x_0\in\ker T$，即 $x=x_0+(x-x_0)\in x_0+\ker T$。
+\end{proof}
+
+\begin{pitfall}[原像陪集与单射条件]
+公式 $T^{-1}(\{y\})=x_0+\ker T$ 在原像非空时总成立，不要求 $\ker T=\{0\}$。核为零只意味着每个非空原像至多含一个元素，即 $T$ 为单射。
+\end{pitfall}
+
+\begin{theorem}[单射、满射与核像]
+设 $T:V\to W$ 线性，则
+\[
+T\text{ 单射}\iff\ker T=\{0\},
+\qquad
+T\text{ 满射}\iff\operatorname{Im}T=W.
+\]
+\end{theorem}
+\begin{proof}
+若 $T$ 单射且 $x\in\ker T$，则 $T(x)=0=T(0)$，故 $x=0$。反之，若 $\ker T=\{0\}$ 且 $T(x_1)=T(x_2)$，则
+\[
+T(x_1-x_2)=0,
+\]
+所以 $x_1-x_2=0$，即 $x_1=x_2$。满射的等价条件就是像空间定义的直接展开。
+\end{proof}
+
+\begin{proposition}[线性相关性在映射下的变化]
+若 $x_1,\ldots,x_s$ 线性相关，则 $T(x_1),\ldots,T(x_s)$ 线性相关。反向一般不成立；若 $T$ 单射，则线性无关向量组的像仍线性无关。
+\end{proposition}
+\begin{proof}
+线性相关意味着存在不全为零的 $a_i$ 使 $\sum a_ix_i=0$。应用 $T$ 得
+\[
+\sum a_iT(x_i)=0,
+\]
+故像向量组相关。
+
+若 $T$ 单射且 $\sum a_iT(x_i)=0$，则
+\[
+T\left(\sum a_ix_i\right)=0.
+\]
+由 $\ker T=\{0\}$，得到 $\sum a_ix_i=0$。若原向量组线性无关，则所有 $a_i=0$。
+\end{proof}
+
+\section{线性映射由基上的取值唯一确定}
+
+\begin{theorem}[基上赋值的线性延拓]
+\leavevmode\par\noindent
+设 $(e_1,\ldots,e_n)$ 是有限维空间 $V$ 的一组基，任取 $w_1,\ldots,w_n\in W$。存在唯一线性映射 $T:V\to W$ 满足
+\[
+T(e_i)=w_i,\qquad i=1,\ldots,n.
+\]
+\end{theorem}
+\begin{proof}
+每个 $x\in V$ 唯一写成 $x=\sum x_ie_i$。定义
+\[
+T(x)=\sum_{i=1}^n x_iw_i.
+\]
+坐标唯一性保证该定义无歧义。直接展开坐标可验证 $T$ 线性，并满足 $T(e_i)=w_i$。
+
+若 $S$ 是另一个满足相同条件的线性映射，则
+\[
+S(x)=S\left(\sum x_ie_i\right)
+=\sum x_iS(e_i)=\sum x_iw_i=T(x).
+\]
+故 $S=T$。
+\end{proof}
+
+\begin{corollary}[基的像生成像空间]
+若 $(e_1,\ldots,e_n)$ 是 $V$ 的一组基，则
+\[
+\operatorname{Im}T
+=\operatorname{span}\{T(e_1),\ldots,T(e_n)\}.
+\]
+该向量组通常不是像空间的一组基，因为其中可能有零向量或线性相关向量。
+\end{corollary}
+\begin{proof}
+任意 $x=\sum x_ie_i$ 满足
+\[
+T(x)=\sum x_iT(e_i),
+\]
+所以像空间包含于右侧张成空间；反向包含由每个 $T(e_i)$ 本身属于像空间得到。
+\end{proof}
+
+\begin{example}[title={求核、像与秩}]
+设 $T:P_3(\R)\to P_2(\R)$，$T(f)=f'$。求核、像、秩与零化度。
+\begin{solution}
+若 $f'=0$，则 $f$ 为常数，故
+\[
+\ker T=\operatorname{span}\{1\}.
+\]
+对任意 $g(t)=a+bt+ct^2$，取
+\[
+f(t)=at+\frac b2t^2+\frac c3t^3,
+\]
+便有 $f'=g$，故 $\operatorname{Im}T=P_2(\R)$。因此
+\[
+\rank T=3,\qquad \operatorname{nullity}T=1.
+\]
+\end{solution}
+\end{example}
+
+\section{秩零化度定理}
+
+\begin{theorem}[秩零化度定理]
+设 $T:V\to W$ 为线性映射，且 $\dim V=n<\infty$。则
+\[
+\dim V=\rank T+\operatorname{nullity}T,
+\]
+即
+\[
+n=\dim\operatorname{Im}T+\dim\ker T.
+\]
+陪域 $W$ 可以是无限维空间；定理只要求定义域有限维。
+\end{theorem}
+\begin{proof}
+设 $\dim\ker T=r$，取核的一组基
+\[
+(e_{k+1},\ldots,e_n),\qquad r=n-k,
+\]
+并将其扩充为 $V$ 的一组基
+\[
+(e_1,\ldots,e_k,e_{k+1},\ldots,e_n).
+\]
+证明 $T(e_1),\ldots,T(e_k)$ 是像空间的一组基。
+
+先证张成性。任取 $y\in\operatorname{Im}T$，存在
+\[
+x=\sum_{i=1}^n a_ie_i
+\]
+使 $T(x)=y$。因为 $e_{k+1},\ldots,e_n\in\ker T$，
+\[
+y=T(x)=\sum_{i=1}^k a_iT(e_i).
+\]
+
+再证线性无关。若
+\[
+\sum_{i=1}^k b_iT(e_i)=0,
+\]
+则 $T(\sum_{i=1}^k b_ie_i)=0$，所以 $\sum_{i=1}^k b_ie_i\in\ker T$。它又属于
+\[
+\operatorname{span}\{e_1,\ldots,e_k\}.
+\]
+由于整组 $e_1,\ldots,e_n$ 线性无关，上述两个子空间交于零，故所有 $b_i=0$。
+
+因此 $\rank T=k$，而 $\operatorname{nullity}T=n-k$，两者之和为 $n$。
+\end{proof}
+
+\begin{corollary}[有限维等维空间中的单射与满射]
+若 $\dim V=\dim W<\infty$，则对线性映射 $T:V\to W$，
+\[
+T\text{ 单射}\iff T\text{ 满射}\iff T\text{ 可逆}.
+\]
+\end{corollary}
+\begin{proof}
+若 $T$ 单射，则 $\dim\ker T=0$，秩零化度定理给出
+\[
+\dim\operatorname{Im}T=\dim V=\dim W,
+\]
+故像空间等于 $W$，即满射。反向同理。线性映射双射时，其集合意义下的逆映射存在；由
+\[
+T^{-1}(au+bv)=aT^{-1}(u)+bT^{-1}(v)
+\]
+可验证逆映射仍线性。
+\end{proof}
+
+\begin{theorem}[左逆、右逆与单射满射]
+设 $V,W$ 为有限维线性空间，$T:V\to W$ 线性。
+\begin{enumerate}
+\item $T$ 单射，当且仅当存在 $L:W\to V$ 使
+\[
+L\circ T=I_V.
+\]
+此时称 $L$ 为 $T$ 的左逆。
+\item $T$ 满射，当且仅当存在 $R:W\to V$ 使
+\[
+T\circ R=I_W.
+\]
+此时称 $R$ 为 $T$ 的右逆。
+\end{enumerate}
+\end{theorem}
+\begin{proof}
+若 $L\circ T=I_V$ 且 $T(x_1)=T(x_2)$，两边作用 $L$ 得 $x_1=x_2$，故 $T$ 单射。
+
+反之，若 $T$ 单射，取 $V$ 的基 $(e_1,\ldots,e_n)$，则
+\[
+(T(e_1),\ldots,T(e_n))
+\]
+线性无关。将其扩充为 $W$ 的一组基。定义 $L(T(e_i))=e_i$，并令 $L$ 在新增基向量上取零，再作线性延拓，即得 $L\circ T=I_V$。
+
+若 $T\circ R=I_W$，则每个 $y\in W$ 都有 $y=T(R(y))$，故 $T$ 满射。
+
+反之，若 $T$ 满射，取 $W$ 的基 $(f_1,\ldots,f_m)$，为每个 $f_i$ 选择一个原像 $e_i\in V$，使 $T(e_i)=f_i$。定义 $R(f_i)=e_i$ 并线性延拓，则 $T\circ R=I_W$。
+\end{proof}
+
+\begin{corollary}[矩阵的左逆与右逆]
+设 $A\in\F^{m\times n}$。
+\[
+A\text{ 有左逆}\iff\rank A=n,
+\qquad
+A\text{ 有右逆}\iff\rank A=m.
+\]
+方阵有单侧逆时，它必可逆，且该单侧逆就是通常的逆矩阵。
+\end{corollary}
+
+\begin{definition}[商空间]
+设 $N$ 是 $V$ 的子空间。对 $x\in V$，陪集
+\[
+x+N=\{x+n:n\in N\}
+\]
+称为 $x$ 关于 $N$ 的陪集。所有陪集的集合记作 $V/N$。定义
+\[
+(x+N)+(y+N)=(x+y)+N,
+\]
+\[
+a(x+N)=ax+N.
+\]
+这些运算与代表元的选择无关，使 $V/N$ 成为线性空间，称为 $V$ 关于 $N$ 的商空间。
+\end{definition}
+
+\begin{proposition}[商空间的维数]
+若 $V$ 有限维，则
+\[
+\dim(V/N)=\dim V-\dim N.
+\]
+\end{proposition}
+\begin{proof}
+取 $N$ 的一组基 $(e_1,\ldots,e_r)$，扩充为 $V$ 的基
+\[
+(e_1,\ldots,e_r,e_{r+1},\ldots,e_n).
+\]
+则
+\[
+(e_{r+1}+N,\ldots,e_n+N)
+\]
+是 $V/N$ 的一组基。张成性来自任意向量的基展开；线性无关性来自
+\[
+\sum_{i=r+1}^n a_ie_i\in N
+\]
+只能在全体基的唯一表示下使所有 $a_i=0$。
+\end{proof}
+
+\begin{theorem}[线性映射第一同构定理]
+设 $T:V\to W$ 线性，则
+\[
+V/\ker T\cong\operatorname{Im}T.
+\]
+\end{theorem}
+\begin{proof}
+定义
+\[
+\overline T:V/\ker T\to\operatorname{Im}T,
+\qquad
+\overline T(x+\ker T)=T(x).
+\]
+若 $x+\ker T=x'+\ker T$，则 $x-x'\in\ker T$，所以 $T(x)=T(x')$，故定义良好。它显然线性且满射。若 $\overline T(x+\ker T)=0$，则 $x\in\ker T$，从而 $x+\ker T$ 是商空间的零元，所以 $\overline T$ 单射。
+\end{proof}
+
+\begin{remark}
+第一同构定理把“两个向量具有相同像当且仅当它们相差一个核向量”写成结构性结论。秩零化度定理是其有限维维数版本。
+\end{remark}
+
+\section{线性映射的矩阵表示}
+
+\begin{definition}[线性映射在两组基下的矩阵]
+设 $\dim V=n$、$\dim W=m$，取有序基
+\[
+\mathcal E=(e_1,\ldots,e_n),\qquad
+\mathcal F=(f_1,\ldots,f_m).
+\]
+将每个 $T(e_j)$ 在基 $\mathcal F$ 下展开：
+\[
+T(e_j)=\sum_{i=1}^m a_{ij}f_i.
+\]
+矩阵 $A=(a_{ij})\in\F^{m\times n}$ 称为 $T$ 关于定义域基 $\mathcal E$ 和陪域基 $\mathcal F$ 的矩阵，记作
+\[
+[T]_{\mathcal F\leftarrow\mathcal E}=A.
+\]
+矩阵的第 $j$ 列就是 $[T(e_j)]_{\mathcal F}$。
+\end{definition}
+
+\begin{theorem}[坐标作用公式]
+若 $A=[T]_{\mathcal F\leftarrow\mathcal E}$，则对任意 $x\in V$，
+\[
+[T(x)]_{\mathcal F}=A[x]_{\mathcal E}.
+\]
+\end{theorem}
+\begin{proof}
+设 $[x]_{\mathcal E}=(x_1,\ldots,x_n)^{\mathsf T}$，则
+\[
+T(x)=\sum_{j=1}^n x_jT(e_j)
+=\sum_{i=1}^m\left(\sum_{j=1}^n a_{ij}x_j\right)f_i.
+\]
+括号中的 $m$ 个系数正是矩阵乘积 $A[x]_{\mathcal E}$ 的分量。
+\end{proof}
+
+\begin{theorem}[矩阵与线性映射的一一对应]
+固定 $V,W$ 的有序基后，映射
+\[
+\operatorname{Hom}(V,W)\to\F^{m\times n},
+\qquad
+T\mapsto[T]_{\mathcal F\leftarrow\mathcal E}
+\]
+是一一对应。它还保持加法与数乘。
+\end{theorem}
+\begin{proof}
+矩阵的各列给出基向量 $e_j$ 的像坐标。由基上赋值的线性延拓定理，每个矩阵唯一确定一个线性映射，故对应是双射。列坐标的逐项计算还给出
+\[
+[S+T]=[S]+[T],\qquad [aT]=a[T].
+\]
+\end{proof}
+
+\begin{corollary}[线性映射空间的维数]
+若 $\dim V=n$、$\dim W=m$，则
+\[
+\dim\operatorname{Hom}(V,W)=mn.
+\]
+\end{corollary}
+\begin{proof}
+固定两组基后，$\operatorname{Hom}(V,W)$ 与矩阵空间 $\F^{m\times n}$ 线性同构。矩阵空间以只有一个位置为 $1$、其余位置为 $0$ 的 $mn$ 个矩阵为一组基。
+\end{proof}
+
+\begin{theorem}[复合映射的矩阵]
+设 $T:V\to W$、$S:W\to U$，并在三个空间中固定基。若
+\[
+[T]=A,\qquad [S]=B,
+\]
+则
+\[
+[S\circ T]=BA.
+\]
+\end{theorem}
+\begin{proof}
+对任意 $x\in V$，
+\[
+[(S\circ T)(x)]
+=B[T(x)]=BA[x].
+\]
+因为矩阵表示唯一，复合映射的矩阵为 $BA$。乘法顺序与映射作用顺序相反：先作用 $T$，再作用 $S$。
+\end{proof}
+
+\begin{corollary}[矩阵秩等于线性映射的秩]
+若 $A$ 是 $T$ 在任意两组基下的矩阵，则
+\[
+\rank A=\rank T.
+\]
+\end{corollary}
+\begin{proof}
+矩阵 $A$ 的列空间由各列 $[T(e_j)]_{\mathcal F}$ 张成；坐标同构保持线性关系和维数，因此列空间维数等于 $\operatorname{Im}T$ 的维数。
+\end{proof}
+
+\begin{theorem}[复合映射的秩不等式]
+设 $T:V\to W$、$S:W\to U$ 为有限维线性映射。则
+\[
+\rank(S\circ T)\le\min\{\rank S,\rank T\},
+\]
+并且
+\[
+\rank(S\circ T)
+\ge \rank S+\rank T-\dim W.
+\]
+后一式称为 Sylvester 秩不等式的线性映射形式。
+\end{theorem}
+\begin{proof}
+因为
+\[
+\operatorname{Im}(S\circ T)=S(\operatorname{Im}T)
+\subseteq\operatorname{Im}S,
+\]
+所以复合秩不超过 $\rank S$；而一个线性映射的像维数不超过其定义域维数，故
+\[
+\dim S(\operatorname{Im}T)\le\dim\operatorname{Im}T=\rank T.
+\]
+
+对限制映射
+\[
+S|_{\operatorname{Im}T}:\operatorname{Im}T\to U
+\]
+使用秩零化度定理：
+\[
+\rank(S\circ T)
+=\dim\operatorname{Im}T
+-\dim(\operatorname{Im}T\cap\ker S).
+\]
+又
+\[
+\dim(\operatorname{Im}T\cap\ker S)
+\le\dim\ker S
+=\dim W-\rank S.
+\]
+代入即得下界。
+\end{proof}
+
+\begin{corollary}[矩阵的 Sylvester 秩不等式]
+若 $A\in\F^{m\times n}$、$B\in\F^{n\times p}$，则
+\[
+\rank A+\rank B-n
+\le\rank(AB)
+\le\min\{\rank A,\rank B\}.
+\]
+\end{corollary}
+
+\begin{example}[title={非标准基下求矩阵}]
+设 $T:P_2(\R)\to\R^2$，
+\[
+T(f)=(f(0),f(1)).
+\]
+定义域取基 $\mathcal E=(1,t,t^2)$，陪域取基
+\[
+\mathcal F=((1,1)^{\mathsf T},(1,-1)^{\mathsf T}).
+\]
+求 $[T]_{\mathcal F\leftarrow\mathcal E}$。
+\begin{solution}
+\[
+T(1)=(1,1)=1f_1+0f_2,
+\]
+\[
+T(t)=(0,1)=\frac12f_1-\frac12f_2,
+\qquad
+T(t^2)=(0,1)=\frac12f_1-\frac12f_2.
+\]
+故
+\[
+[T]_{\mathcal F\leftarrow\mathcal E}
+=\begin{pmatrix}
+1&1/2&1/2\\
+0&-1/2&-1/2
+\end{pmatrix}.
+\]
+\end{solution}
+\end{example}
+
+\section{基变换与一般换基公式}
+
+\begin{definition}[过渡矩阵]
+设 $V$ 的旧基、新基分别为
+\[
+\mathcal E=(e_1,\ldots,e_n),\qquad
+\widetilde{\mathcal E}=(\widetilde e_1,\ldots,\widetilde e_n).
+\]
+若
+\[
+\widetilde{\mathcal E}=\mathcal E P,
+\]
+则称可逆矩阵 $P$ 为从新基到旧基的坐标过渡矩阵。其第 $j$ 列是 $\widetilde e_j$ 在旧基下的坐标，并且
+\[
+[x]_{\mathcal E}=P[x]_{\widetilde{\mathcal E}},
+\qquad
+[x]_{\widetilde{\mathcal E}}=P^{-1}[x]_{\mathcal E}.
+\]
+\end{definition}
+
+\begin{theorem}[一般线性映射的换基公式]
+设 $T:V\to W$。旧基下矩阵为
+\[
+A=[T]_{\mathcal F\leftarrow\mathcal E}.
+\]
+若新基满足
+\[
+\widetilde{\mathcal E}=\mathcal E P,\qquad
+\widetilde{\mathcal F}=\mathcal F Q,
+\]
+则新基下的矩阵为
+\[
+\widetilde A
+=[T]_{\widetilde{\mathcal F}\leftarrow\widetilde{\mathcal E}}
+=Q^{-1}AP.
+\]
+\end{theorem}
+\begin{proof}
+对任意 $x\in V$，新旧坐标满足
+\[
+[x]_{\mathcal E}=P[x]_{\widetilde{\mathcal E}},
+\qquad
+[T(x)]_{\mathcal F}=Q[T(x)]_{\widetilde{\mathcal F}}.
+\]
+又有
+\[
+[T(x)]_{\mathcal F}=A[x]_{\mathcal E}.
+\]
+代入得
+\[
+Q[T(x)]_{\widetilde{\mathcal F}}
+=AP[x]_{\widetilde{\mathcal E}},
+\]
+左右乘 $Q^{-1}$ 即得
+\[
+[T(x)]_{\widetilde{\mathcal F}}
+=Q^{-1}AP[x]_{\widetilde{\mathcal E}}.
+\]
+\end{proof}
+
+\begin{pitfall}[一般换基公式不是总写成相似变换]
+只有当 $T:V\to V$，定义域与陪域使用同一组旧基和同一组新基，即 $Q=P$ 时，公式才化为
+\[
+\widetilde A=P^{-1}AP.
+\]
+对 $V\to W$ 的一般映射，两边基独立变化，应使用 $Q^{-1}AP$。
+\end{pitfall}
+
+\section{相似变换、特征向量与对角化}
+
+\begin{definition}[相似矩阵]
+若存在可逆矩阵 $P$ 使
+\[
+B=P^{-1}AP,
+\]
+则称 $A$ 与 $B$ 相似。相似矩阵表示同一线性变换在不同基下的矩阵。
+\end{definition}
+
+\begin{proposition}[相似变换的不变量]
+相似矩阵具有相同的特征多项式、特征值、行列式、迹、秩和最小多项式。
+\end{proposition}
+\begin{proof}
+例如
+\[
+\det(\lambda I-P^{-1}AP)
+=\det\bigl(P^{-1}(\lambda I-A)P\bigr)
+=\det(\lambda I-A).
+\]
+行列式、迹和秩也分别由乘法公式、迹的循环性质以及可逆矩阵不改变秩得到。最小多项式方面，对任意多项式 $f$，
+\[
+f(P^{-1}AP)=P^{-1}f(A)P,
+\]
+故 $f(A)=0$ 当且仅当 $f(B)=0$。
+\end{proof}
+
+\begin{definition}[特征值、特征向量与特征子空间]
+设 $T:V\to V$。若存在 $x\ne0$ 使
+\[
+T(x)=\lambda x,
+\]
+则称 $\lambda$ 为特征值，$x$ 为对应特征向量。集合
+\[
+E_\lambda(T)=\ker(T-\lambda I)
+\]
+称为 $\lambda$ 的特征子空间。特征子空间包含零向量，但零向量不是特征向量。
+\end{definition}
+
+\begin{definition}[特征多项式]
+设 $A$ 是 $T$ 在任一组基下的矩阵。多项式
+\[
+\chi_T(x)=\det(xI-A)
+\]
+称为 $T$ 的特征多项式。相似矩阵具有相同特征多项式，所以该定义与基的选择无关。
+\end{definition}
+
+\begin{theorem}[Cayley--Hamilton 定理]
+每个有限维线性变换都满足自己的特征多项式：
+\[
+\chi_T(T)=0.
+\]
+等价地，若 $\chi_A(x)=\det(xI-A)$，则 $\chi_A(A)=0$。
+\end{theorem}
+\begin{proof}
+设 $A$ 为 $n$ 阶矩阵。伴随矩阵恒等式给出
+\[
+(xI-A)\operatorname{adj}(xI-A)
+=\det(xI-A)I
+=\chi_A(x)I.
+\]
+将伴随矩阵按 $x$ 的次数展开：
+\[
+\operatorname{adj}(xI-A)
+=B_0x^{n-1}+B_1x^{n-2}+\cdots+B_{n-1}.
+\]
+再写
+\[
+\chi_A(x)=x^n+c_1x^{n-1}+\cdots+c_n.
+\]
+比较恒等式两边各次幂的矩阵系数，得到
+\[
+B_0=I,
+\]
+\[
+B_k-AB_{k-1}=c_kI\qquad(1\le k\le n-1),
+\]
+\[
+-AB_{n-1}=c_nI.
+\]
+将第一个等式左乘 $A^n$，第 $k$ 个等式左乘 $A^{n-k}$，最后一个等式保持不变，再把全部等式相加。含 $B_k$ 的项前后抵消，剩下
+\[
+A^n+c_1A^{n-1}+\cdots+c_nI=0,
+\]
+即 $\chi_A(A)=0$。
+\end{proof}
+
+\begin{definition}[消去多项式与最小多项式]
+设 $T:V\to V$，$f(x)\in\F[x]$。若 $f(T)=0$，则称 $f$ 为 $T$ 的一个消去多项式。所有首一消去多项式中次数最低者称为 $T$ 的最小多项式，记作 $m_T(x)$。
+\end{definition}
+
+\begin{remark}
+Cayley--Hamilton 定理保证 $\chi_T(T)=0$，因此有限维情形中至少存在一个非零消去多项式，最小多项式确实存在，并且
+\[
+m_T(x)\mid\chi_T(x).
+\]
+\end{remark}
+
+\begin{proposition}[最小多项式整除所有消去多项式]
+若 $f(T)=0$，则
+\[
+m_T(x)\mid f(x).
+\]
+\end{proposition}
+\begin{proof}
+作带余除法
+\[
+f(x)=q(x)m_T(x)+r(x),
+\qquad
+\deg r<\deg m_T.
+\]
+代入 $T$ 得 $r(T)=0$。若 $r\ne0$，将其除以首项系数可得到次数更低的首一消去多项式，与 $m_T$ 的最小性矛盾。因此 $r=0$。
+\end{proof}
+
+\begin{theorem}[对角化的充要条件]
+设 $\dim V=n$。下列条件等价：
+\begin{enumerate}
+\item $T$ 可对角化；
+\item $V$ 有一组由 $T$ 的特征向量组成的基；
+\item $V$ 是各不同特征值的特征子空间之直和；
+\item 所有不同特征值的几何重数之和为 $n$。
+\end{enumerate}
+\end{theorem}
+\begin{proof}
+若 $T$ 在基 $(v_1,\ldots,v_n)$ 下矩阵为
+\[
+D=\diag(\lambda_1,\ldots,\lambda_n),
+\]
+则矩阵第 $i$ 列表明 $T(v_i)=\lambda_iv_i$，故该基由特征向量组成。
+
+反之，若存在特征向量基，$T(v_i)=\lambda_iv_i$，则矩阵的第 $i$ 列只有第 $i$ 个元素 $\lambda_i$ 非零，所以矩阵为对角阵。
+
+不同特征值对应的特征向量组联合后线性无关。因此，由特征向量组成一组基，等价于各特征子空间的和为整个 $V$；线性无关又保证该和为直和。最后，直和的维数等于各特征子空间维数之和，得到条件 (4)。
+\end{proof}
+
+\begin{corollary}[不同特征值保证可对角化]
+若 $n$ 维空间上的线性变换具有 $n$ 个互不相同的特征值，则它可对角化。
+\end{corollary}
+
+\begin{corollary}[代数重数与几何重数判据]
+若特征多项式在 $\F$ 上完全分裂，则 $T$ 可对角化当且仅当每个特征值的几何重数等于代数重数。
+\end{corollary}
+\begin{proof}
+每个特征值的几何重数不超过代数重数，而所有代数重数之和为 $n$。因此所有几何重数之和为 $n$，当且仅当每一项都达到对应代数重数。
+\end{proof}
+
+\begin{theorem}[最小多项式的可对角化判据]
+有限维线性变换 $T$ 在 $\F$ 上可对角化，当且仅当其最小多项式在 $\F$ 上分裂为互不相同的一次因子：
+\[
+m_T(x)=\prod_{i=1}^s(x-\lambda_i),
+\qquad
+\lambda_i\ne\lambda_j\ (i\ne j).
+\]
+\end{theorem}
+\begin{proof}
+若 $T$ 可对角化，在特征向量基下其矩阵为对角阵，对角元的不同取值为 $\lambda_1,\ldots,\lambda_s$。多项式
+\[
+p(x)=\prod_{i=1}^s(x-\lambda_i)
+\]
+在每个对角元处为零，所以 $p(T)=0$。最小多项式整除 $p$；另一方面，每个特征值都是最小多项式的根，否则对相应特征向量 $v$ 有
+\[
+m_T(T)v=m_T(\lambda_i)v\ne0.
+\]
+故 $m_T=p$。
+
+反之，设最小多项式如题分裂且无重根。令
+\[
+q_i(x)=\frac{m_T(x)}{x-\lambda_i}.
+\]
+这些多项式的最大公因式为 $1$，所以存在 $a_i(x)$ 使
+\[
+\sum_{i=1}^s a_i(x)q_i(x)=1.
+\]
+对任意 $v\in V$，
+\[
+v=\sum_{i=1}^s a_i(T)q_i(T)v.
+\]
+而
+\[
+(T-\lambda_iI)q_i(T)v=m_T(T)v=0,
+\]
+故每一项都属于 $E_{\lambda_i}(T)$。因此
+\[
+V=E_{\lambda_1}(T)+\cdots+E_{\lambda_s}(T).
+\]
+不同特征值的特征子空间之和为直和，所以 $T$ 可对角化。
+\end{proof}
+
+\begin{theorem}[谱投影公式]
+若 $T$ 可对角化，不同特征值为 $\lambda_1,\ldots,\lambda_s$，定义
+\[
+P_i=\prod_{j\ne i}
+\frac{T-\lambda_jI}{\lambda_i-\lambda_j}.
+\]
+则
+\[
+P_i^2=P_i,\qquad
+P_iP_j=0\ (i\ne j),\qquad
+\sum_{i=1}^sP_i=I,
+\]
+并且
+\[
+\operatorname{Im}P_i=E_{\lambda_i}(T),
+\qquad
+T=\sum_{i=1}^s\lambda_iP_i.
+\]
+\end{theorem}
+\begin{proof}
+在特征子空间 $E_{\lambda_k}(T)$ 上，算子 $T$ 等于 $\lambda_kI$。因此 $P_i$ 在 $E_{\lambda_k}(T)$ 上作用为标量
+\[
+\prod_{j\ne i}\frac{\lambda_k-\lambda_j}
+{\lambda_i-\lambda_j}.
+\]
+当 $k=i$ 时该标量为 $1$；当 $k\ne i$ 时乘积中含有因子 $\lambda_k-\lambda_k=0$，故标量为 $0$。所以 $P_i$ 正是沿其他特征子空间投影到 $E_{\lambda_i}(T)$ 的投影。各公式可在特征子空间直和的每个分量上逐项验证。
+\end{proof}
+
+\begin{remark}
+谱投影把“可对角化”写成算子分解。它比仅写出对角矩阵更能说明空间结构：每个 $P_i$ 提取向量在第 $i$ 个特征子空间中的分量。
+\end{remark}
+
+\begin{example}[title={判定可对角化}]
+设
+\[
+A=\begin{pmatrix}
+1&1&0\\
+0&1&0\\
+0&0&2
+\end{pmatrix}.
+\]
+判断 $A$ 是否可对角化。
+\begin{solution}
+特征值为 $1,2$，其中 $1$ 的代数重数为 $2$。计算
+\[
+A-I=\begin{pmatrix}0&1&0\\0&0&0\\0&0&1\end{pmatrix},
+\]
+故 $\dim\ker(A-I)=1$。特征值 $1$ 的几何重数小于代数重数，所以 $A$ 不可对角化。
+\end{solution}
+\end{example}
+
+\section{不变子空间与分块矩阵}
+
+\begin{definition}[不变子空间]
+子空间 $M\subseteq V$ 若满足
+\[
+T(M)\subseteq M,
+\]
+则称 $M$ 是 $T$ 的不变子空间。
+\end{definition}
+
+\begin{proposition}
+$\ker T$、$\operatorname{Im}T$ 以及每个特征子空间 $E_\lambda(T)$ 都是 $T$ 的不变子空间。
+\end{proposition}
+\begin{proof}
+若 $x\in\ker T$，则 $T(x)=0\in\ker T$。若 $y=T(x)\in\operatorname{Im}T$，则 $T(y)=T(T(x))$ 仍属于像空间。若 $x\in E_\lambda(T)$，则
+\[
+T(Tx)=T(\lambda x)=\lambda Tx,
+\]
+故 $Tx\in E_\lambda(T)$。
+\end{proof}
+
+\begin{theorem}[不变直和与分块对角矩阵]
+若
+\[
+V=V_1\oplus\cdots\oplus V_s
+\]
+且每个 $V_i$ 都是 $T$-不变子空间，则分别取 $V_i$ 的基并合并为 $V$ 的基，$T$ 的矩阵为分块对角形
+\[
+\diag(A_1,\ldots,A_s),
+\]
+其中 $A_i$ 是限制映射 $T|_{V_i}$ 的矩阵。
+\end{theorem}
+\begin{proof}
+属于 $V_i$ 的基向量经 $T$ 作用后仍在 $V_i$ 中，所以其像坐标只会出现在第 $i$ 个基块对应的位置。所有跨块矩阵元均为零，故得到分块对角矩阵。
+\end{proof}
+
+\begin{pitfall}[不变子空间未必存在不变补空间]
+有限维子空间总有线性补空间，但一个 $T$-不变子空间未必有 $T$-不变补空间。例如
+\[
+T=\begin{pmatrix}1&1\\0&1\end{pmatrix}
+\]
+作用在 $\R^2$ 上，$M=\operatorname{span}\{e_1\}$ 是不变子空间。若存在一维不变补空间，它必由一个不属于 $M$ 的特征向量张成；但 $T$ 的全部特征向量都属于 $M$，故不存在这样的不变补空间。
+\end{pitfall}
+
+\begin{theorem}[不变补空间与交换投影]
+设 $M$ 是 $T:V\to V$ 的不变子空间。以下条件等价：
+\begin{enumerate}
+\item 存在 $T$-不变子空间 $N$ 使 $V=M\oplus N$；
+\item 存在投影 $P:V\to V$，满足
+\[
+\operatorname{Im}P=M,\qquad PT=TP.
+\]
+\end{enumerate}
+\end{theorem}
+\begin{proof}
+若 $V=M\oplus N$ 且两部分均不变，令 $P(m+n)=m$。则
+\[
+PT(m+n)=P(Tm+Tn)=Tm,
+\]
+\[
+TP(m+n)=T(m)=Tm,
+\]
+故 $PT=TP$。
+
+反之，若 $P^2=P$、$\operatorname{Im}P=M$ 且 $PT=TP$，投影定理给出
+\[
+V=M\oplus\ker P.
+\]
+若 $x\in\ker P$，则
+\[
+P(Tx)=T(Px)=0,
+\]
+所以 $Tx\in\ker P$。故 $\ker P$ 是所需不变补空间。
+\end{proof}
+
+\section{子空间的交、和与维数公式}
+
+\begin{definition}[子空间的交与和]
+若 $V_1,V_2$ 是 $V$ 的子空间，定义
+\[
+V_1\cap V_2=\{x:x\in V_1\text{ 且 }x\in V_2\},
+\]
+\[
+V_1+V_2=\{x_1+x_2:x_1\in V_1,\ x_2\in V_2\}.
+\]
+\end{definition}
+
+\begin{proposition}
+$V_1\cap V_2$ 与 $V_1+V_2$ 都是 $V$ 的子空间；其中 $V_1+V_2$ 是同时包含 $V_1,V_2$ 的最小子空间。
+\end{proposition}
+\begin{proof}
+两者对线性组合封闭。若子空间 $M$ 同时包含 $V_1,V_2$，则任意 $x_1+x_2$ 仍属于 $M$，故 $V_1+V_2\subseteq M$。
+\end{proof}
+
+\begin{theorem}[子空间维数公式]
+若 $V_1,V_2$ 有限维，则
+\[
+\dim(V_1+V_2)
+=\dim V_1+\dim V_2-\dim(V_1\cap V_2).
+\]
+\end{theorem}
+\begin{proof}
+取交空间的一组基 $(u_1,\ldots,u_r)$，分别扩充为
+\[
+(u_1,\ldots,u_r,a_1,\ldots,a_p)
+\]
+和
+\[
+(u_1,\ldots,u_r,b_1,\ldots,b_q)
+\]
+作为 $V_1,V_2$ 的基。证明合并后的向量组
+\[
+(u_1,\ldots,u_r,a_1,\ldots,a_p,b_1,\ldots,b_q)
+\]
+是 $V_1+V_2$ 的基。
+
+张成性由和空间定义直接得到。若其线性组合为零，将 $b_j$ 项移到右侧，则左侧属于 $V_1$、右侧属于 $V_2$，所以两侧都属于交空间。用 $u_i$ 表示后，分别利用 $V_1,V_2$ 两组扩充基的线性无关性，得到所有系数为零。故
+\[
+\dim(V_1+V_2)=r+p+q
+=(r+p)+(r+q)-r.
+\]
+\end{proof}
+
+\begin{corollary}
+若 $V$ 有限维，则
+\[
+\dim(V_1+V_2)\le\dim V,
+\]
+从而
+\[
+\dim(V_1\cap V_2)\ge
+\dim V_1+\dim V_2-\dim V.
+\]
+\end{corollary}
+
+\begin{example}[title={两个平面的和与交}]
+在 $\R^3$ 中令
+\[
+V_1=\operatorname{span}\{e_1,e_2\},\qquad
+V_2=\operatorname{span}\{e_2,e_3\}.
+\]
+则
+\[
+V_1\cap V_2=\operatorname{span}\{e_2\},\qquad
+V_1+V_2=\R^3.
+\]
+维数公式给出 $3=2+2-1$。
+\end{example}
+
+\section{直和及其等价条件}
+
+\begin{definition}[两个子空间的直和]
+若 $W=V_1+V_2$ 中每个向量都能唯一写成
+\[
+x=x_1+x_2,\qquad x_i\in V_i,
+\]
+则称该和为直和，记作
+\[
+W=V_1\oplus V_2.
+\]
+\end{definition}
+
+\begin{theorem}[两个子空间直和的等价条件]
+设 $W=V_1+V_2$。下列条件等价：
+\begin{enumerate}
+\item $W=V_1\oplus V_2$；
+\item 零向量只有平凡表示 $0=0+0$；
+\item $V_1\cap V_2=\{0\}$；
+\item 若空间有限维，则 $\dim W=\dim V_1+\dim V_2$；
+\item $V_1$ 的任一组基与 $V_2$ 的任一组基合并后是 $W$ 的一组基。
+\end{enumerate}
+\end{theorem}
+\begin{proof}
+若每个向量表示唯一，则零向量表示唯一。若零表示唯一且
+\[
+x=x_1+x_2=y_1+y_2,
+\]
+则
+\[
+0=(x_1-y_1)+(x_2-y_2),
+\]
+从而两项都为零，故表示唯一。
+
+零表示唯一等价于交空间为零：若 $z\in V_1\cap V_2$，则
+\[
+0=z+(-z)=0+0;
+\]
+反之，若 $0=x_1+x_2$，则 $x_1=-x_2\in V_1\cap V_2$。
+
+有限维时，由维数公式，交空间维数为零恰好等价于维数相加。最后，两个基的合并总能张成和空间；其线性无关性正好等价于零表示唯一。
+\end{proof}
+
+\begin{definition}[多个子空间的直和]
+若
+\[
+W=V_1+\cdots+V_s
+\]
+中每个向量的分解 $x=x_1+\cdots+x_s$ 唯一，则记作
+\[
+W=V_1\oplus\cdots\oplus V_s.
+\]
+\end{definition}
+
+\begin{theorem}[多个子空间直和的判据]
+下列条件等价：
+\begin{enumerate}
+\item $W=V_1\oplus\cdots\oplus V_s$；
+\item 若 $x_i\in V_i$ 且 $\sum x_i=0$，则所有 $x_i=0$；
+\item 对每个 $i$，
+\[
+V_i\cap\sum_{j\ne i}V_j=\{0\};
+\]
+\item 有限维时，
+\[
+\dim W=\sum_{i=1}^s\dim V_i;
+\]
+\item 各 $V_i$ 的基合并后构成 $W$ 的一组基。
+\end{enumerate}
+\end{theorem}
+\begin{proof}
+表示唯一与零表示唯一的等价证明与两个子空间相同。若零表示唯一，则任取
+\[
+x_i\in V_i\cap\sum_{j\ne i}V_j
+\]
+可写成 $x_i=\sum_{j\ne i}x_j$，移项得到一个零表示，故所有项为零。反之，该交条件可逐项消去任一零表示中的分量。
+
+基的合并总能张成和空间，其线性无关性等价于零表示唯一；有限维时，合并向量组的个数为各维数之和，因此得到维数条件。
+\end{proof}
+
+\begin{pitfall}[两两交为零不足以保证多个子空间直和]
+当 $s\ge3$ 时，仅有 $V_i\cap V_j=\{0\}$ 并不足够。例如在 $\R^2$ 中取
+\[
+V_1=\operatorname{span}\{e_1\},\quad
+V_2=\operatorname{span}\{e_2\},\quad
+V_3=\operatorname{span}\{e_1+e_2\}.
+\]
+它们两两交为零，但
+\[
+(e_1)+(e_2)-(e_1+e_2)=0
+\]
+给出非平凡零表示，所以不是直和。
+\end{pitfall}
+
+\section{补空间、投影与典型分解}
+
+\begin{definition}[补空间]
+若 $V=W\oplus U$，则称 $U$ 是 $W$ 在 $V$ 中的一个补空间。补空间通常不唯一。
+\end{definition}
+
+\begin{theorem}[有限维子空间总有补空间]
+若 $W$ 是有限维空间 $V$ 的子空间，则存在 $U$ 使
+\[
+V=W\oplus U.
+\]
+\end{theorem}
+\begin{proof}
+取 $W$ 的一组基 $(w_1,\ldots,w_r)$，扩充为 $V$ 的一组基
+\[
+(w_1,\ldots,w_r,u_1,\ldots,u_s).
+\]
+令 $U=\operatorname{span}\{u_1,\ldots,u_s\}$。合并后的向量组是基，所以 $V=W+U$ 且 $W\cap U=\{0\}$。
+\end{proof}
+
+\begin{definition}[沿补空间的投影]
+若 $V=W\oplus U$，每个 $x\in V$ 唯一写成 $x=w+u$。定义
+\[
+P_{W\parallel U}(x)=w.
+\]
+它称为沿 $U$ 投影到 $W$ 的投影算子。
+\end{definition}
+
+\begin{theorem}[投影算子的代数判据]
+线性变换 $P:V\to V$ 是某个直和分解对应的投影，当且仅当
+\[
+P^2=P.
+\]
+此时
+\[
+V=\operatorname{Im}P\oplus\ker P,
+\]
+且 $P$ 是沿 $\ker P$ 投影到 $\operatorname{Im}P$。
+\end{theorem}
+\begin{proof}
+若 $P(w+u)=w$，则再次作用仍得 $P(w)=w$，故 $P^2=P$。
+
+反之，设 $P^2=P$。对任意 $x$，
+\[
+x=Px+(x-Px).
+\]
+第一项属于 $\operatorname{Im}P$，而
+\[
+P(x-Px)=Px-P^2x=0,
+\]
+故第二项属于 $\ker P$。若 $z\in\operatorname{Im}P\cap\ker P$，写 $z=P(y)$，则
+\[
+z=P(y)=P^2(y)=P(z)=0.
+\]
+所以该和为直和。
+\end{proof}
+
+\begin{corollary}
+任意投影算子都可对角化，其特征值只能是 $0$ 或 $1$。
+\end{corollary}
+\begin{proof}
+在 $\operatorname{Im}P$ 与 $\ker P$ 的基合并得到的基下，$P$ 的矩阵为
+\[
+\diag(I_r,0).
+\]
+\end{proof}
+
+\begin{example}[title={奇偶函数分解}]
+设 $V$ 为所有实函数构成的线性空间，$V_{\mathrm e}$、$V_{\mathrm o}$ 分别为偶函数和奇函数空间。任意函数 $f$ 唯一分解为
+\[
+f(x)=\frac{f(x)+f(-x)}2+\frac{f(x)-f(-x)}2.
+\]
+第一项为偶函数，第二项为奇函数，且二者交空间为零，因此
+\[
+V=V_{\mathrm e}\oplus V_{\mathrm o}.
+\]
+对应投影分别为
+\[
+P_{\mathrm e}f(x)=\frac{f(x)+f(-x)}2,\qquad
+P_{\mathrm o}f(x)=\frac{f(x)-f(-x)}2.
+\]
+\end{example}
+
+\begin{example}[title={方阵的对称与反对称分解}]
+在实方阵空间 $M_n(\R)$ 中，令
+\[
+\mathcal S=\{A:A^{\mathsf T}=A\},\qquad
+\mathcal K=\{A:A^{\mathsf T}=-A\}.
+\]
+每个矩阵唯一写成
+\[
+A=\frac{A+A^{\mathsf T}}2+\frac{A-A^{\mathsf T}}2,
+\]
+故
+\[
+M_n(\R)=\mathcal S\oplus\mathcal K.
+\]
+维数分别为
+\[
+\dim\mathcal S=\frac{n(n+1)}2,\qquad
+\dim\mathcal K=\frac{n(n-1)}2.
+\]
+\end{example}
+
+\begin{summary}[本章知识链]
+线性映射由基向量的像唯一决定；核控制单射和解的自由度，像控制满射和可达方向，秩零化度定理把两者的维数联系起来。选定定义域与陪域的基后，线性映射对应矩阵；两边独立换基给出 $Q^{-1}AP$，同一空间同步换基才得到相似变换 $P^{-1}AP$。对角化等价于空间具有特征向量基，也等价于特征子空间的直和分解。子空间的和、交与直和则为这种分解提供统一语言，投影算子 $P^2=P$ 是直和分解的算子表达。
+\end{summary}

@@ -1,0 +1,947 @@
+% libre-compendium
+%
+% Copyright (C) 2026 Richard Qin
+%
+% This document is dual-licensed under either:
+% - GNU Free Documentation License, Version 1.3 or any later version
+%   published by the Free Software Foundation; with no Invariant Sections,
+%   no Front-Cover Texts, and no Back-Cover Texts (see COPYING.DOC); or
+% - Creative Commons Attribution-ShareAlike 4.0 International License
+%   (see LICENSE-CC-BY-SA-4.0).
+
+\chapter{矩阵范数、低秩近似、主成分分析与奇异值分解}
+
+本章默认向量空间取在实数域 $\R$ 上。除特别说明外，$A\in\R^{m\times n}$，并记
+\[
+\langle x,y\rangle=x^{\mathsf T}y,
+\qquad
+\lVert x\rVert_2=\sqrt{x^{\mathsf T}x}.
+\]
+矩阵近似问题的核心是：在规定的误差度量下，用秩较低的矩阵代替原矩阵。奇异值分解给出这一问题的统一坐标系；主成分分析则把它用于数据的降维与方差解释。
+
+\section{向量范数与矩阵范数}
+
+\begin{definition}[范数]
+设 $V$ 为实线性空间。函数 $\lVert\cdot\rVert:V\to\R$ 若对任意 $x,y\in V$ 与 $a\in\R$ 满足
+\begin{enumerate}
+\item $\lVert x\rVert\ge0$，且 $\lVert x\rVert=0$ 当且仅当 $x=0$；
+\item $\lVert ax\rVert=|a|\lVert x\rVert$；
+\item $\lVert x+y\rVert\le\lVert x\rVert+\lVert y\rVert$，
+\end{enumerate}
+则称其为 $V$ 上的范数，称 $(V,\lVert\cdot\rVert)$ 为赋范线性空间。
+\end{definition}
+
+在 $\R^n$ 上最常用的范数为
+\[
+\lVert x\rVert_1=\sum_{i=1}^n|x_i|,
+\qquad
+\lVert x\rVert_2=\left(\sum_{i=1}^nx_i^2\right)^{1/2},
+\qquad
+\lVert x\rVert_\infty=\max_i|x_i|.
+\]
+
+\begin{proposition}[有限维空间中范数等价]
+在有限维线性空间上，任意两个范数 $\lVert\cdot\rVert_a$ 与 $\lVert\cdot\rVert_b$ 都存在常数 $c,C>0$，使
+\[
+c\lVert x\rVert_a\le\lVert x\rVert_b\le C\lVert x\rVert_a
+\]
+对所有 $x$ 成立。
+\end{proposition}
+
+该结论表示不同范数给出相同的收敛概念，但常数 $c,C$ 会影响具体误差估计，不能在数值计算中忽略范数的选择。
+
+\begin{definition}[诱导矩阵范数]
+给定定义域和值域上的向量范数，线性映射 $x\mapsto Ax$ 的诱导范数定义为
+\[
+\lVert A\rVert=\sup_{x\ne0}\frac{\lVert Ax\rVert}{\lVert x\rVert}
+=\sup_{\lVert x\rVert=1}\lVert Ax\rVert.
+\]
+它刻画 $A$ 对向量长度的最大放大倍数。
+\end{definition}
+
+\begin{proposition}[诱导范数的基本性质]
+尺寸相容时有
+\[
+\lVert Ax\rVert\le\lVert A\rVert\lVert x\rVert,
+\qquad
+\lVert AB\rVert\le\lVert A\rVert\lVert B\rVert,
+\qquad
+\lVert I\rVert=1.
+\]
+\end{proposition}
+\begin{proof}
+第一式由上确界定义直接得到。再对任意 $x$ 使用第一式两次：
+\[
+\lVert ABx\rVert\le\lVert A\rVert\lVert Bx\rVert
+\le\lVert A\rVert\lVert B\rVert\lVert x\rVert.
+\]
+令 $\lVert x\rVert=1$ 后取上确界，得到次乘法性。最后，$\lVert Ix\rVert/\lVert x\rVert=1$。
+\end{proof}
+
+\begin{theorem}[常用诱导矩阵范数]
+对 $A=(a_{ij})\in\R^{m\times n}$，
+\[
+\lVert A\rVert_1=\max_{1\le j\le n}\sum_{i=1}^m|a_{ij}|,
+\qquad
+\lVert A\rVert_\infty=\max_{1\le i\le m}\sum_{j=1}^n|a_{ij}|,
+\]
+并且
+\[
+\lVert A\rVert_2
+=\sqrt{\lambda_{\max}(A^{\mathsf T}A)}.
+\]
+最后一个范数称为谱范数或算子 $2$-范数。
+\end{theorem}
+\begin{proof}
+这里只证明谱范数公式。对任意单位向量 $x$，
+\[
+\lVert Ax\rVert_2^2=x^{\mathsf T}A^{\mathsf T}Ax.
+\]
+矩阵 $A^{\mathsf T}A$ 对称半正定。由 Rayleigh 商定理，
+\[
+\max_{\lVert x\rVert_2=1}x^{\mathsf T}A^{\mathsf T}Ax
+=\lambda_{\max}(A^{\mathsf T}A).
+\]
+两边开平方即得结论。平方根不能省略，因为特征值度量的是长度平方。
+\end{proof}
+
+\begin{definition}[Frobenius 范数]
+定义
+\[
+\lVert A\rVert_F
+=\left(\sum_{i=1}^m\sum_{j=1}^na_{ij}^2\right)^{1/2}
+=\sqrt{\tr(A^{\mathsf T}A)}.
+\]
+它来自矩阵空间上的内积
+\[
+\langle A,B\rangle_F=\tr(A^{\mathsf T}B).
+\]
+\end{definition}
+
+\begin{pitfall}[谱范数与 Frobenius 范数不是同一个对象]
+$\lVert A\rVert_2$ 是由向量 Euclid 范数诱导的最大放大倍数；$\lVert A\rVert_F$ 是把矩阵全部元素视为一个长向量所得的长度。除特殊情形外二者不等。若奇异值为 $\sigma_1\ge\cdots\ge\sigma_r>0$，则
+\[
+\lVert A\rVert_2=\sigma_1,
+\qquad
+\lVert A\rVert_F=\sqrt{\sigma_1^2+\cdots+\sigma_r^2}.
+\]
+\end{pitfall}
+
+\begin{example}[title={计算两种矩阵范数}]
+设 $A=\diag(3,1,-2)$。求 $\lVert A\rVert_2$ 与 $\lVert A\rVert_F$。
+\begin{solution}
+$A^{\mathsf T}A=\diag(9,1,4)$，故
+\[
+\lVert A\rVert_2=\sqrt9=3,
+\qquad
+\lVert A\rVert_F=\sqrt{9+1+4}=\sqrt{14}.
+\]
+\end{solution}
+\end{example}
+
+\section{低秩矩阵与逼近问题}
+
+秩为 $k$ 的矩阵只需要 $k$ 个独立方向描述其列空间和行空间。若高秩矩阵的大部分作用集中在少数方向上，就可以用低秩矩阵压缩存储或减少计算量。
+
+\begin{proposition}[秩一分解]
+矩阵 $B$ 的秩不超过 $k$，当且仅当存在向量 $u_i\in\R^m$、$v_i\in\R^n$ 使
+\[
+B=\sum_{i=1}^ku_iv_i^{\mathsf T}.
+\]
+\end{proposition}
+\begin{proof}
+若有上述分解，则 $B$ 的每一列都是 $u_1,\ldots,u_k$ 的线性组合，故 $\rank B\le k$。
+
+反之，设 $\rank B=r\le k$。取列空间的一组基 $u_1,\ldots,u_r$，把每一列在该基下的坐标按行排列，得到矩阵 $C\in\R^{r\times n}$，于是
+\[
+B=(u_1,\ldots,u_r)C=\sum_{i=1}^ru_iv_i^{\mathsf T},
+\]
+其中 $v_i^{\mathsf T}$ 是 $C$ 的第 $i$ 行。若 $r<k$，补零项即可。
+\end{proof}
+
+\begin{definition}[最佳秩 $k$ 逼近问题]
+给定矩阵范数，最佳秩 $k$ 逼近是求
+\[
+\min_{\rank B\le k}\lVert A-B\rVert.
+\]
+约束必须写成 $\rank B\le k$。若强制 $\rank B=k$，当 $k>\rank A$ 时问题不合理；当某些奇异值为零时也可能破坏最优解的自然表述。
+\end{definition}
+
+若 $A$ 是实对称矩阵，可作正交特征分解
+\[
+A=Q\Lambda Q^{\mathsf T}=\sum_{i=1}^n\lambda_iq_iq_i^{\mathsf T}.
+\]
+注意秩一项的左右向量都是 $q_i$，不是两个无关向量。若按 $|\lambda_1|\ge\cdots\ge|\lambda_n|$ 排序，则截断和
+\[
+A_k=\sum_{i=1}^k\lambda_iq_iq_i^{\mathsf T}
+\]
+是谱范数和 Frobenius 范数下的最佳秩 $k$ 逼近。这是 SVD 截断定理在对称矩阵上的特殊情形。
+
+\begin{pitfall}[PCA 不能直接套用任意对称矩阵的特征值绝对值排序]
+一般对称矩阵可能有负特征值，谱范数截断应按 $|\lambda_i|$ 排序。PCA 的协方差矩阵是半正定矩阵，特征值均非负，才可以直接按 $\lambda_1\ge\cdots\ge\lambda_n\ge0$ 排序，并把特征值解释为方差。
+\end{pitfall}
+
+\section{数据中心化、协方差与主成分分析}
+
+设有 $N$ 个样本 $x_1,\ldots,x_N\in\R^d$。样本均值为
+\[
+\bar x=\frac1N\sum_{i=1}^Nx_i,
+\]
+中心化样本为 $y_i=x_i-\bar x$，于是 $\sum_i y_i=0$。把中心化样本作为列组成
+\[
+Y=(y_1,\ldots,y_N)\in\R^{d\times N}.
+\]
+
+\begin{definition}[样本协方差矩阵]
+采用总体型归一化时，定义
+\[
+C=\frac1NYY^{\mathsf T}
+=\frac1N\sum_{i=1}^Ny_iy_i^{\mathsf T}.
+\]
+统计推断中常用 $1/(N-1)$ 代替 $1/N$。二者只差正常数倍，不改变主成分方向，但会同比例改变特征值。
+\end{definition}
+
+\begin{proposition}[协方差矩阵的基本性质]
+$C$ 是对称半正定矩阵，并且
+\[
+\rank C=\rank Y\le\min\{d,N-1\}.
+\]
+\end{proposition}
+\begin{proof}
+由 $(YY^{\mathsf T})^{\mathsf T}=YY^{\mathsf T}$ 得对称性。对任意 $w\in\R^d$，
+\[
+w^{\mathsf T}Cw=\frac1Nw^{\mathsf T}YY^{\mathsf T}w
+=\frac1N\lVert Y^{\mathsf T}w\rVert_2^2\ge0,
+\]
+故 $C$ 半正定。又因
+\[
+\ker(YY^{\mathsf T})=\ker(Y^{\mathsf T}),
+\]
+由秩零化度定理得到 $\rank(YY^{\mathsf T})=\rank Y$。中心化给出 $Y\bm 1=0$，故 $Y$ 的 $N$ 列线性相关，$\rank Y\le N-1$。
+\end{proof}
+
+\begin{theorem}[第一主成分的方差最大化表述]
+对单位方向 $w\in\R^d$，样本在该方向上的投影为 $w^{\mathsf T}y_i$，其平均平方为
+\[
+\frac1N\sum_{i=1}^N(w^{\mathsf T}y_i)^2=w^{\mathsf T}Cw.
+\]
+若 $Cq_i=\lambda_iq_i$，其中
+\[
+\lambda_1\ge\lambda_2\ge\cdots\ge\lambda_d\ge0,
+\]
+则
+\[
+\max_{\lVert w\rVert_2=1}w^{\mathsf T}Cw=\lambda_1,
+\]
+最优方向恰为最大特征值对应的单位特征向量。
+\end{theorem}
+\begin{proof}
+取 $C$ 的正交特征向量基 $q_1,\ldots,q_d$。任意单位向量可写成
+\[
+w=\sum_{i=1}^d\alpha_iq_i,
+\qquad
+\sum_{i=1}^d\alpha_i^2=1.
+\]
+于是
+\[
+w^{\mathsf T}Cw
+=\sum_{i=1}^d\lambda_i\alpha_i^2
+\le\lambda_1\sum_{i=1}^d\alpha_i^2
+=\lambda_1.
+\]
+取 $w=q_1$ 时达到等号。若 $\lambda_1$ 为重特征值，则最大特征值的整个特征子空间中的单位向量都是最优方向，第一主成分方向不唯一。
+\end{proof}
+
+\begin{theorem}[前 $k$ 个主成分]
+设 $W=(w_1,\ldots,w_k)\in\R^{d\times k}$ 满足 $W^{\mathsf T}W=I_k$。投影到子空间 $\operatorname{Im}W$ 后保留的总方差为
+\[
+\tr(W^{\mathsf T}CW).
+\]
+其最大值为
+\[
+\lambda_1+\cdots+\lambda_k,
+\]
+一个最优子空间为 $\operatorname{span}\{q_1,\ldots,q_k\}$。
+\end{theorem}
+
+\begin{theorem}[PCA 的最小重构误差表述]
+对任意正交投影 $P=WW^{\mathsf T}$，其中 $W^{\mathsf T}W=I_k$，有
+\[
+\frac1N\sum_{i=1}^N\lVert y_i-Py_i\rVert_2^2
+=\tr C-\tr(W^{\mathsf T}CW).
+\]
+因此最大化保留方差等价于最小化重构误差，最小误差为
+\[
+\lambda_{k+1}+\cdots+\lambda_d.
+\]
+\end{theorem}
+\begin{proof}
+因为 $P^{\mathsf T}=P$ 且 $P^2=P$，所以 $I-P$ 也是正交投影。于是
+\begin{align*}
+\frac1N\sum_{i=1}^N\lVert(I-P)y_i\rVert_2^2
+&=\frac1N\tr\bigl(Y^{\mathsf T}(I-P)Y\bigr)\\
+&=\tr\left((I-P)\frac1NYY^{\mathsf T}\right)\\
+&=\tr C-\tr(PC)\\
+&=\tr C-\tr(W^{\mathsf T}CW).
+\end{align*}
+前一定理给出最大保留方差为前 $k$ 个特征值之和，而 $\tr C=\sum_i\lambda_i$，故结论成立。
+\end{proof}
+
+\begin{example}[title={二维数据的主成分}]
+设中心化数据的协方差矩阵为
+\[
+C=\begin{pmatrix}5&2\\2&2\end{pmatrix}.
+\]
+求第一主成分方向及其方差贡献率。
+\begin{solution}
+特征多项式为
+\[
+\det(\lambda I-C)=\lambda^2-7\lambda+6
+=(\lambda-6)(\lambda-1).
+\]
+对 $\lambda_1=6$，解 $(C-6I)q=0$ 得方向可取 $(2,1)^{\mathsf T}$，单位化后
+\[
+q_1=\frac1{\sqrt5}(2,1)^{\mathsf T}.
+\]
+总方差为 $\tr C=7$，故第一主成分贡献率为 $6/7$。若保留一个主成分，平均平方重构误差为剩余特征值 $1$。
+\end{solution}
+\end{example}
+
+\section{奇异值分解}
+
+一般矩阵可能不是方阵，也可能没有足够多的实特征向量。SVD 不要求矩阵为方阵，并且对每个实矩阵都存在。
+
+\begin{definition}[奇异值与奇异向量]
+$A^{\mathsf T}A$ 的特征值均非负。把其平方根按降序排列：
+\[
+\sigma_1\ge\sigma_2\ge\cdots\ge\sigma_p\ge0,
+\qquad p=\min\{m,n\}.
+\]
+这些数称为 $A$ 的奇异值。满足
+\[
+A^{\mathsf T}Av_i=\sigma_i^2v_i
+\]
+的单位向量 $v_i$ 称为右奇异向量；当 $\sigma_i>0$ 时，定义
+\[
+u_i=\frac{Av_i}{\sigma_i},
+\]
+称其为对应的左奇异向量。
+\end{definition}
+
+\begin{lemma}[非零奇异向量的正交关系]
+若 $v_1,\ldots,v_r$ 是 $A^{\mathsf T}A$ 对应正特征值的标准正交特征向量，定义 $u_i=Av_i/\sigma_i$，则
+\[
+u_i^{\mathsf T}u_j=\delta_{ij},
+\qquad
+Av_i=\sigma_i u_i,
+\qquad
+A^{\mathsf T}u_i=\sigma_i v_i.
+\]
+\end{lemma}
+\begin{proof}
+前两个关系由定义给出。对任意 $i,j$，
+\[
+u_i^{\mathsf T}u_j
+=\frac{v_i^{\mathsf T}A^{\mathsf T}Av_j}{\sigma_i\sigma_j}
+=\frac{\sigma_j^2v_i^{\mathsf T}v_j}{\sigma_i\sigma_j}
+=\delta_{ij}.
+\]
+最后，
+\[
+A^{\mathsf T}u_i
+=\frac{A^{\mathsf T}Av_i}{\sigma_i}
+=\sigma_i v_i.
+\]
+\end{proof}
+
+\begin{theorem}[奇异值分解定理]
+对任意 $A\in\R^{m\times n}$，存在正交矩阵
+\[
+U\in\R^{m\times m},\qquad V\in\R^{n\times n}
+\]
+以及矩形对角矩阵 $\Sigma\in\R^{m\times n}$，使
+\[
+A=U\Sigma V^{\mathsf T}.
+\]
+$\Sigma$ 的主对角线为 $\sigma_1,\ldots,\sigma_p$。若 $r=\rank A$，则紧致 SVD 为
+\[
+A=U_r\Sigma_rV_r^{\mathsf T}
+=\sum_{i=1}^r\sigma_i u_iv_i^{\mathsf T},
+\]
+其中 $\Sigma_r=\diag(\sigma_1,\ldots,\sigma_r)$。
+\end{theorem}
+\begin{proof}
+对称半正定矩阵 $A^{\mathsf T}A$ 可正交对角化。取其标准正交特征向量 $v_1,\ldots,v_n$，并把正特征值放在前面。设正特征值个数为 $r$，则它们为 $\sigma_i^2$。
+
+对 $1\le i\le r$ 定义 $u_i=Av_i/\sigma_i$。由上一引理，$u_1,\ldots,u_r$ 标准正交。将它们扩充为 $\R^m$ 的标准正交基，组成正交矩阵 $U$；令 $V=(v_1,\ldots,v_n)$。
+
+当 $i\le r$ 时 $Av_i=\sigma_iu_i$；当 $i>r$ 时，
+\[
+\lVert Av_i\rVert_2^2=v_i^{\mathsf T}A^{\mathsf T}Av_i=0,
+\]
+故 $Av_i=0$。因此矩阵等式 $AV=U\Sigma$ 成立。右乘 $V^{\mathsf T}=V^{-1}$ 得 $A=U\Sigma V^{\mathsf T}$。
+\end{proof}
+
+\begin{remark}[SVD 的唯一性]
+奇异值唯一。若某个正奇异值互异，则对应左右奇异向量除同时变号外唯一；若奇异值有重数，则可在相应奇异子空间中同时作正交换基。因此不能笼统地说 SVD 中的 $U,V$ 唯一。
+\end{remark}
+
+\section{SVD 的几何意义与奇异值极值原理}
+
+设 $A=U\Sigma V^{\mathsf T}$。对向量 $x$ 作用 $A$ 可以分为
+\[
+x\xmapsto{V^{\mathsf T}}V^{\mathsf T}x
+\xmapsto{\Sigma}\Sigma V^{\mathsf T}x
+\xmapsto{U}U\Sigma V^{\mathsf T}x.
+\]
+$V^{\mathsf T}$ 与 $U$ 保持长度和夹角，真正改变长度的是 $\Sigma$。因此 $A$ 把定义域单位球面映为值域中的椭球面，其非零半轴方向为 $u_i$，半轴长度为 $\sigma_i$。右奇异向量 $v_i$ 是输入主方向，左奇异向量 $u_i$ 是对应输出方向，并有
+\[
+Av_i=\sigma_i u_i.
+\]
+零奇异值表示相应输入方向被完全压缩到零。
+
+\begin{theorem}[奇异值的极小极大表征]
+把奇异值补零排列为 $\sigma_1\ge\cdots\ge\sigma_n\ge0$。则
+\[
+\sigma_k
+=\max_{\substack{S\subseteq\R^n\\\dim S=k}}
+\min_{\substack{x\in S\\\lVert x\rVert_2=1}}
+\lVert Ax\rVert_2,
+\]
+以及
+\[
+\sigma_k
+=\min_{\substack{L\subseteq\R^n\\\dim L=n-k+1}}
+\max_{\substack{x\in L\\\lVert x\rVert_2=1}}
+\lVert Ax\rVert_2.
+\]
+\end{theorem}
+\begin{proof}
+取 $S_0=\operatorname{span}\{v_1,\ldots,v_k\}$。任意单位向量
+$x=\sum_{i=1}^k\alpha_iv_i$ 满足
+\[
+\lVert Ax\rVert_2^2=\sum_{i=1}^k\sigma_i^2\alpha_i^2
+\ge\sigma_k^2,
+\]
+且 $x=v_k$ 时等号成立。
+
+任意 $k$ 维子空间 $S$ 与
+$\operatorname{span}\{v_k,\ldots,v_n\}$ 的维数之和为 $n+1$，故交空间非零。取交空间中的单位向量
+$x=\sum_{i=k}^n\alpha_iv_i$，则
+\[
+\lVert Ax\rVert_2^2=\sum_{i=k}^n\sigma_i^2\alpha_i^2
+\le\sigma_k^2.
+\]
+因此第一式成立。第二式取
+$L_0=\operatorname{span}\{v_k,\ldots,v_n\}$，再令任意 $(n-k+1)$ 维子空间与
+$\operatorname{span}\{v_1,\ldots,v_k\}$ 相交，同理可证。
+\end{proof}
+
+\begin{corollary}[最大与最小伸缩]
+\[
+\sigma_1=\max_{\lVert x\rVert_2=1}\lVert Ax\rVert_2=\lVert A\rVert_2.
+\]
+若 $A$ 为可逆 $n$ 阶方阵，则
+\[
+\sigma_n=\min_{\lVert x\rVert_2=1}\lVert Ax\rVert_2
+=\frac1{\lVert A^{-1}\rVert_2}.
+\]
+\end{corollary}
+
+\begin{proposition}[奇异值的常用性质]
+设 $Q,R$ 为尺寸相容的正交矩阵，则：
+\begin{enumerate}
+\item $A$ 与 $A^{\mathsf T}$ 有相同的非零奇异值；
+\item $\sigma_i(QAR)=\sigma_i(A)$；
+\item 若 $A$ 为可逆 $n$ 阶方阵，则
+\[
+\sigma_i(A^{-1})=\frac1{\sigma_{n-i+1}(A)};
+\]
+\item 尺寸相容时，
+\[
+\sigma_i(AB)\le\lVert A\rVert_2\sigma_i(B),
+\qquad
+\sigma_i(AB)\le\sigma_i(A)\lVert B\rVert_2.
+\]
+\end{enumerate}
+\end{proposition}
+\begin{proof}
+前两项分别由 $AA^{\mathsf T}$、$A^{\mathsf T}A$ 的非零特征值相同，以及
+\[
+(QAR)^{\mathsf T}(QAR)=R^{\mathsf T}A^{\mathsf T}AR
+\]
+与 $A^{\mathsf T}A$ 正交相似得到。第三项由
+$A^{-1}=V\Sigma^{-1}U^{\mathsf T}$ 得到，取倒数后次序反转。第四项把极小极大表征用于 $AB$，并使用
+\[
+\lVert ABy\rVert_2\le\lVert A\rVert_2\lVert By\rVert_2;
+\]
+另一式对转置矩阵应用同一结论。
+\end{proof}
+
+\begin{example}[title={由 $A^{\mathsf T}A$ 构造 SVD}]
+设
+\[
+A=\begin{pmatrix}1&1\\1&-1\\0&0\end{pmatrix}.
+\]
+求一个紧致 SVD。
+\begin{solution}
+计算得
+\[
+A^{\mathsf T}A=\begin{pmatrix}2&0\\0&2\end{pmatrix}.
+\]
+两个奇异值均为 $\sqrt2$。可取 $v_1=e_1,v_2=e_2$，于是
+\[
+u_1=\frac1{\sqrt2}(1,1,0)^{\mathsf T},
+\qquad
+u_2=\frac1{\sqrt2}(1,-1,0)^{\mathsf T}.
+\]
+故
+\[
+A=\begin{pmatrix}
+1/\sqrt2&1/\sqrt2\\
+1/\sqrt2&-1/\sqrt2\\
+0&0
+\end{pmatrix}
+\begin{pmatrix}\sqrt2&0\\0&\sqrt2\end{pmatrix}I_2.
+\]
+由于奇异值重复，还可同时旋转两组奇异向量，所得 SVD 仍正确。
+\end{solution}
+\end{example}
+
+\section{SVD 与四个基本子空间}
+
+设紧致 SVD 为 $A=U_r\Sigma_rV_r^{\mathsf T}$。则
+\[
+\operatorname{Im}A=\operatorname{span}\{u_1,\ldots,u_r\},
+\qquad
+\operatorname{Im}A^{\mathsf T}=\operatorname{span}\{v_1,\ldots,v_r\}.
+\]
+若把 $v_1,\ldots,v_r$ 扩充为 $v_1,\ldots,v_n$，把 $u_1,\ldots,u_r$ 扩充为 $u_1,\ldots,u_m$，则
+\[
+\ker A=\operatorname{span}\{v_{r+1},\ldots,v_n\},
+\qquad
+\ker A^{\mathsf T}=\operatorname{span}\{u_{r+1},\ldots,u_m\}.
+\]
+
+\begin{proof}
+由
+\[
+Ax=\sum_{i=1}^r\sigma_i u_i(v_i^{\mathsf T}x)
+\]
+可知像包含于 $u_1,\ldots,u_r$ 的张成空间；而 $Av_i=\sigma_i u_i$ 表明每个 $u_i$ 都在像中。核条件 $Ax=0$ 等价于 $v_i^{\mathsf T}x=0$ 对所有 $i\le r$ 成立，即 $x$ 属于其余右奇异向量张成的正交补。其余结论对 $A^{\mathsf T}$ 同理。
+\end{proof}
+
+\begin{corollary}[正交投影的 SVD 表示]
+列空间和行空间上的正交投影分别为
+\[
+P_{\operatorname{Im}A}=U_rU_r^{\mathsf T},
+\qquad
+P_{\operatorname{Im}A^{\mathsf T}}=V_rV_r^{\mathsf T}.
+\]
+\end{corollary}
+
+\begin{definition}[Moore--Penrose 伪逆]
+若 $A=U_r\Sigma_rV_r^{\mathsf T}$，定义
+\[
+A^+=V_r\Sigma_r^{-1}U_r^{\mathsf T}
+=\sum_{i=1}^r\frac1{\sigma_i}v_iu_i^{\mathsf T}.
+\]
+当 $A$ 可逆时，$A^+=A^{-1}$。
+\end{definition}
+
+\begin{proposition}[最小二乘与最小范数解]
+对方程 $Ax=b$，向量 $x_*=A^+b$ 满足：
+\begin{enumerate}
+\item 它使 $\lVert Ax-b\rVert_2$ 取得最小值；
+\item 在所有最小二乘解中，它的 Euclid 范数最小；
+\item 若方程相容，则它是所有精确解中的最小范数解。
+\end{enumerate}
+\end{proposition}
+\begin{proof}
+把 $b$ 按正交直和分解为
+\[
+b=U_rU_r^{\mathsf T}b+(I-U_rU_r^{\mathsf T})b.
+\]
+第一项属于 $\operatorname{Im}A$，第二项垂直于 $\operatorname{Im}A$。任意 $Ax$ 都属于 $\operatorname{Im}A$，故勾股定理给出
+\[
+\lVert Ax-b\rVert_2^2
+=\lVert Ax-U_rU_r^{\mathsf T}b\rVert_2^2
++\lVert(I-U_rU_r^{\mathsf T})b\rVert_2^2.
+\]
+取 $x=A^+b$ 时，$Ax=U_rU_r^{\mathsf T}b$，故残差最小。全部最小二乘解为 $A^+b+z$，其中 $z\in\ker A$。又 $A^+b\in\operatorname{Im}A^{\mathsf T}=(\ker A)^\perp$，所以
+\[
+\lVert A^+b+z\rVert_2^2=\lVert A^+b\rVert_2^2+\lVert z\rVert_2^2,
+\]
+最小范数在 $z=0$ 时取得。
+\end{proof}
+
+\section{最佳低秩逼近定理}
+
+\begin{theorem}[Eckart--Young--Mirsky 定理]
+设
+\[
+A=\sum_{i=1}^r\sigma_i u_iv_i^{\mathsf T},
+\qquad
+\sigma_1\ge\cdots\ge\sigma_r>0,
+\]
+且 $0\le k<r$。定义截断 SVD
+\[
+A_k=\sum_{i=1}^k\sigma_i u_iv_i^{\mathsf T}.
+\]
+则 $\rank A_k\le k$，并且
+\[
+\min_{\rank B\le k}\lVert A-B\rVert_2=\sigma_{k+1},
+\]
+\[
+\min_{\rank B\le k}\lVert A-B\rVert_F
+=\left(\sum_{i=k+1}^r\sigma_i^2\right)^{1/2}.
+\]
+\end{theorem}
+\begin{proof}
+先验证 $A_k$ 达到所列误差。由奇异向量的正交性，
+\[
+A-A_k=\sum_{i=k+1}^r\sigma_i u_iv_i^{\mathsf T},
+\]
+故其最大奇异值为 $\sigma_{k+1}$，奇异值平方和为 $\sum_{i>k}\sigma_i^2$。
+
+对谱范数下界，任取 $\rank B\le k$。考虑维数为 $k+1$ 的子空间
+\[
+S=\operatorname{span}\{v_1,\ldots,v_{k+1}\}.
+\]
+限制映射 $B|_S:S\to\R^m$ 的秩不超过 $k$，由秩零化度定理，其核至少一维。因此存在单位向量 $x\in S$ 使 $Bx=0$。写
+\[
+x=\sum_{i=1}^{k+1}\alpha_iv_i,
+\qquad \sum_{i=1}^{k+1}\alpha_i^2=1.
+\]
+于是
+\[
+\lVert(A-B)x\rVert_2^2
+=\lVert Ax\rVert_2^2
+=\sum_{i=1}^{k+1}\sigma_i^2\alpha_i^2
+\ge\sigma_{k+1}^2.
+\]
+从而 $\lVert A-B\rVert_2\ge\sigma_{k+1}$。
+
+再证明 Frobenius 范数下界。因 $\rank B\le k$，有
+$\dim\ker B\ge n-k$。在 $\ker B$ 中取一个 $n-k$ 维子空间 $S$，并取其标准正交基
+$z_1,\ldots,z_{n-k}$。把这组向量扩充为 $\R^n$ 的标准正交基。Frobenius 范数在右乘正交矩阵后不变，因此
+\[
+\lVert A-B\rVert_F^2
+\ge\sum_{j=1}^{n-k}\lVert(A-B)z_j\rVert_2^2
+=\sum_{j=1}^{n-k}\lVert Az_j\rVert_2^2.
+\]
+为估计右端，把 $z_j$ 在右奇异向量基下展开。令
+\[
+c_i=\sum_{j=1}^{n-k}|v_i^{\mathsf T}z_j|^2.
+\]
+由于 $z_j$ 标准正交，$0\le c_i\le1$，并且
+\[
+\sum_{i=1}^nc_i=n-k.
+\]
+于是
+\[
+\sum_{j=1}^{n-k}\lVert Az_j\rVert_2^2
+=\sum_{i=1}^n\sigma_i^2c_i.
+\]
+这里把不存在的奇异值补为零。因 $\sigma_1^2\ge\cdots\ge\sigma_n^2\ge0$，在约束
+$0\le c_i\le1$、$\sum c_i=n-k$ 下，右端的最小值在
+$c_1=\cdots=c_k=0$、$c_{k+1}=\cdots=c_n=1$ 时取得。因此
+\[
+\lVert A-B\rVert_F^2
+\ge\sum_{i=k+1}^n\sigma_i^2
+=\sum_{i=k+1}^r\sigma_i^2.
+\]
+结合 $A_k$ 达到该下界，结论成立。
+\end{proof}
+
+\begin{remark}[最优解何时唯一]
+在 Frobenius 范数下，若 $\sigma_k>\sigma_{k+1}$，则截断矩阵 $A_k$ 是唯一的最佳秩 $k$ 逼近；若 $\sigma_k=\sigma_{k+1}$，可在跨越截断位置的重奇异值子空间中选择不同方向，最优解一般不唯一。
+
+谱范数下不能照搬这一唯一性结论。即使 $\sigma_k>\sigma_{k+1}$，也可能存在 $A_k$ 以外的最优解。例如
+\[
+A=\diag(3,2,1),\qquad k=1.
+\]
+对任意 $1\le t\le5$，秩一矩阵 $B_t=\diag(t,0,0)$ 都满足
+\[
+\lVert A-B_t\rVert_2
+=\max\{|3-t|,2,1\}=2=\sigma_2.
+\]
+因此截断 SVD 总给出一个最优解，但谱范数下的最优解未必唯一。
+\end{remark}
+
+\begin{example}[title={截断 SVD 的误差}]
+设 $A$ 的奇异值为 $5,3,1$。求最佳秩 $1$ 和秩 $2$ 逼近的谱范数、Frobenius 范数误差。
+\begin{solution}
+由定理，
+\[
+\lVert A-A_1\rVert_2=3,
+\qquad
+\lVert A-A_1\rVert_F=\sqrt{3^2+1^2}=\sqrt{10},
+\]
+而
+\[
+\lVert A-A_2\rVert_2=1,
+\qquad
+\lVert A-A_2\rVert_F=1.
+\]
+仅知道奇异值就能确定最优误差，不必先写出奇异向量。
+\end{solution}
+\end{example}
+
+\section{PCA 与 SVD 的统一}
+
+设中心化数据矩阵 $Y\in\R^{d\times N}$ 的紧致 SVD 为
+\[
+Y=U_r\Sigma_rV_r^{\mathsf T}.
+\]
+则
+\[
+C=\frac1NYY^{\mathsf T}
+=U_r\frac{\Sigma_r^2}{N}U_r^{\mathsf T}.
+\]
+因此：
+\begin{enumerate}
+\item PCA 的主方向就是 $Y$ 的左奇异向量 $u_i$；
+\item 协方差特征值为 $\lambda_i=\sigma_i^2/N$；
+\item 前 $k$ 个主成分的得分矩阵为 $U_k^{\mathsf T}Y=\Sigma_kV_k^{\mathsf T}$；
+\item 秩 $k$ 重构为 $U_kU_k^{\mathsf T}Y=U_k\Sigma_kV_k^{\mathsf T}=Y_k$。
+\end{enumerate}
+所以 PCA 的最小重构误差与矩阵的最佳低秩逼近是同一个定理的两种表述。
+
+\subsection{协方差 PCA 与相关系数 PCA}
+
+当不同特征具有相同量纲且原始尺度具有直接意义时，可以对协方差矩阵作 PCA。若特征量纲不同，或数值尺度相差很大，大尺度变量可能仅因单位选择而主导主成分，此时通常先标准化。
+
+设协方差矩阵为 $C=(c_{ij})$，并令
+\[
+D=\diag(c_{11},\ldots,c_{dd}).
+\]
+若各变量方差均为正，标准化数据矩阵为
+\[
+Z=D^{-1/2}Y,
+\]
+其协方差矩阵为相关系数矩阵
+\[
+R=\frac1NZZ^{\mathsf T}=D^{-1/2}CD^{-1/2}.
+\]
+$R$ 的对角元均为 $1$。协方差 PCA 保留原单位下的总方差；相关系数 PCA 先把每个变量调整为单位方差，再研究相关结构。若某变量方差为零，它在全部样本中恒定，应先删除，不能直接对零方差取倒数。
+
+\begin{example}[title={量纲对 PCA 的影响}]
+两个互不相关变量的协方差矩阵为 $C=\diag(100,1)$。协方差 PCA 的第一主成分为第一个变量，贡献率为 $100/101$。标准化后 $R=I_2$，两个方向方差相同，第一主成分方向不唯一。这说明标准化改变了分析所采用的尺度，而不只是一个形式上的计算步骤。
+\end{example}
+
+\subsection{白化变换}
+
+设 $C=Q_r\Lambda_rQ_r^{\mathsf T}$ 是协方差矩阵在正特征值部分的谱分解，其中
+$\Lambda_r=\diag(\lambda_1,\ldots,\lambda_r)$。对中心化样本 $y$ 定义 PCA 白化坐标
+\[
+z=\Lambda_r^{-1/2}Q_r^{\mathsf T}y.
+\]
+若把全部白化样本作为列组成 $Z$，则
+\[
+\frac1NZZ^{\mathsf T}
+=\Lambda_r^{-1/2}Q_r^{\mathsf T}CQ_r\Lambda_r^{-1/2}
+=I_r.
+\]
+白化同时消除线性相关性，并把各保留方向的方差调整为 $1$。当 $C$ 奇异时，只能在其像空间上白化。对很小的特征值取倒数会放大噪声，实际计算常以
+$(\lambda_i+\varepsilon)^{-1/2}$ 代替 $\lambda_i^{-1/2}$。
+
+\begin{method}[PCA 的规范计算流程]
+给出原始样本时，先计算均值并中心化；再根据样本作为列还是作为行确定协方差矩阵。若样本为列，使用 $C=YY^{\mathsf T}/N$，主方向位于 $\R^d$。可直接对 $C$ 作特征分解，也可对 $Y$ 作 SVD。最后按累计方差贡献率
+\[
+\frac{\lambda_1+\cdots+\lambda_k}{\lambda_1+\cdots+\lambda_r}
+\]
+选择维数，并明确区分主方向、低维坐标和重构数据。
+\end{method}
+
+\section{常见矩阵分解的选择与主方向计算}
+
+\begin{center}
+\begin{tabular}{p{2.0cm}p{3.1cm}p{4.2cm}p{3.7cm}}
+\toprule
+分解 & 适用对象 & 主要结构与用途 & 典型限制\\
+\midrule
+特征分解 & 方阵；正交分解要求实对称矩阵 & 特征方向、不变子空间、矩阵函数、协方差 PCA & 一般方阵可能不可对角化，矩形矩阵无特征分解\\
+QR 分解 & 任意矩形矩阵 & 正交化、最小二乘、构造正交基、QR 特征值算法 & 不直接按重要程度给出低秩方向\\
+SVD & 任意矩形矩阵 & 秩、四个基本子空间、伪逆、条件数、最佳低秩逼近 & 完整 SVD 的计算量通常高于一次 QR 分解\\
+极分解 & 任意矩阵 & 把变换分为半正定伸缩与等距部分 & 不直接给出全部低秩截断项\\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\begin{method}[分解方法的触发特征]
+求正交基或稳定地解最小二乘问题，优先考虑 QR；研究对称算子的特征方向或协方差矩阵，使用正交特征分解；矩阵为矩形、秩亏、病态，或题目要求最佳低秩逼近、伪逆和条件数时，SVD 最直接；若要求把线性变换解释为伸缩与旋转反射的复合，使用极分解。
+\end{method}
+
+\begin{theorem}[幂迭代求第一主方向]
+设 $C$ 为对称半正定矩阵，特征值满足
+\[
+\lambda_1>\lambda_2\ge\cdots\ge\lambda_d\ge0.
+\]
+若初始单位向量 $q^{(0)}$ 在 $q_1$ 方向上的分量非零，定义
+\[
+q^{(t+1)}=\frac{Cq^{(t)}}{\lVert Cq^{(t)}\rVert_2},
+\]
+则 $q^{(t)}$ 收敛到 $q_1$ 或 $-q_1$，误差方向的衰减速度由 $\lambda_2/\lambda_1$ 控制。
+\end{theorem}
+\begin{proof}
+写
+\[
+q^{(0)}=a_1q_1+\cdots+a_dq_d,
+\qquad a_1\ne0.
+\]
+归一化不改变方向，而
+\[
+C^tq^{(0)}
+=\lambda_1^t\left(a_1q_1+
+\sum_{i=2}^da_i\left(\frac{\lambda_i}{\lambda_1}\right)^tq_i\right).
+\]
+因 $|\lambda_i/\lambda_1|<1$，括号中除 $q_1$ 外的分量趋于零。单位化后极限方向为 $\operatorname{sgn}(a_1)q_1$。
+\end{proof}
+
+对一般矩阵 $A$，可以对 $A^{\mathsf T}A$ 使用幂迭代求第一右奇异向量，再令 $u_1=Av_1/\sigma_1$。实际数值计算常交替使用
+\[
+u\leftarrow\frac{Av}{\lVert Av\rVert_2},
+\qquad
+v\leftarrow\frac{A^{\mathsf T}u}{\lVert A^{\mathsf T}u\rVert_2},
+\]
+避免显式形成 $A^{\mathsf T}A$。求得第一主方向后，可对对称矩阵使用
+\[
+C_1=C-\lambda_1q_1q_1^{\mathsf T}
+\]
+消去该方向，再计算下一方向；更稳健的方法是同时迭代一个正交向量组，即子空间迭代。
+
+\section{奇异值的稳定性、条件数与极分解}
+
+\begin{theorem}[奇异值的 Lipschitz 稳定性]
+若 $A,E$ 尺寸相同，则对每个 $i$，
+\[
+|\sigma_i(A+E)-\sigma_i(A)|\le\lVert E\rVert_2.
+\]
+特别地，
+\[
+|\lVert A+E\rVert_2-\lVert A\rVert_2|
+\le\lVert E\rVert_2.
+\]
+\end{theorem}
+
+该结论只保证奇异值稳定，不保证奇异向量总是稳定。当相邻奇异值非常接近或相等时，很小的扰动就可能显著旋转对应奇异子空间中的基。
+
+\begin{definition}[矩阵的 $2$-条件数]
+若方阵 $A$ 可逆，定义
+\[
+\kappa_2(A)=\lVert A\rVert_2\lVert A^{-1}\rVert_2
+=\frac{\sigma_1(A)}{\sigma_n(A)}.
+\]
+若 $A$ 不可逆，约定 $\kappa_2(A)=\infty$。条件数较大表示某些方向被压缩得远强于另一些方向，求逆和解线性方程对扰动更敏感。
+\end{definition}
+
+\begin{theorem}[极分解]
+任意 $A\in\R^{m\times n}$ 都可写成
+\[
+A=QH,
+\qquad
+H=(A^{\mathsf T}A)^{1/2}\succeq0,
+\]
+其中 $Q$ 在 $(\ker A)^\perp$ 上保持长度，并把该空间映到 $\operatorname{Im}A$。若 $m=n$，可把 $Q$ 延拓为正交矩阵。
+
+若 $A$ 是可逆方阵，则
+\[
+Q=A(A^{\mathsf T}A)^{-1/2}
+\]
+唯一，$H$ 正定；若 $A$ 是奇异方阵，则 $H$ 仍唯一，但正交因子 $Q$ 一般不唯一。
+\end{theorem}
+\begin{proof}
+取 SVD $A=U\Sigma V^{\mathsf T}$。令
+\[
+H=V(\Sigma^{\mathsf T}\Sigma)^{1/2}V^{\mathsf T}
+=V\diag(\sigma_1,\ldots,\sigma_n)V^{\mathsf T},
+\]
+其中超出 $p$ 的位置补零。则 $H^2=A^{\mathsf T}A$ 且 $H\succeq0$。在正奇异值对应子空间上定义 $Qv_i=u_i$，在核的正交补上便有 $QH=A$。若为方阵，可把核的一组标准正交基任意映到 $\ker A^{\mathsf T}$ 的标准正交基，从而延拓为正交矩阵。
+
+可逆时所有奇异值为正，$H$ 可逆，故 $Q=AH^{-1}$ 被唯一确定。奇异时，$H$ 在核上为零，$Q$ 在核上的取值不会影响乘积 $QH$，因而可能不唯一。
+\end{proof}
+
+\begin{pitfall}[极分解中的两个常见错误]
+正半定矩阵应写作 $H\succeq0$，而不是含义不明的“半正”；只有可逆方阵的正交因子自动唯一。对矩形矩阵，$Q$ 通常是部分等距映射，而不能不加尺寸条件地称为正交方阵。
+\end{pitfall}
+
+\section{专题：压缩映射原理}
+
+这一专题使用范数语言，但与 PCA、SVD 的主线相对独立。
+
+\begin{definition}[压缩映射]
+设 $X$ 是赋范空间中的非空集合。映射 $T:X\to X$ 若存在常数 $0\le q<1$，使
+\[
+\lVert T(x)-T(y)\rVert\le q\lVert x-y\rVert
+\]
+对任意 $x,y\in X$ 成立，则称 $T$ 为压缩映射。
+\end{definition}
+
+\begin{theorem}[Banach 压缩映射原理]
+若 $X$ 是完备赋范空间中的非空闭子集，$T:X\to X$ 是压缩映射，则：
+\begin{enumerate}
+\item $T$ 有唯一不动点 $x_*$，即 $T(x_*)=x_*$；
+\item 任取 $x_0\in X$，迭代 $x_{n+1}=T(x_n)$ 都收敛到 $x_*$；
+\item 误差满足
+\[
+\lVert x_n-x_*\rVert
+\le\frac{q^n}{1-q}\lVert x_1-x_0\rVert,
+\qquad
+\lVert x_n-x_*\rVert
+\le\frac q{1-q}\lVert x_n-x_{n-1}\rVert.
+\]
+\end{enumerate}
+\end{theorem}
+\begin{proof}
+由压缩性反复得到
+\[
+\lVert x_{j+1}-x_j\rVert\le q^j\lVert x_1-x_0\rVert.
+\]
+对 $m>n$，三角不等式给出
+\begin{align*}
+\lVert x_m-x_n\rVert
+&\le\sum_{j=n}^{m-1}\lVert x_{j+1}-x_j\rVert\\
+&\le\sum_{j=n}^{m-1}q^j\lVert x_1-x_0\rVert\\
+&\le\frac{q^n}{1-q}\lVert x_1-x_0\rVert.
+\end{align*}
+右端随 $n\to\infty$ 趋于零，故 $(x_n)$ 是 Cauchy 列。完备性与 $X$ 的闭性保证其极限 $x_*$ 仍在 $X$ 中。压缩映射是 Lipschitz 连续的，因此
+\[
+T(x_*)=T\left(\lim_nx_n\right)=\lim_nT(x_n)=\lim_nx_{n+1}=x_*.
+\]
+若 $y_*$ 也是不动点，则
+\[
+\lVert x_*-y_*\rVert
+=\lVert T(x_*)-T(y_*)\rVert
+\le q\lVert x_*-y_*\rVert.
+\]
+因 $q<1$，只能有 $x_*=y_*$。令 $m\to\infty$ 即得第一条误差估计；从第 $n$ 项开始求几何级数得到第二条。
+\end{proof}
+
+\begin{example}[title={线性迭代的收敛}]
+设 $T(x)=Bx+c$，且某个诱导矩阵范数满足 $\lVert B\rVert<1$。证明迭代 $x_{n+1}=Bx_n+c$ 收敛，并求极限。
+\begin{solution}
+对任意 $x,y$，
+\[
+\lVert T(x)-T(y)\rVert=\lVert B(x-y)\rVert
+\le\lVert B\rVert\lVert x-y\rVert.
+\]
+故 $T$ 是 $\R^n$ 上的压缩映射。其唯一不动点满足
+\[
+x_*=Bx_*+c,
+\]
+即
+\[
+x_*=(I-B)^{-1}c.
+\]
+$I-B$ 可逆也可由 Neumann 级数
+\[
+(I-B)^{-1}=I+B+B^2+\cdots
+\]
+得到，因为 $\sum\lVert B^j\rVert$ 收敛。
+\end{solution}
+\end{example}
+
+\begin{summary}[本章知识链]
+诱导范数刻画线性映射的最大放大倍数，Frobenius 范数刻画矩阵全部元素的总体能量。SVD 把任意矩阵分解为正交换基、沿互相垂直方向伸缩和再次正交换基，并同时给出秩、四个基本子空间、伪逆与条件数。截断 SVD 是谱范数和 Frobenius 范数下的最佳低秩逼近。对中心化数据矩阵，协方差矩阵的特征向量就是左奇异向量，PCA 的最大方差与最小重构误差因此统一于 Eckart--Young--Mirsky 定理。极分解把线性变换写成半正定伸缩与等距变换的复合；压缩映射原理则把范数估计用于迭代收敛与唯一不动点。
+\end{summary}
