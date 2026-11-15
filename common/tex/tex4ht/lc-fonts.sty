@@ -1,0 +1,26 @@
+% libre-compendium
+%
+% Copyright (C) 2026 Richard Qin
+%
+% This file is part of libre-compendium.
+%
+% libre-compendium is free software: you can redistribute it and/or modify
+% it under the terms of the GNU General Public License as published by
+% the Free Software Foundation, either version 3 of the License, or
+% (at your option) any later version.
+%
+% libre-compendium is distributed in the hope that it will be useful,
+% but WITHOUT ANY WARRANTY; without even the implied warranty of
+% MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+% GNU General Public License for more details.
+%
+% You should have received a copy of the GNU General Public License
+% along with libre-compendium.  If not, see <https://www.gnu.org/licenses/>.
+
+% HTML-only replacement for common/tex/core/lc-fonts.sty.
+% TeX4ht uses browser CSS fonts; avoid emitting XeTeX font definitions.
+\NeedsTeXFormat{LaTeX2e}[2022-11-01]
+\ProvidesPackage{lc-fonts}[2026/11/15 v0.1.0 TeX4ht HTML 字体适配]
+\ExplSyntaxOn
+\bool_new:N \g__lc_font_fallback_bool
+\ExplSyntaxOff

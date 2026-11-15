@@ -1,0 +1,42 @@
+% libre-compendium
+%
+% Copyright (C) 2026 Richard Qin
+%
+% This file is part of libre-compendium.
+%
+% libre-compendium is free software: you can redistribute it and/or modify
+% it under the terms of the GNU General Public License as published by
+% the Free Software Foundation, either version 3 of the License, or
+% (at your option) any later version.
+%
+% libre-compendium is distributed in the hope that it will be useful,
+% but WITHOUT ANY WARRANTY; without even the implied warranty of
+% MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+% GNU General Public License for more details.
+%
+% You should have received a copy of the GNU General Public License
+% along with libre-compendium.  If not, see <https://www.gnu.org/licenses/>.
+
+% TeX4ht adapter for lc-pedagogy.
+\ExplSyntaxOn
+\cs_set_protected:Npn \__lc_pedagogy:nnn #1#2#3
+  {
+    \str_case:en{\use:c{lc@ped@#1}}{
+      {hide}{}
+      {degrade}{
+        \ifvmode\IgnorePar\fi
+        \HCode{<div\space class="lc-pedagogy\space lc-#1\space lc-degraded">}
+        \noindent\textbf{\use:c{lc@name@#1}\tl_if_blank:nF{#2}{：#2}}\hspace{1em}#3
+        \ifvmode\IgnorePar\fi\EndP\HCode{</div>}\par\ShowPar
+      }
+      {show}{
+        \ifvmode\IgnorePar\fi
+        \HCode{<div\space class="lc-pedagogy\space lc-#1">}
+        \HCode{<div\space class="lc-pedagogy-title">}
+        \use:c{lc@name@#1}\tl_if_blank:nF{#2}{：#2}
+        \HCode{</div><div\space class="lc-pedagogy-body">}#3
+        \ifvmode\IgnorePar\fi\EndP\HCode{</div></div>}\par\ShowPar
+      }
+    }
+  }
+\ExplSyntaxOff
