@@ -1,0 +1,21 @@
+libre-compendium NEWS -- 重要变更历史
+
+* 建立项目基础
+
+** 建立全项目共享基础设施 common/，包括文档类、基础与内容宏包、视觉风格、
+   学科命令、双重许可片段、构建脚本、骨架模板及使用手册。
+
+** 搭建 GNU Autotools 与 latexmk 统一构建系统，支持源码树外构建、自动
+   发现 math/ 与 physics/ 下文档项目、PDF 与 TikZ 转 SVG 输出、文档安装
+   与源码发行打包；同步加入 common/tex/tex4ht/ 试验性 HTML 适配，HTML
+   输出当前仍有已知问题待后续修复。
+
+** 确立根目录许可划分与贡献规范：文档内容采用 GFDL-1.3-or-later，即无
+   不可变章节、无前后封面文字，与 CC BY-SA 4.0 双重许可，宏包与构建脚本
+   采用 GPL-3.0-or-later；撰写 CONTRIBUTING 与 INSTALL，确立纯电子邮件补丁
+   协作流程、英文提交规范与强制 git commit -s 声明，并要求新文档项目统一
+   基于 common/ 构建。
+
+** 接入首批学科文档项目：math/advanced-algebra、math/discrete-math、
+   physics/general-physics 与 physics/relativity，统一完成 common/ 迁移、
+   Makefile 接入及版权许可标注。

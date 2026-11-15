@@ -1,0 +1,10 @@
+libre-compendium 的主要作者如下。各独立文档的具体作者、版权人与贡献记录
+亦见于对应文档的标题页、版权页及 Git 提交历史。
+
+Richard Qin <richard.qin.x@gmail.com>
+  项目发起人与维护者，负责：
+  - common/ 共享 LaTeX 文档类、宏包、双重许可片段、骨架模板、TeX4ht
+    适配层与使用手册；
+  - 根目录 GNU Autotools 与 latexmk 构建系统及项目说明文档；
+  - 首批学科文档项目：math/advanced-algebra、math/discrete-math、
+    physics/general-physics 与 physics/relativity。
