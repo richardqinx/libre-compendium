@@ -1,0 +1,49 @@
+% libre-compendium
+%
+% Copyright (C) 2026 Richard Qin
+%
+% This file is part of libre-compendium.
+%
+% libre-compendium is free software: you can redistribute it and/or modify
+% it under the terms of the GNU General Public License as published by
+% the Free Software Foundation, either version 3 of the License, or
+% (at your option) any later version.
+%
+% libre-compendium is distributed in the hope that it will be useful,
+% but WITHOUT ANY WARRANTY; without even the implied warranty of
+% MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+% GNU General Public License for more details.
+%
+% You should have received a copy of the GNU General Public License
+% along with libre-compendium.  If not, see <https://www.gnu.org/licenses/>.
+\ProvidesFile{lc-names-zh.def}[2026/11/13 v0.1.0 libre-compendium 中文名称]
+\def\lc@name@definition{定义}
+\def\lc@name@theorem{定理}
+\def\lc@name@lemma{引理}
+\def\lc@name@proposition{命题}
+\def\lc@name@corollary{推论}
+\def\lc@name@remark{注}
+\def\lc@name@proof{证明}
+\def\lc@name@example{例题}
+\def\lc@name@solution{解答}
+\def\lc@name@answer{答案}
+\def\lc@name@exercise{习题}
+\def\lc@name@method{方法}
+\def\lc@name@pitfall{易错点}
+\def\lc@name@hint{提示}
+\def\lc@name@attention{关注}
+\def\lc@name@examspot{考点}
+\def\lc@name@summary{小结}
+\def\lc@name@solutions{习题解答}
+\def\lc@name@history{修订历史（History）}
+\def\lc@name@attribution{第三方内容来源}
+\def\lc@name@keywords{关键词}
+\def\lc@name@basic{基础}
+\def\lc@name@standard{常规}
+\def\lc@name@advanced{提高}
+\def\lc@name@points{分}
+\def\lc@name@draft{草稿}
+\def\lc@name@fallback{字体回退}
+\def\lc@name@equation{式}
+\def\lc@name@figure{图}
+\def\lc@name@table{表}

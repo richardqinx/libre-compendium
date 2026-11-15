@@ -1,0 +1,21 @@
+common/ 存放 libre-compendium 全项目共享的 LaTeX 文档类、宏包、许可证片段、骨架与手册。
+
+目录结构：
+tex/classes    文档类
+tex/core       基础宏包
+tex/content    内容宏包
+tex/styles     视觉风格
+tex/subjects   学科宏包
+license        许可证片段
+build-aux      构建辅助
+skeletons      文档骨架
+doc             使用手册
+
+编译方法：在文档目录放置 skeletons 中的 latexmkrc 副本后执行：
+
+latexmk main.tex
+LC_ENGINE=lualatex latexmk main.tex
+
+产物位于 build/。引擎为 XeLaTeX 或 LuaLaTeX，LaTeX 内核不低于 2022-11-01。
+
+完整说明见 doc/manual.tex。

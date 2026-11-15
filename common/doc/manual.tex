@@ -1,0 +1,651 @@
+% libre-compendium
+%
+% Copyright (C) 2026 Richard Qin
+%
+% This document is dual-licensed under either:
+% - GNU Free Documentation License, Version 1.3 or any later version
+%   published by the Free Software Foundation; with no Invariant Sections,
+%   no Front-Cover Texts, and no Back-Cover Texts (see COPYING.DOC); or
+% - Creative Commons Attribution-ShareAlike 4.0 International License
+%   (see LICENSE-CC-BY-SA-4.0).
+\ProvidesFile{manual.tex}[2026/11/13 v0.1.0 共享排版系统使用手册]
+\documentclass[style=classic,color=full]{lc-article}
+\input{settings}
+\lcset{title={common/ 使用手册}}
+
+% 本手册局部辅助宏：仅在路径、键值与列表分隔符处允许断行，避免逐字打断标识符。
+\ExplSyntaxOn
+\tl_new:N \l__lcman_code_tl
+\cs_new_protected:Npn \__lcman_code_body:n #1
+  {
+    \group_begin:
+    \ttfamily\small
+    \tl_set:Nn \l__lcman_code_tl {#1}
+    \tl_replace_all:Nnn \l__lcman_code_tl { / } { /\penalty50\relax }
+    \tl_replace_all:Nnn \l__lcman_code_tl { , } { ,\penalty50\relax }
+    \tl_replace_all:Nnn \l__lcman_code_tl { | } { |\penalty100\relax }
+    \tl_replace_all:Nnn \l__lcman_code_tl { ; } { ;\penalty100\relax }
+    \tl_replace_all:Nnn \l__lcman_code_tl { - } { -\penalty150\relax }
+    \tl_replace_all:Nnn \l__lcman_code_tl { = } { =\penalty200\relax }
+    \tl_replace_all:Nnn \l__lcman_code_tl { [ } { [\penalty200\relax }
+    \tl_use:N \l__lcman_code_tl
+    \group_end:
+  }
+\NewDocumentCommand{\code}{m}
+  {
+    \texorpdfstring{\__lcman_code_body:n {#1}}{#1}
+  }
+\ExplSyntaxOff
+\newcolumntype{L}[2]{>{\raggedright\arraybackslash}p{\dimexpr(\linewidth-\numexpr2*(#1-1)\relax\tabcolsep)*#2/1000\relax}}
+\emergencystretch=2em\relax
+
+\begin{document}
+\maketitle
+\begin{abstract}
+本手册说明共享文档类、内容环境、习题收集、图形、字体、构建与双重许可的使用方法。
+\lckeywords{LaTeX；讲义；习题；自由文档}
+\end{abstract}
+\tableofcontents
+
+\section{概述}
+
+本项目是以 GFDL-1.3-or-later 与 CC BY-SA 4.0 双重授权分发的中文 STEM 文档集合。\code{common/} 存放全项目共享的 LaTeX 文档类、宏包、许可证片段、骨架与手册。
+
+不同文档的版权人可以不同。\code{common/} 内的模板与宏包不得写入任何具体个人的姓名或版权信息，版权人由每份文档自己设置；\code{common/} 只提供统一格式（\code{common/doc/manual.tex} 本身是一份文档，其版权设置见第 12 节，属于例外）。
+
+后续计划在各文档目录引入 Autoconf/Automake 递归构建；目前 \code{common/} 的设计保证任意深度的文档目录都可独立编译。
+
+\begingroup\small
+\begin{verbatim}
+common/
++-- README
++-- tex/
+|   +-- classes/
+|   |   +-- lc-lecture.cls
+|   |   +-- lc-problemset.cls
+|   |   +-- lc-article.cls
+|   |   `-- lc-figure.cls
+|   +-- core/
+|   |   +-- lc-project.def
+|   |   +-- lc-names-zh.def
+|   |   +-- lc-base.sty
+|   |   +-- lc-fonts.sty
+|   |   +-- lc-colors.sty
+|   |   +-- lc-page.sty
+|   |   +-- lc-meta.sty
+|   |   +-- lc-status.sty
+|   |   `-- lc-xref.sty
+|   +-- content/
+|   |   +-- lc-theorem.sty
+|   |   +-- lc-pedagogy.sty
+|   |   +-- lc-exercise.sty
+|   |   +-- lc-figure.sty
+|   |   +-- lc-biblio.sty
+|   |   +-- lc-attribution.sty
+|   |   `-- lc-license.sty
+|   +-- styles/
+|   |   +-- lc-style-boxed.sty
+|   |   `-- lc-style-classic.sty
+|   `-- subjects/
+|       +-- lc-math.sty
+|       +-- lc-linear-algebra.sty
+|       `-- lc-physics.sty
++-- license/
+|   +-- fdl-1.3.tex
+|   +-- fdl-1.3-body.tex
+|   `-- lc-notice.tex
++-- build-aux/
+|   +-- latexmkrc
+|   +-- latexmkrc-local
+|   `-- lc-version.sh
++-- skeletons/
+|   +-- lecture/
+|   |   +-- latexmkrc
+|   |   +-- settings.tex
+|   |   +-- main.tex
+|   |   +-- chapters/ch01-example.tex
+|   |   +-- exercises/ch01-example.tex
+|   |   `-- figures/tikz/example-axes.tex
+|   +-- problemset/
+|   |   +-- latexmkrc
+|   |   +-- settings.tex
+|   |   +-- main.tex
+|   |   `-- exercises/set01.tex
+|   `-- article/
+|       +-- latexmkrc
+|       +-- settings.tex
+|       +-- main.tex
+|       +-- sections/sec01-example.tex
+|       `-- references.bib
+`-- doc/
+    +-- latexmkrc
+    +-- settings.tex
+    `-- manual.tex
+\end{verbatim}
+\endgroup
+
+\section{编译}
+
+在任意深度的文档目录中放置 \code{build-aux/latexmkrc-local} 的逐字副本，文件名为 \code{latexmkrc}，然后执行：
+\begingroup\small
+\begin{verbatim}
+latexmk main.tex
+LC_ENGINE=lualatex latexmk main.tex
+\end{verbatim}
+\endgroup
+编译本手册可使用 \code{latexmk manual.tex}。全部构建产物位于各自文档目录下的 \code{build/}。引擎要求 XeLaTeX 或 LuaLaTeX，LaTeX 内核不低于 \code{2022-11-01}；使用 pdfLaTeX 编译会报错停止。
+
+版本信息由构建辅助脚本在每次运行前生成；无 Git 提交时显示 \code{unversioned} 与 \code{none}。使用缓存模式（\code{figures=cache}）时，\code{latexmk} 在主 PDF 生成后调用 \code{memoize-extract.pl} 提取缓存，缓存文件位于 \code{build/memo/}；提取脚本需要 Perl 的 \code{PDF::API2} 或 \code{PDF::Builder} 库。
+
+\section{文档类与选项}
+
+\subsection{公共类选项}
+
+\code{lc-lecture}、\code{lc-problemset}、\code{lc-article} 三个文档类都提供以下公共选项：
+
+\begingroup\small
+\begin{longtable}{@{}L{3}{180}L{3}{400}L{3}{420}@{}}
+\toprule
+选项 & 取值 & 说明\\\midrule\endhead
+\code{style} & \code{boxed/classic} & 视觉风格\\
+\code{color} & \code{full/gray} & 颜色模式\\
+\code{fonts} & \code{auto/noto/fandol} & 见第 9 节；默认 \code{auto}\\
+\code{status} & \code{release/draft} & 见第 11 节；默认 \code{release}\\
+\code{figures} & \code{inline/cache/external} & 见第 8 节；默认 \code{inline}\\
+\bottomrule
+\end{longtable}
+\endgroup
+
+\subsection{\texttt{lc-lecture.cls}}
+
+选项 \code{scope=course|unit}，默认 \code{course}：
+\begin{itemize}
+\item \code{course}：最高级标题为 \code{\textbackslash{}chapter}，内部调用 \code{\textbackslash{}LoadClass[UTF8,zihao=-4,fontset=none,oneside,openany]\{ctexbook\}}。
+\item \code{unit}：最高级标题为 \code{\textbackslash{}section}，内部调用 \code{\textbackslash{}LoadClass[UTF8,zihao=-4,fontset=none]\{ctexart\}}。
+\end{itemize}
+
+默认 \code{style=boxed}、\code{color=full}。选项 \code{profile=standard|review}，默认 \code{standard}；教学框单项选项 \code{method}、\code{pitfall}、\code{hint}、\code{attention}、\code{examspot}、\code{summary}，取值 \code{show|degrade|hide}。预设：
+
+\begingroup\small
+\begin{longtable}{@{}L{3}{340}L{3}{330}L{3}{330}@{}}
+\toprule
+环境 & \code{standard} & \code{review}\\\midrule\endhead
+\code{method} & \code{show} & \code{show}\\
+\code{pitfall} & \code{degrade} & \code{show}\\
+\code{attention} & \code{degrade} & \code{show}\\
+\code{summary} & \code{degrade} & \code{show}\\
+\code{examspot} & \code{hide} & \code{show}\\
+\code{hint} & \code{hide} & \code{show}\\
+\bottomrule
+\end{longtable}
+\endgroup
+
+单项选项无论写在 \code{profile} 之前还是之后，都覆盖预设。加载 \code{lc-pedagogy}、\code{lc-exercise}。习题默认 \code{solutions=hide}、\code{points=hide}。选项 \code{bib=true|false}，默认 \code{false}；\code{true} 时加载 \code{lc-biblio}。
+
+\subsection{\texttt{lc-problemset.cls}}
+
+\code{\textbackslash{}LoadClass[UTF8,zihao=-4,fontset=none]\{ctexart\}}，最高级标题 \code{\textbackslash{}section}。默认 \code{style=boxed}、\code{color=full}。选项 \code{profile=practice|homework|list}，默认 \code{practice}：
+
+\begingroup\small
+\begin{longtable}{@{}L{5}{180}L{5}{160}L{5}{180}L{5}{130}L{5}{350}@{}}
+\toprule
+\code{profile} & \code{solutions} & \code{show} & \code{points} & 额外\\\midrule\endhead
+\code{practice} & \code{end} & \code{solution} & \code{hide} & 无\\
+\code{homework} & \code{hide} & \code{solution} & \code{show} & 标题块下方输出姓名与学号填写栏\\
+\code{list} & \code{end} & \code{answer} & \code{hide} & 无\\
+\bottomrule
+\end{longtable}
+\endgroup
+
+\code{homework} 的填写栏为：
+\begingroup\small
+\begin{verbatim}
+姓名：\underline{\hspace{8em}}\qquad
+学号：\underline{\hspace{8em}}
+\end{verbatim}
+\endgroup
+直接给出的 \code{solutions}、\code{show}、\code{points} 类选项覆盖预设。加载 \code{lc-exercise}，不加载 \code{lc-pedagogy}。选项 \code{bib=true|false}，默认 \code{false}。
+
+\subsection{\texttt{lc-article.cls}}
+
+\code{\textbackslash{}LoadClass[UTF8,zihao=-4,fontset=none]\{ctexart\}}，最高级标题 \code{\textbackslash{}section}。默认 \code{style=classic}、\code{color=full}。
+
+默认加载 \code{lc-biblio}。选项 \code{pedagogy=true|false}（默认 \code{false}，\code{true} 时以 \code{standard} 预设加载 \code{lc-pedagogy}）；选项 \code{exercises=true|false}（默认 \code{false}，\code{true} 时加载 \code{lc-exercise}，\code{solutions=end}）。
+
+命令 \code{\textbackslash{}lckeywords\{<文本>\}}：在 \code{abstract} 环境内使用，另起不缩进的段落输出 \code{\textbackslash{}textbf\{关键词：\}<文本>}，同时设置 PDF 关键词。
+
+\subsection{\texttt{lc-figure.cls}}
+
+\code{\textbackslash{}LoadClass[border=2pt]\{standalone\}}；加载 \code{ctex} 宏包（\code{fontset=none}），再加载 \code{lc-project.def}、\code{lc-names-zh.def}、\code{amsmath}、\code{mathtools}、\code{lc-fonts}、\code{lc-colors}、\code{lc-meta}、\code{lc-math}、\code{lc-figure.sty}。
+
+选项：\code{color}、\code{fonts}（同 3.1）。\code{\textbackslash{}lcset} 可用但不输出任何内容；\code{\textbackslash{}lchistory}、\code{\textbackslash{}lcsource} 定义为吞掉参数的空操作，使同一份 \code{settings.tex} 可直接 \code{\textbackslash{}input}。用法：
+\begingroup\small
+\begin{verbatim}
+\documentclass[color=full]{lc-figure}
+\input{settings}
+\begin{document}
+\input{figures/tikz/<name>}
+\end{document}
+\end{verbatim}
+\endgroup
+
+\subsection{各类专用选项表}
+
+\begingroup\small
+\begin{longtable}{@{}L{4}{210}L{4}{170}L{4}{430}L{4}{190}@{}}
+\toprule
+类 & 选项 & 取值 & 默认\\\midrule\endhead
+\code{lc-lecture} & \code{scope} & \code{course / unit} & \code{course}\\
+\code{lc-lecture} & \code{profile} & \code{standard / review} & \code{standard}\\
+\code{lc-lecture} & \code{method} & \code{show / degrade / hide} & 按预设\\
+\code{lc-lecture} & \code{pitfall} & \code{show / degrade / hide} & 按预设\\
+\code{lc-lecture} & \code{hint} & \code{show / degrade / hide} & 按预设\\
+\code{lc-lecture} & \code{attention} & \code{show / degrade / hide} & 按预设\\
+\code{lc-lecture} & \code{examspot} & \code{show / degrade / hide} & 按预设\\
+\code{lc-lecture} & \code{summary} & \code{show / degrade / hide} & 按预设\\
+\code{lc-lecture} & \code{bib} & \code{true / false} & \code{false}\\
+\code{lc-problemset} & \code{profile} & \code{practice / homework / list} & \code{practice}\\
+\code{lc-problemset} & \code{solutions} & \code{inline / chapter-end / end / hide} & 按预设\\
+\code{lc-problemset} & \code{show} & \code{answer / solution / both} & 按预设\\
+\code{lc-problemset} & \code{points} & \code{show / hide} & 按预设\\
+\code{lc-problemset} & \code{bib} & \code{true / false} & \code{false}\\
+\code{lc-article} & \code{pedagogy} & \code{true / false} & \code{false}\\
+\code{lc-article} & \code{exercises} & \code{true / false} & \code{false}\\
+\code{lc-figure} & \code{color} & \code{full / gray} & \code{full}\\
+\code{lc-figure} & \code{fonts} & \code{auto / noto / fandol} & \code{auto}\\
+\bottomrule
+\end{longtable}
+\endgroup
+
+\section{\texorpdfstring{\texttt{\textbackslash{}lcset}}{\textbackslash lcset} 键}
+
+\code{\textbackslash{}lcset\{<key>=<value>,...\}} 由 \code{lc-meta.sty} 定义（expl3 \code{l3keys}，模块名 \code{lc}）。各宏包向同一模块注册自己的键。键表：
+
+\begingroup\small
+\begin{longtable}{@{}L{5}{250}L{5}{140}L{5}{240}L{5}{220}L{5}{150}@{}}
+\toprule
+键 & 注册者 & 取值 & 默认 & 可在正文中途修改\\\midrule\endhead
+\code{title} & \code{meta} & 文本 & 空 & 否\\
+\code{subtitle} & \code{meta} & 文本 & 空 & 否\\
+\code{short-title} & \code{meta} & 文本 & 空（空时页眉用 \code{title}） & 否\\
+\code{course} & \code{meta} & 文本 & 空 & 否\\
+\code{author} & \code{meta} & 文本 & 空（空时取 \code{copyright-holder}） & 否\\
+\code{date} & \code{meta} & 文本 & 空（空时取版本日期；版本日期为空取 \code{\textbackslash{}today}） & 否\\
+\code{keywords} & \code{meta} & 文本 & 空 & 否\\
+\code{copyright-holder} & \code{meta} & 文本 & 空 & 否\\
+\code{copyright-years} & \code{meta} & 文本 & 空（空时取 \code{\textbackslash{}the\textbackslash{}year}） & 否\\
+\code{solutions} & \code{exercise} & \code{inline/chapter-end/end/hide} & 见第 3 节 & 是（组内有效）\\
+\code{show} & \code{exercise} & \code{answer/solution/both} & \code{solution} & 是\\
+\code{points} & \code{exercise} & \code{show/hide} & 见第 3 节 & 是\\
+\code{levels} & \code{exercise} & \code{show/hide} & \code{show} & 是\\
+\bottomrule
+\end{longtable}
+\endgroup
+
+\code{copyright-holder} 为空时，在生成版权页处报错：\code{lc-meta: 未设置 copyright-holder，请在 settings.tex 中用 \textbackslash{}lcset 设置}。
+
+\code{lc-project.def} 只定义项目级常量，不含任何个人信息：
+\begingroup\small
+\begin{verbatim}
+\def\lc@project@name{libre-compendium}
+\def\lc@project@url{}
+\end{verbatim}
+\endgroup
+
+\section{环境}
+
+\begingroup\small
+\begin{longtable}{@{}L{5}{185}L{5}{90}L{5}{100}L{5}{425}L{5}{200}@{}}
+\toprule
+环境 & 中文名 & 编号 & 语法 & 定义者\\\midrule\endhead
+\code{definition} & 定义 & 陈述组 & \code{\textbackslash{}begin\{definition\}[名称]} & \code{theorem}\\
+\code{theorem} & 定理 & 陈述组 & 同上 & \code{theorem}\\
+\code{lemma} & 引理 & 陈述组 & 同上 & \code{theorem}\\
+\code{proposition} & 命题 & 陈述组 & 同上 & \code{theorem}\\
+\code{corollary} & 推论 & 陈述组 & 同上 & \code{theorem}\\
+\code{remark} & 注 & 不编号 & \code{\textbackslash{}begin\{remark\}[名称]} & \code{theorem}\\
+\code{proof} & 证明 & 不编号 & \code{\textbackslash{}begin\{proof\}[名称]}，结尾右对齐 \code{\textbackslash{}qedsymbol}（$\mdlgwhtsquare$） & \code{theorem}\\
+\code{example} & 例题 & 例题组 & \code{\textbackslash{}begin\{example\}[title=,source=,license=]} & \code{theorem}\\
+\code{solution} & 解答 & 不编号 & \code{\textbackslash{}begin\{solution\}}，只能位于 \code{example} 或 \code{exercise} 内 & \code{theorem}（\code{exercise} 中的行为由 \code{lc-exercise} 接管）\\
+\code{answer} & 答案 & 不编号 & \code{\textbackslash{}begin\{answer\}}，只能位于 \code{exercise} 内 & \code{exercise}\\
+\code{exercise} & 习题 & 习题组 & \code{\textbackslash{}begin\{exercise\}[title=,level=,points=,source=,license=,tags=]} & \code{exercise}\\
+\code{method} & 方法 & 不编号 & \code{\textbackslash{}begin\{method\}[名称]} & \code{pedagogy}\\
+\code{pitfall} & 易错点 & 不编号 & 同上 & \code{pedagogy}\\
+\code{hint} & 提示 & 不编号 & 同上 & \code{pedagogy}\\
+\code{attention} & 关注 & 不编号 & 同上 & \code{pedagogy}\\
+\code{examspot} & 考点 & 不编号 & 同上 & \code{pedagogy}\\
+\code{summary} & 小结 & 不编号 & 同上 & \code{pedagogy}\\
+\bottomrule
+\end{longtable}
+\endgroup
+
+\code{definition}、\code{theorem}、\code{lemma}、\code{proposition}、\code{corollary} 各有带星号的不编号版本（\code{theorem*} 等）。
+
+标题格式：编号环境 \code{定理 2.1（名称）}，无名称时 \code{定理 2.1}；不编号环境 \code{方法：名称}，无名称时 \code{方法}；\code{example} 同编号环境，名称取 \code{title}。括号与冒号用全角。
+
+中文名全部写在 \code{lc-names-zh.def} 中，作为宏（如 \code{\textbackslash{}lc@name@theorem}）供各宏包引用，任何其他文件不得直接写这些中文名。该文件还定义：\code{习题解答}、\code{修订历史（History）}、\code{第三方内容来源}、\code{关键词}、\code{基础}、\code{常规}、\code{提高}、\code{分}、\code{草稿}、\code{字体回退}。
+
+\code{solution} 在 \code{example} 内总是在原位输出。在 \code{example} 或 \code{exercise} 之外使用 \code{solution}，或在 \code{exercise} 之外使用 \code{answer} 时报错：\code{lc-theorem: solution 只能用于 example 或 exercise 内}（\code{answer} 对应文字：\code{lc-exercise: answer 只能用于 exercise 内}）。
+
+陈述组共享一个计数器；例题组、习题组各自独立。陈述组、例题组、习题组、\code{equation}、\code{figure}、\code{table} 都按最高级标题编号：\code{scope=course} 时按 \code{chapter}，其余按 \code{section}，形式 \code{2.1}；公式 \code{(2.1)}。
+
+\code{cleveref} 名称（\code{lc-xref} 中设置，单复数相同）：环境用第 5 节中文名；\code{equation} 用 \code{式}，输出 \code{式 (2.1)}；\code{figure} 用 \code{图}；\code{table} 用 \code{表}；\code{chapter} 输出 \code{第二章}；\code{section} 输出 \code{第 2.1 节}。\code{\textbackslash{}Cref} 与 \code{\textbackslash{}cref} 输出相同。
+
+标签前缀约定：\code{ch:} 章、\code{sec:} 节、\code{def:} 定义、\code{thm:} 定理、\code{lem:} 引理、\code{prop:} 命题、\code{cor:} 推论、\code{eg:} 例题、\code{ex:} 习题、\code{eq:} 公式、\code{fig:} 图、\code{tab:} 表。例如 \code{\textbackslash{}label\{thm:ivt\}}。
+
+\begin{definition}[定义示例]实数集合记为 $\R$。\end{definition}
+\begin{theorem}[定理示例]若 $x=0$，则 $x^2=0$。\end{theorem}
+\begin{proof}将 $x=0$ 代入等式即得。\end{proof}
+\begin{example}[title=例题示例]求 $1+1$。
+\begin{solution}$1+1=2$。\end{solution}
+\end{example}
+\begin{remark}[注示例]例题与陈述组分别编号。\end{remark}
+
+\section{习题系统}
+
+\code{exercise} 键：\code{title}（文本）、\code{level}（\code{basic|standard|advanced}，输出 \code{基础|常规|提高}）、\code{points}（数字）、\code{source}、\code{license}、\code{tags}（逗号列表，只存储，不输出）。
+
+标题行：\code{习题 2.3（title）【基础】（10 分）}。\code{levels=hide} 时省略 \code{【…】}；\code{points=hide} 或未给 \code{points} 时省略分值。
+
+\code{exercise} 内部可以包含 \code{answer} 和 \code{solution}（各最多一个，顺序任意）。\code{show} 决定输出哪一个：\code{answer} 只输出 \code{answer}；\code{solution} 只输出 \code{solution}；\code{both} 先 \code{answer} 后 \code{solution}。所选内容不存在时，该题不输出任何解答。
+
+\code{solutions} 决定位置：
+\begin{itemize}
+\item \code{inline}：在题目末尾原位输出。
+\item \code{chapter-end}：收集，在下一个最高级标题命令之前与文档末尾输出，标题为不编号的次一级标题 \code{习题解答}（\code{course} 用 \code{\textbackslash{}section*}，其余用 \code{\textbackslash{}subsection*}），写入目录，不强制另起一页。
+\item \code{end}：收集，在第 12.4 节第 1 部分输出，标题为不编号最高级标题 \code{习题解答}。
+\item \code{hide}：不输出。
+\end{itemize}
+
+收集用环境体捕获（\code{+b} 参数）存入 expl3 序列，不写辅助文件。收集输出时每题前写 \code{习题 2.3}，带超链接指向题目。
+
+\code{\textbackslash{}lcprintsolutions}：立即输出当前已收集的解答并清空队列。
+
+\code{\textbackslash{}lcinputexercises[<键值>]\{<文件>\}}：在组内执行 \code{\textbackslash{}lcset\{<键值>\}} 后 \code{\textbackslash{}input\{<文件>\}}。讲义中可以用 \code{\textbackslash{}lcinputexercises} 复用习题集的文件。
+
+\begingroup\small
+\begin{verbatim}
+\lcset{solutions=end,show=both,points=show,levels=show}
+\begin{exercise}[title=题目名称,level=standard,points=10,
+ source={来源},license={许可},tags={标签一,标签二}]
+（题目内容）
+\begin{answer}（答案）\end{answer}
+\begin{solution}（解答）\end{solution}
+\end{exercise}
+\lcprintsolutions
+\lcinputexercises[solutions=inline]{exercises/set01}
+\end{verbatim}
+\endgroup
+
+\section{教学框}
+
+六个环境见第 5 节，取值 \code{show|degrade|hide} 由类选项决定（第 3.2 节），在导言区固定：
+\begin{itemize}
+\item \code{show}：按当前风格的教学框外观输出。
+\item \code{degrade}：按 \code{remark} 的外观输出，标题使用该环境自己的中文名（如 \code{易错点：名称}）。
+\item \code{hide}：环境内容整体丢弃。
+\end{itemize}
+
+\begingroup\small
+\begin{longtable}{@{}L{3}{340}L{3}{330}L{3}{330}@{}}
+\toprule
+环境 & \code{standard} & \code{review}\\\midrule\endhead
+\code{method} & \code{show} & \code{show}\\
+\code{pitfall} & \code{degrade} & \code{show}\\
+\code{attention} & \code{degrade} & \code{show}\\
+\code{summary} & \code{degrade} & \code{show}\\
+\code{examspot} & \code{hide} & \code{show}\\
+\code{hint} & \code{hide} & \code{show}\\
+\bottomrule
+\end{longtable}
+\endgroup
+
+\section{图}
+
+\subsection{目录约定}
+
+每份文档目录下的图形文件组织约定如下：
+\begin{itemize}
+\item \code{figures/tikz/<name>.tex}：只含 \code{tikzpicture}（可含 \code{axis}），无导言区；
+\item \code{figures/data/<name>.csv}：PGFPlots 数据；
+\item \code{figures/images/}：位图。
+\end{itemize}
+
+\subsection{加载}
+
+\begin{itemize}
+\item \code{tikz}，库：\code{arrows.meta, calc, positioning, patterns, intersections, decorations.\allowbreak{}pathmorphing, decorations.\allowbreak{}markings, angles, quotes}；
+\item \code{pgfplots}，执行 \code{\textbackslash{}pgfplotsset\{compat=1.18\}}；
+\item \code{graphicx}；
+\item \code{caption}（\code{font=small, labelfont=bf}）；
+\item \code{figures=cache} 时加载 \code{memoize}，备忘文件放在文档目录的 \code{build/memo/}；加载顺序与提取方式严格按 \code{memoize} 手册，受限 shell-escape 下无法自动提取时，在 \code{common/build-aux/latexmkrc} 中按 \code{memoize} 手册的外部提取方式处理。
+\end{itemize}
+
+\subsection{命令}
+
+\code{\textbackslash{}lcfig\{<name>\}}：
+\begin{itemize}
+\item \code{inline} 与 \code{cache} 模式：\code{\textbackslash{}input\{figures/tikz/<name>\}}。
+\item \code{external} 模式：\code{\textbackslash{}includegraphics} 文档目录下的 \code{build/figures/<name>.pdf}（\code{color=gray} 时为 \code{build/figures/<name>-gray.pdf}），文件不存在时报错 \code{lc-figure: 外部图 <路径> 不存在}。当前构建流程暂不自动生成这些外部图 PDF，需预先手动生成对应文件。
+\end{itemize}
+\begingroup\small
+\begin{verbatim}
+\lcfigure[caption=,label=,source=,license=,
+          placement=]{<name>}
+\end{verbatim}
+\endgroup
+该命令使用 \code{figure} 浮动体，\code{placement} 默认为 \code{htbp}；依次执行居中、\code{\textbackslash{}lcfig\{<name>\}}、\code{\textbackslash{}caption} 和 \code{\textbackslash{}label}。有 \code{source} 时登记到第三方内容来源。
+
+\subsection{语义样式}
+
+以下语义样式全部定义在 \code{/tikz/} 下：
+
+\begingroup\small
+\begin{longtable}{@{}L{3}{240}L{3}{380}L{3}{380}@{}}
+\toprule
+样式 & \code{full} & \code{gray}\\\midrule\endhead
+\code{lc axis} & \code{0.5pt}，\code{lc-ink}，末端 \code{Stealth} & 同左（\code{lc-ink} 为灰度）\\
+\code{lc aux} & \code{0.4pt}，\code{dashed}，\code{lc-note} & \code{0.4pt}，\code{dashed}，\code{black!60}\\
+\code{lc vector} & \code{0.9pt}，\code{lc-vector}，末端 \code{Stealth} & \code{0.9pt}，\code{black}，末端 \code{Stealth}\\
+\code{lc force} & \code{1.1pt}，\code{lc-force}，末端 \code{Stealth} & \code{1.1pt}，\code{black}，末端 \code{Stealth}\\
+\code{lc velocity} & \code{0.9pt}，\code{lc-velocity}，末端 \code{Stealth} & \code{0.9pt}，\code{black}，\code{dashed}，末端 \code{Stealth}\\
+\code{lc field line} & \code{0.6pt}，\code{lc-field}，中点箭头（\code{decorations.\allowbreak{}markings}，位置 \code{0.5}） & \code{0.6pt}，\code{black!70}，中点箭头\\
+\code{lc curve 1} … \code{lc curve 4} & \code{0.9pt}，\code{lc-curve1} … \code{lc-curve4}，实线 & \code{0.9pt}，依次：实线 \code{black}、\code{dashed black!80}、\code{dotted black!70}、\code{dash dot black!60}\\
+\code{lc fill} & \code{fill=lc-vector!15}，无边线 & \code{fill=black!12}，无边线\\
+\code{lc charge+} & 圆形节点，半径 \code{1.6mm}，\code{fill=lc-force!20}，边线 \code{lc-force}，内容 \code{\$+\$} & \code{fill=white}，边线 \code{black}，内容 \code{\$+\$}\\
+\code{lc charge-} & 圆形节点，半径 \code{1.6mm}，\code{fill=lc-vector!20}，边线 \code{lc-vector}，内容 \code{\$-\$} & \code{fill=black!15}，边线 \code{black}，内容 \code{\$-\$} \\
+\code{lc label} & \code{font=\textbackslash{}small} & 同左\\
+\bottomrule
+\end{longtable}
+\endgroup
+
+PGFPlots：定义 cycle list \code{lc}（依次 \code{lc curve 1} 到 \code{lc curve 4}）和样式 \code{lc plot}（\code{cycle list name=lc}、\code{axis lines=middle}、\code{axis line style=\{lc axis\}}）。
+
+\subsection{绘图规范}
+
+图按最终尺寸绘制，禁止用 \code{\textbackslash{}resizebox}、\code{\textbackslash{}scalebox} 或 \code{tikzpicture} 的 \code{scale} 缩放；PGFPlots 只用 \code{width}、\code{height} 控制尺寸；图源码中只用语义样式与 \code{lc-} 颜色，不直接写颜色名。
+
+\section{字体}
+
+逐角色检测（\code{\textbackslash{}IfFontExistsTF}，先按字体名检测，再按文件名检测）。\code{fonts=auto}：首选存在用首选，否则用回退并发出警告；\code{fonts=noto}：任何角色首选缺失即报错 \code{lc-fonts: 缺少字体 <首选名>}；\code{fonts=fandol}：直接使用回退列，不发警告。
+
+\begingroup\small
+\begin{longtable}{@{}L{3}{250}L{3}{375}L{3}{375}@{}}
+\toprule
+角色 & 首选（名称 / 文件） & 回退（TeX Live 自带文件）\\\midrule\endhead
+CJK 正文（含粗体） & \code{Noto Serif CJK SC} & \code{FandolSong-Regular.otf / FandolSong-Bold.otf}\\
+CJK 无衬线（含粗体） & \code{Noto Sans CJK SC} & \code{FandolHei-Regular.otf / FandolHei-Bold.otf}\\
+CJK 等宽 & \code{Noto Sans Mono CJK SC} & \code{FandolHei-Regular.otf}\\
+CJK 正文斜体（强调） & \code{FandolKai-Regular.otf}（三种模式都用） & —\\
+\code{zhsong / zhhei / zhkai / zhfs} 族 & CJK 正文 / CJK 无衬线 / \code{FandolKai-Regular.otf} / \code{FandolFang-Regular.otf} & 同左（\code{zhsong}、\code{zhhei} 跟随回退）\\
+西文正文 & \code{STIX Two Text / STIXTwoText-Regular.otf} & \code{texgyretermes-regular.otf}\\
+西文无衬线 & \code{Noto Sans} & \code{texgyreheros-regular.otf}\\
+西文等宽 & \code{Noto Sans Mono} & \code{lmmono10-regular.otf}\\
+数学 & \code{STIX Two Math / STIXTwoMath-Regular.otf} & \code{texgyretermes-math.otf}\\
+\bottomrule
+\end{longtable}
+\endgroup
+
+回退警告格式：\code{\textbackslash{}PackageWarning\{lc-fonts\}\{Font fallback: <角色> uses <回退字体> instead of <首选名>\}}，\code{<角色>} 使用英文：\code{CJK main}、\code{CJK sans}、\code{CJK mono}、\code{Latin main}、\code{Latin sans}、\code{Latin mono}、\code{math}。
+
+发生过任何回退时设置一个布尔量，供 \code{lc-status} 使用。不加载 \code{bm}、\code{amssymb}。
+
+\section{颜色与风格}
+
+\code{color=full} 时定义为下表 HTML 值；\code{color=gray} 时同名颜色定义为右列灰度值。
+
+\begingroup\small
+\begin{longtable}{@{}L{3}{300}L{3}{350}L{3}{350}@{}}
+\toprule
+颜色 & \code{full} & \code{gray}\\\midrule\endhead
+\code{lc-ink} & \code{1F2937} & \code{black!90}\\
+\code{lc-subtle} & \code{F8FAFC} & \code{black!3}\\
+\code{lc-def} & \code{2563EB} & \code{black!60}\\
+\code{lc-thm} & \code{7C3AED} & \code{black!60}\\
+\code{lc-example} & \code{4F46E5} & \code{black!60}\\
+\code{lc-method} & \code{0F766E} & \code{black!60}\\
+\code{lc-pitfall} & \code{DC2626} & \code{black!60}\\
+\code{lc-hint} & \code{059669} & \code{black!60}\\
+\code{lc-exam} & \code{D97706} & \code{black!60}\\
+\code{lc-note} & \code{475569} & \code{black!60}\\
+\code{lc-link} & \code{1D4ED8} & \code{black}\\
+\code{lc-cite} & \code{047857} & \code{black}\\
+\code{lc-vector} & \code{2563EB} & \code{black}\\
+\code{lc-force} & \code{DC2626} & \code{black}\\
+\code{lc-velocity} & \code{059669} & \code{black}\\
+\code{lc-field} & \code{7C3AED} & \code{black!70}\\
+\code{lc-curve1} & \code{2563EB} & \code{black}\\
+\code{lc-curve2} & \code{DC2626} & \code{black!80}\\
+\code{lc-curve3} & \code{059669} & \code{black!70}\\
+\code{lc-curve4} & \code{D97706} & \code{black!60}\\
+\bottomrule
+\end{longtable}
+\endgroup
+
+两个风格文件只设置外观，不定义新环境、不定义计数器。\code{boxed} 用 \code{tcolorbox} 实现带标题栏的框，\code{classic} 用 \code{amsthm} 风格；两者共用 \code{lc-theorem} 定义的计数器，\code{\textbackslash{}label} 放在环境内时 \code{\textbackslash{}cref} 输出第 5 节的格式。
+
+\subsection{boxed}
+
+公共框参数如下：
+\begingroup\small
+\begin{verbatim}
+enhanced, breakable, sharp corners,
+boxrule=0.6pt, leftrule=2.4pt,
+left=1.1mm, right=1.1mm, top=0.9mm, bottom=0.9mm,
+before skip=0.65em, after skip=0.65em,
+fonttitle=\bfseries, coltitle=lc-ink
+\end{verbatim}
+\endgroup
+每种框使用 \code{colback=<色>!5}、\code{colframe=<色>} 和 \code{colbacktitle=<色>!12}；标题在标题栏内。
+
+\begingroup\small
+\begin{longtable}{@{}L{2}{340}L{2}{660}@{}}
+\toprule
+环境 & 外观\\\midrule\endhead
+\code{definition / definition*} & 框，\code{lc-def}\\
+\code{theorem}、\code{lemma}、\code{proposition}、\code{corollary} 及星号版 & 框，\code{lc-thm}\\
+\code{example} & 框，\code{lc-example}\\
+\code{method} & 框，\code{lc-method}\\
+\code{pitfall} & 框，\code{lc-pitfall}\\
+\code{hint} & 框，\code{lc-hint}\\
+\code{examspot} & 框，\code{lc-exam}，\code{colback=lc-exam!7, colbacktitle=lc-exam!14}\\
+\code{attention}、\code{summary} & 框，\code{lc-note}，\code{colback=lc-note!6, colbacktitle=lc-note!14}\\
+\code{solution}、\code{answer} & 框，\code{colback=lc-subtle, colframe=lc-ink!55, colbacktitle=lc-ink!8}，标题 \code{解答} / \code{答案}\\
+\code{exercise} & 无框，标题行粗体 \code{lc-ink}，标题行后正文另起段\\
+\code{remark}、\code{proof}、\code{degrade} 状态的教学框 & 无框，同 \code{classic}\\
+\bottomrule
+\end{longtable}
+\endgroup
+
+\subsection{classic}
+
+\begingroup\small
+\begin{longtable}{@{}L{2}{340}L{2}{660}@{}}
+\toprule
+环境 & 外观\\\midrule\endhead
+陈述组、\code{example}、\code{exercise}、\code{remark} & 标题粗体（\code{\textbackslash{}bfseries}），标题后空 \code{1em} 接正文，正文直立，无句点；前后间距 \code{0.65em}\\
+\code{proof} & 标题 \code{证明} 粗体，结尾右对齐 \ensuremath{\mdlgwhtsquare}\\
+\code{solution}、\code{answer} & 标题 \code{解答} / \code{答案} 粗体，结尾无符号\\
+教学框（\code{show} 状态） & \code{tcolorbox}：无背景，只有左边线 \code{1.2pt black!60}，其余边线 \code{0pt}，标题与正文同行粗体 \code{方法：名称}\\
+\bottomrule
+\end{longtable}
+\endgroup
+
+\section{状态}
+
+\code{status=draft}：用内核钩子 \code{shipout/background} 在每页中央输出旋转 45° 的 \code{草稿}，颜色 \code{black!8}，字号 \code{\textbackslash{}fontsize\{80pt\}\{80pt\}}；加载 \code{showkeys}；\code{\textbackslash{}lctodo\{<文本>\}} 输出红色（\code{full} 模式 \code{lc-pitfall}，\code{gray} 模式 \code{black}）页边注 \code{TODO：<文本>}；发生字体回退时页脚右侧以 \code{\textbackslash{}tiny} 输出 \code{字体回退}。
+
+\code{status=release}：\code{\textbackslash{}lctodo} 报错 \code{lc-status: release 模式下存在 \textbackslash{}lctodo：<文本>}；不输出水印与页脚标记。
+
+\section{版权与许可}
+
+每份文档必须在 \code{settings.tex} 中设置 \code{copyright-holder}。
+
+\subsection{\texorpdfstring{\texttt{\textbackslash{}maketitle}}{\textbackslash maketitle}}
+
+\code{lc-meta} 重定义 \code{\textbackslash{}maketitle}，依次输出：标题块（\code{title}、\code{subtitle}、\code{author}、\code{date}，居中，\code{title} 用 \code{\textbackslash{}LARGE\allowbreak{}\textbackslash{}bfseries}，\code{subtitle} 用 \code{\textbackslash{}large}）；\code{lc-problemset} 的 \code{homework} 预设在标题块下加第 3.3 节的一行；然后 \code{\textbackslash{}clearpage}，输出版权页，\code{\textbackslash{}clearpage}。\code{scope=course} 时标题块单独占一页。
+
+\subsection{版本信息}
+
+\code{lc-meta} 在导言区末尾执行 \code{\textbackslash{}InputIfFileExists\{lc-version.tex\}\{\}\{\}}。该文件由 \code{lc-version.sh} 生成，内容只有一行 \code{\textbackslash{}lcsetversion\{<版本>\}\{<提交短哈希>\}\{<提交日期 YYYY-MM-DD>\}}。文件不存在时三项分别为 \code{unversioned}、\code{none}、空。
+
+\subsection{版权页}
+
+版权页由 \code{lc-license} 提供，并在 \code{\textbackslash{}maketitle} 中调用。内容固定如下，\code{\{…\}} 为替换项；\code{源代码：} 一行在 \code{\textbackslash{}lc@project@url} 为空时整行省略。中文段落用正文字号，英文两段用 \code{\textbackslash{}small}。
+
+\begingroup\small
+\begin{verbatim}
+{title}
+版本 {版本}（{提交哈希}，{提交日期}）
+Copyright © {copyright-years} {copyright-holder}
+
+本作品采用双重许可，您可以任选其一使用、复制、修改和分发：
+GNU 自由文档许可证 1.3 或任何更高版本（GFDL-1.3-or-later）；
+知识共享 署名-相同方式共享 4.0 国际许可协议（CC BY-SA 4.0）。
+
+Permission is granted to copy, distribute and/or modify this document
+under the terms of the GNU Free Documentation License, Version 1.3 or
+any later version published by the Free Software Foundation; with no
+Invariant Sections, no Front-Cover Texts, and no Back-Cover Texts. A
+copy of the license is included in the section entitled “GNU Free
+Documentation License”.
+
+This work is also licensed under the Creative Commons
+Attribution-ShareAlike 4.0 International License. To view a copy of
+this license, visit https://creativecommons.org/licenses/by-sa/4.0/.
+
+源代码：{project-url}
+\end{verbatim}
+\endgroup
+
+提交日期为空时，版本行写成 \code{版本 \{版本\}（\{提交哈希\}）}。这段文本放在 \code{common/license/lc-notice.tex} 中，由 \code{lc-license} 读入并替换。
+
+\subsection{后置部分}
+
+后置部分在 \code{\textbackslash{}AtEndDocument} 处按固定顺序自动输出：
+
+\begin{enumerate}
+\item 尚未输出的习题解答（\code{solutions=end} 或 \code{chapter-end} 的剩余部分）
+\item 修订历史（History）
+\item 第三方内容来源
+\item GNU Free Documentation License
+\end{enumerate}
+
+除 \code{chapter-end} 解答外，每部分 \code{\textbackslash{}clearpage} 开始，标题为最高级标题的不编号形式（\code{\textbackslash{}chapter*} 或 \code{\textbackslash{}section*}），并写入目录。第 2、3 部分没有条目时整节省略；第 4 部分始终输出。\code{chapter-end} 的剩余解答使用不编号的次一级标题并写入目录，不强制另起一页。
+
+\subsection{修订历史}
+
+\code{\textbackslash{}lchistory\{<日期>\}\{<版本>\}\{<作者>\}\{<说明>\}}，导言区或正文中均可使用，按出现顺序收集。输出为 \code{longtable + booktabs} 表格，列：\code{日期}、\code{版本}、\code{作者}、\code{说明}（说明列自动换行，宽度占剩余部分）。
+
+\subsection{第三方内容来源}
+
+第三方内容来源由 \code{lc-attribution.sty} 管理。条目来源包括：\code{example} 与 \code{exercise} 的 \code{source} 键、\code{\textbackslash{}lcfigure} 的 \code{source} 键，以及命令 \code{\textbackslash{}lcsource\{<内容描述>\}\{<来源>\}\{<许可>\}}。\code{license} 键可省略。
+
+输出：先输出固定段落“下表列出本作品中来自第三方的内容及其来源与许可。未列出的内容由本作品的版权人创作。”，再输出 \code{longtable + booktabs} 表格，列：\code{位置}、\code{来源}、\code{许可}。位置写 \code{例题 2.1}、\code{习题 3.4}、\code{图 1.2}，\code{\textbackslash{}lcsource} 条目写 \code{<内容描述>（第 N 页）}；位置带超链接指向原处。许可为空时写 \code{—}。
+
+\subsection{GFDL 附录}
+
+\code{license/fdl-1.3.tex} 保存 GNU 官方原始文件。\code{license/fdl-1.3-body.tex} 取原文件第 22–584 行，去掉导言区与 \code{document} 环境，并将标题改为在正文宽度内居中完整显示。
+
+文末从新页直接输入 \code{body}，在局部分组内设置断行弹性以容纳长 URL。\code{ctexbook} 直接使用 \code{body} 内的标题。\code{ctexart} 在组内把 \code{\textbackslash{}chapter*} 映射为 \code{\textbackslash{}section*}；目录级别由 \code{chapter} 映射为 \code{section}，由 \code{section} 映射为 \code{subsection}。
+\end{document}

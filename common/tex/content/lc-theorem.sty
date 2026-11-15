@@ -1,0 +1,54 @@
+% libre-compendium
+%
+% Copyright (C) 2026 Richard Qin
+%
+% This file is part of libre-compendium.
+%
+% libre-compendium is free software: you can redistribute it and/or modify
+% it under the terms of the GNU General Public License as published by
+% the Free Software Foundation, either version 3 of the License, or
+% (at your option) any later version.
+%
+% libre-compendium is distributed in the hope that it will be useful,
+% but WITHOUT ANY WARRANTY; without even the implied warranty of
+% MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+% GNU General Public License for more details.
+%
+% You should have received a copy of the GNU General Public License
+% along with libre-compendium.  If not, see <https://www.gnu.org/licenses/>.
+
+\NeedsTeXFormat{LaTeX2e}[2022-11-01]
+\ProvidesPackage{lc-theorem}[2026/11/13 v0.1.0 定理与例题环境]
+\RequirePackage{amsthm}
+\ExplSyntaxOn
+\bool_new:N\l__lc_in_example_bool
+\cs_if_exist:NTF\chapter{\newcounter{definition}[chapter]\renewcommand{\thedefinition}{\thechapter.\arabic{definition}}\newcounter{example}[chapter]\renewcommand{\theexample}{\thechapter.\arabic{example}}}{\newcounter{definition}[section]\renewcommand{\thedefinition}{\thesection.\arabic{definition}}\newcounter{example}[section]\renewcommand{\theexample}{\thesection.\arabic{example}}}
+\newtheoremstyle{lc}{0.65em}{0.65em}{\normalfont}{}{\bfseries}{}{1em}{\thmname{#1}\thmnumber{~#2}\thmnote{（#3）}}
+\cs_new_protected:Npn\__lc_plain_begin:n#1{\group_begin:\@thm{\th@lc}{}{#1}[]}
+\cs_new_protected:Npn\__lc_plain_end:{\@endtheorem\group_end:}
+\cs_new_protected:Npn\__lc_statement_begin:nnn#1#2#3{
+ \tl_if_blank:nF{#2}{\crefalias{definition}{#1}\refstepcounter{definition}}
+ \__lc_box_begin:nn{\str_if_eq:nnTF{#1}{definition}{lc-def}{lc-thm}}{\use:c{lc@name@#1}\tl_if_blank:nTF{#2}{\tl_if_blank:nF{#3}{：#3}}{~\thedefinition\tl_if_blank:nF{#3}{（#3）}}}}
+\NewDocumentEnvironment{definition}{O{}}{\__lc_statement_begin:nnn{definition}{numbered}{#1}}{\__lc_box_end:}
+\NewDocumentEnvironment{definition*}{O{}}{\__lc_statement_begin:nnn{definition}{}{#1}}{\__lc_box_end:}
+\NewDocumentEnvironment{theorem}{O{}}{\__lc_statement_begin:nnn{theorem}{numbered}{#1}}{\__lc_box_end:}
+\NewDocumentEnvironment{theorem*}{O{}}{\__lc_statement_begin:nnn{theorem}{}{#1}}{\__lc_box_end:}
+\NewDocumentEnvironment{lemma}{O{}}{\__lc_statement_begin:nnn{lemma}{numbered}{#1}}{\__lc_box_end:}
+\NewDocumentEnvironment{lemma*}{O{}}{\__lc_statement_begin:nnn{lemma}{}{#1}}{\__lc_box_end:}
+\NewDocumentEnvironment{proposition}{O{}}{\__lc_statement_begin:nnn{proposition}{numbered}{#1}}{\__lc_box_end:}
+\NewDocumentEnvironment{proposition*}{O{}}{\__lc_statement_begin:nnn{proposition}{}{#1}}{\__lc_box_end:}
+\NewDocumentEnvironment{corollary}{O{}}{\__lc_statement_begin:nnn{corollary}{numbered}{#1}}{\__lc_box_end:}
+\NewDocumentEnvironment{corollary*}{O{}}{\__lc_statement_begin:nnn{corollary}{}{#1}}{\__lc_box_end:}
+\NewDocumentEnvironment{remark}{O{}}{\__lc_plain_begin:n{\lc@name@remark\tl_if_blank:nF{#1}{：#1}}}{\__lc_plain_end:}
+\RenewDocumentEnvironment{proof}{O{}}{\par\pushQED{\qed}\noindent\textbf{\lc@name@proof\tl_if_blank:nF{#1}{：#1}}\hspace{1em}\ignorespaces}{\popQED\par}
+\tl_new:N\l__lc_eg_title_tl\tl_new:N\l__lc_eg_source_tl\tl_new:N\l__lc_eg_license_tl
+\keys_define:nn{lc/example}{title .tl_set:N=\l__lc_eg_title_tl,source .tl_set:N=\l__lc_eg_source_tl,license .tl_set:N=\l__lc_eg_license_tl}
+\NewDocumentEnvironment{example}{O{}}{
+ \tl_clear:N\l__lc_eg_title_tl\tl_clear:N\l__lc_eg_source_tl\tl_clear:N\l__lc_eg_license_tl\keys_set:nn{lc/example}{#1}
+ \refstepcounter{example}\bool_set_true:N\l__lc_in_example_bool
+ \__lc_box_begin:nn{lc-example}{\lc@name@example\c_space_tl \theexample\tl_if_empty:NF\l__lc_eg_title_tl{（\l__lc_eg_title_tl）}}
+ \tl_if_empty:NF\l__lc_eg_source_tl{\__lc_source_register:eeee{\@currentHref}{\lc@name@example\c_space_tl \theexample}{\exp_not:V\l__lc_eg_source_tl}{\exp_not:V\l__lc_eg_license_tl}}}{\__lc_box_end:}
+\NewDocumentEnvironment{solution}{+b}{
+ \bool_if:NTF\l__lc_in_example_bool{\__lc_response:nn{solution}{#1}}{
+ \bool_if_exist:NTF\l__lc_in_exercise_bool{\bool_if:NTF\l__lc_in_exercise_bool{\__lc_ex_capture_solution:n{#1}}{\PackageError{lc-theorem}{solution~只能用于~example~或~exercise~内}{}}}{\PackageError{lc-theorem}{solution~只能用于~example~或~exercise~内}{}}}}{}
+\ExplSyntaxOff

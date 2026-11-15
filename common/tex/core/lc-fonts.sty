@@ -1,0 +1,135 @@
+% libre-compendium
+%
+% Copyright (C) 2026 Richard Qin
+%
+% This file is part of libre-compendium.
+%
+% libre-compendium is free software: you can redistribute it and/or modify
+% it under the terms of the GNU General Public License as published by
+% the Free Software Foundation, either version 3 of the License, or
+% (at your option) any later version.
+%
+% libre-compendium is distributed in the hope that it will be useful,
+% but WITHOUT ANY WARRANTY; without even the implied warranty of
+% MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+% GNU General Public License for more details.
+%
+% You should have received a copy of the GNU General Public License
+% along with libre-compendium.  If not, see <https://www.gnu.org/licenses/>.
+
+\NeedsTeXFormat{LaTeX2e}[2022-11-01]
+\ProvidesPackage{lc-fonts}[2026/11/13 v0.1.0 逐角色字体选择与回退]
+\RequirePackage{iftex}
+\ifPDFTeX\PackageError{lc}{请使用 XeLaTeX 或 LuaLaTeX 编译}{}\csname @@end\endcsname\fi
+\RequirePackage{fontspec}
+\RequirePackage{unicode-math}
+\ExplSyntaxOn
+\bool_new:N \g__lc_font_fallback_bool
+\cs_new_protected:Npn \__lc_font_find:nnN #1#2#3
+  {\IfFontExistsTF{#1}{\tl_set:Nn #3{#1}}
+    {\IfFontExistsTF{#2}{\tl_set:Nn #3{#2}}{\tl_clear:N #3}}}
+\cs_new_protected:Npn \__lc_font_fallback:nnn #1#2#3
+  {
+    \str_if_eq:eeTF{\lc@fonts}{noto}
+      {\PackageError{lc-fonts}{缺少字体~#2}{}}
+      {\PackageWarning{lc-fonts}{Font~fallback:~#1~uses~#3~instead~of~#2}
+       \bool_gset_true:N \g__lc_font_fallback_bool}
+  }
+\cs_new_protected:Npn \__lc_font_choose:nnnnN #1#2#3#4#5
+  {
+    \str_if_eq:eeTF{\lc@fonts}{fandol}{\tl_set:Nn #5{#4}}
+      {\__lc_font_find:nnN{#2}{#3}#5
+       \tl_if_empty:NT #5
+         {\__lc_font_fallback:nnn{#1}{#2}{#4}\tl_set:Nn #5{#4}}}
+  }
+% 中日韩正文与无衬线各自同时检测常规体和粗体。
+\cs_new_protected:Npn \__lc_font_pair:nnnnnnnNN #1#2#3#4#5#6#7#8#9
+  {
+    \str_if_eq:eeTF{\lc@fonts}{fandol}
+      {\tl_set:Nn #8{#6}\tl_set:Nn #9{#7}}
+      {
+        \__lc_font_find:nnN{#2}{#3}#8
+        \__lc_font_find:nnN{#4}{#5}#9
+        \bool_lazy_or:nnT{\tl_if_empty_p:N #8}{\tl_if_empty_p:N #9}
+          {\__lc_font_fallback:nnn{#1}{#2}{#6~/~#7}
+           \tl_set:Nn #8{#6}\tl_set:Nn #9{#7}}
+      }
+  }
+\tl_new:N \l__lc_cjk_main_tl
+\tl_new:N \l__lc_cjk_main_bold_tl
+\tl_new:N \l__lc_cjk_sans_tl
+\tl_new:N \l__lc_cjk_sans_bold_tl
+\tl_new:N \l__lc_font_tl
+\tl_new:N \l__lc_font_options_tl
+\__lc_font_pair:nnnnnnnNN
+  {CJK~main}{Noto~Serif~CJK~SC}{NotoSerifCJK-Regular.ttc}
+  {Noto~Serif~CJK~SC~Bold}{NotoSerifCJK-Bold.ttc}
+  {FandolSong-Regular.otf}{FandolSong-Bold.otf}
+  \l__lc_cjk_main_tl \l__lc_cjk_main_bold_tl
+\__lc_font_pair:nnnnnnnNN
+  {CJK~sans}{Noto~Sans~CJK~SC}{NotoSansCJK-Regular.ttc}
+  {Noto~Sans~CJK~SC~Bold}{NotoSansCJK-Bold.ttc}
+  {FandolHei-Regular.otf}{FandolHei-Bold.otf}
+  \l__lc_cjk_sans_tl \l__lc_cjk_sans_bold_tl
+% 字体集合文件中的简体中文常规族索引为 2。
+\tl_set:Nn \l__lc_font_options_tl
+  {BoldFont=\l__lc_cjk_main_bold_tl,ItalicFont=FandolKai-Regular.otf}
+\tl_if_in:VnT \l__lc_cjk_main_tl{.ttc}
+  {\tl_put_right:Nn \l__lc_font_options_tl{,FontIndex=2}}
+\tl_if_in:VnT \l__lc_cjk_main_bold_tl{.ttc}
+  {\tl_put_right:Nn \l__lc_font_options_tl{,BoldFeatures={FontIndex=2}}}
+\use:x{\exp_not:N\setCJKmainfont[\exp_not:V\l__lc_font_options_tl]
+  {\exp_not:V\l__lc_cjk_main_tl}}
+\use:x{\exp_not:N\setCJKfamilyfont{zhsong}[\exp_not:V\l__lc_font_options_tl]
+  {\exp_not:V\l__lc_cjk_main_tl}}
+\tl_set:Nn \l__lc_font_options_tl{BoldFont=\l__lc_cjk_sans_bold_tl}
+\tl_if_in:VnT \l__lc_cjk_sans_tl{.ttc}
+  {\tl_put_right:Nn \l__lc_font_options_tl{,FontIndex=2}}
+\tl_if_in:VnT \l__lc_cjk_sans_bold_tl{.ttc}
+  {\tl_put_right:Nn \l__lc_font_options_tl{,BoldFeatures={FontIndex=2}}}
+\use:x{\exp_not:N\setCJKsansfont[\exp_not:V\l__lc_font_options_tl]
+  {\exp_not:V\l__lc_cjk_sans_tl}}
+\use:x{\exp_not:N\setCJKfamilyfont{zhhei}[\exp_not:V\l__lc_font_options_tl]
+  {\exp_not:V\l__lc_cjk_sans_tl}}
+\__lc_font_choose:nnnnN{CJK~mono}{Noto~Sans~Mono~CJK~SC}
+  {NotoSansCJK-Regular.ttc}{FandolHei-Regular.otf}\l__lc_font_tl
+% 同一集合文件中的简体中文等宽族索引为 7。
+\tl_if_in:VnTF \l__lc_font_tl{.ttc}
+  {\setCJKmonofont[FontIndex=7]{\l__lc_font_tl}}
+  {\setCJKmonofont{\l__lc_font_tl}}
+\setCJKfamilyfont{zhkai}{FandolKai-Regular.otf}
+\setCJKfamilyfont{zhfs}{FandolFang-Regular.otf}
+\__lc_font_choose:nnnnN{Latin~main}{STIX~Two~Text}
+  {STIXTwoText-Regular.otf}{texgyretermes-regular.otf}\l__lc_font_tl
+\str_case:VnF \l__lc_font_tl
+  {
+    {texgyretermes-regular.otf}
+      {\setmainfont[BoldFont=texgyretermes-bold.otf,
+        ItalicFont=texgyretermes-italic.otf,
+        BoldItalicFont=texgyretermes-bolditalic.otf]{texgyretermes-regular.otf}}
+    {STIXTwoText-Regular.otf}
+      {\setmainfont[BoldFont=STIXTwoText-Bold.otf,
+        ItalicFont=STIXTwoText-Italic.otf,
+        BoldItalicFont=STIXTwoText-BoldItalic.otf]{STIXTwoText-Regular.otf}}
+  }{\setmainfont{\l__lc_font_tl}}
+\__lc_font_choose:nnnnN{Latin~sans}{Noto~Sans}
+  {NotoSans-Regular.ttf}{texgyreheros-regular.otf}\l__lc_font_tl
+\str_case:VnF \l__lc_font_tl
+  {
+    {texgyreheros-regular.otf}
+      {\setsansfont[BoldFont=texgyreheros-bold.otf,
+        ItalicFont=texgyreheros-italic.otf,
+        BoldItalicFont=texgyreheros-bolditalic.otf]{texgyreheros-regular.otf}}
+    {NotoSans-Regular.ttf}
+      {\setsansfont[BoldFont=NotoSans-Bold.ttf,ItalicFont=NotoSans-Italic.ttf,
+        BoldItalicFont=NotoSans-BoldItalic.ttf]{NotoSans-Regular.ttf}}
+  }{\setsansfont{\l__lc_font_tl}}
+\__lc_font_choose:nnnnN{Latin~mono}{Noto~Sans~Mono}
+  {NotoSansMono-Regular.ttf}{lmmono10-regular.otf}\l__lc_font_tl
+\str_if_eq:VnTF \l__lc_font_tl{NotoSansMono-Regular.ttf}
+  {\setmonofont[BoldFont=NotoSansMono-Bold.ttf]{NotoSansMono-Regular.ttf}}
+  {\setmonofont{\l__lc_font_tl}}
+\__lc_font_choose:nnnnN{math}{STIX~Two~Math}
+  {STIXTwoMath-Regular.otf}{texgyretermes-math.otf}\l__lc_font_tl
+\setmathfont{\l__lc_font_tl}
+\ExplSyntaxOff

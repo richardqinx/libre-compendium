@@ -1,0 +1,42 @@
+% libre-compendium
+%
+% Copyright (C) 2026 Richard Qin
+%
+% This file is part of libre-compendium.
+%
+% libre-compendium is free software: you can redistribute it and/or modify
+% it under the terms of the GNU General Public License as published by
+% the Free Software Foundation, either version 3 of the License, or
+% (at your option) any later version.
+%
+% libre-compendium is distributed in the hope that it will be useful,
+% but WITHOUT ANY WARRANTY; without even the implied warranty of
+% MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+% GNU General Public License for more details.
+%
+% You should have received a copy of the GNU General Public License
+% along with libre-compendium.  If not, see <https://www.gnu.org/licenses/>.
+
+\NeedsTeXFormat{LaTeX2e}[2022-11-01]
+\ProvidesPackage{lc-page}[2026/11/13 v0.1.0 页面与页眉页脚]
+\RequirePackage{geometry}
+\RequirePackage{fancyhdr}
+\RequirePackage{enumitem}
+\RequirePackage{tabularx}
+\RequirePackage{longtable}
+\RequirePackage{booktabs}
+\RequirePackage{array}
+\setlist{itemsep=0.15em,topsep=0.3em}
+\ExplSyntaxOn
+\str_if_eq:eeTF{\lc@kind}{article}
+ {\geometry{a4paper,left=2.6cm,right=2.6cm,top=2.5cm,bottom=2.5cm,headheight=15pt}}
+ {\geometry{a4paper,left=2cm,right=2cm,top=2cm,bottom=2.2cm,headheight=15pt}}
+\pagestyle{fancy}\fancyhf{}
+\fancyhead[L]{\__lc_short_title:}
+\str_case:en{\lc@kind}{
+ {lecture}{\fancyhead[R]{\leftmark}}
+ {problemset}{\fancyhead[R]{\g__lc_course_tl}}}
+\fancyfoot[C]{\thepage}
+\renewcommand{\headrulewidth}{0.4pt}\renewcommand{\footrulewidth}{0pt}
+\fancypagestyle{plain}{\fancyhf{}\fancyfoot[C]{\thepage}\renewcommand{\headrulewidth}{0pt}}
+\ExplSyntaxOff

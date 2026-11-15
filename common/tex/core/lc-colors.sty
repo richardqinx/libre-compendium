@@ -1,0 +1,47 @@
+% libre-compendium
+%
+% Copyright (C) 2026 Richard Qin
+%
+% This file is part of libre-compendium.
+%
+% libre-compendium is free software: you can redistribute it and/or modify
+% it under the terms of the GNU General Public License as published by
+% the Free Software Foundation, either version 3 of the License, or
+% (at your option) any later version.
+%
+% libre-compendium is distributed in the hope that it will be useful,
+% but WITHOUT ANY WARRANTY; without even the implied warranty of
+% MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+% GNU General Public License for more details.
+%
+% You should have received a copy of the GNU General Public License
+% along with libre-compendium.  If not, see <https://www.gnu.org/licenses/>.
+
+\NeedsTeXFormat{LaTeX2e}[2022-11-01]
+\ProvidesPackage{lc-colors}[2026/11/13 v0.1.0 共享颜色]
+\RequirePackage{xcolor}
+\definecolor{lc-ink}{HTML}{1F2937}
+\definecolor{lc-subtle}{HTML}{F8FAFC}
+\definecolor{lc-def}{HTML}{2563EB}
+\definecolor{lc-thm}{HTML}{7C3AED}
+\definecolor{lc-example}{HTML}{4F46E5}
+\definecolor{lc-method}{HTML}{0F766E}
+\definecolor{lc-pitfall}{HTML}{DC2626}
+\definecolor{lc-hint}{HTML}{059669}
+\definecolor{lc-exam}{HTML}{D97706}
+\definecolor{lc-note}{HTML}{475569}
+\definecolor{lc-link}{HTML}{1D4ED8}
+\definecolor{lc-cite}{HTML}{047857}
+\definecolor{lc-vector}{HTML}{2563EB}
+\definecolor{lc-force}{HTML}{DC2626}
+\definecolor{lc-velocity}{HTML}{059669}
+\definecolor{lc-field}{HTML}{7C3AED}
+\definecolor{lc-curve1}{HTML}{2563EB}
+\definecolor{lc-curve2}{HTML}{DC2626}
+\definecolor{lc-curve3}{HTML}{059669}
+\definecolor{lc-curve4}{HTML}{D97706}
+\def\lc@graycolors{\colorlet{lc-ink}{black!90}\colorlet{lc-subtle}{black!3}\colorlet{lc-def}{black!60}\colorlet{lc-thm}{black!60}\colorlet{lc-example}{black!60}\colorlet{lc-method}{black!60}\colorlet{lc-pitfall}{black!60}\colorlet{lc-hint}{black!60}\colorlet{lc-exam}{black!60}\colorlet{lc-note}{black!60}\colorlet{lc-link}{black}\colorlet{lc-cite}{black}\colorlet{lc-vector}{black}\colorlet{lc-force}{black}\colorlet{lc-velocity}{black}\colorlet{lc-field}{black!70}\colorlet{lc-curve1}{black}\colorlet{lc-curve2}{black!80}\colorlet{lc-curve3}{black!70}\colorlet{lc-curve4}{black!60}}
+
+\ExplSyntaxOn
+\str_if_eq:eeT{\lc@color}{gray}{\lc@graycolors}
+\ExplSyntaxOff

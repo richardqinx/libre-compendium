@@ -1,0 +1,69 @@
+# libre-compendium
+#
+# Copyright (C) 2026 Richard Qin
+#
+# This file is part of libre-compendium.
+#
+# libre-compendium is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# libre-compendium is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with libre-compendium.  If not, see <https://www.gnu.org/licenses/>.
+
+use File::Path qw(make_path);
+
+$pdf_mode = ($ENV{LC_ENGINE} && $ENV{LC_ENGINE} eq 'lualatex') ? 4 : 5;
+my $lc_build = $ENV{LC_BUILD_DIR} || 'build';
+my $lc_out = $ENV{LC_OUT_DIR} || $lc_build;
+my $lc_aux = $ENV{LC_AUX_DIR} || $lc_build;
+$out_dir = $lc_out;
+$aux_dir = $lc_aux;
+make_path($lc_build, $lc_out, $lc_aux);
+ensure_path('TEXINPUTS', "$ENV{LC_ROOT}/common/tex//", "$lc_aux/");
+ensure_path('TEXINPUTS', "$ENV{LC_ROOT}/common/license/");
+# Lua 字体缓存也属于构建产物。
+$ENV{TEXMFVAR} = File::Spec->catdir(Cwd::abs_path($lc_build), 'texmf-var');
+make_path($ENV{TEXMFVAR});
+my $lc_version_file = File::Spec->catfile($lc_aux, 'lc-version.tex');
+open(my $lc_version, '-|', 'sh', "$ENV{LC_ROOT}/common/build-aux/lc-version.sh") or die "lc-version.sh: $!";
+open(my $lc_output, '>', $lc_version_file) or die "$lc_version_file: $!";
+print {$lc_output} $_ while <$lc_version>;
+close($lc_version) or die "lc-version.sh failed";
+close($lc_output) or die "$lc_version_file: $!";
+$xelatex = 'xelatex -interaction=nonstopmode -file-line-error -synctex=1 %O %S';
+$lualatex = 'lualatex -interaction=nonstopmode -file-line-error -synctex=1 %O %S';
+
+# 依照 memoize 的 latexmk 配置处理外部提取。
+my $lc_memo_dir = File::Spec->catdir($lc_aux, 'memo');
+make_path($lc_memo_dir);
+my $lc_mmz_pending = '';
+add_hook('after_xlatex_analysis', sub {
+  my $lc_mmz = "$aux_dir1$$Pbase.mmz";
+  $lc_mmz_pending = '';
+  return unless -f $lc_mmz && test_gen_file_time($lc_mmz);
+  open(my $lc_memo, '<', $lc_mmz) or die "$lc_mmz: $!";
+  my @lc_externs;
+  while (<$lc_memo>) {
+    push @lc_externs, "$aux_dir1$1" if /^\\mmzNewExtern\s*\{([^}]+)\}/;
+  }
+  close($lc_memo);
+  rdb_ensure_files_here(@lc_externs);
+  rdb_remove_files($rule, "$lc_mmz.log");
+  $lc_mmz_pending = $lc_mmz if @lc_externs;
+});
+add_hook('after_main_pdf', sub {
+  return unless $lc_mmz_pending;
+  local $ENV{TEXMF_OUTPUT_DIRECTORY} = $aux_dir;
+  my $lc_mmz_name = File::Basename::basename($lc_mmz_pending);
+  system('memoize-extract.pl', '--format', 'latex', '--pdf', $$Pdest, $lc_mmz_name) == 0
+    or die "memoize-extract.pl failed\n";
+  $lc_mmz_pending = '';
+});
+1;

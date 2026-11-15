@@ -1,0 +1,75 @@
+% libre-compendium
+%
+% Copyright (C) 2026 Richard Qin
+%
+% This file is part of libre-compendium.
+%
+% libre-compendium is free software: you can redistribute it and/or modify
+% it under the terms of the GNU General Public License as published by
+% the Free Software Foundation, either version 3 of the License, or
+% (at your option) any later version.
+%
+% libre-compendium is distributed in the hope that it will be useful,
+% but WITHOUT ANY WARRANTY; without even the implied warranty of
+% MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+% GNU General Public License for more details.
+%
+% You should have received a copy of the GNU General Public License
+% along with libre-compendium.  If not, see <https://www.gnu.org/licenses/>.
+
+\NeedsTeXFormat{LaTeX2e}[2022-11-01]
+\ProvidesPackage{lc-figure}[2026/11/13 v0.1.0 图形命令与语义样式]
+\ExplSyntaxOn
+\str_if_eq:eeT{\lc@figures}{cache}{
+ % 为 memoize 已有选项注册内核键，直接传入现有的提取设置。
+ \DeclareKeys[mmz]{extract .code:n={\mmzset{extract={#1}}}}
+ \RequirePackage[extract=no]{memoize}\mmzset{prefix=memo/,mkdir=false}
+ % 框线使用内部绘图环境，不参与图源码缓存。
+ \AddToHook{env/tcolorbox/begin}{\mmzset{disable}}}
+\ExplSyntaxOff
+\RequirePackage{tikz}
+\usetikzlibrary{arrows.meta,calc,positioning,patterns,intersections,decorations.pathmorphing,decorations.markings,angles,quotes}
+\RequirePackage{pgfplots}
+\pgfplotsset{compat=1.18}
+\RequirePackage{graphicx}
+\RequirePackage[font=small,labelfont=bf]{caption}
+\tikzset{
+  lc axis/.style={line width=0.5pt,draw=lc-ink,-{Stealth}},
+  lc aux/.style={line width=0.4pt,dashed,draw=lc-note},
+  lc vector/.style={line width=0.9pt,draw=lc-vector,-{Stealth}},
+  lc force/.style={line width=1.1pt,draw=lc-force,-{Stealth}},
+  lc velocity/.style={line width=0.9pt,draw=lc-velocity,-{Stealth}},
+  lc field line/.style={line width=0.6pt,draw=lc-field,postaction={decorate},decoration={markings,mark=at position 0.5 with {\arrow{Stealth}}}},
+  lc curve 1/.style={line width=0.9pt,draw=lc-curve1},
+  lc curve 2/.style={line width=0.9pt,draw=lc-curve2},
+  lc curve 3/.style={line width=0.9pt,draw=lc-curve3},
+  lc curve 4/.style={line width=0.9pt,draw=lc-curve4},
+  lc fill/.style={fill=lc-vector!15,draw=none},
+  lc charge+/.style={circle,minimum size=3.2mm,inner sep=0pt,fill=lc-force!20,draw=lc-force,node contents={$+$}},
+  lc charge-/.style={circle,minimum size=3.2mm,inner sep=0pt,fill=lc-vector!20,draw=lc-vector,node contents={$-$}},
+  lc label/.style={font=\small}
+}
+\pgfplotscreateplotcyclelist{lc}{{/tikz/lc curve 1}\\{/tikz/lc curve 2}\\{/tikz/lc curve 3}\\{/tikz/lc curve 4}\\}
+\pgfplotsset{lc plot/.style={cycle list name=lc,axis lines=middle,axis line style={lc axis}}}
+
+\ExplSyntaxOn
+\str_if_eq:eeT{\lc@color}{gray}{
+ \tikzset{lc~velocity/.append~style={dashed},lc~curve~2/.append~style={dashed},lc~curve~3/.append~style={dotted},lc~curve~4/.append~style={dash~dot},lc~fill/.style={fill=black!12,draw=none},lc~charge+/.append~style={fill=white,draw=black},lc~charge-/.append~style={fill=black!15,draw=black}}}
+\tl_new:N\l__lc_fig_path_tl
+\NewDocumentCommand{\lcfig}{m}{\str_if_eq:eeTF{\lc@figures}{external}{
+ \tl_set:Nn\l__lc_fig_path_tl{build/figures/#1}
+ \str_if_eq:eeT{\lc@color}{gray}{\tl_put_right:Nn\l__lc_fig_path_tl{-gray}}
+ \tl_put_right:Nn\l__lc_fig_path_tl{.pdf}
+ \file_if_exist:VTF\l__lc_fig_path_tl{\includegraphics{\l__lc_fig_path_tl}}{\PackageError{lc-figure}{外部图~\l__lc_fig_path_tl\c_space_tl 不存在}{}}}{\input{figures/tikz/#1}}}
+\tl_new:N\l__lc_fig_caption_tl\tl_new:N\l__lc_fig_label_tl\tl_new:N\l__lc_fig_source_tl\tl_new:N\l__lc_fig_license_tl\tl_new:N\l__lc_fig_placement_tl
+\keys_define:nn{lc/figure}{caption .tl_set:N=\l__lc_fig_caption_tl,label .tl_set:N=\l__lc_fig_label_tl,source .tl_set:N=\l__lc_fig_source_tl,license .tl_set:N=\l__lc_fig_license_tl,placement .tl_set:N=\l__lc_fig_placement_tl}
+\NewDocumentCommand{\lcfigure}{O{}m}{\group_begin:
+ \tl_clear:N\l__lc_fig_caption_tl\tl_clear:N\l__lc_fig_label_tl\tl_clear:N\l__lc_fig_source_tl\tl_clear:N\l__lc_fig_license_tl\tl_set:Nn\l__lc_fig_placement_tl{htbp}
+ \keys_set:nn{lc/figure}{#1}
+ \exp_args:NV\__lc_figure_begin:n\l__lc_fig_placement_tl
+ \centering\lcfig{#2}\caption{\l__lc_fig_caption_tl}
+ \tl_if_empty:NF\l__lc_fig_label_tl{\exp_args:NV\label\l__lc_fig_label_tl}
+ \tl_if_empty:NF\l__lc_fig_source_tl{\__lc_source_register:eeee{\@currentHref}{\lc@name@figure\c_space_tl \thefigure}{\exp_not:V\l__lc_fig_source_tl}{\exp_not:V\l__lc_fig_license_tl}}
+ \end{figure}\group_end:}
+\cs_new_protected:Npn\__lc_figure_begin:n#1{\begin{figure}[#1]}
+\ExplSyntaxOff

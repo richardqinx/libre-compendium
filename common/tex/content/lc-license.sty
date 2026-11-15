@@ -1,0 +1,43 @@
+% libre-compendium
+%
+% Copyright (C) 2026 Richard Qin
+%
+% This file is part of libre-compendium.
+%
+% libre-compendium is free software: you can redistribute it and/or modify
+% it under the terms of the GNU General Public License as published by
+% the Free Software Foundation, either version 3 of the License, or
+% (at your option) any later version.
+%
+% libre-compendium is distributed in the hope that it will be useful,
+% but WITHOUT ANY WARRANTY; without even the implied warranty of
+% MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+% GNU General Public License for more details.
+%
+% You should have received a copy of the GNU General Public License
+% along with libre-compendium.  If not, see <https://www.gnu.org/licenses/>.
+
+\NeedsTeXFormat{LaTeX2e}[2022-11-01]
+\ProvidesPackage{lc-license}[2026/11/13 v0.1.0 版权页与许可证后置部分]
+\ExplSyntaxOn
+\seq_new:N\g__lc_history_seq
+\NewDocumentCommand{\lchistory}{mmmm}{\seq_gput_right:Nn\g__lc_history_seq{#1&#2&#3&#4\\}}
+\cs_new_protected:Npn\__lc_notice:{
+ \tl_if_empty:NT\g__lc_copyright_holder_tl{\PackageError{lc-meta}{未设置~copyright-holder，请在~settings.tex~中用~\string\lcset\c_space_tl 设置}{}}
+ \group_begin:\ExplSyntaxOff\input{lc-notice.tex}\group_end:}
+\cs_new_protected:Npn\__lc_history:{\seq_if_empty:NF\g__lc_history_seq{
+ \__lc_back_heading:n{\lc@name@history}
+ \begin{longtable}{@{}p{7em}p{6em}p{7em}p{\dimexpr\linewidth-20em-6\tabcolsep\relax}@{}}
+ \toprule 日期&版本&作者&说明\\\midrule\endhead
+ \seq_use:Nn\g__lc_history_seq{}\bottomrule\end{longtable}}}
+\cs_new_protected:Npn\__lc_license:{\clearpage\group_begin:\emergencystretch=\linewidth
+ \cs_if_exist:NTF\chapter{
+ \cs_set_eq:NN\__lc_saved_chapter\chapter
+ \RenewDocumentCommand{\chapter}{s m}{\IfBooleanTF{##1}{\__lc_saved_chapter*{##2}}{\__lc_saved_chapter{##2}}\markboth{GNU~Free~Documentation~License}{GNU~Free~Documentation~License}}
+ }{
+ \NewDocumentCommand{\chapter}{s m}{\section*{##2}\markboth{GNU~Free~Documentation~License}{GNU~Free~Documentation~License}}
+ \cs_set_eq:NN\__lc_saved_addcontentsline\addcontentsline
+ \RenewDocumentCommand{\addcontentsline}{mmm}{\str_case:nnF{##2}{{chapter}{\__lc_saved_addcontentsline{##1}{section}{##3}}{section}{\__lc_saved_addcontentsline{##1}{subsection}{##3}}}{\__lc_saved_addcontentsline{##1}{##2}{##3}}}}
+ \ExplSyntaxOff\input{fdl-1.3-body.tex}\group_end:}
+\AtEndDocument{\cs_if_exist:NT\lcprintsolutions{\lcprintsolutions}\__lc_history:\__lc_attribution:\__lc_license:}
+\ExplSyntaxOff

@@ -1,0 +1,64 @@
+% libre-compendium
+%
+% Copyright (C) 2026 Richard Qin
+%
+% This file is part of libre-compendium.
+%
+% libre-compendium is free software: you can redistribute it and/or modify
+% it under the terms of the GNU General Public License as published by
+% the Free Software Foundation, either version 3 of the License, or
+% (at your option) any later version.
+%
+% libre-compendium is distributed in the hope that it will be useful,
+% but WITHOUT ANY WARRANTY; without even the implied warranty of
+% MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+% GNU General Public License for more details.
+%
+% You should have received a copy of the GNU General Public License
+% along with libre-compendium.  If not, see <https://www.gnu.org/licenses/>.
+
+\NeedsTeXFormat{LaTeX2e}[2022-11-01]
+\ProvidesPackage{lc-meta}[2026/11/13 v0.1.0 元数据与标题]
+\ExplSyntaxOn
+\bool_new:N \g__lc_meta_locked_bool
+\tl_new:N \g__lc_title_tl
+\tl_new:N \g__lc_subtitle_tl
+\tl_new:N \g__lc_short_title_tl
+\tl_new:N \g__lc_course_tl
+\tl_new:N \g__lc_author_tl
+\tl_new:N \g__lc_date_tl
+\tl_new:N \g__lc_keywords_tl
+\tl_new:N \g__lc_copyright_holder_tl
+\tl_new:N \g__lc_copyright_years_tl
+\tl_new:N \g__lc_version_tl
+\tl_new:N \g__lc_commit_tl
+\tl_new:N \g__lc_commit_date_tl
+
+\keys_define:nn{lc}{
+title .code:n={\bool_if:NTF\g__lc_meta_locked_bool{\PackageError{lc-meta}{元数据只能在导言区设置}{}}{\tl_gset:Nn\g__lc_title_tl{#1}}},
+subtitle .code:n={\bool_if:NTF\g__lc_meta_locked_bool{\PackageError{lc-meta}{元数据只能在导言区设置}{}}{\tl_gset:Nn\g__lc_subtitle_tl{#1}}},
+short-title .code:n={\bool_if:NTF\g__lc_meta_locked_bool{\PackageError{lc-meta}{元数据只能在导言区设置}{}}{\tl_gset:Nn\g__lc_short_title_tl{#1}}},
+course .code:n={\bool_if:NTF\g__lc_meta_locked_bool{\PackageError{lc-meta}{元数据只能在导言区设置}{}}{\tl_gset:Nn\g__lc_course_tl{#1}}},
+author .code:n={\bool_if:NTF\g__lc_meta_locked_bool{\PackageError{lc-meta}{元数据只能在导言区设置}{}}{\tl_gset:Nn\g__lc_author_tl{#1}}},
+date .code:n={\bool_if:NTF\g__lc_meta_locked_bool{\PackageError{lc-meta}{元数据只能在导言区设置}{}}{\tl_gset:Nn\g__lc_date_tl{#1}}},
+keywords .code:n={\bool_if:NTF\g__lc_meta_locked_bool{\PackageError{lc-meta}{元数据只能在导言区设置}{}}{\tl_gset:Nn\g__lc_keywords_tl{#1}}},
+copyright-holder .code:n={\bool_if:NTF\g__lc_meta_locked_bool{\PackageError{lc-meta}{元数据只能在导言区设置}{}}{\tl_gset:Nn\g__lc_copyright_holder_tl{#1}}},
+copyright-years .code:n={\bool_if:NTF\g__lc_meta_locked_bool{\PackageError{lc-meta}{元数据只能在导言区设置}{}}{\tl_gset:Nn\g__lc_copyright_years_tl{#1}}}}
+\NewDocumentCommand{\lcset}{m}{\keys_set:nn{lc}{#1}}
+\NewDocumentCommand{\lcsetversion}{mmm}{\tl_gset:Nn\g__lc_version_tl{#1}\tl_gset:Nn\g__lc_commit_tl{#2}\tl_gset:Nn\g__lc_commit_date_tl{#3}}
+\lcsetversion{unversioned}{none}{}
+\AddToHook{begindocument/before}{\InputIfFileExists{lc-version.tex}{}{}\bool_gset_true:N\g__lc_meta_locked_bool}
+\cs_new:Npn\__lc_short_title:{\tl_if_empty:NTF\g__lc_short_title_tl{\g__lc_title_tl}{\g__lc_short_title_tl}}
+\cs_new:Npn\__lc_author:{\tl_if_empty:NTF\g__lc_author_tl{\g__lc_copyright_holder_tl}{\g__lc_author_tl}}
+\cs_new:Npn\__lc_date:{\tl_if_empty:NTF\g__lc_date_tl{\tl_if_empty:NTF\g__lc_commit_date_tl{\today}{\g__lc_commit_date_tl}}{\g__lc_date_tl}}
+\cs_new:Npn\__lc_years:{\tl_if_empty:NTF\g__lc_copyright_years_tl{\the\year}{\g__lc_copyright_years_tl}}
+\RenewDocumentCommand{\maketitle}{}{\thispagestyle{empty}
+ \begin{center}
+ {\LARGE\bfseries\g__lc_title_tl\par}
+ \tl_if_empty:NF\g__lc_subtitle_tl{{\large\g__lc_subtitle_tl\par}}
+ \medskip\__lc_author:\par\__lc_date:\par
+ \str_if_eq:eeT{\lc@kind}{problemset}{\str_if_eq:eeT{\lc@profile}{homework}{\medskip 姓名：\underline{\hspace{8em}}\qquad 学号：\underline{\hspace{8em}}}}
+ \end{center}\clearpage\thispagestyle{empty}\__lc_notice:\clearpage}
+\cs_new_protected:Npn\__lc_back_heading:n#1{\clearpage\phantomsection
+ \cs_if_exist:NTF\chapter{\chapter*{#1}\markboth{#1}{#1}\addcontentsline{toc}{chapter}{#1}}{\section*{#1}\markboth{#1}{#1}\addcontentsline{toc}{section}{#1}}}
+\ExplSyntaxOff

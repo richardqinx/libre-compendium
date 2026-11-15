@@ -1,0 +1,34 @@
+# libre-compendium
+#
+# Copyright (C) 2026 Richard Qin
+#
+# This file is part of libre-compendium.
+#
+# libre-compendium is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# libre-compendium is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with libre-compendium.  If not, see <https://www.gnu.org/licenses/>.
+
+# libre-compendium: 向上查找仓库中的 common/build-aux/latexmkrc 并载入
+use Cwd qw(abs_path);
+use File::Spec;
+my $lc_dir = $ENV{LC_ROOT} ? abs_path($ENV{LC_ROOT}) : abs_path('.');
+my $lc_common = $ENV{LC_ROOT} ? File::Spec->catfile(abs_path($ENV{LC_ROOT}), 'common', 'build-aux', 'latexmkrc') : undef;
+while (! $ENV{LC_ROOT}) {
+  my $cand = File::Spec->catfile($lc_dir, 'common', 'build-aux', 'latexmkrc');
+  if (-f $cand) { $lc_common = $cand; last; }
+  my $parent = abs_path(File::Spec->catdir($lc_dir, File::Spec->updir));
+  die "latexmkrc: common/build-aux/latexmkrc not found\n" if $parent eq $lc_dir;
+  $lc_dir = $parent;
+}
+$ENV{LC_ROOT} ||= $lc_dir;
+$lc_common ||= File::Spec->catfile(abs_path($ENV{LC_ROOT}), 'common', 'build-aux', 'latexmkrc');
+do $lc_common or die "latexmkrc: failed to load $lc_common: $@ $!\n";

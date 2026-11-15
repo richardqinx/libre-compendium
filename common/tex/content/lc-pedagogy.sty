@@ -1,0 +1,36 @@
+% libre-compendium
+%
+% Copyright (C) 2026 Richard Qin
+%
+% This file is part of libre-compendium.
+%
+% libre-compendium is free software: you can redistribute it and/or modify
+% it under the terms of the GNU General Public License as published by
+% the Free Software Foundation, either version 3 of the License, or
+% (at your option) any later version.
+%
+% libre-compendium is distributed in the hope that it will be useful,
+% but WITHOUT ANY WARRANTY; without even the implied warranty of
+% MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+% GNU General Public License for more details.
+%
+% You should have received a copy of the GNU General Public License
+% along with libre-compendium.  If not, see <https://www.gnu.org/licenses/>.
+
+\NeedsTeXFormat{LaTeX2e}[2022-11-01]
+\ProvidesPackage{lc-pedagogy}[2026/11/13 v0.1.0 教学框与预设]
+\ExplSyntaxOn
+\cs_new_protected:Npn\__lc_pedagogy:nnn#1#2#3{
+ \str_case:en{\use:c{lc@ped@#1}}{
+ {hide}{}
+ {degrade}{\par\addvspace{0.65em}\noindent\textbf{\use:c{lc@name@#1}\tl_if_blank:nF{#2}{：#2}}\hspace{1em}#3\par\addvspace{0.65em}}
+ {show}{\str_if_eq:eeTF{\lc@style}{boxed}{
+ \__lc_box_begin:nn{\str_case:nnF{#1}{{attention}{lc-note}{summary}{lc-note}{examspot}{lc-exam}}{lc-#1}}{\use:c{lc@name@#1}\tl_if_blank:nF{#2}{：#2}}
+ #3\__lc_box_end:}
+ {\begin{tcolorbox}[enhanced,blanker,breakable,borderline~west={1.2pt}{0pt}{black!60},left=1.1mm,before~skip=0.65em,after~skip=0.65em]\textbf{\use:c{lc@name@#1}\tl_if_blank:nF{#2}{：#2}}\hspace{1em}#3\end{tcolorbox}}}}}
+\clist_map_inline:nn{method,pitfall,hint,attention,examspot,summary}{
+ \cs_set:cpn{lc@ped@#1}{show}
+ \str_if_eq:eeT{\lc@profile}{standard}{\str_case:nn{#1}{{pitfall}{\cs_set:cpn{lc@ped@#1}{degrade}}{attention}{\cs_set:cpn{lc@ped@#1}{degrade}}{summary}{\cs_set:cpn{lc@ped@#1}{degrade}}{hint}{\cs_set:cpn{lc@ped@#1}{hide}}{examspot}{\cs_set:cpn{lc@ped@#1}{hide}}}}
+ \cs_if_exist:cT{lc@override@#1}{\cs_set_eq:cc{lc@ped@#1}{lc@override@#1}}
+ \NewDocumentEnvironment{#1}{O{}+b}{\__lc_pedagogy:nnn{#1}{##1}{##2}}{}}
+\ExplSyntaxOff

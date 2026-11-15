@@ -1,0 +1,33 @@
+% libre-compendium
+%
+% Copyright (C) 2026 Richard Qin
+%
+% This file is part of libre-compendium.
+%
+% libre-compendium is free software: you can redistribute it and/or modify
+% it under the terms of the GNU General Public License as published by
+% the Free Software Foundation, either version 3 of the License, or
+% (at your option) any later version.
+%
+% libre-compendium is distributed in the hope that it will be useful,
+% but WITHOUT ANY WARRANTY; without even the implied warranty of
+% MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+% GNU General Public License for more details.
+%
+% You should have received a copy of the GNU General Public License
+% along with libre-compendium.  If not, see <https://www.gnu.org/licenses/>.
+
+\NeedsTeXFormat{LaTeX2e}[2022-11-01]
+\ProvidesPackage{lc-style-boxed}[2026/11/13 v0.1.0 带框视觉风格]
+\RequirePackage{tcolorbox}
+\tcbuselibrary{most}
+\tcbset{lc/.style={enhanced,breakable,sharp corners,boxrule=0.6pt,leftrule=2.4pt,left=1.1mm,right=1.1mm,top=0.9mm,bottom=0.9mm,before skip=0.65em,after skip=0.65em,fonttitle=\bfseries,coltitle=lc-ink}}
+\ExplSyntaxOn
+\cs_set_protected:Npn\__lc_box_begin:nn#1#2{
+ \str_case:enF{#1}{
+ {lc-exam}{\begin{tcolorbox}[lc,colback=lc-exam!7,colframe=lc-exam,colbacktitle=lc-exam!14,title={#2}]}
+ {lc-note}{\begin{tcolorbox}[lc,colback=lc-note!6,colframe=lc-note,colbacktitle=lc-note!14,title={#2}]}}
+ {\begin{tcolorbox}[lc,colback=#1!5,colframe=#1,colbacktitle=#1!12,title={#2}]}}
+\cs_set_protected:Npn\__lc_box_end:{\end{tcolorbox}}
+\cs_set_protected:Npn\__lc_response:nn#1#2{\begin{tcolorbox}[lc,colback=lc-subtle,colframe=lc-ink!55,colbacktitle=lc-ink!8,title={\use:c{lc@name@#1}}]#2\end{tcolorbox}}
+\ExplSyntaxOff
