@@ -19,4 +19,15 @@
 
 \NeedsTeXFormat{LaTeX2e}[2022-11-01]
 \ProvidesPackage{lc-linear-algebra}[2026/11/15 v0.1.0 线性代数与矩阵排版]
-\RequirePackage{nicematrix}
+\ifdefined\HCode
+  \RequirePackage{amsmath}
+  \NewDocumentEnvironment{NiceMatrix}{O{}}{\begin{matrix}}{\end{matrix}}
+  \NewDocumentEnvironment{pNiceMatrix}{O{}}{\begin{pmatrix}}{\end{pmatrix}}
+  \NewDocumentEnvironment{bNiceMatrix}{O{}}{\begin{bmatrix}}{\end{bmatrix}}
+  \NewDocumentEnvironment{BNiceMatrix}{O{}}{\begin{Bmatrix}}{\end{Bmatrix}}
+  \NewDocumentEnvironment{vNiceMatrix}{O{}}{\begin{vmatrix}}{\end{vmatrix}}
+  \NewDocumentEnvironment{VNiceMatrix}{O{}}{\begin{Vmatrix}}{\end{Vmatrix}}
+  \NewDocumentCommand{\Block}{O{} m m}{#3}
+\else
+  \RequirePackage{nicematrix}
+\fi

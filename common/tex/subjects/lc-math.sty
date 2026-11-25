@@ -20,7 +20,11 @@
 \NeedsTeXFormat{LaTeX2e}[2022-11-01]
 \ProvidesPackage{lc-math}[2026/11/13 v0.1.0 数学命令]
 \RequirePackage{mathtools}
-\RequirePackage{unicode-math}
+\ifdefined\HCode
+  \RequirePackage{amssymb}
+\else
+  \RequirePackage{unicode-math}
+\fi
 \NewDocumentCommand{\R}{}{\mathbb{R}}
 \NewDocumentCommand{\N}{}{\mathbb{N}}
 \NewDocumentCommand{\Z}{}{\mathbb{Z}}
@@ -32,4 +36,9 @@
 \DeclarePairedDelimiter{\set}{\{}{\}}
 \DeclarePairedDelimiter{\abs}{\lvert}{\rvert}
 \DeclarePairedDelimiter{\norm}{\lVert}{\rVert}
-\NewDocumentCommand{\bm}{m}{\symbfit{#1}}
+\ifdefined\HCode
+  \NewDocumentCommand{\bm}{m}{\mathbf{#1}}
+  \providecommand{\mdlgwhtsquare}{\Box}
+\else
+  \NewDocumentCommand{\bm}{m}{\symbfit{#1}}
+\fi

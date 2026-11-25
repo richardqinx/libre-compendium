@@ -19,6 +19,13 @@
 
 \NeedsTeXFormat{LaTeX2e}[2022-11-01]
 \ProvidesPackage{lc-fonts}[2026/11/13 v0.1.0 逐角色字体选择与回退]
+\ifdefined\HCode
+  \RequirePackage{amssymb}
+  \ExplSyntaxOn
+  \bool_new:N \g__lc_font_fallback_bool
+  \ExplSyntaxOff
+  \expandafter\endinput
+\fi
 \RequirePackage{iftex}
 \ifPDFTeX\PackageError{lc}{请使用 XeLaTeX 或 LuaLaTeX 编译}{}\csname @@end\endcsname\fi
 \RequirePackage{fontspec}

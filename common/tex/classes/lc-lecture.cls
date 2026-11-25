@@ -44,7 +44,8 @@
 \ProcessKeyOptions
 \ExplSyntaxOn
 \str_if_eq:eeTF{\lc@scope}{course}
- {\LoadClass[UTF8,zihao=-4,fontset=none,oneside,openany]{ctexbook}}
+ {\cs_if_exist:NT\HCode{\ExplSyntaxOff\input{ctexbook-hooks.4ht}\ExplSyntaxOn}
+  \LoadClass[UTF8,zihao=-4,fontset=none,oneside,openany]{ctexbook}}
  {\LoadClass[UTF8,zihao=-4,fontset=none]{ctexart}}
 \ExplSyntaxOff
 \RequirePackage{lc-base}
