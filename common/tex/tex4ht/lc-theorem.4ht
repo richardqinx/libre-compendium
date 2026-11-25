@@ -21,16 +21,16 @@
 \ExplSyntaxOn
 \cs_set_protected:Npn \__lc_plain_begin:n #1
   {
-    \ifvmode\IgnorePar\fi
+    \ifvmode\IgnorePar\fi\EndP
     \HCode{<div\space class="lc-block\space lc-remark">}
     \HCode{<div\space class="lc-block-title">}#1\HCode{</div>}
-    \HCode{<div\space class="lc-block-body">}
+    \HCode{<div\space class="lc-block-body">}\par\ShowPar
   }
 \cs_set_protected:Npn \__lc_plain_end:
   {\ifvmode\IgnorePar\fi\EndP\HCode{</div></div>}\par\ShowPar}
 \RenewDocumentEnvironment{proof}{O{}}
   {
-    \ifvmode\IgnorePar\fi
+    \ifvmode\IgnorePar\fi\EndP
     \HCode{<div\space class="lc-proof">}
     \noindent\textbf{\lc@name@proof\tl_if_blank:nF{#1}{：#1}}\par
   }

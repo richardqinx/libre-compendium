@@ -17,5 +17,7 @@
 % You should have received a copy of the GNU General Public License
 % along with libre-compendium.  If not, see <https://www.gnu.org/licenses/>.
 
-% TeX4ht adapter for lc-problemset.
-% The class' standard XHTML configuration handles document structure.
+% TeX4ht adapter for ctexbook.
+\ExplSyntaxOff
+\Hinput{ctexbook}
+\endinput

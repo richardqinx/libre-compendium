@@ -17,8 +17,8 @@
 % You should have received a copy of the GNU General Public License
 % along with libre-compendium.  If not, see <https://www.gnu.org/licenses/>.
 
-% TeX4ht adapter for lc-linear-algebra.
-% Nicematrix drawing annotations are presentation-only in HTML.
-\ifcsname Block\endcsname
-  \let\Block\relax
-\fi
+% Work around upstream TeX4ht ctexart-hooks.4ht leaving \ExplSyntaxOn active
+% when included a second time (early \endinput before \ExplSyntaxOff).
+\ExplSyntaxOff
+\Hinput{ctexart}
+\endinput

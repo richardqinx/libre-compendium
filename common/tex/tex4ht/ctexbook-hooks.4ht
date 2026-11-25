@@ -17,16 +17,24 @@
 % You should have received a copy of the GNU General Public License
 % along with libre-compendium.  If not, see <https://www.gnu.org/licenses/>.
 
-% TeX4ht adapter for xeCJK hooks.
-% TeX4ht prevents xeCJK from loading, but lc-fonts still names the CJK
-% family-selection commands.  Keep those calls harmless in HTML; leave the
-% regular fontspec commands to fontspec itself.
-\providecommand\setCJKmainfont[2][]{ }
-\providecommand\setCJKsansfont[2][]{ }
-\providecommand\setCJKmonofont[2][]{ }
-\providecommand\setCJKfamilyfont[3][]{ }
+% TeX4ht LuaLaTeX hooks for ctexbook (mirrors upstream ctexart-hooks.4ht
+% with the \ExplSyntaxOff leak fixed).
 \ExplSyntaxOn
-\cs_gset_eq:NN\string_Size\relax
-\cs_gset_eq:NN\string_Size:\relax
-\seq_if_exist:NF\fontspec_ht_scripts{\seq_new:N\fontspec_ht_scripts}
+\ifdefined\l_save_engine_str\ExplSyntaxOff\endinput\fi
+\str_new:N \l_save_engine_str
+\def\l_save_engine_str{pdftex}
+\str_if_eq:NNTF \c_sys_engine_str\l_save_engine_str{\ExplSyntaxOff\endinput}{}
+
+\csname :dontusepackage\endcsname{luatexja}
+
+\AddToHook{package/ctexhook/after}{
+  \cs_set:Npn \ctex_file_input:n #1{}
+  \cs_set:Npn \ctex_add_to_selectfont:n #1{}
+  \dim_new:N \ccwd
+  \skip_new:N \l__ctex_ccglue_skip
+  \cs_set_protected:Npn \ctex_update_em_unit:
+  { \dim_set:Nn \ccwd { \f@size \p@ } }
+  \cs_set_protected:Npn \ctex_update_ccglue: {}
+}
 \ExplSyntaxOff
+\endinput

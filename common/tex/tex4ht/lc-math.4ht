@@ -18,24 +18,7 @@
 % along with libre-compendium.  If not, see <https://www.gnu.org/licenses/>.
 
 % TeX4ht adapter for lc-math.
-% Keep the public mathematical command names available to the converter.
-\providecommand{\mathbb}[1]{\mathrm{#1}}
-\providecommand{\varnothing}{\emptyset}
-\providecommand{\R}{\mathbb{R}}
-\providecommand{\N}{\mathbb{N}}
-\providecommand{\Z}{\mathbb{Z}}
-\providecommand{\Q}{\mathbb{Q}}
-\providecommand{\C}{\mathbb{C}}
-\providecommand{\F}{\mathbb{F}}
-\providecommand{\dd}{\mathop{}\!\mathrm{d}}
-\providecommand{\e}{\mathrm{e}}
-\providecommand{\ii}{\mathrm{i}}
-\providecommand{\bm}[1]{\mathbf{#1}}
-\providecommand{\set}[1]{\left\{#1\right\}}
-\providecommand{\abs}[1]{\left\lvert#1\right\rvert}
-\providecommand{\norm}[1]{\left\lVert#1\right\rVert}
-\providecommand{\subsetneq}{\subset}
-\providecommand{\nmid}{\not\mid}
-\providecommand{\vDash}{\models}
-\providecommand{\trianglelefteq}{\triangleleft}
-\providecommand{\nleq}{\not\leq}
+\RenewDocumentCommand{\bm}{m}{\mathbf{#1}}
+\providecommand{\mdlgwhtsquare}{\Box}
+% TeX4ht MathML wraps \left/\right in groups that break e-TeX \middle.
+\def\middle#1{\mathrel{#1}}

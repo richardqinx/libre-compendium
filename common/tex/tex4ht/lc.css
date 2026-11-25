@@ -18,40 +18,473 @@
  * along with libre-compendium.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-/* libre-compendium HTML output */
+/* libre-compendium HTML5 + MathML stylesheet */
 :root {
   color-scheme: light;
-  --lc-ink: #20252b;
-  --lc-muted: #5f6b76;
-  --lc-border: #b7c2cc;
-  --lc-panel: #f5f8fa;
-  --lc-accent: #315f8c;
+  --lc-ink: #1f2937;
+  --lc-muted: #475569;
+  --lc-subtle: #f8fafc;
+  --lc-border: #cbd5e1;
+  --lc-rule: #e2e8f0;
+  --lc-def: #2563eb;
+  --lc-thm: #7c3aed;
+  --lc-example: #4f46e5;
+  --lc-method: #0f766e;
+  --lc-pitfall: #dc2626;
+  --lc-hint: #059669;
+  --lc-exam: #d97706;
+  --lc-note: #475569;
+  --lc-link: #1d4ed8;
+  --lc-cite: #047857;
+  --lc-font-serif: "Noto Serif CJK SC", "Source Han Serif SC", "Songti SC", "STSong", Georgia, serif;
+  --lc-font-sans: "Noto Sans CJK SC", "Source Han Sans SC", system-ui, -apple-system, sans-serif;
+  --lc-font-mono: "Noto Sans Mono CJK SC", ui-monospace, SFMono-Regular, Menlo, monospace;
+  --lc-font-math: "STIX Two Math", "Latin Modern Math", "Libertinus Math", "Cambria Math", math;
 }
-html { line-height: 1.65; }
+
+* { box-sizing: border-box; }
+
+html {
+  font-size: 16px;
+  line-height: 1.8;
+  background: #f1f5f9;
+  scroll-behavior: smooth;
+}
+
 body {
-  max-width: 58rem;
-  margin: 0 auto;
-  padding: 1.5rem;
+  max-width: 54rem;
+  margin: 1.5rem auto;
+  padding: 2.5rem 3rem 4rem;
   color: var(--lc-ink);
-  background: #fff;
-  font-family: system-ui, sans-serif;
+  background: #ffffff;
+  font-family: var(--lc-font-serif);
+  border: 1px solid var(--lc-rule);
+  border-radius: 6px;
+  box-shadow: 0 2px 12px rgba(15, 23, 42, 0.05);
+  overflow-wrap: break-word;
 }
-img { max-width: 100%; height: auto; }
-.math-display { overflow-x: auto; }
-.lc-block, .lc-pedagogy, .lc-exercise, .lc-proof, .lc-response {
-  margin: 1rem 0;
-  padding: .75rem 1rem;
-  border-left: .3rem solid var(--lc-accent);
-  background: var(--lc-panel);
+
+/* Title header & copyright notice */
+.lc-titleblock {
+  margin: 0 0 1.5rem;
+  padding: 2rem 1.75rem 1.6rem;
+  background: var(--lc-subtle);
+  border: 1px solid var(--lc-rule);
+  border-top: 4px solid var(--lc-def);
+  border-radius: 5px;
+  text-align: center;
 }
-.lc-block-title, .lc-pedagogy-title, .lc-response-title {
-  margin: -.75rem -1rem .65rem;
-  padding: .35rem 1rem;
-  color: var(--lc-ink);
+
+.lc-doc-title {
+  margin: 0;
+  font-family: var(--lc-font-sans);
+  font-size: 2rem;
   font-weight: 700;
-  border-bottom: 1px solid var(--lc-border);
+  line-height: 1.3;
+  color: var(--lc-ink);
 }
-.lc-block-body, .lc-pedagogy-body, .lc-response-body { min-width: 0; }
-.lc-degraded { border-left-color: var(--lc-muted); background: transparent; }
-.lc-proof { border-left-color: var(--lc-muted); background: transparent; }
-.lc-exercise { border-left-color: #637b45; }
+
+.lc-doc-subtitle {
+  margin: 0.55rem 0 0;
+  font-family: var(--lc-font-sans);
+  font-size: 1.12rem;
+  color: var(--lc-muted);
+  text-align: center;
+}
+
+.lc-doc-meta {
+  margin: 0.9rem 0 0;
+  font-family: var(--lc-font-sans);
+  font-size: 0.95rem;
+  color: var(--lc-muted);
+  text-align: center;
+}
+
+.lc-notice {
+  margin: 0 0 2rem;
+  padding: 1rem 1.35rem;
+  background: #fafafa;
+  border: 1px solid var(--lc-rule);
+  border-radius: 5px;
+  font-size: 0.88rem;
+  line-height: 1.65;
+  color: var(--lc-muted);
+}
+
+.lc-notice p {
+  margin: 0.35rem 0;
+  text-align: left;
+}
+
+.lc-notice-head {
+  color: var(--lc-ink);
+  font-family: var(--lc-font-sans);
+}
+
+.lc-notice-copy {
+  font-family: var(--lc-font-sans);
+}
+
+.lc-notice-list {
+  margin: 0.35rem 0 0.55rem;
+  padding-left: 1.4rem;
+}
+
+.lc-notice-en {
+  font-size: 0.83rem;
+  line-height: 1.55;
+  color: #64748b;
+}
+
+.maketitle {
+  margin: 0 0 2rem;
+  padding: 1.5rem;
+  background: var(--lc-subtle);
+  border: 1px solid var(--lc-rule);
+  border-top: 4px solid var(--lc-def);
+  border-radius: 5px;
+  text-align: center;
+}
+
+/* Abstract */
+section.abstract,
+div.abstract {
+  margin: 1.5rem 0 2rem;
+  padding: 1.1rem 1.5rem;
+  background: var(--lc-subtle);
+  border-left: 3px solid var(--lc-note);
+  border-radius: 0 4px 4px 0;
+  font-size: 0.96rem;
+}
+
+.abstracttitle {
+  margin: 0 0 0.5rem;
+  font-family: var(--lc-font-sans);
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--lc-ink);
+}
+
+/* Table of contents */
+.tableofcontents {
+  margin: 1.25rem 0 2.25rem;
+  padding: 1.1rem 1.5rem;
+  background: var(--lc-subtle);
+  border: 1px solid var(--lc-rule);
+  border-radius: 4px;
+  font-family: var(--lc-font-sans);
+  font-size: 0.94rem;
+  line-height: 1.7;
+}
+
+.tableofcontents a {
+  color: var(--lc-ink);
+  text-decoration: none;
+}
+
+.tableofcontents a:hover {
+  color: var(--lc-link);
+  text-decoration: underline;
+}
+
+.chaptertoc,
+.chapterToc {
+  display: inline-block;
+  margin-top: 0.35rem;
+  font-weight: 700;
+}
+
+.sectiontoc,
+.sectionToc {
+  display: inline-block;
+  padding-left: 1rem;
+}
+
+.subsectiontoc,
+.subsectionToc {
+  display: inline-block;
+  padding-left: 2.2rem;
+  font-size: 0.9rem;
+  color: var(--lc-muted);
+}
+
+/* Headings */
+h1, h2, h3, h4,
+.chapterHead, .likechapterHead,
+.sectionHead, .likesectionHead, .likesectionhead,
+.subsectionHead, .likesubsectionHead,
+.subsubsectionHead {
+  font-family: var(--lc-font-sans);
+  font-weight: 700;
+  color: var(--lc-ink);
+  line-height: 1.35;
+}
+
+.chapterHead, .likechapterHead {
+  margin: 2.8rem 0 1.2rem;
+  padding-bottom: 0.55rem;
+  font-size: 1.65rem;
+  border-bottom: 2px solid var(--lc-def);
+}
+
+.sectionHead, .likesectionHead, .likesectionhead {
+  margin: 2.1rem 0 0.85rem;
+  padding-bottom: 0.3rem;
+  font-size: 1.32rem;
+  border-bottom: 1px solid var(--lc-rule);
+}
+
+.subsectionHead, .likesubsectionHead {
+  margin: 1.5rem 0 0.6rem;
+  font-size: 1.12rem;
+}
+
+.subsubsectionHead {
+  margin: 1.2rem 0 0.45rem;
+  font-size: 1.02rem;
+  color: var(--lc-muted);
+}
+
+/* Paragraphs, links, lists */
+p {
+  margin: 0.65rem 0;
+  text-align: justify;
+}
+
+a {
+  color: var(--lc-link);
+  text-decoration: none;
+}
+
+a:hover {
+  text-decoration: underline;
+}
+
+a.cite {
+  color: var(--lc-cite);
+}
+
+ul, ol {
+  margin: 0.65rem 0 0.9rem;
+  padding-left: 1.8rem;
+}
+
+li {
+  margin: 0.3rem 0;
+}
+
+code, pre, tt, .texttt {
+  font-family: var(--lc-font-mono);
+  font-size: 0.9em;
+}
+
+pre {
+  padding: 0.85rem 1rem;
+  background: var(--lc-subtle);
+  border: 1px solid var(--lc-rule);
+  border-radius: 4px;
+  overflow-x: auto;
+}
+
+/* Native MathML typography */
+math {
+  font-family: var(--lc-font-math);
+  font-size: 1.04em;
+}
+
+math[display="block"],
+.math-display,
+table.equation,
+table.equation-star {
+  margin: 1rem auto;
+  max-width: 100%;
+  overflow-x: auto;
+  overflow-y: hidden;
+}
+
+table.equation,
+table.equation-star {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+table.equation td,
+table.equation-star td {
+  border: none;
+  padding: 0.2rem 0.4rem;
+}
+
+/* Semantic theorem, pedagogy, exercise & proof blocks */
+.lc-block,
+.lc-pedagogy,
+.lc-exercise,
+.lc-proof,
+.lc-response {
+  --block-accent: var(--lc-def);
+  --block-bg: var(--lc-subtle);
+  margin: 1.25rem 0;
+  padding: 0.9rem 1.2rem;
+  border: 1px solid var(--lc-rule);
+  border-left: 4px solid var(--block-accent);
+  border-radius: 0 5px 5px 0;
+  background: var(--block-bg);
+}
+
+.lc-block-title,
+.lc-pedagogy-title,
+.lc-response-title {
+  margin: -0.9rem -1.2rem 0.75rem;
+  padding: 0.45rem 1.2rem;
+  font-family: var(--lc-font-sans);
+  font-size: 0.96rem;
+  font-weight: 700;
+  color: var(--block-accent);
+  background: rgba(15, 23, 42, 0.025);
+  border-bottom: 1px solid var(--lc-rule);
+}
+
+.lc-block-body,
+.lc-pedagogy-body,
+.lc-response-body {
+  min-width: 0;
+}
+
+.lc-block-body > :first-child,
+.lc-pedagogy-body > :first-child,
+.lc-response-body > :first-child {
+  margin-top: 0;
+}
+
+.lc-block-body > :last-child,
+.lc-pedagogy-body > :last-child,
+.lc-response-body > :last-child {
+  margin-bottom: 0;
+}
+
+/* Color mapping aligned with common/tex/core/lc-colors.sty */
+.lc-def      { --block-accent: var(--lc-def);     --block-bg: #eff6ff; }
+.lc-thm      { --block-accent: var(--lc-thm);     --block-bg: #f5f3ff; }
+.lc-example  { --block-accent: var(--lc-example); --block-bg: #eef2ff; }
+.lc-remark   { --block-accent: var(--lc-note);    --block-bg: var(--lc-subtle); }
+.lc-method   { --block-accent: var(--lc-method);  --block-bg: #f0fdfa; }
+.lc-pitfall  { --block-accent: var(--lc-pitfall); --block-bg: #fef2f2; }
+.lc-hint     { --block-accent: var(--lc-hint);    --block-bg: #ecfdf5; }
+.lc-attention{ --block-accent: var(--lc-note);    --block-bg: var(--lc-subtle); }
+.lc-examspot { --block-accent: var(--lc-exam);    --block-bg: #fffbeb; }
+.lc-summary  { --block-accent: var(--lc-def);     --block-bg: #eff6ff; }
+
+.lc-degraded {
+  --block-accent: var(--lc-note);
+  --block-bg: transparent;
+  border-top: none;
+  border-right: none;
+  border-bottom: none;
+}
+
+.lc-proof {
+  --block-accent: var(--lc-note);
+  --block-bg: transparent;
+  border-top: none;
+  border-right: none;
+  border-bottom: none;
+  padding-top: 0.4rem;
+  padding-bottom: 0.4rem;
+}
+
+.lc-exercise {
+  --block-accent: var(--lc-hint);
+  --block-bg: #ffffff;
+}
+
+.lc-answer,
+.lc-solution {
+  --block-accent: var(--lc-method);
+  --block-bg: var(--lc-subtle);
+}
+
+/* Figures & SVGs */
+figure,
+div.figure {
+  margin: 1.5rem auto;
+  padding: 1rem;
+  text-align: center;
+  background: #ffffff;
+  border: 1px solid var(--lc-rule);
+  border-radius: 4px;
+}
+
+img,
+.lc-figure-svg {
+  display: inline-block;
+  max-width: 100%;
+  height: auto;
+  vertical-align: middle;
+}
+
+figcaption,
+div.caption {
+  margin-top: 0.7rem;
+  font-family: var(--lc-font-sans);
+  font-size: 0.9rem;
+  color: var(--lc-muted);
+  text-align: center;
+}
+
+/* Tables (booktabs style) */
+table.tabular,
+table.longtable {
+  margin: 1.25rem auto;
+  border-collapse: collapse;
+  max-width: 100%;
+  font-size: 0.94rem;
+}
+
+table.tabular td,
+table.tabular th,
+table.longtable td,
+table.longtable th {
+  padding: 0.45rem 0.75rem;
+  vertical-align: top;
+}
+
+table.tabular tr:first-child td,
+table.tabular tr:first-child th,
+table.longtable tr:first-child td,
+table.longtable tr:first-child th {
+  border-top: 2px solid var(--lc-ink);
+}
+
+table.tabular tr:last-child td,
+table.longtable tr:last-child td {
+  border-bottom: 2px solid var(--lc-ink);
+}
+
+/* Responsive layout for narrow screens */
+@media (max-width: 720px) {
+  body {
+    margin: 0;
+    padding: 1.25rem 1rem 2.5rem;
+    border: none;
+    border-radius: 0;
+    box-shadow: none;
+  }
+
+  .maketitle {
+    padding: 1.25rem 1rem;
+  }
+
+  .lc-block,
+  .lc-pedagogy,
+  .lc-exercise,
+  .lc-proof,
+  .lc-response {
+    padding: 0.75rem 0.9rem;
+  }
+
+  .lc-block-title,
+  .lc-pedagogy-title,
+  .lc-response-title {
+    margin: -0.75rem -0.9rem 0.65rem;
+    padding: 0.4rem 0.9rem;
+  }
+}

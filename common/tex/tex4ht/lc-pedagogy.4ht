@@ -24,17 +24,17 @@
     \str_case:en{\use:c{lc@ped@#1}}{
       {hide}{}
       {degrade}{
-        \ifvmode\IgnorePar\fi
+        \ifvmode\IgnorePar\fi\EndP
         \HCode{<div\space class="lc-pedagogy\space lc-#1\space lc-degraded">}
         \noindent\textbf{\use:c{lc@name@#1}\tl_if_blank:nF{#2}{：#2}}\hspace{1em}#3
         \ifvmode\IgnorePar\fi\EndP\HCode{</div>}\par\ShowPar
       }
       {show}{
-        \ifvmode\IgnorePar\fi
+        \ifvmode\IgnorePar\fi\EndP
         \HCode{<div\space class="lc-pedagogy\space lc-#1">}
         \HCode{<div\space class="lc-pedagogy-title">}
         \use:c{lc@name@#1}\tl_if_blank:nF{#2}{：#2}
-        \HCode{</div><div\space class="lc-pedagogy-body">}#3
+        \HCode{</div><div\space class="lc-pedagogy-body">}\par\ShowPar #3
         \ifvmode\IgnorePar\fi\EndP\HCode{</div></div>}\par\ShowPar
       }
     }

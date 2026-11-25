@@ -22,21 +22,21 @@
 \ExplSyntaxOn
 \cs_set_protected:Npn \__lc_box_begin:nn #1#2
   {
-    \ifvmode\IgnorePar\fi
+    \ifvmode\IgnorePar\fi\EndP
     \HCode{<div\space class="lc-block\space #1">}
     \HCode{<div\space class="lc-block-title">}
     #2
-    \HCode{</div><div\space class="lc-block-body">}
+    \HCode{</div><div\space class="lc-block-body">}\par\ShowPar
   }
 \cs_set_protected:Npn \__lc_box_end:
   {\ifvmode\IgnorePar\fi\EndP\HCode{</div></div>}\par\ShowPar}
 \cs_set_protected:Npn \__lc_response:nn #1#2
   {
-    \ifvmode\IgnorePar\fi
+    \ifvmode\IgnorePar\fi\EndP
     \HCode{<div\space class="lc-response\space #1">}
     \HCode{<div\space class="lc-response-title">}
     \use:c{lc@name@#1}
-    \HCode{</div><div\space class="lc-response-body">}
+    \HCode{</div><div\space class="lc-response-body">}\par\ShowPar
     #2
     \ifvmode\IgnorePar\fi\EndP\HCode{</div></div>}\par\ShowPar
   }

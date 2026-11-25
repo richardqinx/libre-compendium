@@ -17,9 +17,6 @@
 % You should have received a copy of the GNU General Public License
 % along with libre-compendium.  If not, see <https://www.gnu.org/licenses/>.
 
-% TeX4ht adapter for lc-exercise.
-\ConfigureEnv{exercise}
-  {\ifvmode\IgnorePar\fi\HCode{<div\space class="lc-exercise">}}
-  {\ifvmode\IgnorePar\fi\EndP\HCode{</div>}\par\ShowPar}
-  {}
-  {}
+% TeX4ht adapter for lc-exercise (uses LaTeX hooks because exercise grabs +b).
+\AddToHook{env/exercise/before}{\ifvmode\IgnorePar\fi\EndP\HCode{<div class="lc-exercise">}\par\ShowPar}
+\AddToHook{env/exercise/after}{\ifvmode\IgnorePar\fi\EndP\HCode{</div>}\par\ShowPar}

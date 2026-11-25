@@ -1,0 +1,52 @@
+% libre-compendium
+%
+% Copyright (C) 2026 Richard Qin
+%
+% This file is part of libre-compendium.
+%
+% libre-compendium is free software: you can redistribute it and/or modify
+% it under the terms of the GNU General Public License as published by
+% the Free Software Foundation, either version 3 of the License, or
+% (at your option) any later version.
+%
+% libre-compendium is distributed in the hope that it will be useful,
+% but WITHOUT ANY WARRANTY; without even the implied warranty of
+% MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+% GNU General Public License for more details.
+%
+% You should have received a copy of the GNU General Public License
+% along with libre-compendium.  If not, see <https://www.gnu.org/licenses/>.
+
+% TeX4ht adapter for lc-xref: bypass cleveref's @cref section-label bug in
+% TeX4ht while preserving Chinese cross-reference names and hyperlinks.
+\ExplSyntaxOn
+\cs_new_protected:Npn \__lc_html_cref_one:n #1
+  {
+    \regex_match:nnTF { \A def: } {#1} { \lc@name@definition\c_space_tl \ref{#1} }
+    { \regex_match:nnTF { \A thm: } {#1} { \lc@name@theorem\c_space_tl \ref{#1} }
+    { \regex_match:nnTF { \A lem: } {#1} { \lc@name@lemma\c_space_tl \ref{#1} }
+    { \regex_match:nnTF { \A prop: } {#1} { \lc@name@proposition\c_space_tl \ref{#1} }
+    { \regex_match:nnTF { \A cor: } {#1} { \lc@name@corollary\c_space_tl \ref{#1} }
+    { \regex_match:nnTF { \A (?:eg|exm): } {#1} { \lc@name@example\c_space_tl \ref{#1} }
+    { \regex_match:nnTF { \A ex: } {#1} { \lc@name@exercise\c_space_tl \ref{#1} }
+    { \regex_match:nnTF { \A eq: } {#1} { \lc@name@equation\c_space_tl (\ref{#1}) }
+    { \regex_match:nnTF { \A fig: } {#1} { \lc@name@figure\c_space_tl \ref{#1} }
+    { \regex_match:nnTF { \A tab: } {#1} { \lc@name@table\c_space_tl \ref{#1} }
+    { \regex_match:nnTF { \A (?:ch|chap): } {#1} { 第~\ref{#1}~章 }
+    { \regex_match:nnTF { \A sec: } {#1} { 第~\ref{#1}~节 }
+      { \ref{#1} } } } } } } } } } } } }
+  }
+\NewDocumentCommand{\__lc_html_cref}{m}
+  {
+    \bool_set_true:N \l_tmpa_bool
+    \clist_map_inline:nn {#1}
+      {
+        \bool_if:NTF \l_tmpa_bool { \bool_set_false:N \l_tmpa_bool } { 、 }
+        \__lc_html_cref_one:n {##1}
+      }
+  }
+\AtBeginDocument{
+  \RenewDocumentCommand{\cref}{s m}{\__lc_html_cref{#2}}
+  \RenewDocumentCommand{\Cref}{s m}{\__lc_html_cref{#2}}
+}
+\ExplSyntaxOff
