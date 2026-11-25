@@ -33,7 +33,7 @@
   \tl_if_empty:NF\g__lc_title_tl{\Configure{TITLE+}{\g__lc_title_tl}}
   \RenewDocumentCommand{\maketitle}{}{
     \ifvmode\IgnorePar\fi\EndP
-    \HCode{<header\space class="lc-titleblock">}
+    \HCode{<header\space id="top"\space class="lc-titleblock">}
     \HCode{<h1\space class="lc-doc-title">}\g__lc_title_tl\HCode{</h1>}
     \tl_if_empty:NF\g__lc_subtitle_tl{
       \HCode{<p\space class="lc-doc-subtitle">}\g__lc_subtitle_tl\HCode{</p>}
@@ -56,7 +56,7 @@
         \HCode{<p\space class="lc-notice-source">}源代码：\url{\lc@project@url}\HCode{</p>}
       }
     }
-    \HCode{</aside>}\par\ShowPar
+    \HCode{</aside><a\space class="lc-back-to-top"\space href="}\HCode{\c_hash_str top}\HCode{"\space aria-label="回到顶部">↑\space 顶部</a>}\par\ShowPar
   }
 }
 \ExplSyntaxOff
