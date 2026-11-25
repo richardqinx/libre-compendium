@@ -20,7 +20,7 @@ dnl along with libre-compendium.  If not, see <https://www.gnu.org/licenses/>.
 AC_INIT([libre-compendium], [0.1.0], [richard.qin.x@gmail.com])
 AC_CONFIG_SRCDIR([common/tex/classes/lc-lecture.cls])
 AC_CONFIG_AUX_DIR([build-aux])
-AM_INIT_AUTOMAKE([foreign dist-xz])
+AM_INIT_AUTOMAKE([foreign dist-xz tar-pax])
 AC_PROG_INSTALL
 AC_PROG_MAKE_SET
 
