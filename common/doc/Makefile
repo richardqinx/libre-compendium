@@ -20,34 +20,4 @@
 # libre-compendium common manual entry point
 PROJECT_SRC := $(abspath $(dir $(lastword $(MAKEFILE_LIST))))
 LC_ROOT ?= $(abspath $(PROJECT_SRC)/../..)
-BUILD_ROOT ?= $(PROJECT_SRC)/build
-DIST_ROOT ?= $(PROJECT_SRC)/dist
-LC_ENGINE ?= xelatex
-LATEXMK ?= latexmk
-
-MANUAL_TEX := $(PROJECT_SRC)/manual.tex
-LATEX_RC := $(PROJECT_SRC)/latexmkrc
-LATEX_BUILD := $(BUILD_ROOT)/latex
-PDF_DIST := $(DIST_ROOT)/pdf
-
-.PHONY: all pdf check logs clean help
-
-all: pdf
-
-pdf:
-	@set -eu; mkdir -p "$(LATEX_BUILD)" "$(PDF_DIST)"; \
-	  LC_ROOT="$(LC_ROOT)" LC_ENGINE="$(LC_ENGINE)" LC_BUILD_DIR="$(LATEX_BUILD)" LC_OUT_DIR="$(LATEX_BUILD)" LC_AUX_DIR="$(LATEX_BUILD)" \
-	    "$(LATEXMK)" -cd -r "$(LATEX_RC)" -outdir="$(LATEX_BUILD)" -auxdir="$(LATEX_BUILD)" "$(MANUAL_TEX)"; \
-	  cp "$(LATEX_BUILD)/manual.pdf" "$(PDF_DIST)/manual.pdf"
-
-check: pdf
-	@test -s "$(PDF_DIST)/manual.pdf"
-
-logs:
-	@find "$(BUILD_ROOT)" -type f -name '*.log' -print 2>/dev/null || true
-
-clean:
-	rm -rf "$(BUILD_ROOT)" "$(DIST_ROOT)"
-
-help:
-	@echo 'Targets: all pdf check logs clean'
+include $(LC_ROOT)/build-aux/doc-project.mk

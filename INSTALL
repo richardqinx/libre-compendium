@@ -139,11 +139,11 @@ Libre Compendium 构建与安装说明
 
   - 中间文件与日志：build/<项目路径>/ 下的 latex/、tikz/、html/ 目录
   - 最终输出产物：  dist/<项目路径>/
-      - pdf/lecture.pdf       由 main.tex 编译生成
-      - pdf/problemset.pdf    当项目包含 problemset.tex 时一并生成
+      - pdf/<文档名>.pdf      按顶层入口自动生成；main.tex 依文档类命名为
+                              lecture.pdf、article.pdf 或 problemset.pdf，
+                              其余入口如 problemset.tex、manual.tex 沿用原名
       - svg/*.svg             当项目包含 figures/tikz/*.tex 时生成
-      - html/lecture/         正文 HTML5、CSS 与 index.html
-      - html/problemset/      习题 HTML5、CSS 与 index.html
+      - html/<文档名>/        对应入口的 HTML5、CSS 与 index.html
 
 
 六、安装、卸载与源码发行

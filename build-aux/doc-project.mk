@@ -31,8 +31,17 @@ PDFCAIRO ?= pdftocairo
 XELATEX ?= xelatex
 HTML_TEX4HT_DIR ?= $(LC_ROOT)/common/tex/tex4ht
 
-MAIN_TEX := $(PROJECT_SRC)/main.tex
-PROBLEMSET_TEX := $(PROJECT_SRC)/problemset.tex
+# Discover top-level document entrypoints containing \documentclass; projects
+# may override DOC_TARGETS or MAIN_OUTPUT_NAME in their own Makefile.
+DOC_TARGETS ?= $(sort $(basename $(notdir $(shell grep -l '^[^%]*\\documentclass' "$(PROJECT_SRC)"/*.tex 2>/dev/null))))
+MAIN_OUTPUT_NAME ?= $(strip $(shell \
+  if test -f "$(PROJECT_SRC)/main.tex"; then \
+    if grep -q 'lc-article' "$(PROJECT_SRC)/main.tex"; then echo article; \
+    elif grep -q 'lc-lecture' "$(PROJECT_SRC)/main.tex"; then echo lecture; \
+    elif grep -q 'lc-problemset' "$(PROJECT_SRC)/main.tex"; then echo problemset; \
+    else echo main; fi; \
+  else echo main; fi))
+
 LATEX_RC := $(PROJECT_SRC)/latexmkrc
 LATEX_BUILD := $(BUILD_ROOT)/latex
 SVG_BUILD := $(BUILD_ROOT)/tikz
@@ -49,41 +58,31 @@ all: pdf html svg
 
 pdf:
 	@set -eu; mkdir -p "$(LATEX_BUILD)" "$(PDF_DIST)"; \
-	  if test -f "$(MAIN_TEX)"; then \
+	  for target in $(DOC_TARGETS); do \
+	    src="$(PROJECT_SRC)/$$target.tex"; \
+	    out="$$target"; \
+	    if test "$$target" = main; then out="$(MAIN_OUTPUT_NAME)"; fi; \
 	    LC_ROOT="$(LC_ROOT)" LC_ENGINE="$(LC_ENGINE)" LC_BUILD_DIR="$(LATEX_BUILD)" LC_OUT_DIR="$(LATEX_BUILD)" LC_AUX_DIR="$(LATEX_BUILD)" \
-	      "$(LATEXMK)" -cd -r "$(LATEX_RC)" -outdir="$(LATEX_BUILD)" -auxdir="$(LATEX_BUILD)" "$(MAIN_TEX)"; \
-	    cp "$(LATEX_BUILD)/main.pdf" "$(PDF_DIST)/lecture.pdf"; \
-	  fi; \
-	  if test -f "$(PROBLEMSET_TEX)"; then \
-	    LC_ROOT="$(LC_ROOT)" LC_ENGINE="$(LC_ENGINE)" LC_BUILD_DIR="$(LATEX_BUILD)" LC_OUT_DIR="$(LATEX_BUILD)" LC_AUX_DIR="$(LATEX_BUILD)" \
-	      "$(LATEXMK)" -cd -r "$(LATEX_RC)" -outdir="$(LATEX_BUILD)" -auxdir="$(LATEX_BUILD)" "$(PROBLEMSET_TEX)"; \
-	    cp "$(LATEX_BUILD)/problemset.pdf" "$(PDF_DIST)/problemset.pdf"; \
-	  fi
+	      "$(LATEXMK)" -cd -r "$(LATEX_RC)" -outdir="$(LATEX_BUILD)" -auxdir="$(LATEX_BUILD)" "$$src"; \
+	    cp "$(LATEX_BUILD)/$$target.pdf" "$(PDF_DIST)/$$out.pdf"; \
+	  done
 
 html: svg
 	@set -eu; mkdir -p "$(HTML_BUILD)" "$(HTML_DIST)" "$(BUILD_ROOT)/texmf-var"; \
-	  if test -f "$(MAIN_TEX)"; then \
-	    mkdir -p "$(HTML_BUILD)/lecture" "$(HTML_DIST)/lecture"; \
-	    sh "$(LC_ROOT)/common/build-aux/lc-version.sh" > "$(HTML_BUILD)/lecture/lc-version.tex"; \
-	    (cd "$(HTML_BUILD)/lecture" && \
+	  for target in $(DOC_TARGETS); do \
+	    src="$(PROJECT_SRC)/$$target.tex"; \
+	    out="$$target"; \
+	    if test "$$target" = main; then out="$(MAIN_OUTPUT_NAME)"; fi; \
+	    mkdir -p "$(HTML_BUILD)/$$out" "$(HTML_DIST)/$$out"; \
+	    sh "$(LC_ROOT)/common/build-aux/lc-version.sh" > "$(HTML_BUILD)/$$out/lc-version.tex"; \
+	    (cd "$(HTML_BUILD)/$$out" && \
 	      TEXMFVAR="$(BUILD_ROOT)/texmf-var" \
-	      TEXINPUTS="$(HTML_TEX4HT_DIR):$(LC_ROOT)/common/tex//:$(LC_ROOT)/common/license/:$(PROJECT_SRC):$(HTML_BUILD)/lecture:" \
+	      TEXINPUTS="$(HTML_TEX4HT_DIR):$(LC_ROOT)/common/tex//:$(LC_ROOT)/common/license/:$(PROJECT_SRC):$(HTML_BUILD)/$$out:" \
 	      BIBINPUTS="$(PROJECT_SRC):" \
-	      "$(MAKE4HT)" -l -c lc-html.cfg -d "$(HTML_DIST)/lecture" "$(MAIN_TEX)" "" "" "" "-interaction=nonstopmode"); \
-	    cp "$(HTML_TEX4HT_DIR)/lc.css" "$(HTML_DIST)/lecture/lc.css"; \
-	    test -f "$(HTML_DIST)/lecture/main.html" && cp "$(HTML_DIST)/lecture/main.html" "$(HTML_DIST)/lecture/index.html"; \
-	  fi; \
-	  if test -f "$(PROBLEMSET_TEX)"; then \
-	    mkdir -p "$(HTML_BUILD)/problemset" "$(HTML_DIST)/problemset"; \
-	    sh "$(LC_ROOT)/common/build-aux/lc-version.sh" > "$(HTML_BUILD)/problemset/lc-version.tex"; \
-	    (cd "$(HTML_BUILD)/problemset" && \
-	      TEXMFVAR="$(BUILD_ROOT)/texmf-var" \
-	      TEXINPUTS="$(HTML_TEX4HT_DIR):$(LC_ROOT)/common/tex//:$(LC_ROOT)/common/license/:$(PROJECT_SRC):$(HTML_BUILD)/problemset:" \
-	      BIBINPUTS="$(PROJECT_SRC):" \
-	      "$(MAKE4HT)" -l -c lc-html.cfg -d "$(HTML_DIST)/problemset" "$(PROBLEMSET_TEX)" "" "" "" "-interaction=nonstopmode"); \
-	    cp "$(HTML_TEX4HT_DIR)/lc.css" "$(HTML_DIST)/problemset/lc.css"; \
-	    test -f "$(HTML_DIST)/problemset/problemset.html" && cp "$(HTML_DIST)/problemset/problemset.html" "$(HTML_DIST)/problemset/index.html"; \
-	  fi
+	      "$(MAKE4HT)" -l -c lc-html.cfg -d "$(HTML_DIST)/$$out" "$$src" "" "" "" "-interaction=nonstopmode"); \
+	    cp "$(HTML_TEX4HT_DIR)/lc.css" "$(HTML_DIST)/$$out/lc.css"; \
+	    test -f "$(HTML_DIST)/$$out/$$target.html" && cp "$(HTML_DIST)/$$out/$$target.html" "$(HTML_DIST)/$$out/index.html"; \
+	  done
 
 svg: $(SVG_FILES)
 
@@ -109,8 +108,11 @@ $(SVG_DIST)/%.svg: $(PROJECT_SRC)/figures/tikz/%.tex
 	  fi
 
 check: pdf
-	@test -s "$(PDF_DIST)/lecture.pdf" || test ! -f "$(MAIN_TEX)"
-	@test -s "$(PDF_DIST)/problemset.pdf" || test ! -f "$(PROBLEMSET_TEX)"
+	@set -eu; for target in $(DOC_TARGETS); do \
+	  out="$$target"; \
+	  if test "$$target" = main; then out="$(MAIN_OUTPUT_NAME)"; fi; \
+	  test -s "$(PDF_DIST)/$$out.pdf"; \
+	done
 
 logs:
 	@find "$(BUILD_ROOT)" -type f -name '*.log' -print 2>/dev/null || true
