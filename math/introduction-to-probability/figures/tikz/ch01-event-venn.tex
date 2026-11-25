@@ -1,0 +1,82 @@
+\begin{tikzpicture}
+  % (1) A \subset B
+  \begin{scope}[shift={(0,2.8)}]
+    \draw[draw=lc-ink,line width=0.5pt] (0,0) rectangle (3.6,2.2);
+    \node[lc label,anchor=south west] at (0.08,0.06) {$S$};
+    \draw[lc curve 1] (1.8,1.15) circle (0.85);
+    \fill[lc fill] (1.95,1.15) circle (0.45);
+    \draw[lc curve 2] (1.95,1.15) circle (0.45);
+    \node[lc label] at (1.30,1.15) {$B$};
+    \node[lc label] at (1.95,1.15) {$A$};
+    \node[lc label,anchor=north] at (1.8,-0.08) {(1) $A\subset B$};
+  \end{scope}
+
+  % (2) A \cup B
+  \begin{scope}[shift={(4.4,2.8)}]
+    \draw[draw=lc-ink,line width=0.5pt] (0,0) rectangle (3.6,2.2);
+    \node[lc label,anchor=south west] at (0.08,0.06) {$S$};
+    \fill[lc fill] (1.45,1.15) circle (0.68);
+    \fill[lc fill] (2.25,1.15) circle (0.68);
+    \draw[lc curve 1] (1.45,1.15) circle (0.68);
+    \draw[lc curve 2] (2.25,1.15) circle (0.68);
+    \node[lc label] at (1.15,1.15) {$A$};
+    \node[lc label] at (2.55,1.15) {$B$};
+    \node[lc label,anchor=north] at (1.8,-0.08) {(2) $A\cup B$};
+  \end{scope}
+
+  % (3) A \cap B
+  \begin{scope}[shift={(8.8,2.8)}]
+    \draw[draw=lc-ink,line width=0.5pt] (0,0) rectangle (3.6,2.2);
+    \node[lc label,anchor=south west] at (0.08,0.06) {$S$};
+    \begin{scope}
+      \clip (1.45,1.15) circle (0.68);
+      \fill[lc fill] (2.25,1.15) circle (0.68);
+    \end{scope}
+    \draw[lc curve 1] (1.45,1.15) circle (0.68);
+    \draw[lc curve 2] (2.25,1.15) circle (0.68);
+    \node[lc label] at (1.15,1.15) {$A$};
+    \node[lc label] at (2.55,1.15) {$B$};
+    \node[lc label,anchor=north] at (1.8,-0.08) {(3) $A\cap B$};
+  \end{scope}
+
+  % (4) A - B
+  \begin{scope}[shift={(0,0)}]
+    \draw[draw=lc-ink,line width=0.5pt] (0,0) rectangle (3.6,2.2);
+    \node[lc label,anchor=south west] at (0.08,0.06) {$S$};
+    \begin{scope}
+      \clip (0,0) rectangle (3.6,2.2);
+      \fill[lc fill] (1.45,1.15) circle (0.68);
+      \fill[white] (2.25,1.15) circle (0.68);
+    \end{scope}
+    \draw[lc curve 1] (1.45,1.15) circle (0.68);
+    \draw[lc curve 2] (2.25,1.15) circle (0.68);
+    \node[lc label] at (1.15,1.15) {$A$};
+    \node[lc label] at (2.55,1.15) {$B$};
+    \node[lc label,anchor=north] at (1.8,-0.08) {(4) $A-B$};
+  \end{scope}
+
+  % (5) A \cap B = \varnothing
+  \begin{scope}[shift={(4.4,0)}]
+    \draw[draw=lc-ink,line width=0.5pt] (0,0) rectangle (3.6,2.2);
+    \node[lc label,anchor=south west] at (0.08,0.06) {$S$};
+    \fill[lc fill] (1.08,1.15) circle (0.58);
+    \fill[lc fill] (2.52,1.15) circle (0.58);
+    \draw[lc curve 1] (1.08,1.15) circle (0.58);
+    \draw[lc curve 2] (2.52,1.15) circle (0.58);
+    \node[lc label] at (1.08,1.15) {$A$};
+    \node[lc label] at (2.52,1.15) {$B$};
+    \node[lc label,anchor=north] at (1.8,-0.08) {(5) $A\cap B=\varnothing$};
+  \end{scope}
+
+  % (6) \overline{A}
+  \begin{scope}[shift={(8.8,0)}]
+    \fill[lc fill] (0,0) rectangle (3.6,2.2);
+    \fill[white] (1.8,1.15) circle (0.68);
+    \draw[draw=lc-ink,line width=0.5pt] (0,0) rectangle (3.6,2.2);
+    \draw[lc curve 1] (1.8,1.15) circle (0.68);
+    \node[lc label,anchor=south west] at (0.08,0.06) {$S$};
+    \node[lc label] at (1.8,1.15) {$A$};
+    \node[lc label] at (2.95,1.72) {$\overline{A}$};
+    \node[lc label,anchor=north] at (1.8,-0.08) {(6) $\overline{A}=S-A$};
+  \end{scope}
+\end{tikzpicture}

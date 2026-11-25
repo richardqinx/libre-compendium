@@ -1,0 +1,861 @@
+% libre-compendium
+%
+% Copyright (C) 2026 Richard Qin
+%
+% This document is dual-licensed under either:
+% - GNU Free Documentation License, Version 1.3 or any later version
+%   published by the Free Software Foundation; with no Invariant Sections,
+%   no Front-Cover Texts, and no Back-Cover Texts (see COPYING.DOC); or
+% - Creative Commons Attribution-ShareAlike 4.0 International License
+%   (see LICENSE-CC-BY-SA-4.0).
+\chapter{随机变量及其分布}
+\label{ch:random-variables}
+
+第一章以事件及其集合运算描述随机现象。在大量实际问题中，人们关心的往往是与试验结果相联系的数值，例如次品件数、元件寿命或测量误差。将随机试验的每个结果映为实数，便引入了随机变量的概念，从而可以借助微积分与函数分析的工具系统研究概率规律。本章先给出随机变量与分布函数的定义，分别讨论离散型与连续型两类主要模型，最后研究随机变量函数的分布。
+
+\section{随机变量}
+\label{sec:random-variable}
+
+\begin{definition}[随机变量]
+\label{def:random-variable}
+设随机试验 $E$ 的样本空间为 $S=\set{e}$。若对每个样本点 $e\in S$，都有唯一的实数 $X(e)$ 与之对应，则称定义在样本空间 $S$ 上的实值单值函数 $X=X(e)$ 为\textbf{随机变量}。
+\end{definition}
+
+通常用大写字母 $X,Y,Z$ 表示随机变量，用小写字母 $x,y,z$ 表示实数。对于任意实数集合 $L\subset\R$，记号 $\set{X\in L}$ 表示样本空间中所有满足 $X(e)\in L$ 的样本点构成的事件，即
+\[
+  \set{X\in L}=\set{e\in S\mid X(e)\in L},\qquad
+  P(X\in L)=P(\set{e\in S\mid X(e)\in L}).
+\]
+特别地，$\set{X=x}$、$\set{X\le x}$、$\set{a<X\le b}$ 均代表样本空间中的随机事件。
+
+\begin{remark}[可测性说明]
+严格公理化定义要求随机变量满足可测性条件：对任意实数 $x$，集合 $\set{e\in S\mid X(e)\le x}$ 属于事件域 $\mathcal{F}$，从而保证各类区间事件的概率均有定义。相关细节将在文末附录中统一讨论。
+\end{remark}
+
+\begin{example}[title={从样本点映射到随机变量}]
+\label{eg:rv-coin-sum}
+在\cref{eg:seven-sample-spaces}的试验 $E_2$（抛一枚均匀硬币三次）中，以 $X$ 记出现正面的次数，写出 $X(e)$ 的对应关系，并求 $P(X=2)$ 与 $P(X\le 1)$。
+\begin{solution}
+样本空间 $S_2$ 含 $8$ 个等可能样本点，$X$ 将 $S_2$ 映到 $\set{0,1,2,3}$：
+\[
+  X(e)=
+  \begin{cases}
+    3,& e=HHH,\\
+    2,& e\in\set{HHT,HTH,THH},\\
+    1,& e\in\set{HTT,THT,TTH},\\
+    0,& e=TTT.
+  \end{cases}
+\]
+由此可得
+\[
+  \begin{gathered}
+    P(X=2)=P(\set{HHT,HTH,THH})=\frac{3}{8},\\
+    P(X\le 1)=P(\set{HTT,THT,TTH,TTT})=\frac{4}{8}=\frac{1}{2}.
+  \end{gathered}
+\]
+\end{solution}
+\end{example}
+
+\begin{definition}[同分布]
+\label{def:identically-distributed}
+若对任意实数 $x$ 均有 $P(X\le x)=P(Y\le x)$，则称随机变量 $X$ 与 $Y$ \textbf{同分布}。
+\end{definition}
+
+\section{离散型随机变量及其分布律}
+\label{sec:discrete-law}
+
+\begin{definition}[离散型随机变量与分布律]
+\label{def:discrete-rv}
+若随机变量 $X$ 的全部可能取值是有限个或可列无限多个 $x_1,x_2,\ldots$，则称 $X$ 为\textbf{离散型随机变量}。称
+\begin{equation}
+  P(X=x_k)=p_k,\qquad k=1,2,\ldots
+  \label{eq:pmf-def}
+\end{equation}
+为 $X$ 的\textbf{分布律}（又称\textbf{概率分布列}），常以表格形式记为
+\[
+\begin{array}{c|ccccc}
+  X & x_1 & x_2 & \cdots & x_k & \cdots \\ \hline
+  p_k & p_1 & p_2 & \cdots & p_k & \cdots
+\end{array}
+\]
+分布律满足两条基本性质：
+\begin{enumerate}
+  \item \textbf{非负性}：$p_k\ge 0\,(k=1,2,\ldots)$；
+  \item \textbf{规范性}：$\sum_{k}p_k=1$。
+\end{enumerate}
+\end{definition}
+
+由于各事件 $\set{X=x_k}$ 两两互斥且并集为 $S$，由概率的可列可加性立得 $\sum_k p_k=1$；且对任意实数集 $D$，有 $P(X\in D)=\sum_{x_k\in D}p_k$。
+
+\begin{example}[title={通过信号灯组数的分布律}]
+\label{eg:traffic-lights}
+汽车在开往目的地的道路上依次经过 $4$ 组相互独立的信号灯，每组信号灯禁止通行的概率均为 $p\,(0<p<1)$。记 $X$ 为汽车首次停下时已经通过的信号灯组数，求 $X$ 的分布律（并给出 $p=1/2$ 时的数值表）。
+\begin{solution}
+汽车可能在第 $1,2,3,4$ 组信号灯处首次停下（分别对应 $X=0,1,2,3$），也可能顺利通过全部 $4$ 组（对应 $X=4$）。由各组信号灯相互独立，
+\[
+  P(X=k)=(1-p)^k p\quad(k=0,1,2,3),\qquad P(X=4)=(1-p)^4.
+\]
+当 $p=1/2$ 时，分布律列表如下：
+\[
+\begin{array}{c|ccccc}
+  X & 0 & 1 & 2 & 3 & 4 \\ \hline
+  p_k & 0.5 & 0.25 & 0.125 & 0.0625 & 0.0625
+\end{array}
+\]
+核验各项之和为 $0.5+0.25+0.125+0.0625+0.0625=1$。
+\end{solution}
+\end{example}
+
+\subsection{(0--1) 分布与二项分布}
+
+\begin{definition}[$(0\text{--}1)$ 分布与二项分布]
+\label{def:bernoulli-binomial}
+\begin{enumerate}
+  \item 若随机变量 $X$ 只取 $0$ 与 $1$ 两个值，分布律为
+  \[
+    P(X=k)=p^k(1-p)^{1-k},\qquad k=0,1\quad(0<p<1),
+  \]
+  则称 $X$ 服从参数为 $p$ 的\textbf{$(0\text{--}1)$ 分布}（又称\textbf{两点分布}或\textbf{伯努利分布}），记为 $X\sim b(1,p)$。
+  \item 在 $n$ 重伯努利试验中，记成功次数为 $X$。由\eqref{eq:bernoulli-count}，$X$ 的分布律为
+  \begin{equation}
+    P(X=k)=\binom{n}{k}p^k(1-p)^{n-k},\qquad k=0,1,\ldots,n\quad(0<p<1),
+    \label{eq:binomial-law}
+  \end{equation}
+  称 $X$ 服从参数为 $n,p$ 的\textbf{二项分布}，记为 $X\sim b(n,p)$。
+\end{enumerate}
+\end{definition}
+
+由二项式定理，$\sum_{k=0}^{n}\binom{n}{k}p^k(1-p)^{n-k}=\bigl[p+(1-p)\bigr]^n=1$，规范性成立。当 $n=1$ 时二项分布退化为 $(0\text{--}1)$ 分布。
+
+\begin{proposition}[二项分布的最可能次数]
+\label{prop:binomial-mode}
+设 $X\sim b(n,p)$，则随着 $k$ 从 $0$ 增至 $n$，概率 $p_k=P(X=k)$ 先单调递增，达到极大值后再单调递减：
+\begin{enumerate}
+  \item 若 $(n+1)p$ 不是整数，则 $p_k$ 在唯一整数 $k_0=\lfloor (n+1)p\rfloor$ 处取得最大值；
+  \item 若 $(n+1)p$ 是整数，则 $p_k$ 在 $k_0=(n+1)p-1$ 与 $k_0=(n+1)p$ 两处并列取得最大值。
+\end{enumerate}
+\end{proposition}
+\begin{proof}
+对 $1\le k\le n$，作相邻概率之比：
+\[
+  \frac{p_k}{p_{k-1}}
+  =\frac{\binom{n}{k}p^k(1-p)^{n-k}}{\binom{n}{k-1}p^{k-1}(1-p)^{n-k+1}}
+  =\frac{n-k+1}{k}\cdot\frac{p}{1-p}
+  =1+\frac{(n+1)p-k}{k(1-p)}.
+\]
+因此，$p_k>p_{k-1}$ 当且仅当 $k<(n+1)p$；$p_k=p_{k-1}$ 当且仅当 $k=(n+1)p$；$p_k<p_{k-1}$ 当且仅当 $k>(n+1)p$。由此即得两种情形的极大值位置。
+\end{proof}
+
+\begin{example}[title={分组维修与集中维修方案比较}]
+\label{eg:maintenance-pooling}
+某车间有 $80$ 台同类型设备，各台设备的工作相互独立，同一时刻发生故障的概率均为 $0.01$，且每台设备的故障可由一名维修工独立处理。现有两种人员配备方案：方案一由 $4$ 人维护，每人各自负责 $20$ 台；方案二由 $3$ 人共同维护全部 $80$ 台。比较两种方案下，设备发生故障时不能及时得到维修的概率。
+\begin{solution}
+在方案一中，记 $X_i\,(i=1,2,3,4)$ 为第 $i$ 名工人负责的 $20$ 台设备在同一时刻发生故障的台数，则 $X_1,X_2,X_3,X_4$ 相互独立且同服从 $b(20,0.01)$。记事件 $A_i=\set{X_i\ge 2}$ 表示第 $i$ 组出现不能及时维修的情形，则对每组有
+\[
+  P(A_i)=1-P(X_i=0)-P(X_i=1)
+  =1-0.99^{20}-20\times 0.01\times 0.99^{19}\approx 0.01686.
+\]
+整个车间出现故障而不能及时维修的事件为 $A_1\cup A_2\cup A_3\cup A_4$。由各组相互独立，
+\[
+  P(A_1\cup A_2\cup A_3\cup A_4)
+  =1-\prod_{i=1}^{4}\bigl(1-P(A_i)\bigr)
+  =1-(1-P(A_1))^4\approx 0.06575.
+\]
+（即便仅以单组概率作下界估计，也有 $P(A_1\cup A_2\cup A_3\cup A_4)>P(A_1)\approx 0.01686$。）
+
+在方案二中，记 $Y$ 为 $80$ 台设备在同一时刻发生故障的总台数，则 $Y\sim b(80,0.01)$。当且仅当同时有至少 $4$ 台设备发生故障时，$3$ 名工人无法及时全部处理，其概率为
+\[
+  P(Y\ge 4)=1-\sum_{k=0}^{3}\binom{80}{k}0.01^k\,0.99^{80-k}\approx 0.00866.
+\]
+可见，方案二虽然少用了 $1$ 名工人（每人平均照看约 $27$ 台设备），但通过人力共享大幅降低了故障拥堵概率，不能及时维修的概率由约 $6.58\%$ 降至约 $0.87\%$，服务可靠性反而显著提高。
+\end{solution}
+\end{example}
+
+\subsection{泊松分布与泊松定理}
+
+\begin{definition}[泊松分布]
+\label{def:poisson}
+设随机变量 $X$ 的全部可能取值为 $0,1,2,\ldots$，其分布律为
+\begin{equation}
+  P(X=k)=\frac{\lambda^k\e^{-\lambda}}{k!},\qquad k=0,1,2,\ldots\quad(\lambda>0),
+  \label{eq:poisson-law}
+\end{equation}
+则称 $X$ 服从参数为 $\lambda$ 的\textbf{泊松（Poisson）分布}，记为 $X\sim\pi(\lambda)$。
+\end{definition}
+
+由指数函数的麦克劳林展开 $\sum_{k=0}^{\infty}\frac{\lambda^k}{k!}=\e^\lambda$，立得 $\sum_{k=0}^{\infty}\frac{\lambda^k\e^{-\lambda}}{k!}=1$。泊松分布广泛用于描述单位时间或单位区域内稀有随机事件发生的次数，如一昼夜内急救电话呼唤次数、放射性物质在固定时段内发射的粒子数、一页书中的印刷错误数等。它与二项分布之间有如下重要的极限联系。
+
+\begin{theorem}[泊松定理]
+\label{thm:poisson-limit}
+设 $\lambda>0$ 为常数，对每个正整数 $n$ 设 $p_n\in(0,1)$ 满足 $\lim_{n\to\infty}np_n=\lambda$。则对任意固定的非负整数 $k$，有
+\begin{equation}
+  \lim_{n\to\infty}\binom{n}{k}p_n^k(1-p_n)^{n-k}=\frac{\lambda^k\e^{-\lambda}}{k!}.
+  \label{eq:poisson-limit}
+\end{equation}
+\end{theorem}
+\begin{proof}
+记 $\lambda_n=np_n$，则 $\lambda_n\to\lambda$ 且 $p_n=\lambda_n/n\to 0$。对固定非负整数 $k$，将二项概率重写为
+\[
+\begin{aligned}
+  \binom{n}{k}p_n^k(1-p_n)^{n-k}
+  &=\frac{n(n-1)\cdots(n-k+1)}{k!}\left(\frac{\lambda_n}{n}\right)^k\left(1-\frac{\lambda_n}{n}\right)^{n-k}\\
+  &=\frac{\lambda_n^k}{k!}\cdot\prod_{j=0}^{k-1}\left(1-\frac{j}{n}\right)\cdot\left(1-\frac{\lambda_n}{n}\right)^{n}\cdot\left(1-\frac{\lambda_n}{n}\right)^{-k}.
+\end{aligned}
+\]
+当 $n\to\infty$ 时：第一因子趋于 $\frac{\lambda^k}{k!}$；第二因子为固定 $k$ 项之积，每项趋于 $1$；第四因子趋于 $1$。对第三因子取自然对数，由等价无穷小 $\ln(1-u)\sim -u\,(u\to 0)$ 得
+\[
+  n\ln\left(1-\frac{\lambda_n}{n}\right)
+  =\lambda_n\cdot\frac{\ln(1-\lambda_n/n)}{\lambda_n/n}
+  \longrightarrow -\lambda,
+\]
+故 $\left(1-\frac{\lambda_n}{n}\right)^n\to\e^{-\lambda}$。将四个因子的极限相乘即得\eqref{eq:poisson-limit}。
+\end{proof}
+
+当 $n$ 较大、$p$ 较小且 $\lambda=np$ 适中（工程上常用 $n\ge 20,\,p\le 0.05$）时，可用泊松分布近似计算二项概率：
+\[
+  \binom{n}{k}p^k(1-p)^{n-k}\approx\frac{\lambda^k\e^{-\lambda}}{k!}\qquad(\lambda=np).
+\]
+
+\begin{example}[title={利用泊松定理近似计算二项概率}]
+\label{eg:poisson-approx}
+某批微型芯片的次品率为 $0.1\%$，各芯片是否为次品相互独立。从该批芯片中任取 $1000$ 只，求其中至少有 $2$ 只次品的概率。
+\begin{solution}
+记 $X$ 为次品只数，则 $X\sim b(1000,0.001)$。直接用二项公式计算得
+\[
+  P(X\ge 2)=1-0.999^{1000}-1000\times 0.001\times 0.999^{999}\approx 0.264241.
+\]
+利用泊松定理，取 $\lambda=np=1000\times 0.001=1$，则
+\[
+  P(X\ge 2)\approx 1-\e^{-1}-\e^{-1}=1-2\e^{-1}\approx 0.264241.
+\]
+两者在小概率、大样本情形下吻合至小数点后第六位，而泊松近似的计算大为简化。
+\end{solution}
+\end{example}
+
+\subsection{几何分布、负二项分布与超几何分布}
+
+除上述三类外，以下三种离散分布也在计数与等待模型中频繁出现。
+
+\begin{definition}[几何分布、负二项分布与超几何分布]
+\label{def:geom-nb-hyper}
+\begin{enumerate}
+  \item \textbf{几何分布}：在每次成功概率为 $p\,(0<p<1)$ 的独立重复试验中，记首次成功所需的试验次数为 $X$，则其分布律为
+  \begin{equation}
+    P(X=k)=(1-p)^{k-1}p,\qquad k=1,2,\ldots,
+    \label{eq:geometric-law}
+  \end{equation}
+  记为 $X\sim G(p)$。
+  \item \textbf{负二项分布（帕斯卡分布）}：在同样的独立重复试验中，记累计出现第 $r\,(r\ge 1)$ 次成功所需的总试验次数为 $Y$。因第 $k$ 次试验必成功且前 $k-1$ 次恰成功 $r-1$ 次，故
+  \begin{equation}
+    P(Y=k)=\binom{k-1}{r-1}p^r(1-p)^{k-r},\qquad k=r,r+1,\ldots,
+    \label{eq:neg-binomial-law}
+  \end{equation}
+  记为 $Y\sim NB(r,p)$。当 $r=1$ 时即退化为几何分布。
+  \item \textbf{超几何分布}：从含 $M$ 件次品的 $N$ 件产品中不放回任取 $n$ 件，记抽得的次品数为 $X$。由\eqref{eq:hypergeometric-prob}，
+  \begin{equation}
+    P(X=k)=\frac{\binom{M}{k}\binom{N-M}{n-k}}{\binom{N}{n}},\qquad
+    \max\set{0,n-N+M}\le k\le\min\set{n,M},
+    \label{eq:hypergeometric-law}
+  \end{equation}
+  记为 $X\sim H(N,M,n)$。
+\end{enumerate}
+\end{definition}
+
+令 $q=1-p$。几何分布满足 $\sum_{k=1}^{\infty}pq^{k-1}=\frac{p}{1-q}=1$，且对任意正整数 $m,n$ 有
+\[
+  P(X>m+n\mid X>m)=\frac{q^{m+n}}{q^m}=q^n=P(X>n),
+\]
+称为\textbf{离散无记忆性}：前 $m$ 次试验均失败的信息不改变此后等待首次成功所需次数的分布。若改记首次成功前的失败次数 $K=X-1$，则 $K$ 从 $0$ 起取值，$P(K=k)=q^kp\,(k=0,1,\ldots)$。超几何分布的规范性来自组合恒等式 $\sum_k\binom{M}{k}\binom{N-M}{n-k}=\binom{N}{n}$。
+
+\section{随机变量的分布函数}
+\label{sec:cdf}
+
+对于取值充满整个区间的非离散型随机变量，无法逐点列举分布律。为用统一的分析工具刻画所有类型的随机变量，引入分布函数。
+
+\begin{definition}[分布函数]
+\label{def:cdf}
+设 $X$ 是随机变量，对任意实数 $x$，称函数
+\begin{equation}
+  F(x)=P(X\le x),\qquad -\infty<x<\infty
+  \label{eq:cdf-def}
+\end{equation}
+为 $X$ 的\textbf{分布函数}（必要时记为 $F_X(x)$）。
+\end{definition}
+
+将 $X$ 视作数轴上的随机点，则 $F(x)$ 即随机点落在区间 $(-\infty,x]$ 内的累积概率。
+
+\begin{theorem}[分布函数的基本性质]
+\label{thm:cdf-properties}
+任意随机变量的分布函数 $F(x)$ 满足以下三条性质：
+\begin{enumerate}
+  \item \textbf{单调不减性}：若 $x_1<x_2$，则 $F(x_1)\le F(x_2)$；
+  \item \textbf{规范极限}：$0\le F(x)\le 1$，且
+  \[
+    F(-\infty)=\lim_{x\to-\infty}F(x)=0,\qquad F(+\infty)=\lim_{x\to+\infty}F(x)=1;
+  \]
+  \item \textbf{右连续性}：对任意实数 $x$，有 $F(x+0)=\lim_{t\to x^+}F(t)=F(x)$。
+\end{enumerate}
+反之，任意满足上述三条性质的实函数 $F(x)$ 必是某个随机变量的分布函数。
+\end{theorem}
+\begin{proof}
+(1) 若 $x_1<x_2$，则 $\set{X\le x_1}\subset\set{X\le x_2}$，由\cref{thm:probability-properties}中的单调性得 $F(x_1)\le F(x_2)$。
+
+(2) 显然 $0\le F(x)\le 1$。因 $F$ 单调不减，只需沿整数列求极限。事件列 $A_n=\set{X\le -n}$ 单调递减且 $\bigcap_{n=1}^{\infty}A_n=\varnothing$，事件列 $B_n=\set{X\le n}$ 单调递增且 $\bigcup_{n=1}^{\infty}B_n=S$，由\cref{thm:probability-continuity}即得
+\[
+  \lim_{n\to\infty}F(-n)=P(\varnothing)=0,\qquad \lim_{n\to\infty}F(n)=P(S)=1.
+\]
+
+(3) 任取单调递减序列 $t_n\downarrow x$，事件列 $\set{X\le t_n}$ 单调递减且 $\bigcap_{n=1}^{\infty}\set{X\le t_n}=\set{X\le x}$。由上连续性得 $\lim_{n\to\infty}F(t_n)=P(X\le x)=F(x)$，即 $F(x+0)=F(x)$。充分性的构造涉及区间测度扩张，详见文末附录。
+\end{proof}
+
+类似地，取严格递增序列 $t_n\uparrow x$，事件列 $\set{X\le t_n}$ 单调递增且并集为 $\set{X<x}$，由下连续性得到左极限与点概率的关系：
+\begin{equation}
+  F(x-0)=P(X<x),\qquad P(X=x)=F(x)-F(x-0).
+  \label{eq:cdf-jump}
+\end{equation}
+由此可直接写出任意区间的概率计算公式：对任意 $a<b$，
+\begin{equation}
+\begin{aligned}
+  P(a<X\le b)&=F(b)-F(a),&
+  P(a\le X\le b)&=F(b)-F(a-0),\\
+  P(a<X<b)&=F(b-0)-F(a),&
+  P(a\le X<b)&=F(b-0)-F(a-0).
+\end{aligned}
+\label{eq:cdf-intervals}
+\end{equation}
+
+对于离散型随机变量，由\eqref{eq:cdf-def}得
+\[
+  F(x)=\sum_{x_k\le x}p_k,
+\]
+其图像是一条右连续的阶梯形曲线，在每个可能取值 $x_k$ 处产生高度为 $p_k$ 的跳跃。
+
+\begin{example}[title={离散型随机变量的阶梯分布函数}]
+\label{eg:discrete-cdf}
+设离散型随机变量 $X$ 的分布律为
+\[
+\begin{array}{c|ccc}
+  X & -1 & 2 & 3 \\ \hline
+  p_k & 1/4 & 1/2 & 1/4
+\end{array}
+\]
+求 $X$ 的分布函数 $F(x)$，并计算 $P(X\le 1/2)$、$P(3/2<X\le 5/2)$ 与 $P(2\le X\le 3)$。
+\begin{solution}
+按 $x$ 落入由取值 $-1,2,3$ 划分的四个区间分别累加概率：
+\[
+  F(x)=
+  \begin{cases}
+    0,& x<-1,\\
+    1/4,& -1\le x<2,\\
+    3/4,& 2\le x<3,\\
+    1,& x\ge 3.
+  \end{cases}
+\]
+其图像见\cref{fig:discrete-cdf}。利用\eqref{eq:cdf-intervals}计算：
+\[
+  P(X\le 1/2)=F(1/2)=\frac{1}{4},\qquad
+  P(3/2<X\le 5/2)=F(5/2)-F(3/2)=\frac{3}{4}-\frac{1}{4}=\frac{1}{2},
+\]
+\[
+  P(2\le X\le 3)=F(3)-F(2-0)=1-\frac{1}{4}=\frac{3}{4}.
+\]
+\end{solution}
+\end{example}
+
+\lcfigure[caption={\cref{eg:discrete-cdf}中离散型随机变量的阶梯分布函数 $F(x)$。每个跳跃点左侧以空心点表示左极限 $F(x_k-0)$，右侧以实心点表示右连续函数值 $F(x_k)$，跳跃高度恰好等于该点概率 $p_k$。},label=fig:discrete-cdf]{ch02-discrete-cdf}
+
+\begin{example}[title={连续变化的分布函数：圆靶弹着点}]
+\label{eg:target-cdf}
+一半径为 $2\ \mathrm{m}$ 的圆形靶盘，设每次射击均中靶，且弹着点落在靶上任一同心圆盘内的概率与该圆盘面积成正比。以 $X$ 表示弹着点到圆心的距离，求 $X$ 的分布函数 $F(x)$。
+\begin{solution}
+当 $x<0$ 时，$\set{X\le x}=\varnothing$，故 $F(x)=0$。当 $0\le x<2$ 时，由几何面积比得
+\[
+  F(x)=P(0\le X\le x)=\frac{\pi x^2}{\pi\cdot 2^2}=\frac{x^2}{4}.
+\]
+当 $x\ge 2$ 时，$\set{X\le x}=S$，故 $F(x)=1$。综上，
+\[
+  F(x)=
+  \begin{cases}
+    0,& x<0,\\
+    x^2/4,& 0\le x<2,\\
+    1,& x\ge 2.
+  \end{cases}
+\]
+这里 $F(x)$ 是一条连续曲线，且对任意 $x\in\R$ 可表为积分 $F(x)=\int_{-\infty}^{x}f(t)\dd t$，其中当 $0<t<2$ 时 $f(t)=t/2$、其余位置 $f(t)=0$。这自然引出了下一节的连续型随机变量。
+\end{solution}
+\end{example}
+
+\section{连续型随机变量及其概率密度}
+\label{sec:density}
+
+\begin{definition}[连续型随机变量与概率密度]
+\label{def:continuous-rv}
+若对随机变量 $X$ 的分布函数 $F(x)$，存在非负可积函数 $f(x)$，使得对任意实数 $x$ 均有
+\begin{equation}
+  F(x)=\int_{-\infty}^{x}f(t)\dd t,
+  \label{eq:density-cdf}
+\end{equation}
+则称 $X$ 为\textbf{连续型随机变量}，$f(x)$ 称为 $X$ 的\textbf{概率密度函数}，简称\textbf{概率密度}。
+\end{definition}
+
+\begin{proposition}[概率密度的基本性质]
+\label{prop:density-properties}
+设 $X$ 是具有概率密度 $f(x)$ 的连续型随机变量，则：
+\begin{enumerate}
+  \item $f(x)\ge 0$；
+  \item $\int_{-\infty}^{+\infty}f(x)\dd x=1$；
+  \item 对任意实数 $a<b$，有
+  \begin{equation}
+    P(a<X\le b)=F(b)-F(a)=\int_{a}^{b}f(x)\dd x;
+    \label{eq:density-interval}
+  \end{equation}
+  \item 在 $f(x)$ 的连续点处，有 $F'(x)=f(x)$；
+  \item 对任意指定实数 $a$，有 $P(X=a)=0$。
+\end{enumerate}
+反之，任意满足性质 (1) 与 (2) 的可积函数 $f(x)$，通过\eqref{eq:density-cdf}定义的 $F(x)$ 必为某个连续型随机变量的分布函数。
+\end{proposition}
+\begin{proof}
+性质 (1) 由定义直接给出；令 $x\to+\infty$ 对\eqref{eq:density-cdf}取极限即得性质 (2)；性质 (3) 由 $F(b)-F(a)$ 相减得到；性质 (4) 由微积分基本定理给出。因变上限积分\eqref{eq:density-cdf}处处连续，故 $F(a-0)=F(a)$，代入\eqref{eq:cdf-jump}立得 $P(X=a)=0$。反向结论直接验证 $F$ 单调不减、连续且在 $\pm\infty$ 处极限分别为 $0,1$ 即可。
+\end{proof}
+
+由 $P(X=a)=0$ 可知，计算连续型随机变量落在区间内的概率时，区间端点开闭无关紧要：
+\[
+  P(a<X<b)=P(a\le X<b)=P(a<X\le b)=P(a\le X\le b)=\int_{a}^{b}f(x)\dd x.
+\]
+
+\begin{pitfall}[正确理解概率密度]
+\begin{enumerate}
+  \item 概率密度 $f(x)$ 不是点概率，而是单位长度上的概率密集程度：当 $\Delta x>0$ 很小时，$P(x<X\le x+\Delta x)\approx f(x)\Delta x$。因此 $f(x)$ 在某些点可以大于 $1$（例如后文均匀分布 $U(0,1/2)$ 的密度恒为 $2$），只要曲线下方总面积为 $1$ 即可。
+  \item 由于积分值不受个别点函数值的影响，改变 $f(x)$ 在有限个点处的值不改变分布函数 $F(x)$。
+\end{enumerate}
+\end{pitfall}
+
+\begin{example}[title={由密度求归一化常数、分布函数与区间概率}]
+\label{eg:piecewise-density}
+设连续型随机变量 $X$ 的概率密度为
+\[
+  f(x)=
+  \begin{cases}
+    kx,& 0\le x<3,\\
+    2-\dfrac{x}{2},& 3\le x\le 4,\\
+    0,& \text{其他}.
+  \end{cases}
+\]
+(1) 确定常数 $k$；(2) 求 $X$ 的分布函数 $F(x)$；(3) 求 $P(1<X\le 7/2)$。
+\begin{solution}
+(1) 由规范性 $\int_{-\infty}^{+\infty}f(x)\dd x=1$，
+\[
+  1=\int_{0}^{3}kx\dd x+\int_{3}^{4}\left(2-\frac{x}{2}\right)\dd x
+  =\frac{9}{2}k+\left[2x-\frac{x^2}{4}\right]_{3}^{4}
+  =\frac{9}{2}k+\frac{1}{4},
+\]
+解得 $k=\frac{1}{6}$。
+
+(2) 分四个区间分段积分：当 $x<0$ 时 $F(x)=0$；当 $0\le x<3$ 时
+\[
+  F(x)=\int_{0}^{x}\frac{t}{6}\dd t=\frac{x^2}{12};
+\]
+当 $3\le x<4$ 时
+\[
+  F(x)=\int_{0}^{3}\frac{t}{6}\dd t+\int_{3}^{x}\left(2-\frac{t}{2}\right)\dd t
+  =\frac{3}{4}+\left(2x-\frac{x^2}{4}-\frac{15}{4}\right)
+  =-3+2x-\frac{x^2}{4};
+\]
+当 $x\ge 4$ 时 $F(x)=1$。整理得
+\[
+  F(x)=
+  \begin{cases}
+    0,& x<0,\\
+    x^2/12,& 0\le x<3,\\
+    -3+2x-x^2/4,& 3\le x<4,\\
+    1,& x\ge 4.
+  \end{cases}
+\]
+核验分界点 $x=0,3,4$ 处左右连续性均成立。
+
+(3) $P(1<X\le 7/2)=F(7/2)-F(1)=\left(-3+7-\frac{49}{16}\right)-\frac{1}{12}=\frac{15}{16}-\frac{1}{12}=\frac{41}{48}$。
+\end{solution}
+\end{example}
+
+\subsection{均匀分布}
+
+\begin{definition}[均匀分布]
+\label{def:uniform}
+若连续型随机变量 $X$ 的概率密度为
+\begin{equation}
+  f(x)=
+  \begin{cases}
+    \dfrac{1}{b-a},& a<x<b,\\
+    0,& \text{其他},
+  \end{cases}
+  \label{eq:uniform-density}
+\end{equation}
+其中 $a<b$，则称 $X$ 在区间 $(a,b)$ 上服从\textbf{均匀分布}，记为 $X\sim U(a,b)$。
+\end{definition}
+
+其分布函数为
+\[
+  F(x)=
+  \begin{cases}
+    0,& x<a,\\
+    \dfrac{x-a}{b-a},& a\le x<b,\\
+    1,& x\ge b.
+  \end{cases}
+\]
+对 $(a,b)$ 内任意长度为 $l$ 的子区间 $(c,c+l)$，有 $P(c<X\le c+l)=\frac{l}{b-a}$，只与区间长度成正比而与位置无关，体现了“等长子区间等可能”的含义。
+
+\subsection{指数分布}
+
+\begin{definition}[指数分布]
+\label{def:exponential}
+若连续型随机变量 $X$ 的概率密度为
+\begin{equation}
+  f(x)=
+  \begin{cases}
+    \dfrac{1}{\theta}\e^{-x/\theta},& x>0,\\
+    0,& x\le 0,
+  \end{cases}
+  \label{eq:exponential-density}
+\end{equation}
+其中 $\theta>0$ 为常数，则称 $X$ 服从尺度参数为 $\theta$ 的\textbf{指数分布}，记为 $X\sim\operatorname{Exp}(\theta)$。
+\end{definition}
+
+积分即得其分布函数为
+\begin{equation}
+  F(x)=
+  \begin{cases}
+    1-\e^{-x/\theta},& x>0,\\
+    0,& x\le 0,
+  \end{cases}
+  \label{eq:exponential-cdf}
+\end{equation}
+尾概率为 $P(X>t)=\e^{-t/\theta}\,(t\ge 0)$。若令速率参数 $\lambda=1/\theta$，密度也可写作 $\lambda\e^{-\lambda x}\,(x>0)$；本讲义统一使用尺度参数 $\theta$（第四章将证明 $\theta$ 恰为均值）。
+
+\begin{proposition}[指数分布的无记忆性]
+\label{prop:exp-memoryless}
+设 $X\sim\operatorname{Exp}(\theta)$，则对任意 $s>0,\,t>0$，成立
+\begin{equation}
+  P(X>s+t\mid X>s)=P(X>t).
+  \label{eq:exp-memoryless}
+\end{equation}
+\end{proposition}
+\begin{proof}
+由条件概率定义及 $\set{X>s+t}\subset\set{X>s}$，
+\[
+  P(X>s+t\mid X>s)=\frac{P(X>s+t)}{P(X>s)}
+  =\frac{\e^{-(s+t)/\theta}}{\e^{-s/\theta}}=\e^{-t/\theta}=P(X>t).
+\]
+\end{proof}
+
+若将 $X$ 理解为某电子元件的寿命，则\eqref{eq:exp-memoryless}表明：已知元件已正常工作了 $s$ 小时，它还能再继续工作至少 $t$ 小时的条件概率与全新元件工作至少 $t$ 小时的概率完全相同，即元件对已使用时长没有“老化记忆”。这一性质使指数分布成为可靠性理论与排队论的核心模型。
+
+\subsection{正态分布}
+
+\begin{definition}[正态分布]
+\label{def:normal}
+若连续型随机变量 $X$ 的概率密度为
+\begin{equation}
+  f(x)=\frac{1}{\sqrt{2\pi}\,\sigma}\exp\left[-\frac{(x-\mu)^2}{2\sigma^2}\right],\qquad -\infty<x<+\infty,
+  \label{eq:normal-density}
+\end{equation}
+其中 $\mu\in\R,\,\sigma>0$ 为常数，则称 $X$ 服从参数为 $\mu,\sigma^2$ 的\textbf{正态分布}（又称\textbf{高斯分布}），记为 $X\sim N(\mu,\sigma^2)$。特别地，当 $\mu=0,\,\sigma=1$ 时称为\textbf{标准正态分布} $N(0,1)$，其概率密度与分布函数分别记为
+\begin{equation}
+  \varphi(x)=\frac{1}{\sqrt{2\pi}}\e^{-x^2/2},\qquad
+  \Phi(x)=\int_{-\infty}^{x}\varphi(t)\dd t.
+  \label{eq:std-normal}
+\end{equation}
+\end{definition}
+
+先验证\eqref{eq:normal-density}的规范性。
+
+\begin{proposition}[高斯积分与正态密度归一化]
+\label{prop:gaussian-integral}
+成立高斯积分 $\int_{-\infty}^{+\infty}\e^{-t^2/2}\dd t=\sqrt{2\pi}$，从而对任意 $\mu\in\R,\,\sigma>0$ 有 $\int_{-\infty}^{+\infty}f(x)\dd x=1$。
+\end{proposition}
+\begin{proof}
+记 $I=\int_{-\infty}^{+\infty}\e^{-t^2/2}\dd t>0$。将 $I^2$ 写成二重积分并作极坐标变换 $x=r\cos\vartheta,\,y=r\sin\vartheta$：
+\[
+  I^2=\int_{-\infty}^{+\infty}\int_{-\infty}^{+\infty}\e^{-(x^2+y^2)/2}\dd x\dd y
+  =\int_{0}^{2\pi}\dd\vartheta\int_{0}^{+\infty}\e^{-r^2/2}r\dd r
+  =2\pi\left[-\e^{-r^2/2}\right]_{0}^{+\infty}=2\pi,
+\]
+故 $I=\sqrt{2\pi}$。对一般正态密度作换元 $t=(x-\mu)/\sigma$，即得
+\[
+  \int_{-\infty}^{+\infty}\frac{1}{\sqrt{2\pi}\,\sigma}\e^{-(x-\mu)^2/(2\sigma^2)}\dd x
+  =\frac{1}{\sqrt{2\pi}}\int_{-\infty}^{+\infty}\e^{-t^2/2}\dd t=1.
+\]
+\end{proof}
+
+\begin{proposition}[正态密度曲线的几何特征]
+\label{prop:normal-density-shape}
+正态分布 $N(\mu,\sigma^2)$ 的概率密度 $f(x)$ 满足：
+\begin{enumerate}
+  \item 曲线关于直线 $x=\mu$ 对称，且 $\lim_{x\to\pm\infty}f(x)=0$（以 $x$ 轴为渐近线）；
+  \item $f(x)$ 在 $(-\infty,\mu)$ 上严格递增，在 $(\mu,+\infty)$ 上严格递减，在 $x=\mu$ 处取得唯一最大值 $f(\mu)=\dfrac{1}{\sqrt{2\pi}\,\sigma}$；
+  \item $f(x)$ 在 $(\mu-\sigma,\mu+\sigma)$ 内上凸，在 $(-\infty,\mu-\sigma)$ 与 $(\mu+\sigma,+\infty)$ 内下凸，因而在 $x=\mu\pm\sigma$ 处有两个拐点。
+\end{enumerate}
+\end{proposition}
+\begin{proof}
+(1) 因 $(x-\mu)^2$ 为 $x-\mu$ 的偶函数，故 $f(\mu-h)=f(\mu+h)$ 对任意 $h\in\R$ 成立，即曲线关于 $x=\mu$ 对称；又当 $x\to\pm\infty$ 时 $(x-\mu)^2/(2\sigma^2)\to+\infty$，故 $f(x)\to 0$。
+
+(2) 对\eqref{eq:normal-density}求一阶导数得
+\[
+  f'(x)=-\frac{x-\mu}{\sigma^2}\,f(x).
+\]
+因 $f(x)>0$ 恒成立，故 $x<\mu$ 时 $f'(x)>0$，$x>\mu$ 时 $f'(x)<0$，$x=\mu$ 是唯一驻点与最大值点，最大值为 $f(\mu)=\frac{1}{\sqrt{2\pi}\sigma}$。
+
+(3) 继续求二阶导数得
+\[
+  f''(x)=-\frac{1}{\sigma^2}f(x)-\frac{x-\mu}{\sigma^2}f'(x)
+  =\frac{(x-\mu)^2-\sigma^2}{\sigma^4}\,f(x).
+\]
+当 $\abs{x-\mu}<\sigma$ 时 $f''(x)<0$，当 $\abs{x-\mu}>\sigma$ 时 $f''(x)>0$，故二阶导数在 $x=\mu\pm\sigma$ 处变号，这两点恰为曲线的两个拐点。
+\end{proof}
+
+由此可见，$\mu$ 是\textbf{位置参数}（改变 $\mu$ 仅左右平移曲线而不改变形状）；$\sigma$ 是\textbf{尺度参数}（$\sigma$ 越小，峰值 $\frac{1}{\sqrt{2\pi}\sigma}$ 越高、两拐点 $\mu\pm\sigma$ 越靠拢，概率质量越集中于 $\mu$ 附近），见\cref{fig:normal-density}左图。
+
+\lcfigure[caption={正态分布的几何特征。左图固定 $\mu$ 比较不同 $\sigma$ 下的密度曲线形态；右图展示标准正态密度 $\varphi(z)$ 在 $[-1,1]$、$[-2,2]$、$[-3,3]$ 内的概率面积（即 $3\sigma$ 原则）。},label=fig:normal-density]{ch02-normal-density}
+
+\begin{proposition}[正态分布的标准化与对称性]
+\label{prop:normal-standardize}
+\begin{enumerate}
+  \item 标准正态分布函数满足 $\Phi(-z)=1-\Phi(z)$。
+  \item 若 $X\sim N(\mu,\sigma^2)$，则标准化变量 $Z=\dfrac{X-\mu}{\sigma}\sim N(0,1)$。由此，对任意实数 $a<b$，
+  \begin{equation}
+    F(x)=\Phi\left(\frac{x-\mu}{\sigma}\right),\qquad
+    P(a<X\le b)=\Phi\left(\frac{b-\mu}{\sigma}\right)-\Phi\left(\frac{a-\mu}{\sigma}\right).
+    \label{eq:normal-standardize}
+  \end{equation}
+\end{enumerate}
+\end{proposition}
+\begin{proof}
+(1) 因 $\varphi(t)$ 为偶函数，令 $u=-t$ 得
+\[
+  \Phi(-z)=\int_{-\infty}^{-z}\varphi(t)\dd t=\int_{z}^{+\infty}\varphi(u)\dd u=1-\Phi(z).
+\]
+(2) 计算 $Z=(X-\mu)/\sigma$ 的分布函数，并作积分换元 $t=(u-\mu)/\sigma$：
+\[
+  P(Z\le z)=P(X\le\mu+\sigma z)
+  =\int_{-\infty}^{\mu+\sigma z}\frac{1}{\sqrt{2\pi}\,\sigma}\e^{-(u-\mu)^2/(2\sigma^2)}\dd u
+  =\int_{-\infty}^{z}\varphi(t)\dd t=\Phi(z),
+\]
+故 $Z\sim N(0,1)$。令 $z=(x-\mu)/\sigma$ 即得 $F(x)=\Phi\bigl(\frac{x-\mu}{\sigma}\bigr)$，两式相减即得区间概率公式。
+\end{proof}
+
+利用\eqref{eq:normal-standardize}，对任意 $X\sim N(\mu,\sigma^2)$ 可算得
+\[
+\begin{aligned}
+  P(\abs{X-\mu}<\sigma)&=2\Phi(1)-1\approx 68.27\%,\\
+  P(\abs{X-\mu}<2\sigma)&=2\Phi(2)-1\approx 95.45\%,\\
+  P(\abs{X-\mu}<3\sigma)&=2\Phi(3)-1\approx 99.73\%.
+\end{aligned}
+\]
+可见正态变量的取值几乎全部落在 $(\mu-3\sigma,\mu+3\sigma)$ 内，这一规律称为\textbf{$3\sigma$ 原则}（\cref{fig:normal-density}右图）。
+
+\begin{definition}[标准正态分布的上 $\alpha$ 分位点]
+\label{def:normal-quantile}
+设 $Z\sim N(0,1)$。对给定 $\alpha\in(0,1)$，若实数 $z_\alpha$ 满足
+\[
+  P(Z>z_\alpha)=1-\Phi(z_\alpha)=\alpha,
+\]
+则称 $z_\alpha$ 为标准正态分布的\textbf{上 $\alpha$ 分位点}。由对称性有 $z_{1-\alpha}=-z_\alpha$。
+\end{definition}
+
+下表列出统计推断与概率计算中最常用的几个标准正态上分位点：
+\[
+\begin{array}{c|cccccc}
+  \alpha & 0.10 & 0.05 & 0.025 & 0.01 & 0.005 & 0.001 \\ \hline
+  z_\alpha & 1.282 & 1.645 & 1.960 & 2.326 & 2.576 & 3.090
+\end{array}
+\]
+
+\begin{example}[title={温度控制器的设定值}]
+\label{eg:temp-regulator}
+容器内液体的温度 $X$（单位：$^\circ\mathrm{C}$）服从正态分布 $N(d,0.5^2)$，其中 $d$ 为调节器的设定温度。(1) 当 $d=90$ 时，求液体温度低于 $89\,^\circ\mathrm{C}$ 的概率；(2) 若要求温度不低于 $80\,^\circ\mathrm{C}$ 的概率至少为 $0.99$，设定值 $d$ 至少应取多少？
+\begin{solution}
+(1) 当 $d=90,\,\sigma=0.5$ 时，由标准化公式\eqref{eq:normal-standardize}，
+\[
+  P(X<89)=\Phi\left(\frac{89-90}{0.5}\right)=\Phi(-2)=1-\Phi(2)\approx 1-0.9772=0.0228.
+\]
+
+(2) 依题意要求
+\[
+  P(X\ge 80)=1-\Phi\left(\frac{80-d}{0.5}\right)=\Phi\left(\frac{d-80}{0.5}\right)\ge 0.99.
+\]
+查常用分位点表知 $\Phi(z_{0.01})=0.99$ 且 $z_{0.01}\approx 2.326$，故需
+\[
+  \frac{d-80}{0.5}\ge 2.326\implies d\ge 80+0.5\times 2.326=81.163\,(^\circ\mathrm{C}).
+\]
+\end{solution}
+\end{example}
+
+\section{随机变量的函数的分布}
+\label{sec:univariate-transform}
+
+设随机变量 $X$ 的分布已知，$g(x)$ 是已知的连续函数（或逐段连续函数），下面讨论如何由 $X$ 的分布求新随机变量 $Y=g(X)$ 的分布。
+
+\subsection{离散型随机变量的函数}
+
+若 $X$ 为离散型，取值为 $x_1,x_2,\ldots$，对应概率为 $p_1,p_2,\ldots$，则 $Y=g(X)$ 也是离散型，其可能取值为 $g(x_k)$ 中的全部不同数值；若多个 $x_k$ 对应同一函数值 $y$，只需将它们的概率相加：
+\[
+  P(Y=y)=\sum_{k:\,g(x_k)=y}p_k.
+\]
+
+\begin{example}[title={离散型函数的同值合并}]
+\label{eg:discrete-transform}
+设 $X$ 的分布律为 $P(X=-1)=0.2$、$P(X=0)=0.3$、$P(X=1)=0.1$、$P(X=2)=0.4$，求 $Y=(X-1)^2$ 的分布律。
+\begin{solution}
+$X$ 依次取 $-1,0,1,2$ 时，$Y=(X-1)^2$ 对应取 $4,1,0,1$。合并同值 $Y=1$ 的两项概率：
+\[
+\begin{gathered}
+  P(Y=0)=P(X=1)=0.1,\qquad P(Y=4)=P(X=-1)=0.2,\\
+  P(Y=1)=P(X=0)+P(X=2)=0.7.
+\end{gathered}
+\]
+列出 $Y$ 的分布律：
+\[
+\begin{array}{c|ccc}
+  Y & 0 & 1 & 4 \\ \hline
+  p_k & 0.1 & 0.7 & 0.2
+\end{array}
+\]
+\end{solution}
+\end{example}
+
+\subsection{连续型随机变量的函数}
+
+\begin{method}[求连续型随机变量函数分布的分布函数法]
+对一般函数 $Y=g(X)$（不要求 $g$ 单调），按以下四步求解最为稳妥：
+\begin{enumerate}
+  \item 根据 $X$ 的取值范围确定 $Y$ 的可能取值范围；
+  \item 对任意实数 $y$，写出 $F_Y(y)=P(Y\le y)=P(g(X)\le y)$；
+  \item 将不等式 $g(X)\le y$ 等价转化为 $X$ 的取值区间，并用 $F_X$ 或积分表示 $F_Y(y)$；
+  \item 对 $F_Y(y)$ 分段求导即得概率密度 $f_Y(y)=F_Y'(y)$（若 $F_Y$ 存在跳跃点，则 $Y$ 为混合型，需单独保留点概率）。
+\end{enumerate}
+\end{method}
+
+\begin{example}[title={平方变换与自由度为 $1$ 的 $\chi^2$ 分布}]
+\label{eg:square-transform}
+设连续型随机变量 $X$ 的概率密度为 $f_X(x)$，求 $Y=X^2$ 的概率密度；特别地，写出 $X\sim N(0,1)$ 时 $Y=X^2$ 的概率密度。
+\begin{solution}
+显然 $Y\ge 0$。当 $y\le 0$ 时，$F_Y(y)=P(X^2\le y)=0$。当 $y>0$ 时，
+\[
+  F_Y(y)=P(X^2\le y)=P(-\sqrt{y}\le X\le\sqrt{y})=F_X(\sqrt{y})-F_X(-\sqrt{y}).
+\]
+对 $y>0$ 求导（注意复合函数链式法则中 $-\sqrt{y}$ 的导数为 $-\frac{1}{2\sqrt{y}}$），得
+\begin{equation}
+  f_Y(y)=
+  \begin{cases}
+    \dfrac{1}{2\sqrt{y}}\bigl[f_X(\sqrt{y})+f_X(-\sqrt{y})\bigr],& y>0,\\
+    0,& y\le 0.
+  \end{cases}
+  \label{eq:square-density}
+\end{equation}
+特别地，当 $X\sim N(0,1)$ 时，由 $\varphi(\sqrt{y})=\varphi(-\sqrt{y})=\frac{1}{\sqrt{2\pi}}\e^{-y/2}$，代入\eqref{eq:square-density}得
+\[
+  f_Y(y)=
+  \begin{cases}
+    \dfrac{1}{\sqrt{2\pi}}\,y^{-1/2}\e^{-y/2},& y>0,\\
+    0,& y\le 0,
+  \end{cases}
+\]
+这正是数理统计中自由度为 $1$ 的 $\chi^2$ 分布。
+\end{solution}
+\end{example}
+
+当 $g(x)$ 在 $X$ 的有效取值区间上严格单调可微时，可将分布函数法直接化为简洁的密度变换公式。
+
+\begin{theorem}[严格单调函数的密度变换公式]
+\label{thm:monotone-transform}
+设随机变量 $X$ 具有概率密度 $f_X(x)$，且 $f_X(x)$ 在开区间 $(a,b)$ 外为零（允许 $a=-\infty$ 或 $b=+\infty$）。若函数 $y=g(x)$ 在 $(a,b)$ 上处处可导且恒有 $g'(x)>0$（或恒有 $g'(x)<0$），记其值域为 $(\alpha,\beta)$，反函数为 $x=h(y)$，则 $Y=g(X)$ 仍为连续型随机变量，其概率密度为
+\begin{equation}
+  f_Y(y)=
+  \begin{cases}
+    f_X\bigl(h(y)\bigr)\abs{h'(y)},& \alpha<y<\beta,\\
+    0,& \text{其他}.
+  \end{cases}
+  \label{eq:monotone-density}
+\end{equation}
+\end{theorem}
+\begin{proof}
+先设 $g'(x)>0$，则 $g$ 在 $(a,b)$ 上严格递增，反函数 $h$ 在 $(\alpha,\beta)$ 上严格递增且可微，$h'(y)>0$。对 $y\le\alpha$ 有 $F_Y(y)=0$，对 $y\ge\beta$ 有 $F_Y(y)=1$；当 $\alpha<y<\beta$ 时，
+\[
+  F_Y(y)=P(g(X)\le y)=P(X\le h(y))=F_X(h(y)).
+\]
+对 $y$ 求导得 $f_Y(y)=f_X(h(y))h'(y)=f_X(h(y))\abs{h'(y)}$。
+
+若 $g'(x)<0$，则 $g$ 严格递减，反函数 $h$ 严格递减且 $h'(y)<0$。当 $\alpha<y<\beta$ 时，不等号反向：
+\[
+  F_Y(y)=P(g(X)\le y)=P(X\ge h(y))=1-F_X(h(y)).
+\]
+求导得 $f_Y(y)=-f_X(h(y))h'(y)=f_X(h(y))\abs{h'(y)}$。合并两种情形即得\eqref{eq:monotone-density}。
+\end{proof}
+
+若 $g(x)$ 在有限个互不相交的区间 $I_1,\ldots,I_m$ 上各自严格单调可微（对应反函数 $h_j$），则对每个 $y$ 只需将所有满足 $y\in g(I_j)$ 的分支贡献相加：$f_Y(y)=\sum_{j:\,y\in g(I_j)}f_X(h_j(y))\abs{h_j'(y)}$；\cref{eg:square-transform}的\eqref{eq:square-density}正是两分支的特例。
+
+\begin{example}[title={正态变量的线性变换与交流电压分布}]
+\label{eg:monotone-examples}
+(1) 设 $X\sim N(\mu,\sigma^2)$，证明其非退化线性函数 $Y=aX+b\,(a\ne 0)$ 仍服从正态分布 $N(a\mu+b,a^2\sigma^2)$。
+
+(2) 设交流电压 $V=A\sin\Theta$，其中常数 $A>0$。分别在 $\Theta\sim U(-\pi/2,\pi/2)$ 与 $\Theta\sim U(0,\pi)$ 两种情形下，求 $V$ 的概率密度。
+\begin{solution}
+(1) $y=ax+b$ 在 $\R$ 上严格单调，反函数为 $h(y)=\frac{y-b}{a}$，$\abs{h'(y)}=\frac{1}{\abs{a}}$。代入\eqref{eq:monotone-density}得
+\[
+  f_Y(y)=\frac{1}{\abs{a}}f_X\left(\frac{y-b}{a}\right)
+  =\frac{1}{\sqrt{2\pi}\,\abs{a}\sigma}\exp\left[-\frac{\bigl(y-(a\mu+b)\bigr)^2}{2(a\sigma)^2}\right],\qquad y\in\R,
+\]
+即 $Y\sim N(a\mu+b,a^2\sigma^2)$。
+
+(2) \textbf{情形一：$\Theta\sim U(-\pi/2,\pi/2)$。} 在 $(-\pi/2,\pi/2)$ 上，$v=A\sin\theta$ 严格递增，值域为 $(-A,A)$，反函数为 $h(v)=\arcsin(v/A)$，导数 $h'(v)=\frac{1}{\sqrt{A^2-v^2}}>0$。又 $f_\Theta(\theta)=\frac{1}{\pi}\,(-\pi/2<\theta<\pi/2)$，代入\eqref{eq:monotone-density}得
+\[
+  f_V(v)=
+  \begin{cases}
+    \dfrac{1}{\pi\sqrt{A^2-v^2}},& -A<v<A,\\
+    0,& \text{其他}.
+  \end{cases}
+\]
+
+\textbf{情形二：$\Theta\sim U(0,\pi)$。} 此时 $v=A\sin\theta$ 在 $(0,\pi/2)$ 上严格递增、在 $(\pi/2,\pi)$ 上严格递减，不再整体单调，值域为 $(0,A]$。改用分布函数法：当 $v\le 0$ 时 $F_V(v)=0$；当 $v\ge A$ 时 $F_V(v)=1$；当 $0<v<A$ 时，令 $\theta_0=\arcsin(v/A)\in(0,\pi/2)$，则 $A\sin\Theta\le v$ 等价于 $\Theta\in(0,\theta_0]\cup[\pi-\theta_0,\pi)$，故
+\[
+  F_V(v)=P(0<\Theta\le\theta_0)+P(\pi-\theta_0\le\Theta<\pi)
+  =\frac{\theta_0}{\pi}+\frac{\theta_0}{\pi}
+  =\frac{2}{\pi}\arcsin\frac{v}{A}.
+\]
+对 $v\in(0,A)$ 求导即得
+\[
+  f_V(v)=
+  \begin{cases}
+    \dfrac{2}{\pi\sqrt{A^2-v^2}},& 0<v<A,\\
+    0,& \text{其他}.
+  \end{cases}
+\]
+（这与前述两单调分支求和公式 $f_\Theta(h_1(v))\abs{h_1'(v)}+f_\Theta(h_2(v))\abs{h_2'(v)}=\frac{1}{\pi\sqrt{A^2-v^2}}+\frac{1}{\pi\sqrt{A^2-v^2}}$ 完全一致。）
+\end{solution}
+\end{example}
+
+\begin{example}[title={既非离散又非连续的混合型随机变量}]
+\label{eg:mixed-rv}
+设 $X\sim U(-1,1)$，令截断变量 $Y=\max\set{0,X}$。求 $Y$ 的分布函数 $F_Y(y)$，并说明 $Y$ 既不是离散型也不是连续型随机变量。
+\begin{solution}
+显然 $Y\in[0,1]$。按 $y$ 的取值分区间计算 $F_Y(y)=P(\max\set{0,X}\le y)$：
+\begin{itemize}
+  \item 当 $y<0$ 时，事件 $\set{Y\le y}$ 为不可能事件，故 $F_Y(y)=0$；
+  \item 当 $0\le y<1$ 时，$\set{\max\set{0,X}\le y}=\set{X\le y}$，故 $F_Y(y)=F_X(y)=\dfrac{y+1}{2}$；
+  \item 当 $y\ge 1$ 时，$F_Y(y)=1$。
+\end{itemize}
+综上，
+\[
+  F_Y(y)=
+  \begin{cases}
+    0,& y<0,\\
+    \dfrac{y+1}{2},& 0\le y<1,\\
+    1,& y\ge 1.
+  \end{cases}
+\]
+在 $y=0$ 处有 $F_Y(0)-F_Y(0-0)=\frac{1}{2}>0$，即 $P(Y=0)=\frac{1}{2}$，故 $F_Y(y)$ 在 $0$ 处不连续，$Y$ 不是连续型随机变量；另一方面，$F_Y(y)$ 在 $(0,1)$ 上严格连续递增而非阶梯函数，$Y$ 在 $(0,1)$ 内取不可数多个值，故 $Y$ 也不是离散型随机变量。这类兼具离散跳跃与连续增长的分布称为\textbf{混合型分布}，其完整刻画依赖于分布函数。
+\end{solution}
+\end{example}
+
+\begin{summary}[第二章核心脉络]
+本章以随机变量 $X=X(e)$ 将随机事件数量化，并以分布函数 $F(x)=P(X\le x)$ 作为统一刻画工具：单调不减、两端极限为 $0$ 与 $1$ 以及右连续性是分布函数的充要特征。在此之下，分布分为离散型（由分布律 $p_k$ 描述，核心模型为两点、二项、泊松、几何、负二项与超几何分布，其中泊松定理联系大 $n$ 小 $p$ 的二项分布与泊松分布）与连续型（由概率密度 $f(x)$ 积分生成，单点概率为零，核心模型为均匀、指数与正态分布，重点掌握指数无记忆性与正态标准化）。最后，求随机变量函数 $Y=g(X)$ 的分布时，离散型按同值合并概率，连续型以分布函数法为通法、严格单调情形可直接套用密度变换公式。
+\end{summary}

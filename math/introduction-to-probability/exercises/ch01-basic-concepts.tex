@@ -1,0 +1,291 @@
+% libre-compendium
+%
+% Copyright (C) 2026 Richard Qin
+%
+% This document is dual-licensed under either:
+% - GNU Free Documentation License, Version 1.3 or any later version
+%   published by the Free Software Foundation; with no Invariant Sections,
+%   no Front-Cover Texts, and no Back-Cover Texts (see COPYING.DOC); or
+% - Creative Commons Attribution-ShareAlike 4.0 International License
+%   (see LICENSE-CC-BY-SA-4.0).
+\section{概率论的基本概念}
+
+\begin{exercise}[title={样本空间与事件表达},level=basic,points=6,tags={样本空间,事件运算}]
+(1) 对出厂产品逐件检验，合格记为 $1$，不合格记为 $0$。规定连续查出 $2$ 件次品即停检，或累计检满 $4$ 件即停检。写出该试验的样本空间 $S$。
+
+(2) 设 $A,B,C$ 为三个事件，用事件运算表示：“$A,B,C$ 中不多于两个发生”以及“$A,B,C$ 中恰有两个发生”。
+\begin{answer}
+(1) $S=\set{00,100,0100,0101,0110,0111,1010,1011,1100,1101,1110,1111}$；
+(2) $\overline{ABC}=\overline{A}\cup\overline{B}\cup\overline{C}$；$AB\overline{C}\cup A\overline{B}C\cup\overline{A}BC$。
+\end{answer}
+\begin{solution}
+(1) 按检验停止时的件数分类：
+\begin{itemize}
+  \item 检 $2$ 件停检：仅 $00$；
+  \item 检 $3$ 件停检：第 $2,3$ 件必为 $0$ 且第 $1$ 件为 $1$，仅 $100$；
+  \item 检 $4$ 件停检：前 $3$ 件中不含连续两个 $0$，共有 $10$ 种序列：$0100,0101,0110,0111,1010,1011,1100,1101,1110,1111$。
+\end{itemize}
+合并即得共 $12$ 个样本点的样本空间 $S$。
+
+(2) “不多于两个发生”即“并非三个同时发生”，故为 $\overline{ABC}=\overline{A}\cup\overline{B}\cup\overline{C}$。“恰有两个发生”按不发生的那一个分类，为互斥并 $AB\overline{C}\cup A\overline{B}C\cup\overline{A}BC$。
+\end{solution}
+\end{exercise}
+
+\begin{exercise}[title={概率的加法公式与对立事件},level=basic,points=6,tags={概率性质,容斥公式}]
+设 $A,B,C$ 为三个事件，已知 $P(A)=P(B)=P(C)=\frac{1}{4}$，$P(AB)=P(BC)=0$，$P(AC)=\frac{1}{8}$。求：
+(1) $A,B,C$ 至少有一个发生的概率；
+(2) $A,B,C$ 恰好有一个发生的概率。
+\begin{answer}
+(1) $\frac{5}{8}$；(2) $\frac{1}{2}$。
+\end{answer}
+\begin{solution}
+由 $ABC\subset AB$ 及 $P(AB)=0$，由单调性知 $P(ABC)=0$。
+
+(1) 由三事件容斥公式，
+\[
+  P(A\cup B\cup C)=\frac{1}{4}+\frac{1}{4}+\frac{1}{4}-0-0-\frac{1}{8}+0=\frac{5}{8}.
+\]
+
+(2) 恰好发生一个的事件为 $A\overline{B}\overline{C}\cup\overline{A}B\overline{C}\cup\overline{A}\overline{B}C$（两两互斥）。因 $P(AB)=P(BC)=P(ABC)=0$，
+\[
+\begin{aligned}
+  P(A\overline{B}\overline{C})&=P(A)-P(AB)-P(AC)+P(ABC)=\frac{1}{4}-\frac{1}{8}=\frac{1}{8},\\
+  P(\overline{A}B\overline{C})&=P(B)-P(AB)-P(BC)+P(ABC)=\frac{1}{4},\\
+  P(\overline{A}\overline{B}C)&=P(C)-P(AC)-P(BC)+P(ABC)=\frac{1}{4}-\frac{1}{8}=\frac{1}{8}.
+\end{aligned}
+\]
+三项相加得所求概率为 $\frac{1}{8}+\frac{1}{4}+\frac{1}{8}=\frac{1}{2}$。
+\end{solution}
+\end{exercise}
+
+\begin{exercise}[title={超几何抽样},level=basic,points=6,tags={古典概型,超几何}]
+一批共 $10$ 片药片中有 $5$ 片是安慰剂。
+(1) 从中任取 $5$ 片，求至少有 $2$ 片是安慰剂的概率；
+(2) 每次不放回地任取 $1$ 片，求前 $3$ 次都取到安慰剂的概率。
+\begin{answer}
+(1) $\frac{113}{126}$；(2) $\frac{1}{12}$。
+\end{answer}
+\begin{solution}
+(1) 记 $A$ 为“至少有 $2$ 片安慰剂”，其对立事件 $\overline{A}$ 为“恰有 $0$ 片或 $1$ 片安慰剂”。采用无序组合计数，
+\[
+  P(\overline{A})=\frac{\binom{5}{0}\binom{5}{5}+\binom{5}{1}\binom{5}{4}}{\binom{10}{5}}
+  =\frac{1+25}{252}=\frac{13}{126},
+\]
+故 $P(A)=1-\frac{13}{126}=\frac{113}{126}$。
+
+(2) 按有序抽取计数（或直接用乘法公式）：
+\[
+  P(\text{前 }3\text{ 次皆为安慰剂})
+  =\frac{5}{10}\cdot\frac{4}{9}\cdot\frac{3}{8}=\frac{1}{12}.
+\]
+\end{solution}
+\end{exercise}
+
+\begin{exercise}[title={配对抽样计数},level=basic,points=6,tags={古典概型,对立事件}]
+从 $5$ 双互不相同的鞋子中任取 $4$ 只，求这 $4$ 只鞋中至少有两只配成一双的概率。
+\begin{answer}
+$\frac{13}{21}$。
+\end{answer}
+\begin{solution}
+记 $A$ 为“至少有两只配成一双”，则对立事件 $\overline{A}$ 为“所取 $4$ 只鞋互不成双”。从 $10$ 只鞋中任取 $4$ 只共有 $\binom{10}{4}=210$ 种等可能取法。要使 $4$ 只鞋互不成双，先从 $5$ 双鞋中任选 $4$ 双（有 $\binom{5}{4}$ 种选法），再从每双中任取 $1$ 只（每双有 $2$ 种取法），故 $\abs{\overline{A}}=\binom{5}{4}\cdot 2^4=80$。因此
+\[
+  P(A)=1-\frac{80}{210}=\frac{13}{21}.
+\]
+\end{solution}
+\end{exercise}
+
+\begin{exercise}[title={随机折断构成三角形},level=standard,points=8,tags={几何概型}]
+在长度为 $1$ 的线段上独立且均匀地任取两个分点，将线段分为三段，求这三段能构成一个三角形的概率。
+\begin{answer}
+$\frac{1}{4}$。
+\end{answer}
+\begin{solution}
+设两分点坐标为 $x,y\in[0,1]$，样本空间为单位正方形 $G=[0,1]^2$，面积为 $1$。由对称性，先考虑 $x<y$ 的半正方形（面积 $1/2$），此时三段长度依次为 $x$、$y-x$、$1-y$。它们能构成三角形当且仅当任意两边之和大于第三边，即每段长度均小于 $1/2$：
+\[
+  x<\frac{1}{2},\qquad y-x<\frac{1}{2},\qquad 1-y<\frac{1}{2}\iff y>\frac{1}{2}.
+\]
+在 $x<y$ 区域内，上述不等式围成以 $(0,\frac{1}{2})$、$(\frac{1}{2},\frac{1}{2})$、$(\frac{1}{2},1)$ 为顶点的直角三角形，面积为 $\frac{1}{2}\times\frac{1}{2}\times\frac{1}{2}=\frac{1}{8}$。同理 $y<x$ 半区也贡献面积 $\frac{1}{8}$，故所求概率为 $\frac{1}{8}+\frac{1}{8}=\frac{1}{4}$。
+\end{solution}
+\end{exercise}
+
+\begin{exercise}[title={条件概率与缩减样本空间},level=standard,points=8,tags={条件概率,古典概型}]
+(1) 已知 $P(\overline{A})=0.3$，$P(B)=0.4$，$P(A\overline{B})=0.5$，求条件概率 $P(B\mid A\cup\overline{B})$。
+
+(2) 掷两颗均匀骰子，已知两颗骰子点数之和为 $7$，分别用定义公式法与缩减样本空间法求其中有一颗为 $1$ 点的概率。
+\begin{answer}
+(1) $\frac{1}{4}$；(2) $\frac{1}{3}$。
+\end{answer}
+\begin{solution}
+(1) 由 $P(\overline{A})=0.3$ 得 $P(A)=0.7$，$P(\overline{B})=1-0.4=0.6$。于是
+\[
+  P(AB)=P(A)-P(A\overline{B})=0.7-0.5=0.2,
+\]
+\[
+  P(A\cup\overline{B})=P(A)+P(\overline{B})-P(A\overline{B})=0.7+0.6-0.5=0.8.
+\]
+又 $B(A\cup\overline{B})=AB\cup B\overline{B}=AB$，故
+\[
+  P(B\mid A\cup\overline{B})=\frac{P(AB)}{P(A\cup\overline{B})}=\frac{0.2}{0.8}=\frac{1}{4}.
+\]
+
+(2) 记 $A$ 为“点数之和为 $7$”，$B$ 为“至少有一颗为 $1$ 点”。
+\begin{itemize}
+  \item \textbf{定义公式法}：有序样本空间含 $36$ 个等可能点，$A=\set{(1,6),(2,5),(3,4),(4,3),(5,2),(6,1)}$ 含 $6$ 个点，$AB=\set{(1,6),(6,1)}$ 含 $2$ 个点，故 $P(B\mid A)=\frac{2/36}{6/36}=\frac{1}{3}$。
+  \item \textbf{缩减样本空间法}：条件 $A$ 将样本空间缩减为上述 $6$ 个等可能点，其中含 $1$ 点的有 $(1,6)$ 与 $(6,1)$ 共 $2$ 个，故 $P(B\mid A)=\frac{2}{6}=\frac{1}{3}$。
+\end{itemize}
+\end{solution}
+\end{exercise}
+
+\begin{exercise}[title={两袋转移摸球},level=standard,points=8,tags={全概率公式}]
+甲袋中装有 $n$ 只白球、$m$ 只红球，乙袋中装有 $N$ 只白球、$M$ 只红球。先从甲袋任取一球放入乙袋，再从乙袋任取一球，求最后取到白球的概率。
+\begin{answer}
+$\frac{n+N(n+m)}{(n+m)(N+M+1)}$。
+\end{answer}
+\begin{solution}
+记 $B_1$ 为“从甲袋取到白球”，$B_2=\overline{B}_1$ 为“从甲袋取到红球”，$A$ 为“从乙袋取到白球”。则 $B_1,B_2$ 构成样本空间的划分，且
+\[
+  P(B_1)=\frac{n}{n+m},\qquad P(B_2)=\frac{m}{n+m},
+\]
+\[
+  P(A\mid B_1)=\frac{N+1}{N+M+1},\qquad P(A\mid B_2)=\frac{N}{N+M+1}.
+\]
+由全概率公式，
+\[
+  P(A)=\frac{n}{n+m}\cdot\frac{N+1}{N+M+1}+\frac{m}{n+m}\cdot\frac{N}{N+M+1}
+  =\frac{n+N(n+m)}{(n+m)(N+M+1)}.
+\]
+\end{solution}
+\end{exercise}
+
+\begin{exercise}[title={两箱零件的连续不放回抽样},level=standard,points=10,tags={全概率公式,贝叶斯公式}]
+有两箱同种类零件：第一箱装 $50$ 只，其中 $10$ 只一等品；第二箱装 $30$ 只，其中 $18$ 只一等品。随机挑选一箱，然后从该箱中不放回依次取两只零件。求：
+(1) 第一次取到一等品的概率；
+(2) 在第一次取到一等品的条件下，第二次仍取到一等品的概率。
+\begin{answer}
+(1) $0.4$；(2) $\frac{690}{1421}\approx 0.4856$。
+\end{answer}
+\begin{solution}
+记 $B_i\,(i=1,2)$ 为“选中第 $i$ 箱”，$A_1$ 为“第一次取到一等品”，$A_2$ 为“第二次取到一等品”。有 $P(B_1)=P(B_2)=\frac{1}{2}$，$P(A_1\mid B_1)=\frac{10}{50}=\frac{1}{5}$，$P(A_1\mid B_2)=\frac{18}{30}=\frac{3}{5}$。
+
+(1) 由全概率公式，
+\[
+  P(A_1)=\frac{1}{2}\cdot\frac{1}{5}+\frac{1}{2}\cdot\frac{3}{5}=0.4.
+\]
+
+(2) 需计算 $P(A_2\mid A_1)=\frac{P(A_1A_2)}{P(A_1)}$。对事件 $A_1A_2$ 使用全概率公式，
+\[
+\begin{aligned}
+  P(A_1A_2)&=P(B_1)P(A_1A_2\mid B_1)+P(B_2)P(A_1A_2\mid B_2)\\
+  &=\frac{1}{2}\cdot\frac{10}{50}\cdot\frac{9}{49}+\frac{1}{2}\cdot\frac{18}{30}\cdot\frac{17}{29}\\
+  &=\frac{9}{490}+\frac{51}{290}=\frac{261+2499}{14210}=\frac{2760}{14210}=\frac{276}{1421}.
+\end{aligned}
+\]
+因此
+\[
+  P(A_2\mid A_1)=\frac{276/1421}{2/5}=\frac{690}{1421}\approx 0.4856.
+\]
+\end{solution}
+\end{exercise}
+
+\begin{exercise}[title={桥式系统的可靠性},level=standard,points=10,tags={独立性,全概率公式,可靠性}]
+设有 $5$ 个独立工作的元件 $1,2,3,4,5$，每个元件的可靠性均为 $p\,(0<p<1)$。元件按桥式网络接法连接：输入端分两路分别接元件 $1$ 和 $4$，元件 $1$ 后端接元件 $2$ 至输出端，元件 $4$ 后端接元件 $5$ 至输出端，元件 $3$ 跨接在“$1,2$ 之间节点”与“$4,5$ 之间节点”上（电流可双向通过元件 $3$）。求该桥式系统的可靠性。
+\begin{answer}
+$2p^2+2p^3-5p^4+2p^5$。
+\end{answer}
+\begin{solution}
+记 $A_i\,(i=1,\ldots,5)$ 为“第 $i$ 个元件正常”，$A$ 为“系统正常”。直接对所有路径做容斥较为繁琐，注意到元件 $3$ 破坏了简单的串并联结构，故按 $A_3$ 与 $\overline{A}_3$ 划分样本空间并用全概率公式：
+\[
+  P(A)=P(A_3)P(A\mid A_3)+P(\overline{A}_3)P(A\mid\overline{A}_3).
+\]
+\begin{itemize}
+  \item 当 $A_3$ 发生（桥接导通）时，系统退化为“$(1\text{ 与 }4\text{ 并联})$ 再与 $(2\text{ 与 }5\text{ 并联})$ 串联”，其可靠性为
+  \[
+    P(A\mid A_3)=\bigl[1-(1-p)^2\bigr]^2=(2p-p^2)^2=4p^2-4p^3+p^4.
+  \]
+  \item 当 $\overline{A}_3$ 发生（桥接断开）时，系统退化为“$(1,2\text{ 串联})$ 与 $(4,5\text{ 串联})$ 并联”，由串并联公式得
+  \[
+    P(A\mid\overline{A}_3)=1-(1-p^2)^2=2p^2-p^4.
+  \]
+\end{itemize}
+代入全概率公式整理：
+\[
+\begin{aligned}
+  P(A)&=p(4p^2-4p^3+p^4)+(1-p)(2p^2-p^4)\\
+  &=2p^2+2p^3-5p^4+2p^5.
+\end{aligned}
+\]
+\end{solution}
+\end{exercise}
+
+\begin{exercise}[title={条件概率不等式证明},level=advanced,points=10,tags={条件概率,证明}]
+设所涉及的条件概率均有意义，证明：
+(1) 若 $P(A)>0$，则 $P(AB\mid A)\ge P(AB\mid A\cup B)$；
+(2) 若 $P(A\mid C)\ge P(B\mid C)$ 且 $P(A\mid\overline{C})\ge P(B\mid\overline{C})$，则 $P(A)\ge P(B)$。
+\begin{answer}
+见解答。
+\end{answer}
+\begin{solution}
+(1) 注意 $AB\subset A\subset A\cup B$，故 $AB\cap A=AB$ 且 $AB\cap(A\cup B)=AB$。由单调性知 $0<P(A)\le P(A\cup B)$，于是
+\[
+  P(AB\mid A)=\frac{P(AB)}{P(A)}\ge\frac{P(AB)}{P(A\cup B)}=P(AB\mid A\cup B).
+\]
+
+(2) 对 $A$ 与 $B$ 分别使用关于划分 $C,\overline{C}$ 的全概率公式：
+\[
+\begin{aligned}
+  P(A)&=P(C)P(A\mid C)+P(\overline{C})P(A\mid\overline{C})\\
+  &\ge P(C)P(B\mid C)+P(\overline{C})P(B\mid\overline{C})=P(B).
+\end{aligned}
+\]
+\end{solution}
+\end{exercise}
+
+\begin{exercise}[title={独立性的充要条件与组合保持性},level=advanced,points=10,tags={独立性,证明}]
+(1) 设 $0<P(B)<1$，证明：事件 $A,B$ 相互独立的充要条件是 $P(A\mid B)=P(A\mid\overline{B})$。
+(2) 设事件 $A,B,C$ 相互独立，证明：$C$ 与 $A\cup B$ 相互独立。
+\begin{answer}
+见解答。
+\end{answer}
+\begin{solution}
+(1) \textbf{必要性}：若 $A,B$ 独立，则 $A,\overline{B}$ 也独立，从而 $P(A\mid B)=P(A)=P(A\mid\overline{B})$。
+
+\textbf{充分性}：若 $P(A\mid B)=P(A\mid\overline{B})$，由全概率公式得
+\[
+  P(A)=P(B)P(A\mid B)+P(\overline{B})P(A\mid\overline{B})
+  =\bigl[P(B)+P(\overline{B})\bigr]P(A\mid B)=P(A\mid B),
+\]
+故 $P(AB)=P(B)P(A\mid B)=P(A)P(B)$，即 $A,B$ 相互独立。
+
+(2) 由分配律 $(A\cup B)C=AC\cup BC$，再用加法公式与 $A,B,C$ 的相互独立性：
+\[
+\begin{aligned}
+  P\bigl((A\cup B)C\bigr)
+  &=P(AC\cup BC)=P(AC)+P(BC)-P(ABC)\\
+  &=P(A)P(C)+P(B)P(C)-P(A)P(B)P(C)\\
+  &=\bigl[P(A)+P(B)-P(AB)\bigr]P(C)\\
+  &=P(A\cup B)P(C),
+\end{aligned}
+\]
+故 $C$ 与 $A\cup B$ 相互独立。
+\end{solution}
+\end{exercise}
+
+\begin{exercise}[title={伪币识别的贝叶斯更新},level=advanced,points=10,tags={贝叶斯公式,独立性}]
+袋中装有 $m$ 枚均匀硬币和 $n$ 枚伪币（伪币两面均印有正面）。从袋中任取一枚硬币连续投掷 $r$ 次，已知每次均出现正面，求这枚硬币是均匀硬币的后验概率，并说明 $r\to\infty$ 时的极限。
+\begin{answer}
+$\frac{m}{m+n\cdot 2^r}$；当 $n>0$ 且 $r\to\infty$ 时趋于 $0$。
+\end{answer}
+\begin{solution}
+记 $B_1$ 为“取到均匀硬币”，$B_2=\overline{B}_1$ 为“取到伪币”，$A$ 为“连掷 $r$ 次皆正面”。有
+\[
+  P(B_1)=\frac{m}{m+n},\qquad P(B_2)=\frac{n}{m+n}.
+\]
+给定取到均匀硬币时，各次投掷独立，故 $P(A\mid B_1)=2^{-r}$；给定取到伪币时，每次必出现正面，故 $P(A\mid B_2)=1$。由贝叶斯公式，
+\[
+  P(B_1\mid A)
+  =\frac{\frac{m}{m+n}\cdot 2^{-r}}{\frac{m}{m+n}\cdot 2^{-r}+\frac{n}{m+n}\cdot 1}
+  =\frac{m}{m+n\cdot 2^r}.
+\]
+当 $n>0$ 且 $r\to\infty$ 时，$2^r\to\infty$，故 $P(B_1\mid A)\to 0$：连续出现正面的次数越多，后验信念越强烈地倾向于这枚硬币是伪币。
+\end{solution}
+\end{exercise}

@@ -1,0 +1,1024 @@
+% libre-compendium
+%
+% Copyright (C) 2026 Richard Qin
+%
+% This document is dual-licensed under either:
+% - GNU Free Documentation License, Version 1.3 or any later version
+%   published by the Free Software Foundation; with no Invariant Sections,
+%   no Front-Cover Texts, and no Back-Cover Texts (see COPYING.DOC); or
+% - Creative Commons Attribution-ShareAlike 4.0 International License
+%   (see LICENSE-CC-BY-SA-4.0).
+
+\chapter{随机变量的数字特征}
+\label{ch:numerical-characteristics}
+
+分布函数、分布律与概率密度完整地刻画了随机变量的概率规律，但在实际问题和理论分析中，我们往往更关心某些能够浓缩分布核心特征的常数指标，例如随机变量取值的平均水平、围绕平均值的离散程度，以及多个随机变量之间的线性关联强度。这类由分布唯一决定的常数称为随机变量的\textbf{数字特征}。本章系统建立数学期望、方差、协方差、相关系数、高阶矩与协方差矩阵的理论与计算方法，并在章末对全书常用分布进行统一总结。
+
+\section{数学期望}
+\label{sec:expectation}
+
+\subsection{数学期望的定义}
+
+考虑甲、乙两名射手进行 $n$ 次独立射击，记每次命中的环数为随机变量 $X$（可能取值为 $x_1,\ldots,x_m$）。若在 $n$ 次射击中 $x_k$ 出现 $n_k$ 次，则平均环数为
+\[
+  \bar{x}=\frac{1}{n}\sum_{k=1}^{m}x_k n_k=\sum_{k=1}^{m}x_k\cdot\frac{n_k}{n}.
+\]
+当试验次数 $n$ 很大时，频率 $n_k/n$ 稳定在概率 $p_k=P(X=x_k)$ 附近，因此平均环数趋近于以概率为权重的加权平均值 $\sum_{k}x_k p_k$。将这一思想推广到可列离散型与连续型随机变量，便得到数学期望的定义。
+
+\begin{definition}[数学期望]
+\label{def:expectation}
+\begin{enumerate}
+  \item 设离散型随机变量 $X$ 的分布律为 $P(X=x_k)=p_k\,(k=1,2,\ldots)$。若级数 $\sum_{k=1}^{\infty}x_k p_k$ \textbf{绝对收敛}（即 $\sum_{k=1}^{\infty}\abs{x_k}p_k<+\infty$），则称该级数的和为随机变量 $X$ 的\textbf{数学期望}（简称\textbf{期望}或\textbf{均值}），记为
+  \begin{equation}
+    E(X)=\sum_{k=1}^{\infty}x_k p_k.
+    \label{eq:expectation-discrete}
+  \end{equation}
+  \item 设连续型随机变量 $X$ 的概率密度为 $f(x)$。若广义积分 $\int_{-\infty}^{+\infty}x f(x)\dd x$ \textbf{绝对收敛}（即 $\int_{-\infty}^{+\infty}\abs{x}f(x)\dd x<+\infty$），则称该积分值为 $X$ 的\textbf{数学期望}，记为
+  \begin{equation}
+    E(X)=\int_{-\infty}^{+\infty}x f(x)\dd x.
+    \label{eq:expectation-continuous}
+  \end{equation}
+\end{enumerate}
+若上述级数或积分不绝对收敛，则称 $X$ 的数学期望不存在。
+\end{definition}
+
+定义中要求绝对收敛，是因为随机变量的取值次序并无天然顺序，只有绝对收敛才能保证级数重排或广义积分求值的结果唯一确定。例如，标准柯西分布的概率密度为 $f(x)=\frac{1}{\pi(1+x^2)}\,(x\in\R)$，虽然密度关于原点对称，但
+\[
+  \int_{-\infty}^{+\infty}\frac{\abs{x}}{\pi(1+x^2)}\dd x
+  =\frac{2}{\pi}\int_{0}^{+\infty}\frac{x}{1+x^2}\dd x
+  =\frac{1}{\pi}\Bigl[\ln(1+x^2)\Bigr]_{0}^{+\infty}=+\infty,
+\]
+故标准柯西分布的数学期望不存在。
+
+\begin{example}[title={串联系统的平均寿命}]
+\label{eg:series-mean-lifetime}
+设两独立子系统的寿命分别服从指数分布 $\operatorname{Exp}(\theta_1)$ 与 $\operatorname{Exp}(\theta_2)\,(\theta_1>0,\,\theta_2>0)$。求由它们串联而成的系统的平均寿命。
+\begin{solution}
+由\cref{eg:three-lifetime-systems}(1)知，串联系统寿命 $Z=\min\set{X,Y}$ 仍服从指数分布，其概率密度为 $f_Z(z)=\lambda\e^{-\lambda z}\,(z>0)$，其中 $\lambda=\frac{1}{\theta_1}+\frac{1}{\theta_2}$。直接用分部积分求期望：
+\[
+  E(Z)=\int_{0}^{+\infty}z\,\lambda\e^{-\lambda z}\dd z
+  =\Bigl[-z\e^{-\lambda z}\Bigr]_{0}^{+\infty}+\int_{0}^{+\infty}\e^{-\lambda z}\dd z
+  =\frac{1}{\lambda}=\frac{\theta_1\theta_2}{\theta_1+\theta_2}.
+\]
+显然 $E(Z)<\min\set{\theta_1,\theta_2}$，串联系统的平均寿命严格短于任一单个子系统的平均寿命。
+\end{solution}
+\end{example}
+
+\begin{example}[title={候车时间的数学期望}]
+\label{eg:bus-wait-expectation}
+设某乘客在站台候车，因发车时刻与客流波动，其候车时间 $X$（单位：分钟）的分布律为
+\[
+\begin{array}{c|ccccc}
+  X & 10 & 15 & 20 & 30 & 45 \\ \hline
+  p_k & 1/6 & 1/9 & 1/6 & 1/3 & 2/9
+\end{array}
+\]
+求该乘客的平均候车时间。
+\begin{solution}
+先核验总概率：$\frac{1}{6}+\frac{1}{9}+\frac{1}{6}+\frac{1}{3}+\frac{2}{9}=\frac{3+2+3+6+4}{18}=1$。由\eqref{eq:expectation-discrete}，
+\[
+  E(X)=10\cdot\frac{1}{6}+15\cdot\frac{1}{9}+20\cdot\frac{1}{6}+30\cdot\frac{1}{3}+45\cdot\frac{2}{9}
+  =\frac{5}{3}+\frac{5}{3}+\frac{10}{3}+10+10=\frac{80}{3}\approx 26.67\text{（分钟）}.
+\]
+\end{solution}
+\end{example}
+
+\begin{example}[title={分段保修费用的数学期望}]
+\label{eg:lifetime-payment}
+某电子元件的寿命 $T$（单位：小时）服从指数分布 $\operatorname{Exp}(1000)$，其概率密度为 $f(t)=\frac{1}{1000}\e^{-t/1000}\,(t>0)$。厂商规定：若元件在 $1000$ 小时内失效，退还全款 $3000$ 元；若在 $1000$ 至 $2000$ 小时内失效，补偿 $1500$ 元；若使用超过 $2000$ 小时，则无需补偿。求每件产品的期望赔付额。
+\begin{solution}
+记每件产品的赔付额为离散型随机变量 $X$，可能取值为 $3000,\,1500,\,0$，其概率分别由连续变量 $T$ 的区间概率给出：
+\[
+\begin{aligned}
+  P(X=3000)&=P(T\le 1000)=1-\e^{-1}\approx 0.63212,\\
+  P(X=1500)&=P(1000<T\le 2000)=\e^{-1}-\e^{-2}\approx 0.23254,\\
+  P(X=0)&=P(T>2000)=\e^{-2}\approx 0.13534.
+\end{aligned}
+\]
+由\eqref{eq:expectation-discrete}，期望赔付额为
+\[
+  E(X)=3000(1-\e^{-1})+1500(\e^{-1}-\e^{-2})
+  =3000-1500\e^{-1}-1500\e^{-2}\approx 2245.18\text{（元）}.
+\]
+\end{solution}
+\end{example}
+
+\begin{example}[title={合并检测的分组优化}]
+\label{eg:pooled-testing}
+为筛查某批共 $N$ 份独立样品是否呈阳性（每份样品阳性概率均为 $p\in(0,1)$），采用分组混合检测方案：将样品每 $k$ 份分为一组（设 $N$ 被 $k$ 整除），先将组内 $k$ 份样品混合检测一次；若混合样呈阴性，则该组全部通过，共需 $1$ 次检测；若混合样呈阳性，则对该组逐份复检，共需 $k+1$ 次检测。求平均每份样品所需的检测次数，并讨论 $p=0.1$ 时的最优分组大小 $k$。
+\begin{solution}
+记任意一组所需的检测次数为 $X_i$，则 $X_i$ 仅取 $1$ 与 $k+1$ 两值。全组均为阴性的概率为 $(1-p)^k$，至少有一份阳性的概率为 $1-(1-p)^k$，故该组期望检测次数为
+\[
+  E(X_i)=1\cdot(1-p)^k+(k+1)\bigl[1-(1-p)^k\bigr]=k+1-k(1-p)^k.
+\]
+除以组容量 $k$，平均每份样品所需检测次数为
+\[
+  g(k)=\frac{E(X_i)}{k}=1+\frac{1}{k}-(1-p)^k,\qquad k\ge 2.
+\]
+当 $p=0.1$ 时，逐一计算小整数 $k$ 的值：
+\[
+\begin{aligned}
+  g(2)&=1+0.5-0.9^2=0.6900,& g(3)&=1+\frac{1}{3}-0.9^3\approx 0.6043,\\
+  g(4)&=1+0.25-0.9^4=0.5939,& g(5)&=1+0.20-0.9^5\approx 0.6095.
+\end{aligned}
+\]
+又当 $k\ge 5$ 时，$(1-0.1)^k\le 0.9^5=0.59049$，于是 $g(k)>1-0.59049=0.40951$；更精确地，对 $k\ge 6$ 有 $g(k)\ge 1-0.9^6=0.46856$ 且 $g(6)=1+\frac{1}{6}-0.9^6\approx 0.6352$，而对 $k\ge 7$ 有 $1-0.9^k\ge 1-0.9^7\approx 0.5217$，进一步 $g(k)$ 在 $k\ge 5$ 时满足 $g(k+1)-g(k)=0.1\cdot 0.9^k-\frac{1}{k(k+1)}$：验证 $k=5$ 时 $0.05905>\frac{1}{30}\approx 0.0333$，$k=6,7,\ldots$ 均大于零直至尾部 $g(k)\to 1$，故 $k=4$ 取得全局最小值 $g(4)=0.5939$，可节省约 $40.6\%$ 的检测工作量。
+\end{solution}
+\end{example}
+
+\subsection{随机变量函数的数学期望}
+
+求 $Y=g(X)$ 或 $Z=g(X,Y)$ 的数学期望时，并不必先求出新变量的分布，而是可以直接利用原变量的分布律或概率密度计算。
+
+\begin{theorem}[随机变量函数的数学期望]
+\label{thm:function-expectation}
+\begin{enumerate}
+  \item 设 $Y=g(X)$ 是随机变量 $X$ 的实值函数（要求以下级数或积分绝对收敛）：
+  \begin{itemize}
+    \item 若 $X$ 为离散型，分布律为 $P(X=x_k)=p_k$，则
+    \begin{equation}
+      E\bigl[g(X)\bigr]=\sum_{k}g(x_k)p_k;
+      \label{eq:func-exp-discrete}
+    \end{equation}
+    \item 若 $X$ 为连续型，概率密度为 $f(x)$，则
+    \begin{equation}
+      E\bigl[g(X)\bigr]=\int_{-\infty}^{+\infty}g(x)f(x)\dd x.
+      \label{eq:func-exp-continuous}
+    \end{equation}
+  \end{itemize}
+  \item 设 $Z=g(X,Y)$ 是二维随机变量 $(X,Y)$ 的实值函数（要求绝对收敛）：
+  \begin{itemize}
+    \item 若 $(X,Y)$ 为二维离散型，联合分布律为 $p_{ij}=P(X=x_i,Y=y_j)$，则
+    \[
+      E\bigl[g(X,Y)\bigr]=\sum_{i}\sum_{j}g(x_i,y_j)p_{ij};
+    \]
+    \item 若 $(X,Y)$ 为二维连续型，联合概率密度为 $f(x,y)$，则
+    \begin{equation}
+      E\bigl[g(X,Y)\bigr]=\int_{-\infty}^{+\infty}\int_{-\infty}^{+\infty}g(x,y)f(x,y)\dd x\dd y.
+      \label{eq:func-exp-2d}
+    \end{equation}
+  \end{itemize}
+\end{enumerate}
+\end{theorem}
+\begin{proof}
+对离散情形，将 $g(x_k)$ 取相同值 $y_j$ 的项合并，即 $P(Y=y_j)=\sum_{k:\,g(x_k)=y_j}p_k$。由绝对收敛级数可任意重排分组，得
+\[
+  E(Y)=\sum_{j}y_j P(Y=y_j)=\sum_{j}y_j\sum_{k:\,g(x_k)=y_j}p_k=\sum_{k}g(x_k)p_k.
+\]
+对连续情形，先证 $g(x)$ 在区间 $(a,b)$ 上严格递增可微（反函数 $x=h(y)$，值域 $(\alpha,\beta)$）的情形：由\cref{thm:monotone-transform}，
+\[
+  E(Y)=\int_{\alpha}^{\beta}y\,f_Y(y)\dd y
+  =\int_{\alpha}^{\beta}y\,f_X\bigl(h(y)\bigr)h'(y)\dd y.
+\]
+作积分换元 $x=h(y)$（则 $y=g(x),\,\dd x=h'(y)\dd y$），立得 $E(Y)=\int_{a}^{b}g(x)f_X(x)\dd x$；$g$ 严格递减时同理（反函数导数为负，积分上下限同步反转）。一般可测函数及多维情形的严格证明依赖于测度论的勒贝格积分变换定理。
+\end{proof}
+
+\begin{lemma}[期望的单调性与有界收敛性质]
+\label{lem:expectation-limits}
+\begin{enumerate}
+  \item 若随机变量 $X\le Y$ 几乎必然成立且两者期望均存在，则 $E(X)\le E(Y)$；特别地，若 $X\ge 0$，则 $E(X)\ge 0$。
+  \item 若随机变量列 $\set{X_n}$ 满足 $\abs{X_n}\le M$（$M$ 为有限常数）且 $X_n$ 按概率收敛（或几乎必然收敛）于 $X$，则 $\lim_{n\to\infty}E(X_n)=E(X)$。
+\end{enumerate}
+\end{lemma}
+
+\begin{example}[title={无界曲边支集上的二维函数期望}]
+\label{eg:unbounded-function-expectation}
+设二维随机变量 $(X,Y)$ 的联合概率密度为
+\[
+  f(x,y)=
+  \begin{cases}
+    \dfrac{3}{2x^3 y^2},& x>1,\;\dfrac{1}{x}<y<x,\\
+    0,& \text{其他}.
+  \end{cases}
+\]
+验证规范性，并求 $E(Y)$ 与 $E\!\left(\dfrac{1}{XY}\right)$。
+\begin{solution}
+先核验规范性：固定 $x>1$ 对 $y\in(1/x,x)$ 积分，
+\[
+  \int_{1}^{+\infty}\dd x\int_{1/x}^{x}\frac{3}{2x^3 y^2}\dd y
+  =\int_{1}^{+\infty}\frac{3}{2x^3}\left[-\frac{1}{y}\right]_{1/x}^{x}\dd x
+  =\frac{3}{2}\int_{1}^{+\infty}\left(\frac{1}{x^2}-\frac{1}{x^4}\right)\dd x
+  =\frac{3}{2}\left(1-\frac{1}{3}\right)=1.
+\]
+由\eqref{eq:func-exp-2d}，
+\[
+  E(Y)=\int_{1}^{+\infty}\dd x\int_{1/x}^{x}y\cdot\frac{3}{2x^3 y^2}\dd y
+  =\frac{3}{2}\int_{1}^{+\infty}\frac{1}{x^3}\bigl[\ln y\bigr]_{1/x}^{x}\dd x
+  =3\int_{1}^{+\infty}\frac{\ln x}{x^3}\dd x.
+\]
+分部积分（令 $u=\ln x,\,\dd v=x^{-3}\dd x$），得
+\[
+  E(Y)=3\left(\left[-\frac{\ln x}{2x^2}\right]_{1}^{+\infty}+\int_{1}^{+\infty}\frac{1}{2x^3}\dd x\right)
+  =3\cdot\frac{1}{4}=\frac{3}{4}.
+\]
+同样计算 $E\!\left(\frac{1}{XY}\right)$：
+\[
+\begin{aligned}
+  E\!\left(\frac{1}{XY}\right)
+  &=\int_{1}^{+\infty}\dd x\int_{1/x}^{x}\frac{1}{xy}\cdot\frac{3}{2x^3 y^2}\dd y
+  =\frac{3}{2}\int_{1}^{+\infty}\frac{1}{x^4}\left[-\frac{1}{2y^2}\right]_{1/x}^{x}\dd x\\
+  &=\frac{3}{4}\int_{1}^{+\infty}\left(\frac{1}{x^2}-\frac{1}{x^6}\right)\dd x
+  =\frac{3}{4}\left(1-\frac{1}{5}\right)=\frac{3}{5}.
+\end{aligned}
+\]
+\end{solution}
+\end{example}
+
+\begin{example}[title={随机需求下的最优订货量（报童模型）}]
+\label{eg:production-expectation}
+某商店销售一种季节性商品，每售出一件获利 $a>0$ 元，每滞销一件亏损 $b>0$ 元。设市场需求量 $X$ 为连续型随机变量，分布函数为 $F(x)$，概率密度为 $f(x)$（$x\ge 0$）。若商店预先订货 $q>0$ 件，问订货量 $q$ 取何值时期望利润最大？
+\begin{solution}
+当需求量为 $X$ 时，实际售出 $\min\set{X,q}$ 件，滞销 $\max\set{q-X,0}$ 件，故利润函数为
+\[
+  g(X)=
+  \begin{cases}
+    aX-b(q-X)=(a+b)X-bq,& 0\le X\le q,\\
+    aq,& X>q.
+  \end{cases}
+\]
+由\eqref{eq:func-exp-continuous}，期望利润为 $q$ 的函数：
+\[
+  \Pi(q)=E\bigl[g(X)\bigr]
+  =\int_{0}^{q}\bigl[(a+b)x-bq\bigr]f(x)\dd x+aq\int_{q}^{+\infty}f(x)\dd x.
+\]
+对 $q$ 求导（利用含参积分求导法则，注意上下限处被积函数在 $x=q$ 处相等并相互抵消）：
+\[
+\begin{aligned}
+  \Pi'(q)&=aq\,f(q)-b\int_{0}^{q}f(x)\dd x-aq\,f(q)+a\int_{q}^{+\infty}f(x)\dd x\\
+  &=a\bigl[1-F(q)\bigr]-bF(q)=a-(a+b)F(q).
+\end{aligned}
+\]
+再求二阶导数得 $\Pi''(q)=-(a+b)f(q)\le 0$。令 $\Pi'(q)=0$，解得最优订货量 $q^*$ 满足临界分位点方程：
+\[
+  F(q^*)=\frac{a}{a+b}.
+\]
+该式直观体现了边际平衡：多订一件货的边际期望收益 $a[1-F(q^*)]$ 恰等于边际期望滞销损失 $bF(q^*)$。
+\end{solution}
+\end{example}
+
+\begin{example}[title={风速平方对应的平均风压}]
+\label{eg:wind-pressure}
+设某地区风速 $V\sim U(0,a)\,(a>0)$，迎风结构所受风压与风速平方成正比，即 $W=kV^2$（$k>0$ 为比例常数）。求平均风压 $E(W)$，并与 $k\bigl[E(V)\bigr]^2$ 比较。
+\begin{solution}
+由\eqref{eq:func-exp-continuous}，无需先求 $W$ 的密度，直接积分得
+\[
+  E(W)=E(kV^2)=\int_{0}^{a}kv^2\cdot\frac{1}{a}\dd v=\frac{1}{3}ka^2.
+\]
+另一方面，$E(V)=\frac{a}{2}$，故 $k[E(V)]^2=\frac{1}{4}ka^2<\frac{1}{3}ka^2=E(W)$。这直观说明对非线性函数一般有 $E[g(X)]\ne g(E(X))$。
+\end{solution}
+\end{example}
+
+\begin{example}[title={密封投标的最优报价决策}]
+\label{eg:auction-expectation}
+某工程项目采用最低价中标。己方完成项目的成本为 $80$ 万元，已知竞争对手的最低报价 $Y\sim U(100,200)$（单位：万元）。若己方报价 $c$ 万元，则当 $c<Y$ 时中标并获利 $c-80$ 万元，否则未中标利润为 $0$。问己方应报价多少万元才能使期望利润最大？
+\begin{solution}
+显然报价低于 $80$ 万元会亏损，高于 $200$ 万元必不中标；当 $c\in[100,200]$ 时，中标概率为 $P(Y>c)=\frac{200-c}{100}$，期望利润为
+\[
+  \Pi(c)=(c-80)P(Y>c)=\frac{(c-80)(200-c)}{100}
+  =\frac{-(c-140)^2+3600}{100}.
+\]
+当 $c\in[80,100)$ 时必中标，期望利润为 $c-80<20$ 万元。因此当且仅当 $c^*=140$ 万元时，期望利润取得全局最大值 $\Pi(140)=36$ 万元。
+\end{solution}
+\end{example}
+
+\subsection{数学期望的基本性质}
+
+\begin{proposition}[数学期望的基本性质]
+\label{prop:expectation-properties}
+设 $C$ 为常数，$X,Y$ 的数学期望均存在，则：
+\begin{enumerate}
+  \item $E(C)=C$；
+  \item $E(CX)=C\,E(X)$；
+  \item \textbf{线性可加性}：$E(X+Y)=E(X)+E(Y)$（\textbf{不要求 $X$ 与 $Y$ 独立}）；推广到有限个变量，对任意实常数 $a_1,\ldots,a_n$ 与 $b$，有
+  \[
+    E\!\left(b+\sum_{i=1}^{n}a_i X_i\right)=b+\sum_{i=1}^{n}a_i E(X_i);
+  \]
+  \item \textbf{独立乘积性}：若 $X$ 与 $Y$ \textbf{相互独立}，则 $E(XY)=E(X)E(Y)$。
+\end{enumerate}
+\end{proposition}
+\begin{proof}
+性质 (1)、(2) 直接由定义即得。以二维连续型为例证明 (3) 与 (4)（离散型将积分换为求和完全类似）。
+
+对于 (3)，由\eqref{eq:func-exp-2d}与边缘密度公式：
+\[
+\begin{aligned}
+  E(X+Y)&=\int_{-\infty}^{+\infty}\int_{-\infty}^{+\infty}(x+y)f(x,y)\dd x\dd y\\
+  &=\int_{-\infty}^{+\infty}x\left[\int_{-\infty}^{+\infty}f(x,y)\dd y\right]\dd x
+   +\int_{-\infty}^{+\infty}y\left[\int_{-\infty}^{+\infty}f(x,y)\dd x\right]\dd y\\
+  &=\int_{-\infty}^{+\infty}x f_X(x)\dd x+\int_{-\infty}^{+\infty}y f_Y(y)\dd y=E(X)+E(Y).
+\end{aligned}
+\]
+
+对于 (4)，因 $X$ 与 $Y$ 相互独立，有 $f(x,y)=f_X(x)f_Y(y)$，故
+\[
+  E(XY)=\int_{-\infty}^{+\infty}\int_{-\infty}^{+\infty}xy\,f_X(x)f_Y(y)\dd x\dd y
+  =\left(\int_{-\infty}^{+\infty}x f_X(x)\dd x\right)\left(\int_{-\infty}^{+\infty}y f_Y(y)\dd y\right)
+  =E(X)E(Y).
+\]
+\end{proof}
+
+数学期望的线性可加性\textbf{不要求各随机变量相互独立}，这使得\textbf{指示变量分解法}成为求复杂计数变量期望的极强工具：将总计数写成若干 $(0\text{--}1)$ 指示变量之和 $X=\sum_{i=1}^{n}I_i$，于是 $E(X)=\sum_{i=1}^{n}P(A_i)$，完全避开了求 $X$ 复杂分布律的繁琐过程。
+
+\begin{example}[title={公交车停靠次数（指示变量法）}]
+\label{eg:bus-stops}
+一辆民航客车载有 $m=20$ 名旅客从机场开往市区，沿途有 $n=10$ 个停靠站。每位旅客在各站下车是等可能的，且各旅客在哪站下车相互独立。若某站无人下车则客车不停，求客车沿途停靠次数 $X$ 的数学期望。
+\begin{solution}
+直接求 $X$ 的分布律相当繁琐，改用指示变量分解。对第 $i$ 个车站（$i=1,2,\ldots,n$），引入指示变量
+\[
+  I_i=
+  \begin{cases}
+    1,& \text{第 }i\text{ 站有人下车（客车停靠）},\\
+    0,& \text{第 }i\text{ 站无人下车}.
+  \end{cases}
+\]
+显然停靠总次数为 $X=I_1+I_2+\cdots+I_n$。对任意固定的第 $i$ 站，每名旅客不在该站下车的概率为 $1-\frac{1}{n}$，全部 $m$ 名旅客都不在该站下车的概率为 $\left(1-\frac{1}{n}\right)^m$，故
+\[
+  E(I_i)=P(I_i=1)=1-\left(1-\frac{1}{n}\right)^m.
+\]
+尽管 $I_1,\ldots,I_n$ 之间并不独立（总人数固定为 $m$），但由数学期望的线性可加性，立即得到
+\[
+  E(X)=\sum_{i=1}^{n}E(I_i)=n\left[1-\left(1-\frac{1}{n}\right)^m\right].
+\]
+代入 $m=20,\,n=10$，得 $E(X)=10\bigl(1-0.9^{20}\bigr)\approx 8.784$（次）。
+\end{solution}
+\end{example}
+
+\begin{example}[title={独立电流与电阻下的电压数学期望}]
+\label{eg:voltage-expectation}
+设某电路中通过的电流 $I$（单位：$\mathrm{A}$）与电阻 $R$（单位：$\Omega$）相互独立，它们的概率密度分别为
+\[
+  f_I(i)=
+  \begin{cases}
+    2i,& 0<i<1,\\
+    0,& \text{其他},
+  \end{cases}
+  \qquad
+  f_R(r)=
+  \begin{cases}
+    \dfrac{r^2}{9},& 0<r<3,\\
+    0,& \text{其他}.
+  \end{cases}
+\]
+求电路两端电压 $U=IR$ 的数学期望 $E(U)$。
+\begin{solution}
+分别求 $I$ 与 $R$ 的数学期望：
+\[
+  E(I)=\int_{0}^{1}i\cdot 2i\dd i=\frac{2}{3},\qquad
+  E(R)=\int_{0}^{3}r\cdot\frac{r^2}{9}\dd r=\left[\frac{r^4}{36}\right]_{0}^{3}=\frac{9}{4}.
+\]
+因 $I$ 与 $R$ 相互独立，由\cref{prop:expectation-properties}(4)得
+\[
+  E(U)=E(IR)=E(I)E(R)=\frac{2}{3}\times\frac{9}{4}=\frac{3}{2}\text{（伏）}.
+\]
+\end{solution}
+\end{example}
+
+\begin{remark}[分位数与中位数]
+数学期望反映分布的“重心”，但对极端大值较为敏感（甚至如柯西分布期望不存在）。与期望互补的另一类位置指标是\textbf{分位数}：对 $p\in(0,1)$，称满足 $F(x_p)\ge p$ 且 $F(x_p-0)\le p$ 的数 $x_p$（对连续严格递增的 $F$，即 $F(x_p)=p$ 的唯一解）为分布的\textbf{$p$ 分位数}；特别地，$p=1/2$ 时的 $x_{0.5}$ 称为\textbf{中位数}。例如，指数分布 $\operatorname{Exp}(\theta)$ 的均值为 $\theta$，而由 $1-\e^{-x_{0.5}/\theta}=1/2$ 解得中位数为 $\theta\ln 2\approx 0.693\theta$，小于均值（右偏分布的典型特征）；标准柯西分布虽然期望不存在，但其中位数明确存在且等于 $0$。
+\end{remark}
+
+\section{方差}
+\label{sec:variance}
+
+\subsection{方差的定义与计算}
+
+数学期望刻画了随机变量取值的中心位置，但仅凭均值无法反映取值的分散程度。例如两批灯泡的平均寿命都是 $1000$ 小时，一批寿命集中在 $980\text{--}1020$ 小时，另一批却分散在 $500\text{--}1500$ 小时，两者质量稳定性截然不同。由于偏差的期望恒为零（$E[X-E(X)]=E(X)-E(X)=0$），正负偏差相互抵消，为了度量偏差的大小且便于微积分与代数运算，我们取偏差平方的期望。
+
+\begin{definition}[方差与标准差]
+\label{def:variance}
+设随机变量 $X$ 的数学期望 $E(X)$ 存在，若 $E\bigl[(X-E(X))^2\bigr]$ 存在，则称其为 $X$ 的\textbf{方差}，记为 $D(X)$（或 $\operatorname{Var}(X)$）：
+\begin{equation}
+  D(X)=E\bigl[(X-E(X))^2\bigr].
+  \label{eq:variance-def}
+\end{equation}
+称方差的算术平方根 $\sigma(X)=\sqrt{D(X)}$ 为 $X$ 的\textbf{标准差}（或\textbf{均方差}），它与 $X$ 具有相同的量纲。
+\end{definition}
+
+\begin{proposition}[方差的常用计算公式与均方误差最小性]
+\label{prop:variance-calc}
+设 $E(X^2)<+\infty$，则：
+\begin{enumerate}
+  \item 方差等于二阶原点矩减去期望的平方：
+  \begin{equation}
+    D(X)=E(X^2)-\bigl[E(X)\bigr]^2;
+    \label{eq:variance-second-moment}
+  \end{equation}
+  \item 对任意实常数 $c$，均有 $E\bigl[(X-c)^2\bigr]=D(X)+\bigl[E(X)-c\bigr]^2\ge D(X)$，等号成立当且仅当 $c=E(X)$。
+\end{enumerate}
+\end{proposition}
+\begin{proof}
+(1) 将 $(X-E(X))^2$ 展开并应用期望的线性性：
+\[
+  D(X)=E\bigl[X^2-2E(X)X+[E(X)]^2\bigr]=E(X^2)-2E(X)E(X)+[E(X)]^2=E(X^2)-[E(X)]^2.
+\]
+(2) 令 $\mu=E(X)$，插入 $\mu$ 展开：
+\[
+  E\bigl[(X-c)^2\bigr]=E\bigl[(X-\mu+\mu-c)^2\bigr]
+  =E\bigl[(X-\mu)^2\bigr]+2(\mu-c)E(X-\mu)+(\mu-c)^2
+  =D(X)+(\mu-c)^2\ge D(X),
+\]
+当且仅当 $c=\mu=E(X)$ 时取等号。
+\end{proof}
+
+性质 (2) 赋予了数学期望另一种深刻含义：在用单一常数 $c$ 预测随机变量 $X$ 时，$c=E(X)$ 是使均方误差 $E[(X-c)^2]$ 最小的唯一最优预测值，而最小均方误差恰好就是方差 $D(X)$。
+
+\subsection{方差的基本性质与切比雪夫不等式}
+
+\begin{proposition}[方差的基本性质]
+\label{prop:variance-properties}
+设 $a,b,C$ 为常数，相关方差均存在，则：
+\begin{enumerate}
+  \item $D(C)=0$；
+  \item $D(aX+b)=a^2 D(X)$（平移不改变方差，缩放使方差按平方比例变化）；
+  \item 若 $X$ 与 $Y$ \textbf{相互独立}，则 $D(X\pm Y)=D(X)+D(Y)$；推广到有限个相互独立的随机变量 $X_1,\ldots,X_n$，有
+  \[
+    D\!\left(\sum_{i=1}^{n}a_i X_i+b\right)=\sum_{i=1}^{n}a_i^2 D(X_i);
+  \]
+  \item $D(X)=0$ 的充要条件是 $P\bigl(X=E(X)\bigr)=1$（即 $X$ 几乎必然取常数）。
+\end{enumerate}
+\end{proposition}
+\begin{proof}
+(1) $D(C)=E[(C-C)^2]=0$。
+
+(2) 因 $E(aX+b)=aE(X)+b$，故 $D(aX+b)=E\bigl[(aX+b-aE(X)-b)^2\bigr]=a^2 E[(X-E(X))^2]=a^2 D(X)$。
+
+(3) 记 $\mu_X=E(X),\,\mu_Y=E(Y)$，展开得
+\[
+  D(X\pm Y)=E\bigl[(X-\mu_X)\pm(Y-\mu_Y)\bigr]^2
+  =D(X)+D(Y)\pm 2E\bigl[(X-\mu_X)(Y-\mu_Y)\bigr].
+\]
+当 $X$ 与 $Y$ 相互独立时，$X-\mu_X$ 与 $Y-\mu_Y$ 也相互独立，故交叉项等于 $E(X-\mu_X)E(Y-\mu_Y)=0$，即得 $D(X\pm Y)=D(X)+D(Y)$。
+
+(4) 充分性由 (1) 立得；必要性可由紧接着证明的切比雪夫不等式\eqref{eq:chebyshev}导出：若 $D(X)=0$，则对任意正整数 $n$ 均有 $P\bigl(\abs{X-E(X)}\ge 1/n\bigr)\le n^2 D(X)=0$，取可列并得 $P(X\ne E(X))=P\bigl(\bigcup_{n=1}^{\infty}\set{\abs{X-E(X)}\ge 1/n}\bigr)=0$，即 $P(X=E(X))=1$。
+\end{proof}
+
+若 $X$ 的期望为 $\mu$、方差为 $\sigma^2>0$，则称 $X^*=\dfrac{X-\mu}{\sigma}$ 为 $X$ 的\textbf{标准化随机变量}，由期望与方差的线性性质立得 $E(X^*)=0,\,D(X^*)=1$。
+
+\begin{example}[title={活塞与气缸的装配概率}]
+\label{eg:piston-assembly}
+设某型号活塞的直径 $X\sim N(22.40,0.03^2)$（单位：$\mathrm{cm}$），气缸的内径 $Y\sim N(22.50,0.04^2)$，$X$ 与 $Y$ 相互独立。任取一只活塞和一只气缸进行装配，求能顺利装入（即 $X<Y$）的概率。
+\begin{solution}
+令间隙 $Z=Y-X$。由\cref{prop:independent-normal-linear}及期望、方差的线性性质，$Z$ 仍服从正态分布，且
+\[
+  E(Z)=E(Y)-E(X)=22.50-22.40=0.10,
+\]
+\[
+  D(Z)=D(Y)+(-1)^2 D(X)=0.04^2+0.03^2=0.0025=0.05^2,
+\]
+即 $Z\sim N(0.10,0.05^2)$。因此顺利装配的概率为
+\[
+  P(X<Y)=P(Z>0)=1-\Phi\!\left(\frac{0-0.10}{0.05}\right)=1-\Phi(-2)=\Phi(2)\approx 0.9772.
+\]
+\end{solution}
+\end{example}
+
+方差不仅是一个定性的离散度指标，它还直接控制了随机变量偏离期望的尾部概率上界，这就是著名的切比雪夫不等式。
+
+\begin{theorem}[切比雪夫不等式]
+\label{thm:chebyshev}
+设随机变量 $X$ 具有有限的数学期望 $\mu=E(X)$ 与方差 $\sigma^2=D(X)$，则对任意正数 $\varepsilon>0$，成立
+\begin{equation}
+  P\bigl(\abs{X-\mu}\ge\varepsilon\bigr)\le\frac{\sigma^2}{\varepsilon^2},
+  \label{eq:chebyshev}
+\end{equation}
+或等价地，
+\[
+  P\bigl(\abs{X-\mu}<\varepsilon\bigr)\ge 1-\frac{\sigma^2}{\varepsilon^2}.
+\]
+\end{theorem}
+\begin{proof}
+以连续型随机变量为例（离散型将积分换为求和完全相同）。将方差的积分区域缩小到尾部区域 $\set{x:\abs{x-\mu}\ge\varepsilon}$，在该区域上 $(x-\mu)^2\ge\varepsilon^2$，于是
+\[
+  \sigma^2=\int_{-\infty}^{+\infty}(x-\mu)^2 f(x)\dd x
+  \ge\int_{\abs{x-\mu}\ge\varepsilon}(x-\mu)^2 f(x)\dd x
+  \ge\varepsilon^2\int_{\abs{x-\mu}\ge\varepsilon}f(x)\dd x
+  =\varepsilon^2 P\bigl(\abs{X-\mu}\ge\varepsilon\bigr).
+\]
+两边除以 $\varepsilon^2>0$ 即得\eqref{eq:chebyshev}。
+\end{proof}
+
+\lcfigure[caption={切比雪夫不等式的几何直观：尾部事件 $\set{\abs{X-\mu}\ge\varepsilon}$ 对应的左右两尾阴影面积之和不超过 $\sigma^2/\varepsilon^2$。},label=fig:chebyshev-tail]{ch04-chebyshev-tail}
+
+切比雪夫不等式的突出价值在于它\textbf{不依赖分布的具体形式}：只要知道均值和方差，就能给出偏离概率的普适上界（下一章的大数定律正是以它为基石）。由于它对一切分布都成立，对具体分布而言这个界通常比较宽松。例如取 $\varepsilon=2\sigma$，切比雪夫不等式给出 $P(\abs{X-\mu}<2\sigma)\ge 1-\frac{1}{4}=75\%$；而对正态分布该精确概率约为 $95.45\%$，对均匀分布 $U(a,b)$（$\sigma=\frac{b-a}{2\sqrt{3}}$）该精确概率甚至等于 $100\%$。
+
+\section{协方差及相关系数}
+\label{sec:covariance}
+
+在证明\cref{prop:variance-properties}(3)时我们看到，当 $X$ 与 $Y$ 未必独立时，
+\[
+  D(X+Y)=D(X)+D(Y)+2E\bigl[(X-E(X))(Y-E(Y))\bigr].
+\]
+这一交叉项度量了 $X$ 与 $Y$ 围绕各自均值同步偏离的协同趋势，称为协方差。
+
+\subsection{协方差的定义与性质}
+
+\begin{definition}[协方差与相关系数]
+\label{def:covariance}
+设二维随机变量 $(X,Y)$ 的二阶矩均有限，称
+\begin{equation}
+  \operatorname{Cov}(X,Y)=E\Bigl[\bigl(X-E(X)\bigr)\bigl(Y-E(Y)\bigr)\Bigr]
+  \label{eq:cov-def}
+\end{equation}
+为 $X$ 与 $Y$ 的\textbf{协方差}。当 $D(X)>0$ 且 $D(Y)>0$ 时，称无量纲数
+\begin{equation}
+  \rho_{XY}=\frac{\operatorname{Cov}(X,Y)}{\sqrt{D(X)}\sqrt{D(Y)}}
+  \label{eq:corr-def}
+\end{equation}
+为 $X$ 与 $Y$ 的\textbf{相关系数}。若 $\rho_{XY}=0$（等价于 $\operatorname{Cov}(X,Y)=0$），则称 $X$ 与 $Y$ \textbf{不相关}。
+\end{definition}
+
+展开\eqref{eq:cov-def}立即得到协方差最常用的计算公式：
+\begin{equation}
+  \operatorname{Cov}(X,Y)=E(XY)-E(X)E(Y).
+  \label{eq:cov-calc}
+\end{equation}
+
+\begin{proposition}[协方差的基本性质与一般和的方差]
+\label{prop:covariance-properties}
+设相关二阶矩均存在，$a,b,c,d$ 为常数，则：
+\begin{enumerate}
+  \item \textbf{对称性}：$\operatorname{Cov}(X,Y)=\operatorname{Cov}(Y,X)$，且 $\operatorname{Cov}(X,X)=D(X)$；
+  \item \textbf{双线性性}：$\operatorname{Cov}(aX+b,\,cY+d)=ac\,\operatorname{Cov}(X,Y)$，且
+  \[
+    \operatorname{Cov}(X_1+X_2,\,Y)=\operatorname{Cov}(X_1,Y)+\operatorname{Cov}(X_2,Y);
+  \]
+  \item \textbf{一般和的方差公式}：
+  \begin{equation}
+    D(X\pm Y)=D(X)+D(Y)\pm 2\operatorname{Cov}(X,Y),
+    \label{eq:sum-covariance}
+  \end{equation}
+  推广到有限个变量，
+  \[
+    D\!\left(\sum_{i=1}^{n}X_i\right)=\sum_{i=1}^{n}D(X_i)+2\sum_{1\le i<j\le n}\operatorname{Cov}(X_i,X_j).
+  \]
+\end{enumerate}
+\end{proposition}
+\begin{proof}
+(1) 与 (2) 直接将定义\eqref{eq:cov-def}展开并利用数学期望的线性性即得；(3) 利用方差与协方差的关系 $D(\sum_{i}X_i)=\operatorname{Cov}(\sum_{i}X_i,\sum_{j}X_j)$ 并反复应用双线性性立得。
+\end{proof}
+
+由\eqref{eq:sum-covariance}可见，要使 $D(\sum_{i=1}^{n}X_i)=\sum_{i=1}^{n}D(X_i)$ 成立，并不一定要求 $X_1,\ldots,X_n$ 相互独立，只需它们\textbf{两两不相关}即可。
+
+\subsection{相关系数的性质与最佳线性预测}
+
+先证明概率论中极为常用的柯西—施瓦茨不等式。
+
+\begin{proposition}[柯西—施瓦茨不等式]
+\label{prop:cauchy-schwarz}
+若随机变量 $U,V$ 满足 $E(U^2)<+\infty$ 与 $E(V^2)<+\infty$，则
+\begin{equation}
+  \bigl[E(UV)\bigr]^2\le E(U^2)E(V^2).
+  \label{eq:cauchy-schwarz}
+\end{equation}
+\end{proposition}
+\begin{proof}
+对任意实数 $t\in\R$，因 $(tU+V)^2\ge 0$，由期望的非负性与线性性有
+\[
+  q(t)=E\bigl[(tU+V)^2\bigr]=E(U^2)\,t^2+2E(UV)\,t+E(V^2)\ge 0.
+\]
+若 $E(U^2)=0$，则 $P(U=0)=1$，两边均为 $0$；若 $E(U^2)>0$，则关于 $t$ 的非负二次三项式判别式必满足 $\Delta=4[E(UV)]^2-4E(U^2)E(V^2)\le 0$，即得\eqref{eq:cauchy-schwarz}。
+\end{proof}
+
+现在我们通过“用 $X$ 的线性函数 $a+bX$ 在均方意义下最佳逼近 $Y$”来揭示相关系数 $\rho_{XY}$ 的几何与统计本质。
+
+\begin{theorem}[相关系数的有界性与最佳线性预测]
+\label{thm:correlation-bound}
+设 $D(X)>0$ 且 $D(Y)>0$，记 $\mu_X=E(X),\,\mu_Y=E(Y),\,\sigma_X=\sqrt{D(X)},\,\sigma_Y=\sqrt{D(Y)}$。则：
+\begin{enumerate}
+  \item 恒有 $\abs{\rho_{XY}}\le 1$；
+  \item 在所有线性预测 $\hat{Y}=a+bX\,(a,b\in\R)$ 中，均方误差 $e(a,b)=E\bigl[(Y-a-bX)^2\bigr]$ 在
+  \begin{equation}
+    b^*=\rho_{XY}\frac{\sigma_Y}{\sigma_X}=\frac{\operatorname{Cov}(X,Y)}{D(X)},\qquad
+    a^*=\mu_Y-b^*\mu_X
+    \label{eq:best-linear-pred}
+  \end{equation}
+  处取得唯一最小值，最小均方误差为
+  \begin{equation}
+    \min_{a,b\in\R}E\bigl[(Y-a-bX)^2\bigr]=\sigma_Y^2\bigl(1-\rho_{XY}^2\bigr);
+    \label{eq:min-linear-mse}
+  \end{equation}
+  \item $\abs{\rho_{XY}}=1$ 的充要条件是存在常数 $a,b\,(b\ne 0)$ 使得 $P(Y=a+bX)=1$（当 $\rho_{XY}=1$ 时 $b>0$，当 $\rho_{XY}=-1$ 时 $b<0$）。
+\end{enumerate}
+\end{theorem}
+\begin{proof}
+对任意 $a,b\in\R$，记 $c=a+b\mu_X-\mu_Y$，将 $Y-(a+bX)$ 改写为 $(Y-\mu_Y)-b(X-\mu_X)-c$，展开并利用 $E(X-\mu_X)=E(Y-\mu_Y)=0$：
+\[
+\begin{aligned}
+  e(a,b)&=E\bigl[(Y-\mu_Y)-b(X-\mu_X)-c\bigr]^2\\
+  &=\sigma_Y^2+b^2\sigma_X^2-2b\,\operatorname{Cov}(X,Y)+c^2\\
+  &=\sigma_X^2\left(b-\rho_{XY}\frac{\sigma_Y}{\sigma_X}\right)^2+c^2+\sigma_Y^2\bigl(1-\rho_{XY}^2\bigr).
+\end{aligned}
+\]
+右端前两项均非负，故 $e(a,b)$ 当且仅当 $b=b^*=\rho_{XY}\frac{\sigma_Y}{\sigma_X}$ 且 $c=0$（即 $a=a^*=\mu_Y-b^*\mu_X$）时取得唯一最小值 $\sigma_Y^2(1-\rho_{XY}^2)$，这就同时证明了 (2)。
+
+因为 $e(a^*,b^*)=E[(Y-a^*-b^*X)^2]\ge 0$ 且 $\sigma_Y^2>0$，必有 $1-\rho_{XY}^2\ge 0$，即 $\abs{\rho_{XY}}\le 1$，证明了 (1)。
+
+最后，由\cref{prop:variance-properties}(4)，$\abs{\rho_{XY}}=1\iff\sigma_Y^2(1-\rho_{XY}^2)=0\iff E[(Y-a^*-b^*X)^2]=0\iff P(Y=a^*+b^*X)=1$；且由 $b^*=\rho_{XY}\frac{\sigma_Y}{\sigma_X}$ 知 $b^*$ 与 $\rho_{XY}$ 同号，证明了 (3)。
+\end{proof}
+
+\cref{thm:correlation-bound}清楚地表明：$\rho_{XY}$ 刻画的是 $X$ 与 $Y$ 之间的\textbf{线性相关程度}。$\abs{\rho_{XY}}$ 越接近 $1$，最小线性预测误差 $\sigma_Y^2(1-\rho_{XY}^2)$ 越小，线性关联越紧密；当 $\rho_{XY}=0$ 时，最佳线性预测退化为常数 $\mu_Y$，两者不存在线性关联。
+
+\subsection{独立性与不相关的关系}
+
+若 $X$ 与 $Y$ 相互独立，则由\cref{prop:expectation-properties}(4)知 $E(XY)=E(X)E(Y)$，代入\eqref{eq:cov-calc}立得 $\operatorname{Cov}(X,Y)=0$，即\textbf{相互独立必不相关}。但反之一般不成立：不相关仅意味着没有\textbf{线性}关系，两者仍可能存在强烈的非线性函数依赖。
+
+\begin{example}[title={不相关但完全函数依赖的两个反例}]
+\label{eg:uncorrelated-dependent}
+(1) \textbf{离散反例}：设 $X$ 等可能取值 $-1,0,1$，令 $Y=X^2$。则 $E(X)=0$，$XY=X^3=X$，故 $E(XY)=E(X)=0$，从而 $\operatorname{Cov}(X,Y)=E(XY)-E(X)E(Y)=0$，即 $X$ 与 $Y$ 不相关。但 $Y$ 由 $X$ 完全确定，显然不独立（如 $P(X=0,Y=1)=0\ne P(X=0)P(Y=1)=\frac{1}{3}\cdot\frac{2}{3}$）。
+
+(2) \textbf{连续反例}：设 $X\sim U(-1,1)$，令 $Y=X^2$。因 $X$ 的密度为偶函数，奇数次矩为零，故 $E(X)=0$，$E(XY)=E(X^3)=0$，从而 $\operatorname{Cov}(X,Y)=0$，$X$ 与 $Y$ 不相关；但 $Y=X^2$ 同样与 $X$ 完全函数依赖，并不独立。
+\end{example}
+
+然而，对于二维正态分布，独立性与不相关是完全等价的。
+
+\begin{proposition}[二维正态分布参数 $\rho$ 的含义]
+\label{prop:bivariate-normal-rho}
+设 $(X,Y)\sim N(\mu_1,\mu_2,\sigma_1^2,\sigma_2^2,\rho)$，则 $X$ 与 $Y$ 的相关系数恰为参数 $\rho$（即 $\rho_{XY}=\rho$）。因此，二维正态随机变量 $X$ 与 $Y$ \textbf{相互独立的充要条件是它们不相关}。
+\end{proposition}
+\begin{proof}
+记标准化变量 $U=\frac{X-\mu_1}{\sigma_1}$ 与 $V=\frac{Y-\mu_2}{\sigma_2}$，则 $\rho_{XY}=E(UV)$。在\cref{sec:conditional-distribution}中已知，给定 $X=x$（即 $U=u$）时，$Y\sim N(\mu_2+\rho\sigma_2 u,\sigma_2^2(1-\rho^2))$，即 $V\mid U=u\sim N(\rho u,1-\rho^2)$。由此
+\[
+\begin{aligned}
+  \rho_{XY}&=\int_{-\infty}^{+\infty}\int_{-\infty}^{+\infty}uv\,f_{U,V}(u,v)\dd v\dd u\\
+  &=\int_{-\infty}^{+\infty}u f_U(u)\left[\int_{-\infty}^{+\infty}v f_{V\mid U}(v\mid u)\dd v\right]\dd u\\
+  &=\int_{-\infty}^{+\infty}u f_U(u)\cdot(\rho u)\dd u=\rho E(U^2)=\rho.
+\end{aligned}
+\]
+结合\cref{prop:bivariate-normal-indep}（独立 $\iff\rho=0$），立得二维正态情形下独立等价于不相关。
+\end{proof}
+
+\section{矩、协方差矩阵与多维正态分布}
+\label{sec:moments}
+
+\begin{definition}[原点矩、中心矩与混合矩]
+\label{def:moments}
+设 $X,Y$ 为随机变量，$k,l$ 为正整数（要求相应期望存在）：
+\begin{enumerate}
+  \item $E(X^k)$ 称为 $X$ 的\textbf{$k$ 阶原点矩}（记为 $A_k$）；一阶原点矩即数学期望 $E(X)$。
+  \item $E\bigl[(X-E(X))^k\bigr]$ 称为 $X$ 的\textbf{$k$ 阶中心矩}（记为 $B_k$）；二阶中心矩即方差 $D(X)$。
+  \item $E(X^k Y^l)$ 称为 $X$ 与 $Y$ 的\textbf{$k+l$ 阶混合矩}；$E\bigl[(X-E(X))^k(Y-E(Y))^l\bigr]$ 称为\textbf{$k+l$ 阶混合中心矩}；$1+1$ 阶混合中心矩即协方差 $\operatorname{Cov}(X,Y)$。
+\end{enumerate}
+\end{definition}
+
+\begin{definition}[协方差矩阵]
+\label{def:covariance-matrix}
+设 $n$ 维随机向量 $\bm{X}=(X_1,X_2,\ldots,X_n)^{\mathsf{T}}$ 的各分量方差均有限，记 $c_{ij}=\operatorname{Cov}(X_i,X_j)\,(i,j=1,\ldots,n)$。称 $n\times n$ 矩阵
+\begin{equation}
+  \bm{C}=(c_{ij})_{n\times n}=
+  \begin{pmatrix}
+    c_{11} & c_{12} & \cdots & c_{1n} \\
+    c_{21} & c_{22} & \cdots & c_{2n} \\
+    \vdots & \vdots & \ddots & \vdots \\
+    c_{n1} & c_{n2} & \cdots & c_{nn}
+  \end{pmatrix}
+  \label{eq:cov-matrix}
+\end{equation}
+为 $\bm{X}$ 的\textbf{协方差矩阵}，其主对角元 $c_{ii}=D(X_i)$。
+\end{definition}
+
+协方差矩阵 $\bm{C}$ 必为\textbf{实对称半正定矩阵}：对称性源于 $c_{ij}=c_{ji}$；对任意实向量 $\bm{a}\in\R^n$（分量为 $a_1,\ldots,a_n$），由协方差的双线性性有
+\[
+  \bm{a}^{\mathsf{T}}\bm{C}\bm{a}
+  =\sum_{i=1}^{n}\sum_{j=1}^{n}a_i a_j \operatorname{Cov}(X_i,X_j)
+  =D\!\left(\sum_{i=1}^{n}a_i X_i\right)\ge 0.
+\]
+进一步地，当且仅当分量 $X_1,\ldots,X_n$ 之间不存在非平凡的确定性线性关系时，$\bm{C}$ 严格正定（因而可逆）。
+
+以二维正态随机向量 $\bm{X}=(X_1,X_2)^{\mathsf{T}}\sim N(\mu_1,\mu_2,\sigma_1^2,\sigma_2^2,\rho)$ 为例，其均值向量为 $\bm{\mu}=(\mu_1,\mu_2)^{\mathsf{T}}$，协方差矩阵为
+\[
+  \bm{C}=
+  \begin{pmatrix}
+    \sigma_1^2 & \rho\sigma_1\sigma_2 \\
+    \rho\sigma_1\sigma_2 & \sigma_2^2
+  \end{pmatrix},
+  \qquad
+  \det\bm{C}=\sigma_1^2\sigma_2^2(1-\rho^2)>0,
+\]
+逆矩阵为
+\[
+  \bm{C}^{-1}=\frac{1}{1-\rho^2}
+  \begin{pmatrix}
+    \dfrac{1}{\sigma_1^2} & -\dfrac{\rho}{\sigma_1\sigma_2} \\[8pt]
+    -\dfrac{\rho}{\sigma_1\sigma_2} & \dfrac{1}{\sigma_2^2}
+  \end{pmatrix}.
+\]
+直接乘开验证可知，\eqref{eq:bivariate-normal-density}可写成紧凑的矩阵形式：
+\[
+  f(\bm{x})=\frac{1}{(2\pi)^{2/2}(\det\bm{C})^{1/2}}
+  \exp\!\left[-\frac{1}{2}(\bm{x}-\bm{\mu})^{\mathsf{T}}\bm{C}^{-1}(\bm{x}-\bm{\mu})\right].
+\]
+将维数从 $2$ 推广到任意正整数 $n$，便得到 $n$ 维正态分布的定义。
+
+\begin{definition}[$n$ 维正态分布]
+\label{def:multivariate-normal}
+设 $\bm{\mu}\in\R^n$ 为常向量，$\bm{C}$ 为 $n\times n$ 实对称正定矩阵。若 $n$ 维随机向量 $\bm{X}=(X_1,\ldots,X_n)^{\mathsf{T}}$ 的联合概率密度为
+\begin{equation}
+  f(\bm{x})=\frac{1}{(2\pi)^{n/2}(\det\bm{C})^{1/2}}
+  \exp\!\left[-\frac{1}{2}(\bm{x}-\bm{\mu})^{\mathsf{T}}\bm{C}^{-1}(\bm{x}-\bm{\mu})\right],
+  \qquad \bm{x}\in\R^n,
+  \label{eq:mvn-density}
+\end{equation}
+则称 $\bm{X}$ 服从\textbf{$n$ 维正态分布}，记为 $\bm{X}\sim N(\bm{\mu},\bm{C})$。
+\end{definition}
+
+\begin{theorem}[$n$ 维正态分布的基本性质]
+\label{thm:multivariate-normal-properties}
+设 $n$ 维随机向量 $\bm{X}=(X_1,\ldots,X_n)^{\mathsf{T}}\sim N(\bm{\mu},\bm{C})$（$\bm{C}$ 对称正定），则：
+\begin{enumerate}
+  \item \textbf{标准正态表示}：存在 $n\times n$ 可逆矩阵 $\bm{B}$ 满足 $\bm{B}\bm{B}^{\mathsf{T}}=\bm{C}$，使得 $\bm{X}=\bm{\mu}+\bm{B}\bm{Z}$，其中 $\bm{Z}=(Z_1,\ldots,Z_n)^{\mathsf{T}}$ 的各分量相互独立且同服从 $N(0,1)$；
+  \item \textbf{线性组合与边缘分布}：对任意不全为零的常向量 $\bm{l}=(l_1,\ldots,l_n)^{\mathsf{T}}\in\R^n$，一维线性组合 $\bm{l}^{\mathsf{T}}\bm{X}$ 服从正态分布 $N(\bm{l}^{\mathsf{T}}\bm{\mu},\,\bm{l}^{\mathsf{T}}\bm{C}\bm{l})$；特别地，每个边缘分量 $X_i\sim N(\mu_i,c_{ii})$；
+  \item \textbf{满秩线性变换}：若 $\bm{A}$ 为 $n\times n$ 可逆常数矩阵、$\bm{b}\in\R^n$ 为常向量，则 $\bm{Y}=\bm{A}\bm{X}+\bm{b}\sim N(\bm{A}\bm{\mu}+\bm{b},\,\bm{A}\bm{C}\bm{A}^{\mathsf{T}})$（更一般地，对 $k\times n$ 满行秩矩阵 $\bm{A}$ 亦成立）；
+  \item \textbf{独立与不相关等价}：分量 $X_1,\ldots,X_n$ 相互独立的充要条件是它们两两不相关（即 $\bm{C}$ 为对角矩阵）。
+\end{enumerate}
+\end{theorem}
+\begin{proof}
+先证 (3) 中的可逆方阵情形。令 $\bm{y}=\bm{A}\bm{x}+\bm{b}$，逆变换为 $\bm{x}=\bm{A}^{-1}(\bm{y}-\bm{b})$，其雅可比行列式绝对值为 $\abs{\det\bm{A}^{-1}}=\abs{\det\bm{A}}^{-1}$。记 $\bm{\mu}_{\bm{Y}}=\bm{A}\bm{\mu}+\bm{b}$，$\bm{C}_{\bm{Y}}=\bm{A}\bm{C}\bm{A}^{\mathsf{T}}$，则 $\bm{C}_{\bm{Y}}^{-1}=(\bm{A}^{\mathsf{T}})^{-1}\bm{C}^{-1}\bm{A}^{-1}$ 且 $\det\bm{C}_{\bm{Y}}=(\det\bm{A})^2\det\bm{C}$。代入多元换元公式与\eqref{eq:mvn-density}，得
+\[
+\begin{aligned}
+  f_{\bm{Y}}(\bm{y})&=f_{\bm{X}}\bigl(\bm{A}^{-1}(\bm{y}-\bm{b})\bigr)\abs{\det\bm{A}}^{-1}\\
+  &=\frac{1}{(2\pi)^{n/2}(\det\bm{C}_{\bm{Y}})^{1/2}}
+    \exp\!\left[-\frac{1}{2}(\bm{y}-\bm{\mu}_{\bm{Y}})^{\mathsf{T}}\bm{C}_{\bm{Y}}^{-1}(\bm{y}-\bm{\mu}_{\bm{Y}})\right],
+\end{aligned}
+\]
+故 $\bm{Y}\sim N(\bm{A}\bm{\mu}+\bm{b},\,\bm{A}\bm{C}\bm{A}^{\mathsf{T}})$。
+
+再证 (1)。因 $\bm{C}$ 实对称正定，由谱定理存在正交矩阵 $\bm{Q}$ 与正对角矩阵 $\bm{\Lambda}=\operatorname{diag}(\lambda_1,\ldots,\lambda_n)$ 使 $\bm{C}=\bm{Q}\bm{\Lambda}\bm{Q}^{\mathsf{T}}$。令 $\bm{B}=\bm{Q}\bm{\Lambda}^{1/2}$，则 $\bm{B}$ 可逆且 $\bm{B}\bm{B}^{\mathsf{T}}=\bm{C}$。令 $\bm{Z}=\bm{B}^{-1}(\bm{X}-\bm{\mu})$，由 (3) 知 $\bm{Z}\sim N(\bm{0},\bm{I}_n)$，其联合密度分解为 $\prod_{i=1}^{n}\frac{1}{\sqrt{2\pi}}\e^{-z_i^2/2}$，故 $Z_1,\ldots,Z_n$ 独立同服从 $N(0,1)$，且 $\bm{X}=\bm{\mu}+\bm{B}\bm{Z}$。
+
+对于 (2)，利用 (1) 写出 $\bm{l}^{\mathsf{T}}\bm{X}=\bm{l}^{\mathsf{T}}\bm{\mu}+(\bm{B}^{\mathsf{T}}\bm{l})^{\mathsf{T}}\bm{Z}$，它是独立标准正态变量 $Z_1,\ldots,Z_n$ 的非零线性组合，由\cref{prop:independent-normal-linear}立得其服从正态分布，均值为 $\bm{l}^{\mathsf{T}}\bm{\mu}$，方差为 $\norm{\bm{B}^{\mathsf{T}}\bm{l}}^2=\bm{l}^{\mathsf{T}}\bm{B}\bm{B}^{\mathsf{T}}\bm{l}=\bm{l}^{\mathsf{T}}\bm{C}\bm{l}$；取 $\bm{l}$ 为第 $i$ 个单位坐标向量即得 $X_i\sim N(\mu_i,c_{ii})$。
+
+对于 (4)，必要性由独立必不相关立得；反之，若两两不相关则 $\bm{C}=\operatorname{diag}(\sigma_1^2,\ldots,\sigma_n^2)$，此时 $\det\bm{C}=\prod_{i=1}^{n}\sigma_i^2$、$\bm{C}^{-1}=\operatorname{diag}(\sigma_1^{-2},\ldots,\sigma_n^{-2})$，代入\eqref{eq:mvn-density}直接分解为
+\[
+  f(\bm{x})=\prod_{i=1}^{n}\frac{1}{\sqrt{2\pi}\,\sigma_i}\exp\!\left[-\frac{(x_i-\mu_i)^2}{2\sigma_i^2}\right]
+  =\prod_{i=1}^{n}f_{X_i}(x_i),
+\]
+故 $X_1,\ldots,X_n$ 相互独立。
+\end{proof}
+
+\section{常用分布总结}
+\label{sec:distribution-summary}
+
+本节系统推导第二、三章引入的十类常用一维分布（并附二维正态分布）的数学期望、方差与分布函数，并按参数及条件、取值范围、分布律或概率密度、数字特征、典型应用以及分布间联系进行完整汇总。
+
+\subsection{常用离散型分布}
+
+以下均记 $q=1-p$。离散型随机变量的分布函数统一由 $F(x)=\sum_{x_k\le x}p_k$ 给出，呈右连续阶梯函数。
+
+\begin{enumerate}
+  \item \textbf{$(0\text{--}1)$ 分布 $b(1,p)$}（参数 $0<p<1$，取值 $\set{0,1}$）：分布律为 $P(X=k)=p^k q^{1-k}\,(k=0,1)$。直接由定义计算：
+  \[
+    E(X)=0\cdot q+1\cdot p=p,\qquad
+    E(X^2)=0^2\cdot q+1^2\cdot p=p,
+  \]
+  从而
+  \[
+    D(X)=E(X^2)-\bigl[E(X)\bigr]^2=p-p^2=p(1-p)=pq.
+  \]
+  $b(1,p)$ 是单次伯努利试验的指标编码，也是构造二项分布与指示变量分解法的基本单元。
+
+  \item \textbf{二项分布 $b(n,p)$}（参数 $n\in\N^+,\,0<p<1$，取值 $\set{0,1,\ldots,n}$）：分布律为 $P(X=k)=\binom{n}{k}p^k q^{n-k}$。给出两种等价推导：
+
+  \textbf{方法一（指示变量分解法）}：将 $n$ 重伯努利试验的总成功次数写为 $X=X_1+X_2+\cdots+X_n$，其中 $X_1,\ldots,X_n$ 相互独立且同服从 $b(1,p)$。由期望线性性与独立变量方差可加性，立得
+  \[
+    E(X)=\sum_{i=1}^{n}E(X_i)=np,\qquad
+    D(X)=\sum_{i=1}^{n}D(X_i)=npq.
+  \]
+
+  \textbf{方法二（组合恒等式直接求和）}：利用 $k\binom{n}{k}=n\binom{n-1}{k-1}$ 与二项式定理，
+  \[
+    E(X)=\sum_{k=1}^{n}k\binom{n}{k}p^k q^{n-k}
+    =np\sum_{k=1}^{n}\binom{n-1}{k-1}p^{k-1}q^{(n-1)-(k-1)}
+    =np(p+q)^{n-1}=np.
+  \]
+  再利用 $k(k-1)\binom{n}{k}=n(n-1)\binom{n-2}{k-2}$ 求二阶阶乘矩：
+  \[
+    E\bigl[X(X-1)\bigr]=\sum_{k=2}^{n}k(k-1)\binom{n}{k}p^k q^{n-k}
+    =n(n-1)p^2\sum_{k=2}^{n}\binom{n-2}{k-2}p^{k-2}q^{n-k}
+    =n(n-1)p^2,
+  \]
+  于是 $E(X^2)=E[X(X-1)]+E(X)=n(n-1)p^2+np$，故
+  \[
+    D(X)=n(n-1)p^2+np-(np)^2=np(1-p)=npq.
+  \]
+
+  \item \textbf{泊松分布 $\pi(\lambda)$}（参数 $\lambda>0$，取值 $\set{0,1,2,\ldots}$）：分布律为 $P(X=k)=\frac{\lambda^k\e^{-\lambda}}{k!}$。利用指数级数 $\sum_{m=0}^{\infty}\frac{\lambda^m}{m!}=\e^\lambda$ 与阶乘矩技巧：
+  \[
+    E(X)=\sum_{k=0}^{\infty}k\frac{\lambda^k\e^{-\lambda}}{k!}
+    =\lambda\e^{-\lambda}\sum_{k=1}^{\infty}\frac{\lambda^{k-1}}{(k-1)!}
+    =\lambda\e^{-\lambda}\cdot\e^\lambda=\lambda,
+  \]
+  \[
+    E\bigl[X(X-1)\bigr]=\sum_{k=2}^{\infty}k(k-1)\frac{\lambda^k\e^{-\lambda}}{k!}
+    =\lambda^2\e^{-\lambda}\sum_{k=2}^{\infty}\frac{\lambda^{k-2}}{(k-2)!}
+    =\lambda^2\e^{-\lambda}\cdot\e^\lambda=\lambda^2.
+  \]
+  因此 $E(X^2)=E[X(X-1)]+E(X)=\lambda^2+\lambda$，从而
+  \[
+    D(X)=E(X^2)-\bigl[E(X)\bigr]^2=(\lambda^2+\lambda)-\lambda^2=\lambda.
+  \]
+  泊松分布的均值与方差相等，均为 $\lambda$；在泊松极限 $n\to\infty,\,np_n\to\lambda$ 下，$b(n,p_n)$ 的均值 $np_n\to\lambda$、方差 $np_n(1-p_n)\to\lambda$，与该结果完全吻合。
+
+  \item \textbf{几何分布 $G(p)$}（参数 $0<p<1$，取值 $\set{1,2,\ldots}$）：分布律为 $P(X=k)=pq^{k-1}$，分布函数在正整数 $m$ 处为 $F(m)=1-q^m$。为求期望与方差，对绝对收敛幂级数 $\sum_{k=0}^{\infty}q^k=\frac{1}{1-q}\,(\abs{q}<1)$ 逐项求一阶与二阶导数：
+  \[
+    \sum_{k=1}^{\infty}kq^{k-1}=\frac{\dd}{\dd q}\left(\frac{1}{1-q}\right)=\frac{1}{(1-q)^2}=\frac{1}{p^2},
+  \]
+  \[
+    \sum_{k=2}^{\infty}k(k-1)q^{k-2}=\frac{\dd^2}{\dd q^2}\left(\frac{1}{1-q}\right)=\frac{2}{(1-q)^3}=\frac{2}{p^3}.
+  \]
+  代入定义即得
+  \[
+    E(X)=\sum_{k=1}^{\infty}k\cdot pq^{k-1}=p\cdot\frac{1}{p^2}=\frac{1}{p},
+  \]
+  \[
+    E\bigl[X(X-1)\bigr]=\sum_{k=2}^{\infty}k(k-1)pq^{k-1}=pq\sum_{k=2}^{\infty}k(k-1)q^{k-2}=pq\cdot\frac{2}{p^3}=\frac{2q}{p^2},
+  \]
+  从而 $E(X^2)=\frac{2q}{p^2}+\frac{1}{p}=\frac{2-p}{p^2}$，故
+  \[
+    D(X)=\frac{2-p}{p^2}-\frac{1}{p^2}=\frac{1-p}{p^2}=\frac{q}{p^2}.
+  \]
+
+  \item \textbf{负二项分布 $NB(r,p)$}（参数 $r\in\N^+,\,0<p<1$，取值 $\set{r,r+1,\ldots}$）：分布律为 $P(Y=k)=\binom{k-1}{r-1}p^r q^{k-r}$。将累计出现第 $r$ 次成功所需的总试验次数拆分为相邻两次成功之间的等待次数之和 $Y=T_1+T_2+\cdots+T_r$，由各次试验独立知 $T_1,\ldots,T_r$ 相互独立且同服从 $G(p)$，故
+  \[
+    E(Y)=\sum_{i=1}^{r}E(T_i)=\frac{r}{p},\qquad
+    D(Y)=\sum_{i=1}^{r}D(T_i)=\frac{rq}{p^2}.
+  \]
+
+  \item \textbf{超几何分布 $H(N,M,n)$}（参数 $N,M,n\in\N^+,\,M\le N,\,n\le N$，取值满足 $\max\set{0,n-(N-M)}\le k\le\min\set{n,M}$）：分布律为 $P(X=k)=\dfrac{\binom{M}{k}\binom{N-M}{n-k}}{\binom{N}{n}}$。设总体 $N$ 件产品含 $M$ 件次品，不放回抽取 $n$ 件，记 $X=I_1+I_2+\cdots+I_n$，其中 $I_i$ 为第 $i$ 次抽到次品的指示变量。记 $p=\frac{M}{N},\,q=1-p$。由抽签对称性，每次抽到次品的无条件概率均相等，即
+  \[
+    E(I_i)=P(I_i=1)=\frac{M}{N}=p,\qquad
+    D(I_i)=pq.
+  \]
+  故由期望线性性立即得到 $E(X)=\sum_{i=1}^{n}E(I_i)=np$。
+
+  因不放回抽样使 $I_i$ 与 $I_j\,(i\ne j)$ 不独立，须计算协方差。对任意 $i\ne j$，
+  \[
+    E(I_i I_j)=P(I_i=1,\,I_j=1)=\frac{M}{N}\cdot\frac{M-1}{N-1},
+  \]
+  于是
+  \[
+    \operatorname{Cov}(I_i,I_j)=E(I_i I_j)-E(I_i)E(I_j)
+    =\frac{M(M-1)}{N(N-1)}-\frac{M^2}{N^2}
+    =-\frac{M(N-M)}{N^2(N-1)}=-\frac{pq}{N-1}.
+  \]
+  代入\eqref{eq:sum-covariance}（共有 $n(n-1)$ 个有序对 $i\ne j$），得
+  \[
+    D(X)=\sum_{i=1}^{n}D(I_i)+\sum_{i\ne j}\operatorname{Cov}(I_i,I_j)
+    =npq+n(n-1)\left(-\frac{pq}{N-1}\right)
+    =npq\cdot\frac{N-n}{N-1},
+  \]
+  其中因子 $\frac{N-n}{N-1}\in[0,1]$ 称为\textbf{有限总体修正因子}。当 $N\to\infty$ 且 $M/N\to p$（固定 $n$）时，$\frac{N-n}{N-1}\to 1$，$H(N,M,n)$ 的期望与方差分别趋于 $b(n,p)$ 的 $np$ 与 $npq$。
+\end{enumerate}
+
+\subsection{常用连续型分布}
+
+\begin{enumerate}
+  \item \textbf{均匀分布 $U(a,b)$}（参数 $a<b$，支集 $(a,b)$）：概率密度在 $(a,b)$ 内为 $f(x)=\frac{1}{b-a}$，分布函数为
+  \[
+    F(x)=
+    \begin{cases}
+      0,& x<a,\\
+      \dfrac{x-a}{b-a},& a\le x<b,\\
+      1,& x\ge b.
+    \end{cases}
+  \]
+  直接积分求一阶、二阶原点矩：
+  \[
+    E(X)=\int_{a}^{b}\frac{x}{b-a}\dd x
+    =\frac{b^2-a^2}{2(b-a)}=\frac{a+b}{2},
+  \]
+  \[
+    E(X^2)=\int_{a}^{b}\frac{x^2}{b-a}\dd x
+    =\frac{b^3-a^3}{3(b-a)}=\frac{a^2+ab+b^2}{3},
+  \]
+  通分并化简得
+  \[
+    D(X)=E(X^2)-\bigl[E(X)\bigr]^2
+    =\frac{4(a^2+ab+b^2)-3(a^2+2ab+b^2)}{12}
+    =\frac{(b-a)^2}{12}.
+  \]
+
+  \item \textbf{指数分布 $\operatorname{Exp}(\theta)$}（尺度参数 $\theta>0$，支集 $(0,+\infty)$）：当 $x>0$ 时 $f(x)=\frac{1}{\theta}\e^{-x/\theta}$，$F(x)=1-\e^{-x/\theta}$（$x\le 0$ 时均为 $0$）。用分部积分直接求 $E(X)$ 与 $E(X^2)$：
+  \[
+    E(X)=\int_{0}^{+\infty}x\cdot\frac{1}{\theta}\e^{-x/\theta}\dd x
+    =\Bigl[-x\e^{-x/\theta}\Bigr]_{0}^{+\infty}+\int_{0}^{+\infty}\e^{-x/\theta}\dd x
+    =0+\Bigl[-\theta\e^{-x/\theta}\Bigr]_{0}^{+\infty}=\theta;
+  \]
+  再作一次分部积分：
+  \[
+    E(X^2)=\int_{0}^{+\infty}x^2\cdot\frac{1}{\theta}\e^{-x/\theta}\dd x
+    =\Bigl[-x^2\e^{-x/\theta}\Bigr]_{0}^{+\infty}+2\int_{0}^{+\infty}x\e^{-x/\theta}\dd x
+    =2\theta E(X)=2\theta^2.
+  \]
+  因此
+  \[
+    D(X)=E(X^2)-\bigl[E(X)\bigr]^2=2\theta^2-\theta^2=\theta^2.
+  \]
+  若改用速率参数 $\lambda=1/\theta$，则 $E(X)=1/\lambda,\,D(X)=1/\lambda^2$。
+
+  \item \textbf{$\Gamma$ 分布 $\Gamma(\alpha,\theta)$ 与 $\chi^2(n)$ 分布}（参数 $\alpha>0,\,\theta>0$，支集 $(0,+\infty)$）：概率密度为 $f(x)=\dfrac{1}{\Gamma(\alpha)\theta^\alpha}x^{\alpha-1}\e^{-x/\theta}\,(x>0)$。先由分部积分验证伽马函数递推式：对任意 $s>0$，
+  \[
+    \Gamma(s+1)=\int_{0}^{+\infty}t^s\e^{-t}\dd t
+    =\Bigl[-t^s\e^{-t}\Bigr]_{0}^{+\infty}+s\int_{0}^{+\infty}t^{s-1}\e^{-t}\dd t
+    =s\Gamma(s).
+  \]
+  作换元 $t=x/\theta$（$x=\theta t,\,\dd x=\theta\dd t$），直接得任意 $k$ 阶原点矩：
+  \[
+    E(X^k)=\int_{0}^{+\infty}\frac{x^{\alpha+k-1}\e^{-x/\theta}}{\Gamma(\alpha)\theta^\alpha}\dd x
+    =\frac{\theta^k}{\Gamma(\alpha)}\int_{0}^{+\infty}t^{\alpha+k-1}\e^{-t}\dd t
+    =\theta^k\frac{\Gamma(\alpha+k)}{\Gamma(\alpha)}.
+  \]
+  分别取 $k=1,2$ 并应用递推式 $\Gamma(\alpha+1)=\alpha\Gamma(\alpha)$ 与 $\Gamma(\alpha+2)=(\alpha+1)\alpha\Gamma(\alpha)$，得
+  \[
+    E(X)=\alpha\theta,\qquad E(X^2)=\alpha(\alpha+1)\theta^2,
+  \]
+  从而
+  \[
+    D(X)=\alpha(\alpha+1)\theta^2-(\alpha\theta)^2=\alpha\theta^2.
+  \]
+  特别地，取 $\alpha=1$ 复原指数分布 $\operatorname{Exp}(\theta)$ 的 $E(X)=\theta,\,D(X)=\theta^2$；取 $\alpha=n/2,\,\theta=2$ 得自由度为 $n$ 的卡方分布 $\chi^2(n)$ 的数字特征：$E(X)=n,\,D(X)=2n$。
+
+  \item \textbf{正态分布 $N(\mu,\sigma^2)$}（参数 $\mu\in\R,\,\sigma>0$，取值 $(-\infty,+\infty)$）：概率密度为
+  \[
+    f(x)=\frac{1}{\sqrt{2\pi}\,\sigma}\exp\!\left[-\frac{(x-\mu)^2}{2\sigma^2}\right],
+  \]
+  分布函数通过标准正态表示为 $F(x)=\Phi\!\left(\dfrac{x-\mu}{\sigma}\right)$。
+
+  先对标准正态分布 $Z\sim N(0,1)$ 严格验证绝对可积并求矩：
+  \[
+    \int_{-\infty}^{+\infty}\abs{z}\varphi(z)\dd z
+    =\frac{2}{\sqrt{2\pi}}\int_{0}^{+\infty}z\e^{-z^2/2}\dd z
+    =\frac{2}{\sqrt{2\pi}}\Bigl[-\e^{-z^2/2}\Bigr]_{0}^{+\infty}
+    =\sqrt{\frac{2}{\pi}}<+\infty,
+  \]
+  故 $E(Z)$ 存在；又因 $z\varphi(z)$ 为奇函数，在对称区间上积分为零，得 $E(Z)=0$。对二阶原点矩 $E(Z^2)$ 分部积分（令 $u=z,\,\dd v=z\e^{-z^2/2}\dd z$，则 $v=-\e^{-z^2/2}$，且 $\lim_{z\to\pm\infty}z\e^{-z^2/2}=0$）：
+  \[
+    E(Z^2)=\frac{1}{\sqrt{2\pi}}\int_{-\infty}^{+\infty}z\cdot z\e^{-z^2/2}\dd z
+    =\frac{1}{\sqrt{2\pi}}\Bigl[-z\e^{-z^2/2}\Bigr]_{-\infty}^{+\infty}
+    +\frac{1}{\sqrt{2\pi}}\int_{-\infty}^{+\infty}\e^{-z^2/2}\dd z
+    =0+1=1,
+  \]
+  从而 $D(Z)=E(Z^2)-[E(Z)]^2=1$。对一般正态变量 $X\sim N(\mu,\sigma^2)$，由标准化关系写作 $X=\mu+\sigma Z$，再由期望与方差的线性性质立得
+  \[
+    E(X)=\mu+\sigma E(Z)=\mu,\qquad
+    D(X)=\sigma^2 D(Z)=\sigma^2.
+  \]
+  至于二维正态分布 $(X,Y)\sim N(\mu_1,\mu_2,\sigma_1^2,\sigma_2^2,\rho)$，其边缘分布分别为 $N(\mu_1,\sigma_1^2)$ 与 $N(\mu_2,\sigma_2^2)$，均值向量为 $(\mu_1,\mu_2)^{\mathsf{T}}$，相关系数为 $\rho_{XY}=\rho$，协方差矩阵为 $\begin{pmatrix} \sigma_1^2 & \rho\sigma_1\sigma_2 \\ \rho\sigma_1\sigma_2 & \sigma_2^2 \end{pmatrix}$。
+\end{enumerate}
+
+\subsection{常用分布总表与分布间联系}
+
+\cref{tab:common-distributions}汇总了十类常用一维分布的核心要素，\cref{fig:distribution-relations}则梳理了各分布之间通过独立求和、参数特化与极限逼近形成的整体联系网络。
+
+\begin{table}[htbp]
+\centering
+\caption{常用概率分布的核心要素汇总（$q=1-p$）}
+\label{tab:common-distributions}
+\renewcommand{\arraystretch}{1.55}
+\small
+\begin{tabularx}{\textwidth}{@{}llllll@{}}
+\toprule
+分布与记号 & 参数条件 & 取值范围 & 分布律 / 概率密度 & $E(X)$ & $D(X)$ \\
+\midrule
+两点 $b(1,p)$ & $0<p<1$ & $\set{0,1}$ & $p^k q^{1-k}$ & $p$ & $pq$ \\
+二项 $b(n,p)$ & $n\in\N^+,\,0<p<1$ & $\set{0,\ldots,n}$ & $\binom{n}{k}p^k q^{n-k}$ & $np$ & $npq$ \\
+泊松 $\pi(\lambda)$ & $\lambda>0$ & $\set{0,1,2,\ldots}$ & $\dfrac{\lambda^k\e^{-\lambda}}{k!}$ & $\lambda$ & $\lambda$ \\
+几何 $G(p)$ & $0<p<1$ & $\set{1,2,\ldots}$ & $pq^{k-1}$ & $\dfrac{1}{p}$ & $\dfrac{q}{p^2}$ \\
+负二项 $NB(r,p)$ & $r\in\N^+,\,0<p<1$ & $\set{r,r+1,\ldots}$ & $\binom{k-1}{r-1}p^r q^{k-r}$ & $\dfrac{r}{p}$ & $\dfrac{rq}{p^2}$ \\
+超几何 $H(N,M,n)$ & $M,n\le N$ & 合法整数 $k$ & $\dfrac{\binom{M}{k}\binom{N-M}{n-k}}{\binom{N}{n}}$ & $n\dfrac{M}{N}$ & $npq\dfrac{N-n}{N-1}$ \\
+\midrule
+均匀 $U(a,b)$ & $a<b$ & $(a,b)$ & $\dfrac{1}{b-a}$ & $\dfrac{a+b}{2}$ & $\dfrac{(b-a)^2}{12}$ \\
+指数 $\operatorname{Exp}(\theta)$ & $\theta>0$ & $(0,+\infty)$ & $\dfrac{1}{\theta}\e^{-x/\theta}$ & $\theta$ & $\theta^2$ \\
+Gamma $\Gamma(\alpha,\theta)$ & $\alpha>0,\,\theta>0$ & $(0,+\infty)$ & $\dfrac{x^{\alpha-1}\e^{-x/\theta}}{\Gamma(\alpha)\theta^\alpha}$ & $\alpha\theta$ & $\alpha\theta^2$ \\
+正态 $N(\mu,\sigma^2)$ & $\mu\in\R,\,\sigma>0$ & $(-\infty,+\infty)$ & $\dfrac{1}{\sqrt{2\pi}\sigma}\e^{-\frac{(x-\mu)^2}{2\sigma^2}}$ & $\mu$ & $\sigma^2$ \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+\lcfigure[caption={常用概率分布之间的演化与联系网络。箭头标示通过独立求和、参数特化或极限逼近建立的对应关系。},label=fig:distribution-relations]{ch04-distribution-relations}
+
+从应用建模角度可作简要归类：
+\begin{itemize}
+  \item \textbf{成功计数类}：单次试验用 $b(1,p)$，放回独立重复用 $b(n,p)$，不放回有限总体用 $H(N,M,n)$，大 $n$ 小 $p$ 稀有事件计数用 $\pi(\lambda)$；
+  \item \textbf{等待次数与寿命类}：离散首次成功等待用 $G(p)$，第 $r$ 次成功等待用 $NB(r,p)$，连续无记忆寿命用 $\operatorname{Exp}(\theta)$，多阶段串联等待或冷备用总寿命用 $\Gamma(\alpha,\theta)$；
+  \item \textbf{对称与误差类}：区间内完全等可能取值用 $U(a,b)$，大量微小独立随机因素叠加形成的误差与测量值用 $N(\mu,\sigma^2)$（其极限机理将在第五章中心极限定理中严格阐明）。
+\end{itemize}
+
+\begin{method}[计算数字特征的四条高效路径]
+\begin{enumerate}
+  \item \textbf{拆成独立/简单变量之和}：遇计数问题优先尝试指示变量 $X=\sum I_i$，利用线性性直接求期望（无需独立）与方差（需计算协方差）；
+  \item \textbf{用二阶矩与阶乘矩算方差}：连续分布常用 $D(X)=E(X^2)-[E(X)]^2$，含阶乘的离散分布（泊松、二项、几何）先求 $E[X(X-1)]$ 远比直接算 $E(X^2)$ 简便；
+  \item \textbf{借已知分布凑系数}：求复杂积分时，常将积分核心配成正态、$\Gamma$ 或指数分布的归一化积分直接读出结果；
+  \item \textbf{用对称性消去奇次矩}：若密度关于 $x=\mu$ 对称且矩存在，则一切奇数阶中心矩 $E[(X-\mu)^{2k+1}]$ 均为零。
+\end{enumerate}
+\end{method}
+
+\begin{pitfall}[数字特征中的三类常见误区]
+\begin{enumerate}
+  \item \textbf{滥用 $E(XY)=E(X)E(Y)$ 与 $D(X+Y)=D(X)+D(Y)$}：期望的加法无需独立，但乘积期望等于期望乘积以及方差的可加性都需要不相关（独立）前提；一般情形必须保留交叉项 $2\operatorname{Cov}(X,Y)$。
+  \item \textbf{混淆方差的缩放系数与加减号}：$D(aX+b)=a^2 D(X)$ 中常数 $b$ 消失且系数平方为 $a^2$；独立时 $D(X-Y)=D(X)+D(Y)$，切忌写成相减。
+  \item \textbf{将“不相关”等同于“独立”}：$\rho_{XY}=0$ 仅排除线性关系，只有在联合正态分布等特殊情形下才等价于独立。
+\end{enumerate}
+\end{pitfall}
+
+\begin{summary}[第四章核心脉络]
+本章围绕分布的数字浓缩展开：数学期望 $E(X)$ 以绝对收敛为前提刻画分布重心，其线性可加性（配指示变量法）与函数期望公式是核心计算工具；方差 $D(X)=E(X^2)-[E(X)]^2$ 刻画离散程度，并通过切比雪夫不等式控制尾部概率；协方差 $\operatorname{Cov}(X,Y)$ 与相关系数 $\rho_{XY}\in[-1,1]$ 度量两变量的线性关联强度（直接决定最佳线性预测的均方误差）；高阶矩与实对称半正定的协方差矩阵将二阶数字特征推广至 $n$ 维与多维正态分布。最后通过十类常用分布总表与联系图，将前四章的分布模型与数字特征融为一体。
+\end{summary}

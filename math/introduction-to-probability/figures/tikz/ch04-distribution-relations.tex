@@ -1,0 +1,33 @@
+\begin{tikzpicture}[
+  distnode/.style={draw=lc-ink,fill=lc-subtle,rounded corners=2pt,inner sep=4.5pt,font=\small,align=center},
+  edgelab/.style={font=\scriptsize,fill=white,inner sep=1.5pt,align=center}
+]
+  % Top row: Hypergeometric
+  \node[distnode] (hyper) at (4.4,5.6) {超几何分布\\$H(N,M,n)$};
+
+  % Second row: Bernoulli, Binomial, Poisson
+  \node[distnode] (bern) at (0,3.4) {两点分布\\$b(1,p)$};
+  \node[distnode] (binom) at (4.4,3.4) {二项分布\\$b(n,p)$};
+  \node[distnode] (pois) at (9.0,3.4) {泊松分布\\$\pi(\lambda)$};
+
+  % Third row: Geometric, Negative Binomial, Normal
+  \node[distnode] (geom) at (0,1.1) {几何分布\\$G(p)$};
+  \node[distnode] (nbinom) at (4.4,1.1) {负二项分布\\$NB(r,p)$};
+  \node[distnode] (norm) at (9.0,1.1) {正态分布\\$N(\mu,\sigma^2)$};
+
+  % Fourth row: Exponential, Gamma, Chi-square
+  \node[distnode] (expd) at (0,-1.2) {指数分布\\$\operatorname{Exp}(\theta)$};
+  \node[distnode] (gammad) at (4.4,-1.2) {Gamma 分布\\$\Gamma(\alpha,\theta)$};
+  \node[distnode] (chi2) at (9.0,-1.2) {$\chi^2$ 分布\\$\chi^2(n)$};
+
+  % Arrows
+  \draw[lc vector] (bern) -- node[edgelab,above] {$n$ 重独立和} (binom);
+  \draw[lc vector] (hyper) -- node[edgelab,right] {$N\to\infty,\,M/N\to p$} (binom);
+  \draw[lc vector] (binom) -- node[edgelab,above] {$np=\lambda,\,n\to\infty$} (pois);
+  \draw[lc vector] (binom) -- node[edgelab] {$n\to\infty$} (norm);
+  \draw[lc vector] (pois) -- node[edgelab,right] {$\lambda\to\infty$} (norm);
+  \draw[lc vector] (geom) -- node[edgelab,above] {$r$ 重独立和} (nbinom);
+  \draw[lc vector] (expd) -- node[edgelab,above] {$n$ 重独立和\\[-2pt]($\alpha=n$)} (gammad);
+  \draw[lc vector] (gammad) -- node[edgelab,above] {$\alpha=n/2,\,\theta=2$} (chi2);
+  \draw[lc vector] (geom) -- node[edgelab,right] {连续极限} (expd);
+\end{tikzpicture}

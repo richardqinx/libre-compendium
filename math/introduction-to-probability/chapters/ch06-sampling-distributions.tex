@@ -1,0 +1,390 @@
+% libre-compendium
+%
+% Copyright (C) 2026 Richard Qin
+%
+% This document is dual-licensed under either:
+% - GNU Free Documentation License, Version 1.3 or any later version
+%   published by the Free Software Foundation; with no Invariant Sections,
+%   no Front-Cover Texts, and no Back-Cover Texts (see COPYING.DOC); or
+% - Creative Commons Attribution-ShareAlike 4.0 International License
+%   (see LICENSE-CC-BY-SA-4.0).
+
+\chapter{样本及抽样分布}
+\label{ch:sampling-distributions}
+
+前面五章讲述的是概率论的基本理论：在假定随机变量分布已知的前提下，研究其数字特征、函数分布与极限规律。从本章起进入\textbf{数理统计}阶段。在数理统计中，研究对象的概率分布是未知的或含未知参数的；我们通过对总体进行重复独立的观察获取样本数据，再构造适当的统计量并借助其概率分布（即抽样分布），对总体的规律作出估计与推断。
+
+\section{随机样本}
+\label{sec:random-sample}
+
+在统计研究中，往往关注某类对象的某一项数量指标（如某型号灯泡的寿命、某批零件的直径）。我们将该数量指标的全部可能观察值构成的集合称为\textbf{总体}，其中每个可能观察值称为\textbf{个体}。总体包含的个体数称为\textbf{总体容量}，据此分为有限总体与无限总体；当有限总体的容量远大于样本容量时，通常可近似视作无限总体处理。
+
+由于每个个体都是随机试验的一个观察值，一个总体对应于一个随机变量 $X$，今后不区分总体与相应的随机变量，统称为总体 $X$（其分布函数与数字特征即总体的分布函数与数字特征）。
+
+\begin{definition}[简单随机样本]
+\label{def:simple-random-sample}
+设 $X$ 是具有分布函数 $F(x)$ 的随机变量。若 $X_1,X_2,\ldots,X_n$ 是相互独立且均与 $X$ 同分布的随机变量，则称 $(X_1,X_2,\ldots,X_n)$ 为来自总体 $X$（或分布 $F$）的容量为 $n$ 的\textbf{简单随机样本}（简称\textbf{样本}）。试验后得到的具体数值 $(x_1,x_2,\ldots,x_n)$ 称为\textbf{样本值}（或观察值）。
+\end{definition}
+
+由独立同分布性立即得到样本的联合分布：
+\begin{enumerate}
+  \item 若总体分布函数为 $F(x)$，则样本 $(X_1,\ldots,X_n)$ 的联合分布函数为
+  \[
+    F^*(x_1,x_2,\ldots,x_n)=\prod_{i=1}^{n}F(x_i);
+  \]
+  \item 若总体为连续型、概率密度为 $f(x)$，则样本的联合概率密度为
+  \[
+    f^*(x_1,x_2,\ldots,x_n)=\prod_{i=1}^{n}f(x_i);
+  \]
+  \item 若总体为离散型、分布律为 $P(X=x)=p(x)$，则样本的联合分布律为
+  \[
+    P(X_1=x_1,\ldots,X_n=x_n)=\prod_{i=1}^{n}p(x_i).
+  \]
+\end{enumerate}
+
+对于有限总体，有放回抽样严格产生简单随机样本；当总体容量 $N$ 远大于样本容量 $n$ 时，不放回抽样亦可近似按简单随机样本处理。
+
+\section{直方图和箱线图}
+\label{sec:histogram-boxplot}
+
+获得样本观察值 $x_1,x_2,\ldots,x_n$ 后，常借助分组表、直方图与箱线图直观把握数据的中心位置、离散程度、对称性及是否存在异常值。
+
+\subsection{频率直方图}
+
+对连续型总体样本值 $x_1,\ldots,x_n$ 作\textbf{频率直方图}的步骤如下：
+\begin{enumerate}
+  \item 选取略大于样本取值范围的区间 $[a,b]$（$a<\min x_i,\,b>\max x_i$），将其等分为 $k$ 个组距为 $\Delta=(b-a)/k$ 的小区间（常按样本容量取 $k=5\text{--}20$，分点精度比原数据多一位以避免落点歧义）；
+  \item 统计落入第 $j$ 个小区间的频数 $f_j$ 与频率 $f_j/n$；
+  \item 在第 $j$ 个小区间上作高为 $\dfrac{f_j}{n\Delta}$ 的矩形，使每个矩形的\textbf{面积}恰好等于该组频率 $f_j/n$，所有矩形总面积为 $1$。
+\end{enumerate}
+
+当样本容量 $n$ 较大时，每个小区间的频率逼近总体落入该区间的概率，从而频率直方图的外廓近似刻画了总体概率密度曲线 $y=f(x)$ 的形状。
+
+\begin{example}[title={头颅最大宽度数据的分组频数表}]
+\label{eg:etruscan-histogram}
+实测 $n=84$ 名成年男子的头颅最大宽度（单位：$\mathrm{mm}$），最小值 $126$，最大值 $158$。取覆盖区间 $[124.5,159.5]$ 等分为 $7$ 组（组距 $\Delta=5$），整理得频数与频率表如下：
+\begin{center}
+\begin{tabular}{cccc}
+  \toprule
+  分组区间 & 频数 $f_j$ & 频率 $f_j/84$ & 矩形高度 $f_j/(84\times 5)$ \\
+  \midrule
+  $[124.5,\,129.5)$ & 1  & 0.0119 & 0.0024 \\
+  $[129.5,\,134.5)$ & 4  & 0.0476 & 0.0095 \\
+  $[134.5,\,139.5)$ & 10 & 0.1190 & 0.0238 \\
+  $[139.5,\,144.5)$ & 33 & 0.3929 & 0.0786 \\
+  $[144.5,\,149.5)$ & 24 & 0.2857 & 0.0571 \\
+  $[149.5,\,154.5)$ & 9  & 0.1071 & 0.0214 \\
+  $[154.5,\,159.5]$ & 3  & 0.0357 & 0.0071 \\
+  \bottomrule
+\end{tabular}
+\end{center}
+由表可见，矩形高度在中心区间 $[139.5,144.5)$ 处达到单峰并向两侧较对称地递减，提示总体近似呈正态分布；同时可直接读出宽度落在 $(134.5,144.5)$ 内的比例约 $51.2\%$。
+\end{example}
+
+\subsection{样本分位数与箱线图}
+
+\begin{definition}[样本 $p$ 分位数]
+\label{def:sample-quantile}
+将样本值 $x_1,\ldots,x_n$ 按升序排列为次序统计量 $x_{(1)}\le x_{(2)}\le\cdots\le x_{(n)}$。对给定的 $p\in(0,1)$，称满足“至少有 $np$ 个观察值 $\le x_p$，且至少有 $n(1-p)$ 个观察值 $\ge x_p$”的数 $x_p$ 为\textbf{样本 $p$ 分位数}，按以下法则唯一确定：
+\begin{equation}
+  x_p=
+  \begin{cases}
+    x_{(\lfloor np\rfloor+1)},& np\text{ 不是整数},\\[4pt]
+    \dfrac{1}{2}\bigl(x_{(np)}+x_{(np+1)}\bigr),& np\text{ 是整数}.
+  \end{cases}
+  \label{eq:sample-quantile}
+\end{equation}
+\end{definition}
+
+三个最常用的样本分位数为：\textbf{第一四分位数} $Q_1=x_{0.25}$、\textbf{样本中位数} $M=Q_2=x_{0.5}$ 与\textbf{第三四分位数} $Q_3=x_{0.75}$。记\textbf{四分位距}为 $\mathrm{IQR}=Q_3-Q_1$。
+
+\textbf{箱线图}基于五数概括 $(\min,Q_1,M,Q_3,\max)$：沿数轴在 $Q_1$ 与 $Q_3$ 之间绘制矩形箱体，箱内于 $M$ 处画分界线，两侧各引须线至最小值与最大值。为了识别\textbf{疑似异常值}，引入\textbf{修正箱线图}：凡落在区间 $[Q_1-1.5\mathrm{IQR},\,Q_3+1.5\mathrm{IQR}]$ 之外的数据点均标记为疑似异常值，须线仅延伸至剔除疑似异常值后的最值。
+
+\begin{example}[title={样本分位数与修正箱线图异常值检测}]
+\label{eg:boxplot-outlier}
+某医院 $n=21$ 名患者的住院天数（已排序）为：
+\[
+  1,2,3,3,4,4,5,6,6,7,7,9,9,10,12,12,13,15,18,23,55.
+\]
+求五数概括、四分位距并判别疑似异常值。
+\begin{solution}
+最小值为 $1$，最大值为 $55$。按\eqref{eq:sample-quantile}计算四分位数：
+\begin{itemize}
+  \item $21\times 0.25=5.25$（非整数），故 $Q_1=x_{(6)}=4$；
+  \item $21\times 0.50=10.5$（非整数），故中位数 $M=x_{(11)}=7$；
+  \item $21\times 0.75=15.75$（非整数），故 $Q_3=x_{(16)}=12$。
+\end{itemize}
+由此得 $\mathrm{IQR}=Q_3-Q_1=8$，正常上下界为
+\[
+  Q_1-1.5\mathrm{IQR}=4-12=-8,\qquad Q_3+1.5\mathrm{IQR}=12+12=24.
+\]
+观察值 $55>24$，为唯一的疑似异常值；剔除 $55$ 后右侧须线延伸至 $23$。数据明显右偏，中位数 $7$ 比受极端值 $55$ 拉高的均值更能稳健反映中心趋势。
+\end{solution}
+\end{example}
+
+\section{抽样分布}
+\label{sec:sampling-distribution}
+
+\subsection{统计量与经验分布函数}
+
+\begin{definition}[统计量]
+\label{def:statistic}
+设 $(X_1,X_2,\ldots,X_n)$ 是来自总体 $X$ 的一个样本，$g(X_1,\ldots,X_n)$ 是样本的函数。若 $g$ 中\textbf{不含任何未知参数}，则称 $g(X_1,\ldots,X_n)$ 为一个\textbf{统计量}。统计量本身是随机变量，其概率分布称为\textbf{抽样分布}。
+\end{definition}
+
+最常用的五个基本统计量定义如下：
+\begin{enumerate}
+  \item \textbf{样本均值}：$\displaystyle\bar{X}=\frac{1}{n}\sum_{i=1}^{n}X_i$；
+  \item \textbf{样本方差}：$\displaystyle S^2=\frac{1}{n-1}\sum_{i=1}^{n}(X_i-\bar{X})^2=\frac{1}{n-1}\left(\sum_{i=1}^{n}X_i^2-n\bar{X}^2\right)$；
+  \item \textbf{样本标准差}：$S=\sqrt{S^2}$；
+  \item \textbf{样本 $k$ 阶原点矩}：$\displaystyle A_k=\frac{1}{n}\sum_{i=1}^{n}X_i^k\,(k=1,2,\ldots)$（特别地 $A_1=\bar{X}$）；
+  \item \textbf{样本 $k$ 阶中心矩}：$\displaystyle B_k=\frac{1}{n}\sum_{i=1}^{n}(X_i-\bar{X})^k\,(k=2,3,\ldots)$（注意 $B_2=\frac{n-1}{n}S^2$）。
+\end{enumerate}
+
+若总体 $k$ 阶原点矩 $\mu_k=E(X^k)$ 存在，则 $X_1^k,\ldots,X_n^k$ 独立同分布且期望均为 $\mu_k$，由辛钦弱大数定律立得 $A_k\xrightarrow{P}\mu_k$；再由连续映射性质，样本矩的连续函数依概率收敛于总体矩的同一连续函数，这就是第七章矩估计法的理论根基。
+
+\begin{definition}[经验分布函数]
+\label{def:empirical-cdf}
+设 $x_1,\ldots,x_n$ 是总体 $X$ 的样本值，按升序排为 $x_{(1)}\le x_{(2)}\le\cdots\le x_{(n)}$。称
+\begin{equation}
+  F_n(x)=\frac{1}{n}\#\set{i: x_i\le x}=
+  \begin{cases}
+    0,& x<x_{(1)},\\
+    k/n,& x_{(k)}\le x<x_{(k+1)}\;(k=1,\ldots,n-1),\\
+    1,& x\ge x_{(n)}
+  \end{cases}
+  \label{eq:empirical-cdf}
+\end{equation}
+为\textbf{经验分布函数}（若出现重值，跳跃高度为该值频数除以 $n$）。
+\end{definition}
+
+对每个固定 $x$，$nF_n(x)\sim b\bigl(n,F(x)\bigr)$，由伯努利大数定律知 $F_n(x)\xrightarrow{P} F(x)$。更强地，成立格里汶科（Glivenko--Cantelli）定理：
+\begin{theorem}[格里汶科定理]
+\label{thm:glivenko}
+设 $X_1,\ldots,X_n$ 是来自总体分布函数 $F(x)$ 的简单随机样本，$F_n(x)$ 为其经验分布函数，则
+\[
+  P\!\left(\lim_{n\to\infty}\sup_{x\in\R}\abs{F_n(x)-F(x)}=0\right)=1,
+\]
+即 $F_n(x)$ 以概率 $1$ 关于 $x\in\R$ 一致收敛于总体分布函数 $F(x)$。
+\end{theorem}
+
+\subsection{统计学三大抽样分布：\texorpdfstring{$\chi^2$}{χ²} 分布、\texorpdfstring{$t$}{t} 分布与 \texorpdfstring{$F$}{F} 分布}
+
+\begin{definition}[$\chi^2$ 分布]
+\label{def:chi-square}
+设 $X_1,X_2,\ldots,X_n$ 相互独立且同服从标准正态分布 $N(0,1)$，则称随机变量
+\begin{equation}
+  \chi^2=X_1^2+X_2^2+\cdots+X_n^2
+  \label{eq:chi2-def}
+\end{equation}
+服从自由度为 $n$ 的\textbf{$\chi^2$（卡方）分布}，记为 $\chi^2\sim\chi^2(n)$。
+\end{definition}
+
+由\cref{eg:square-transform}知 $X_i^2\sim\Gamma(1/2,2)$，再由同尺度 $\Gamma$ 分布的可加性（\cref{prop:gamma-additivity}），立即推出 $\chi^2(n)$ 就是 $\Gamma(n/2,2)$ 分布，其概率密度为
+\begin{equation}
+  f(y)=
+  \begin{cases}
+    \dfrac{1}{2^{n/2}\Gamma(n/2)}\,y^{n/2-1}\e^{-y/2},& y>0,\\
+    0,& y\le 0.
+  \end{cases}
+  \label{eq:chi2-density}
+\end{equation}
+$\chi^2$ 分布具有以下基本性质：
+\begin{enumerate}
+  \item \textbf{可加性}：若 $\chi_1^2\sim\chi^2(n_1)$ 与 $\chi_2^2\sim\chi^2(n_2)$ 相互独立，则 $\chi_1^2+\chi_2^2\sim\chi^2(n_1+n_2)$；
+  \item \textbf{期望与方差}：由 $\Gamma(n/2,2)$ 的数字特征（或利用 $E(X_i^2)=1,\,D(X_i^2)=E(X_i^4)-1=3-1=2$），得
+  \[
+    E(\chi^2)=n,\qquad D(\chi^2)=2n;
+  \]
+  \item \textbf{上 $\alpha$ 分位数}：对 $\alpha\in(0,1)$，满足 $P\bigl(\chi^2>\chi_\alpha^2(n)\bigr)=\alpha$ 的数 $\chi_\alpha^2(n)$ 称为 $\chi^2(n)$ 的上 $\alpha$ 分位数。当自由度 $n>40$ 时，可用费希尔近似公式
+  \[
+    \chi_\alpha^2(n)\approx\frac{1}{2}\left(z_\alpha+\sqrt{2n-1}\right)^2.
+  \]
+\end{enumerate}
+
+\begin{definition}[$t$ 分布（学生氏分布）]
+\label{def:t-distribution}
+设 $X\sim N(0,1)$ 与 $Y\sim\chi^2(n)$ 相互独立，则称随机变量
+\begin{equation}
+  T=\frac{X}{\sqrt{Y/n}}
+  \label{eq:t-def}
+\end{equation}
+服从自由度为 $n$ 的\textbf{$t$ 分布}，记为 $T\sim t(n)$。其概率密度为
+\begin{equation}
+  h_n(t)=\frac{\Gamma\bigl((n+1)/2\bigr)}{\sqrt{n\pi}\,\Gamma(n/2)}\left(1+\frac{t^2}{n}\right)^{-(n+1)/2},\qquad -\infty<t<+\infty.
+  \label{eq:t-density}
+\end{equation}
+\end{definition}
+
+$t(n)$ 密度曲线关于 $t=0$ 对称、呈钟形，但尾部比标准正态分布更厚（$n=1$ 时即标准柯西分布）；随着 $n\to\infty$，有 $\lim_{n\to\infty}h_n(t)=\varphi(t)$（见\cref{fig:sampling-densities}右图）。由对称性，$t(n)$ 的上 $\alpha$ 分位数 $t_\alpha(n)$ 满足
+\begin{equation}
+  t_{1-\alpha}(n)=-t_\alpha(n),
+  \label{eq:t-quantile-sym}
+\end{equation}
+且当 $n>45$ 时可近似取 $t_\alpha(n)\approx z_\alpha$。
+
+\begin{definition}[$F$ 分布]
+\label{def:f-distribution}
+设 $U\sim\chi^2(n_1)$ 与 $V\sim\chi^2(n_2)$ 相互独立，则称随机变量
+\begin{equation}
+  F=\frac{U/n_1}{V/n_2}
+  \label{eq:f-def}
+\end{equation}
+服从自由度为 $(n_1,n_2)$ 的\textbf{$F$ 分布}，记为 $F\sim F(n_1,n_2)$。其概率密度在 $y>0$ 时为
+\begin{equation}
+  \psi(y)=\frac{\Gamma\bigl((n_1+n_2)/2\bigr)}{\Gamma(n_1/2)\Gamma(n_2/2)}
+  \left(\frac{n_1}{n_2}\right)^{n_1/2}
+  y^{n_1/2-1}\left(1+\frac{n_1}{n_2}y\right)^{-(n_1+n_2)/2},
+  \label{eq:f-density}
+\end{equation}
+$y\le 0$ 时为 $0$。
+\end{definition}
+
+由定义直接可得 $F$ 分布的两条核心性质：
+\begin{enumerate}
+  \item \textbf{倒数性质}：若 $F\sim F(n_1,n_2)$，则 $\dfrac{1}{F}\sim F(n_2,n_1)$；特别地，若 $T\sim t(n)$，则 $T^2=\frac{X^2/1}{Y/n}\sim F(1,n)$。
+  \item \textbf{上 $\alpha$ 分位数的倒数公式}：对任意 $\alpha\in(0,1)$，成立
+  \begin{equation}
+    F_{1-\alpha}(n_1,n_2)=\frac{1}{F_\alpha(n_2,n_1)}.
+    \label{eq:f-quantile-recip}
+  \end{equation}
+  事实上，由 $1-\alpha=P\bigl(F>F_{1-\alpha}(n_1,n_2)\bigr)=P\!\left(\frac{1}{F}<\frac{1}{F_{1-\alpha}(n_1,n_2)}\right)$ 得 $P\!\left(\frac{1}{F}>\frac{1}{F_{1-\alpha}(n_1,n_2)}\right)=\alpha$；而 $\frac{1}{F}\sim F(n_2,n_1)$，对照上 $\alpha$ 分位数定义即得 $\frac{1}{F_{1-\alpha}(n_1,n_2)}=F_\alpha(n_2,n_1)$。
+\end{enumerate}
+
+\lcfigure[caption={统计学常用抽样分布的密度轮廓。左图展示 $\chi^2(n)$ 随自由度增大由右偏逐渐趋于对称；右图展示 $t(n)$ 较 $N(0,1)$ 具有更厚的尾部，并随 $n$ 增大逼近 $N(0,1)$。},label=fig:sampling-densities]{ch06-sampling-densities}
+
+\subsection{正态总体样本均值与样本方差的抽样分布}
+
+先对\textbf{任意}具有有限期望 $\mu$ 与方差 $\sigma^2$ 的总体（不要求正态）建立样本均值与样本方差的期望和方差。
+
+\begin{proposition}[样本均值与样本方差的无偏性]
+\label{prop:sample-mean-var-moments}
+设 $X_1,\ldots,X_n$ 是来自总体 $X$（$E(X)=\mu,\,D(X)=\sigma^2$）的样本，则
+\begin{equation}
+  E(\bar{X})=\mu,\qquad D(\bar{X})=\frac{\sigma^2}{n},\qquad E(S^2)=\sigma^2.
+  \label{eq:sample-moments}
+\end{equation}
+\end{proposition}
+\begin{proof}
+由独立同分布性，$E(\bar{X})=\frac{1}{n}\sum_{i=1}^{n}E(X_i)=\mu$，$D(\bar{X})=\frac{1}{n^2}\sum_{i=1}^{n}D(X_i)=\frac{\sigma^2}{n}$。对于样本方差，利用恒等式 $\sum_{i=1}^{n}(X_i-\bar{X})^2=\sum_{i=1}^{n}X_i^2-n\bar{X}^2$ 以及 $E(X_i^2)=\sigma^2+\mu^2$、$E(\bar{X}^2)=\frac{\sigma^2}{n}+\mu^2$，得
+\[
+  E(S^2)=\frac{1}{n-1}\left[\sum_{i=1}^{n}E(X_i^2)-nE(\bar{X}^2)\right]
+  =\frac{1}{n-1}\left[n(\sigma^2+\mu^2)-n\left(\frac{\sigma^2}{n}+\mu^2\right)\right]
+  =\sigma^2.
+\]
+\end{proof}
+
+这正是样本方差定义中分母取 $n-1$ 而非 $n$ 的根本原因：因为用样本均值 $\bar{X}$ 替代未知总体均值 $\mu$ 损失了 $1$ 个自由度，除以 $n-1$ 恰好使 $S^2$ 成为 $\sigma^2$ 的无偏估计。
+
+当总体为正态分布时，可以精确给出 $\bar{X}$ 与 $S^2$ 的联合及抽样分布。
+
+\begin{theorem}[单个正态总体的抽样分布（Fisher 定理）]
+\label{thm:normal-sampling-one}
+设 $X_1,X_2,\ldots,X_n$ 是来自正态总体 $N(\mu,\sigma^2)$ 的样本，$\bar{X}$ 与 $S^2$ 分别为样本均值与样本方差，则：
+\begin{enumerate}
+  \item $\bar{X}\sim N\!\left(\mu,\,\dfrac{\sigma^2}{n}\right)$；
+  \item $\dfrac{(n-1)S^2}{\sigma^2}\sim\chi^2(n-1)$；
+  \item $\bar{X}$ 与 $S^2$ 相互独立；
+  \item $\dfrac{\bar{X}-\mu}{S/\sqrt{n}}\sim t(n-1)$。
+\end{enumerate}
+\end{theorem}
+\begin{proof}
+(1) 由独立正态线性组合性质（\cref{prop:independent-normal-linear}）与\eqref{eq:sample-moments}立得。
+
+(2)、(3) 利用正交变换严格证明。令标准化向量 $\bm{Z}=(Z_1,\ldots,Z_n)^{\mathsf{T}}$，其中 $Z_i=\frac{X_i-\mu}{\sigma}\sim N(0,1)$ 相互独立。构造一个 $n\times n$ 正交矩阵 $\bm{A}$（$\bm{A}\bm{A}^{\mathsf{T}}=\bm{I}_n$），使其第一行为单位向量 $\left(\frac{1}{\sqrt{n}},\frac{1}{\sqrt{n}},\ldots,\frac{1}{\sqrt{n}}\right)$（其余 $n-1$ 行可由施密特正交化补全，例如赫尔默特正交阵）。
+
+作正交变换 $\bm{Y}=\bm{A}\bm{Z}=(Y_1,\ldots,Y_n)^{\mathsf{T}}$。由\cref{thm:multivariate-normal-properties}(3)，$\bm{Y}\sim N(\bm{0},\bm{A}\bm{I}_n\bm{A}^{\mathsf{T}})=N(\bm{0},\bm{I}_n)$，故 $Y_1,Y_2,\ldots,Y_n$ 相互独立且同服从 $N(0,1)$。
+
+由 $\bm{A}$ 的第一行形式知
+\[
+  Y_1=\frac{1}{\sqrt{n}}\sum_{i=1}^{n}Z_i=\sqrt{n}\,\frac{\bar{X}-\mu}{\sigma},
+  \qquad\text{即 }\bar{X}=\mu+\frac{\sigma}{\sqrt{n}}Y_1.
+\]
+又因正交变换保持欧氏范数不变，$\sum_{i=1}^{n}Y_i^2=\sum_{i=1}^{n}Z_i^2$，于是
+\[
+  \frac{(n-1)S^2}{\sigma^2}
+  =\frac{1}{\sigma^2}\sum_{i=1}^{n}(X_i-\bar{X})^2
+  =\sum_{i=1}^{n}(Z_i-\bar{Z})^2
+  =\sum_{i=1}^{n}Z_i^2-n\bar{Z}^2
+  =\sum_{i=1}^{n}Y_i^2-Y_1^2
+  =\sum_{i=2}^{n}Y_i^2.
+\]
+由于 $Y_2,\ldots,Y_n$ 独立同服从 $N(0,1)$，由 $\chi^2$ 分布定义立得 $\frac{(n-1)S^2}{\sigma^2}=\sum_{i=2}^{n}Y_i^2\sim\chi^2(n-1)$；又因 $\bar{X}$ 仅是 $Y_1$ 的函数，而 $S^2$ 仅是 $(Y_2,\ldots,Y_n)$ 的函数，由\cref{thm:indep-functions}即得 $\bar{X}$ 与 $S^2$ 相互独立。
+
+(4) 记 $U=\frac{\bar{X}-\mu}{\sigma/\sqrt{n}}\sim N(0,1)$，$V=\frac{(n-1)S^2}{\sigma^2}\sim\chi^2(n-1)$。由 (3) 知 $U$ 与 $V$ 相互独立，代入 $t$ 分布定义\eqref{eq:t-def}并消去 $\sigma$：
+\[
+  \frac{U}{\sqrt{V/(n-1)}}
+  =\frac{(\bar{X}-\mu)/(\sigma/\sqrt{n})}{\sqrt{S^2/\sigma^2}}
+  =\frac{\bar{X}-\mu}{S/\sqrt{n}}\sim t(n-1).
+\]
+\end{proof}
+
+\begin{theorem}[两个独立正态总体的抽样分布]
+\label{thm:normal-sampling-two}
+设 $X_1,\ldots,X_{n_1}$ 与 $Y_1,\ldots,Y_{n_2}$ 分别是来自正态总体 $N(\mu_1,\sigma_1^2)$ 与 $N(\mu_2,\sigma_2^2)$ 的两个相互独立的样本，样本均值与样本方差分别为 $\bar{X},\bar{Y}$ 与 $S_1^2,S_2^2$，则：
+\begin{enumerate}
+  \item $\dfrac{S_1^2/\sigma_1^2}{S_2^2/\sigma_2^2}\sim F(n_1-1,\,n_2-1)$；
+  \item 当 $\sigma_1^2=\sigma_2^2=\sigma^2$ 时，
+  \begin{equation}
+    \frac{(\bar{X}-\bar{Y})-(\mu_1-\mu_2)}{S_w\sqrt{\dfrac{1}{n_1}+\dfrac{1}{n_2}}}\sim t(n_1+n_2-2),
+    \label{eq:two-sample-t}
+  \end{equation}
+  其中 $S_w^2=\dfrac{(n_1-1)S_1^2+(n_2-1)S_2^2}{n_1+n_2-2}$ 称为两样本的\textbf{合并样本方差}，$S_w=\sqrt{S_w^2}$。
+\end{enumerate}
+\end{theorem}
+\begin{proof}
+(1) 由\cref{thm:normal-sampling-one}(2)及两样本独立性，$\frac{(n_1-1)S_1^2}{\sigma_1^2}\sim\chi^2(n_1-1)$ 与 $\frac{(n_2-1)S_2^2}{\sigma_2^2}\sim\chi^2(n_2-1)$ 相互独立。代入 $F$ 分布定义\eqref{eq:f-def}即得 $\frac{S_1^2/\sigma_1^2}{S_2^2/\sigma_2^2}\sim F(n_1-1,n_2-1)$。
+
+(2) 当 $\sigma_1^2=\sigma_2^2=\sigma^2$ 时，$\bar{X}-\bar{Y}\sim N\!\left(\mu_1-\mu_2,\,\sigma^2\left(\frac{1}{n_1}+\frac{1}{n_2}\right)\right)$，故
+\[
+  U=\frac{(\bar{X}-\bar{Y})-(\mu_1-\mu_2)}{\sigma\sqrt{\frac{1}{n_1}+\frac{1}{n_2}}}\sim N(0,1).
+\]
+又由 $\chi^2$ 分布的可加性，
+\[
+  V=\frac{(n_1-1)S_1^2}{\sigma^2}+\frac{(n_2-1)S_2^2}{\sigma^2}
+  =\frac{(n_1+n_2-2)S_w^2}{\sigma^2}\sim\chi^2(n_1+n_2-2).
+\]
+因 $(\bar{X},S_1^2)$ 与 $(\bar{Y},S_2^2)$ 相互独立且每组内部均值与方差独立，故 $U$ 与 $V$ 相互独立。代入 $t$ 分布定义 $\frac{U}{\sqrt{V/(n_1+n_2-2)}}$ 并约去 $\sigma$ 即得\eqref{eq:two-sample-t}。
+\end{proof}
+
+\begin{example}[title={正态抽样分布的典型计算与统计量构造}]
+\label{eg:sampling-calculations}
+(1) 设样本 $X_1,\ldots,X_{16}$ 来自正态总体 $N(\mu,\sigma^2)$（$\mu,\sigma^2$ 未知），求 $D(S^2)$ 以及概率 $P(S^2/\sigma^2<2.041)$（查表知 $\chi_{0.01}^2(15)=30.578$）。
+
+(2) 设 $X_1,\ldots,X_6$ 来自 $N(0,1)$，确定常数 $C$ 使 $Y=C\bigl[(X_1+X_2+X_3)^2+(X_4+X_5+X_6)^2\bigr]$ 服从 $\chi^2$ 分布，并指出自由度。
+\begin{solution}
+(1) 由\cref{thm:normal-sampling-one}(2)，$W=\frac{15S^2}{\sigma^2}\sim\chi^2(15)$，故 $D(W)=2\times 15=30$，从而
+\[
+  D(S^2)=\left(\frac{\sigma^2}{15}\right)^2 D(W)=\frac{30}{225}\sigma^4=\frac{2}{15}\sigma^4.
+\]
+（一般地，对容量 $n$ 的正态样本有 $D(S^2)=\frac{2\sigma^4}{n-1}$。）又
+\[
+  P\!\left(\frac{S^2}{\sigma^2}<2.041\right)
+  =P\!\left(\frac{15S^2}{\sigma^2}<30.615\right)\approx 1-0.01=0.99.
+\]
+
+(2) 因 $X_1+X_2+X_3\sim N(0,3)$ 与 $X_4+X_5+X_6\sim N(0,3)$ 相互独立，标准化得 $\frac{X_1+X_2+X_3}{\sqrt{3}}\sim N(0,1)$ 与 $\frac{X_4+X_5+X_6}{\sqrt{3}}\sim N(0,1)$。平方相加得 $\frac{1}{3}\bigl[(X_1+X_2+X_3)^2+(X_4+X_5+X_6)^2\bigr]\sim\chi^2(2)$，故取 $C=\frac{1}{3}$，自由度为 $2$。
+\end{solution}
+\end{example}
+
+\begin{method}[构造三大抽样分布统计量的标准化口诀]
+处理正态样本的抽样分布问题时，先将所有原始正态变量\textbf{逐项标准化为独立的 $N(0,1)$}：
+\begin{enumerate}
+  \item 若干独立 $N(0,1)$ 的平方和 $\longrightarrow\chi^2(k)$（自由度为独立平方项个数）；
+  \item 分子为 $N(0,1)$、分母为独立 $\sqrt{\chi^2(n)/n}$ $\longrightarrow t(n)$；
+  \item 分子分母分别为独立 $\chi^2(n_1)/n_1$ 与 $\chi^2(n_2)/n_2$ $\longrightarrow F(n_1,n_2)$；
+  \item 遇样本方差 $S^2$ 时，立刻配出 $\frac{(n-1)S^2}{\sigma^2}\sim\chi^2(n-1)$ 且牢记它与 $\bar{X}$ 相互独立。
+\end{enumerate}
+\end{method}
+
+\begin{pitfall}[抽样分布中的三类常见误区]
+\begin{enumerate}
+  \item \textbf{将含未知参数的表达式误当统计量}：例如 $\bar{X}-\mu$、$\frac{(n-1)S^2}{\sigma^2}$ 含有未知参数 $\mu$ 或 $\sigma^2$，它们不是统计量（而是第七章用于构造置信区间的\textbf{枢轴量}）。
+  \item \textbf{漏掉样本方差的自由度系数 $n-1$}：是 $\frac{(n-1)S^2}{\sigma^2}\sim\chi^2(n-1)$，而非 $\frac{nS^2}{\sigma^2}$；若改用样本二阶中心矩 $B_2=\frac{1}{n}\sum(X_i-\bar{X})^2$，则 $\frac{nB_2}{\sigma^2}\sim\chi^2(n-1)$。
+  \item \textbf{在非正态总体上滥用三大抽样分布}：$\bar{X}$ 与 $S^2$ 的独立性以及 $\chi^2,t,F$ 精确抽样分布均严格依赖总体正态性假定（事实上，“$\bar{X}$ 与 $S^2$ 独立”本身是正态分布的特征性质）。
+\end{enumerate}
+\end{pitfall}
+
+\begin{summary}[第六章核心脉络]
+本章架起了从概率论通往数理统计的桥梁：以独立同分布的简单随机样本刻画抽样数据，用直方图与箱线图直观探索分布形态与异常值，以不含未知参数的统计量（$\bar{X},S^2,A_k,B_k,F_n(x)$）提取样本信息，并建立了 $\chi^2(n)$、$t(n)$、$F(n_1,n_2)$ 三大抽样分布及正态总体下 $\bar{X}$ 与 $S^2$ 的精确分布定理，为第七章的参数估计与后续假设检验做好全部准备。
+\end{summary}

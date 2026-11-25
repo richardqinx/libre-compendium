@@ -1,0 +1,997 @@
+% libre-compendium
+%
+% Copyright (C) 2026 Richard Qin
+%
+% This document is dual-licensed under either:
+% - GNU Free Documentation License, Version 1.3 or any later version
+%   published by the Free Software Foundation; with no Invariant Sections,
+%   no Front-Cover Texts, and no Back-Cover Texts (see COPYING.DOC); or
+% - Creative Commons Attribution-ShareAlike 4.0 International License
+%   (see LICENSE-CC-BY-SA-4.0).
+
+\chapter{多维随机变量及其分布}
+\label{ch:multivariate}
+
+在实际随机现象中，往往需要在同一次试验下同时考察多个随机数量及其相互联系，例如炮弹弹着点的横纵坐标 $(X,Y)$、某批次零件的直径与硬度、同一时刻多台设备的故障状态等。单独了解各个分量的分布并不足以刻画它们之间的关联，因此需要将一维随机变量及其分布推广到多维情形。本章以二维随机变量为重点，系统建立联合分布、边缘分布、条件分布、独立性以及随机变量函数分布的理论与计算方法，并自然推广到一般 $n$ 维情形。
+
+\section{二维随机变量}
+\label{sec:joint-distribution}
+
+\subsection{二维随机变量与联合分布函数}
+
+\begin{definition}[二维随机变量与联合分布函数]
+\label{def:joint-cdf}
+设 $E$ 是一个随机试验，样本空间为 $S=\set{e}$。若 $X=X(e)$ 与 $Y=Y(e)$ 是定义在同一样本空间 $S$ 上的两个随机变量，则由它们构成的有序数组 $(X,Y)$ 称为\textbf{二维随机变量}（或\textbf{二维随机向量}）。对任意实数 $x,y\in\R$，二元函数
+\begin{equation}
+  F(x,y)=P\bigl(\set{X\le x}\cap\set{Y\le y}\bigr)=P(X\le x,\,Y\le y)
+  \label{eq:joint-cdf}
+\end{equation}
+称为 $(X,Y)$ 的\textbf{分布函数}，或称为随机变量 $X$ 与 $Y$ 的\textbf{联合分布函数}。
+\end{definition}
+
+几何上，将 $(X,Y)$ 看作平面上随机点的坐标，则 $F(x,y)$ 表示随机点 $(X,Y)$ 落入以 $(x,y)$ 为右上顶点的无穷左下区域 $(-\infty,x]\times(-\infty,y]$ 内的概率。利用集合运算，任意左开右闭矩形区域 $(x_1,x_2]\times(y_1,y_2]$（其中 $x_1<x_2,\,y_1<y_2$）的概率均可由联合分布函数线性表出：
+\begin{equation}
+  P(x_1<X\le x_2,\,y_1<Y\le y_2)
+  =F(x_2,y_2)-F(x_2,y_1)-F(x_1,y_2)+F(x_1,y_1).
+  \label{eq:joint-rect-prob}
+\end{equation}
+事实上，将左下区域 $(-\infty,x_2]\times(-\infty,y_2]$ 按直线 $x=x_1$ 与 $y=y_1$ 拆为四个互不相容部分，由容斥关系立得\eqref{eq:joint-rect-prob}。
+
+\begin{proposition}[联合分布函数的基本性质]
+\label{prop:joint-cdf-properties}
+二维随机变量 $(X,Y)$ 的联合分布函数 $F(x,y)$ 具有以下四条性质：
+\begin{enumerate}
+  \item \textbf{单调性}：$F(x,y)$ 关于 $x$ 和 $y$ 分别单调不减，即当 $x_1<x_2$ 时 $F(x_1,y)\le F(x_2,y)$，当 $y_1<y_2$ 时 $F(x,y_1)\le F(x,y_2)$。
+  \item \textbf{有界性与极限}：$0\le F(x,y)\le 1$，且
+  \[
+    \begin{gathered}
+      F(-\infty,y)=\lim_{x\to-\infty}F(x,y)=0,\qquad
+      F(x,-\infty)=\lim_{y\to-\infty}F(x,y)=0,\\
+      F(-\infty,-\infty)=0,\qquad
+      F(+\infty,+\infty)=\lim_{\substack{x\to+\infty\\ y\to+\infty}}F(x,y)=1.
+    \end{gathered}
+  \]
+  \item \textbf{右连续性}：$F(x,y)$ 关于 $x$ 右连续，关于 $y$ 也右连续，即
+  \[
+    F(x+0,y)=F(x,y),\qquad F(x,y+0)=F(x,y).
+  \]
+  \item \textbf{矩形非负性}：对任意 $x_1<x_2$ 与 $y_1<y_2$，成立
+  \[
+    F(x_2,y_2)-F(x_2,y_1)-F(x_1,y_2)+F(x_1,y_1)\ge 0.
+  \]
+\end{enumerate}
+\end{proposition}
+\begin{proof}
+性质 (1) 由事件包含关系 $\set{X\le x_1,Y\le y}\subset\set{X\le x_2,Y\le y}$ 及概率单调性即得；性质 (4) 由\eqref{eq:joint-rect-prob}与概率的非负性立得。
+
+对于性质 (2)，任取递减趋于 $-\infty$ 的数列 $\set{x_n}$，事件列 $A_n=\set{X\le x_n,Y\le y}$ 满足 $A_1\supset A_2\supset\cdots$ 且 $\bigcap_{n=1}^{\infty}A_n=\varnothing$，由概率的下连续性得 $\lim_{n\to\infty}F(x_n,y)=P(\varnothing)=0$，结合单调性知 $F(-\infty,y)=0$；同理 $F(x,-\infty)=0$。取递增趋于 $+\infty$ 的数列 $\set{x_n}$ 与 $\set{y_n}$，事件列 $B_n=\set{X\le x_n,Y\le y_n}$ 单调递增且 $\bigcup_{n=1}^{\infty}B_n=S$，由概率的上连续性得 $F(+\infty,+\infty)=1$。
+
+对于性质 (3)，任取严格递减趋于 $x$ 的数列 $\set{x_n}$，事件列 $\set{X\le x_n,Y\le y}$ 单调递减且交为 $\set{X\le x,Y\le y}$，再由概率的下连续性即得 $F(x+0,y)=F(x,y)$；关于 $y$ 的右连续性同理可证。
+\end{proof}
+
+与一维情形类似，满足\cref{prop:joint-cdf-properties}四条性质的任意二元函数 $F(x,y)$ 必定是某个二维随机变量的联合分布函数。特别注意性质 (4) 是二维情形特有的条件：仅分别关于 $x$ 和 $y$ 单调不减，未必能保证矩形增量为非负。
+
+\subsection{二维离散型随机变量及其联合分布律}
+
+\begin{definition}[二维离散型随机变量与联合分布律]
+\label{def:joint-pmf}
+若二维随机变量 $(X,Y)$ 的全部可能取值是有限对或可列无限多对 $(x_i,y_j)\,(i,j=1,2,\ldots)$，则称 $(X,Y)$ 为\textbf{二维离散型随机变量}。称
+\begin{equation}
+  P(X=x_i,\,Y=y_j)=p_{ij},\qquad i,j=1,2,\ldots
+  \label{eq:joint-pmf}
+\end{equation}
+为 $(X,Y)$ 的\textbf{分布律}（或 $X$ 与 $Y$ 的\textbf{联合分布律}）。
+\end{definition}
+
+联合分布律满足非负性与规范性：
+\[
+  p_{ij}\ge 0,\qquad \sum_{i}\sum_{j}p_{ij}=1,
+\]
+且由联合分布律可直接写出联合分布函数 $F(x,y)=\sum_{x_i\le x}\sum_{y_j\le y}p_{ij}$。
+
+\begin{example}[title={分层随机取整数的联合分布律}]
+\label{eg:hierarchical-integers}
+从集合 $\set{1,2,3,4}$ 中等可能任取一数记为 $X$，再从集合 $\set{1,\ldots,X}$ 中等可能任取一数记为 $Y$。求 $(X,Y)$ 的联合分布律，并计算 $P(X+Y\le 4)$ 与 $F(2.5,2)$。
+\begin{solution}
+由题意 $P(X=i)=\frac{1}{4}\,(i=1,2,3,4)$，在给定 $X=i$ 时 $Y$ 在 $\set{1,\ldots,i}$ 上等可能取值，即 $P(Y=j\mid X=i)=\frac{1}{i}\,(1\le j\le i)$。由乘法公式，
+\[
+  p_{ij}=P(X=i,\,Y=j)=P(X=i)P(Y=j\mid X=i)=
+  \begin{cases}
+    \dfrac{1}{4i},& 1\le j\le i\le 4,\\
+    0,& \text{其他}.
+  \end{cases}
+\]
+将联合分布律列表如下：
+\[
+\begin{array}{c|cccc}
+  X\backslash Y & 1 & 2 & 3 & 4 \\ \hline
+  1 & 1/4 & 0 & 0 & 0 \\
+  2 & 1/8 & 1/8 & 0 & 0 \\
+  3 & 1/12 & 1/12 & 1/12 & 0 \\
+  4 & 1/16 & 1/16 & 1/16 & 1/16
+\end{array}
+\]
+核验总概率：$\frac{1}{4}+2\cdot\frac{1}{8}+3\cdot\frac{1}{12}+4\cdot\frac{1}{16}=1$。由表累加得
+\[
+  P(X+Y\le 4)=p_{11}+p_{21}+p_{22}+p_{31}
+  =\frac{1}{4}+\frac{1}{8}+\frac{1}{8}+\frac{1}{12}=\frac{7}{12},
+\]
+\[
+  F(2.5,2)=P(X\le 2.5,\,Y\le 2)=p_{11}+p_{21}+p_{22}=\frac{1}{4}+\frac{1}{8}+\frac{1}{8}=\frac{1}{2}.
+\]
+\end{solution}
+\end{example}
+
+\subsection{二维连续型随机变量及其联合概率密度}
+
+\begin{definition}[二维连续型随机变量与联合概率密度]
+\label{def:joint-pdf}
+对于二维随机变量 $(X,Y)$ 的联合分布函数 $F(x,y)$，若存在非负可积函数 $f(x,y)$，使得对任意 $(x,y)\in\R^2$ 均有
+\begin{equation}
+  F(x,y)=\int_{-\infty}^{x}\int_{-\infty}^{y}f(u,v)\dd v\dd u,
+  \label{eq:joint-pdf-def}
+\end{equation}
+则称 $(X,Y)$ 为\textbf{二维连续型随机变量}，称 $f(x,y)$ 为 $(X,Y)$ 的\textbf{概率密度}（或 $X$ 与 $Y$ 的\textbf{联合概率密度}）。
+\end{definition}
+
+联合概率密度具有以下基本性质：
+\begin{enumerate}
+  \item $f(x,y)\ge 0$；
+  \item $\displaystyle\int_{-\infty}^{+\infty}\int_{-\infty}^{+\infty}f(x,y)\dd x\dd y=F(+\infty,+\infty)=1$；
+  \item 若 $G$ 是平面上的可积区域，则 $(X,Y)$ 落入 $G$ 内的概率等于密度曲面 $z=f(x,y)$ 在 $G$ 上方的曲顶柱体体积：
+  \begin{equation}
+    P\bigl((X,Y)\in G\bigr)=\iint_{G}f(x,y)\dd x\dd y;
+    \label{eq:joint-area-prob}
+  \end{equation}
+  \item 若 $f(x,y)$ 在点 $(x,y)$ 处连续，则有
+  \[
+    \frac{\partial^2 F(x,y)}{\partial x\,\partial y}=f(x,y).
+  \]
+  由此，对充分小的正数 $\Delta x,\Delta y$，有局部概率近似
+  \[
+    P(x<X\le x+\Delta x,\,y<Y\le y+\Delta y)\approx f(x,y)\,\Delta x\,\Delta y,
+  \]
+  即 $f(x,y)$ 刻画了概率质量在点 $(x,y)$ 附近的单位面积密度。
+\end{enumerate}
+
+特别地，二维连续型随机变量落入任意一条平面曲线（如直线 $y=x$ 或圆周）上的概率为零，因为曲线的平面面积为零；因此计算区域概率时，是否包含边界曲线不影响结果。
+
+\begin{example}[title={指数型联合概率密度的归一化与区域概率}]
+\label{eg:exponential-joint}
+设二维随机变量 $(X,Y)$ 的联合概率密度为
+\[
+  f(x,y)=
+  \begin{cases}
+    A\e^{-(2x+3y)},& x>0,\;y>0,\\
+    0,& \text{其他}.
+  \end{cases}
+\]
+求：(1) 常数 $A$；(2) 联合分布函数 $F(x,y)$；(3) 概率 $P(X<Y)$。
+\begin{solution}
+(1) 由规范性，
+\[
+  1=\int_{0}^{+\infty}\int_{0}^{+\infty}A\e^{-(2x+3y)}\dd x\dd y
+  =A\left(\int_{0}^{+\infty}\e^{-2x}\dd x\right)\left(\int_{0}^{+\infty}\e^{-3y}\dd y\right)
+  =A\cdot\frac{1}{2}\cdot\frac{1}{3}=\frac{A}{6},
+\]
+故 $A=6$。
+
+(2) 当 $x>0$ 且 $y>0$ 时，
+\[
+  F(x,y)=\int_{0}^{x}\int_{0}^{y}6\e^{-(2u+3v)}\dd v\dd u
+  =\left(1-\e^{-2x}\right)\left(1-\e^{-3y}\right);
+\]
+当 $x\le 0$ 或 $y\le 0$ 时，$F(x,y)=0$。
+
+(3) 区域 $G=\set{(x,y):0<x<y}$ 上的概率为
+\[
+  P(X<Y)=\int_{0}^{+\infty}\dd x\int_{x}^{+\infty}6\e^{-2x-3y}\dd y
+  =\int_{0}^{+\infty}2\e^{-5x}\dd x=\frac{2}{5}.
+\]
+\end{solution}
+\end{example}
+
+下面介绍两类最重要的二维连续分布。
+
+\begin{definition}[平面区域上的均匀分布]
+\label{def:2d-uniform}
+设 $D$ 是平面 $\R^2$ 上面积为 $S_D\,(0<S_D<+\infty)$ 的有界区域。若二维随机变量 $(X,Y)$ 的联合概率密度为
+\[
+  f(x,y)=
+  \begin{cases}
+    \dfrac{1}{S_D},& (x,y)\in D,\\
+    0,& \text{其他},
+  \end{cases}
+\]
+则称 $(X,Y)$ 服从区域 $D$ 上的\textbf{均匀分布}。此时对任意子区域 $G\subset D$，有 $P\bigl((X,Y)\in G\bigr)=\dfrac{S_G}{S_D}$。
+\end{definition}
+
+\begin{definition}[二维正态分布]
+\label{def:bivariate-normal}
+若二维随机变量 $(X,Y)$ 的联合概率密度为
+\begin{equation}
+  f(x,y)=\frac{1}{2\pi\sigma_1\sigma_2\sqrt{1-\rho^2}}
+  \exp\left\{-\frac{1}{2(1-\rho^2)}
+  \left[\frac{(x-\mu_1)^2}{\sigma_1^2}-2\rho\frac{(x-\mu_1)(y-\mu_2)}{\sigma_1\sigma_2}+\frac{(y-\mu_2)^2}{\sigma_2^2}\right]\right\},
+  \label{eq:bivariate-normal-density}
+\end{equation}
+其中 $\mu_1,\mu_2\in\R$，$\sigma_1>0,\sigma_2>0$，$-1<\rho<1$ 均为常数，则称 $(X,Y)$ 服从参数为 $\mu_1,\mu_2,\sigma_1^2,\sigma_2^2,\rho$ 的\textbf{二维正态分布}，记为 $(X,Y)\sim N(\mu_1,\mu_2,\sigma_1^2,\sigma_2^2,\rho)$。
+\end{definition}
+
+上述概念可直接推广到 $n$ 维情形：同一样本空间上的 $n$ 个随机变量构成的向量 $(X_1,\ldots,X_n)$ 称为\textbf{$n$ 维随机变量}，其联合分布函数为 $F(x_1,\ldots,x_n)=P(X_1\le x_1,\ldots,X_n\le x_n)$；在连续情形下，联合概率密度满足 $F(x_1,\ldots,x_n)=\int_{-\infty}^{x_1}\cdots\int_{-\infty}^{x_n}f(u_1,\ldots,u_n)\dd u_n\cdots\dd u_1$。
+
+\section{边缘分布}
+\label{sec:marginal-distribution}
+
+二维随机变量 $(X,Y)$ 的每个分量 $X$ 和 $Y$ 本身都是一维随机变量，它们各自的分布称为 $(X,Y)$ 关于 $X$ 和关于 $Y$ 的\textbf{边缘分布}。
+
+\begin{definition}[边缘分布函数、边缘分布律与边缘概率密度]
+\label{def:marginal-distribution}
+设二维随机变量 $(X,Y)$ 的联合分布函数为 $F(x,y)$，则分量 $X$ 与 $Y$ 的分布函数分别称为关于 $X$ 和关于 $Y$ 的\textbf{边缘分布函数}，记为 $F_X(x)$ 与 $F_Y(y)$，由概率的上连续性有
+\begin{equation}
+  F_X(x)=P(X\le x,\,Y<+\infty)=F(x,+\infty),\qquad
+  F_Y(y)=P(X<+\infty,\,Y\le y)=F(+\infty,y).
+  \label{eq:marginal-cdf}
+\end{equation}
+\begin{enumerate}
+  \item 若 $(X,Y)$ 为二维离散型，联合分布律为 $p_{ij}=P(X=x_i,Y=y_j)$，则 $X$ 与 $Y$ 的\textbf{边缘分布律}分别由行求和与列求和给出：
+  \begin{equation}
+    p_{i\cdot}=P(X=x_i)=\sum_{j}p_{ij},\qquad
+    p_{\cdot j}=P(Y=y_j)=\sum_{i}p_{ij}.
+    \label{eq:marginal-pmf}
+  \end{equation}
+  \item 若 $(X,Y)$ 为二维连续型，联合概率密度为 $f(x,y)$，则 $X$ 与 $Y$ 也都是连续型随机变量，其\textbf{边缘概率密度}分别由对另一变量积分消元给出：
+  \begin{equation}
+    f_X(x)=\int_{-\infty}^{+\infty}f(x,y)\dd y,\qquad
+    f_Y(y)=\int_{-\infty}^{+\infty}f(x,y)\dd x.
+    \label{eq:marginal-pdf}
+  \end{equation}
+\end{enumerate}
+\end{definition}
+
+边缘公式\eqref{eq:marginal-pmf}和\eqref{eq:marginal-pdf}均可直接从\eqref{eq:marginal-cdf}推出。例如在连续情形，
+\[
+  F_X(x)=F(x,+\infty)=\int_{-\infty}^{x}\left[\int_{-\infty}^{+\infty}f(u,v)\dd v\right]\dd u,
+\]
+对照一维密度定义即得 $f_X(x)=\int_{-\infty}^{+\infty}f(x,y)\dd y$。
+
+\begin{example}[title={正约数个数与不同素因子个数的联合与边缘分布}]
+\label{eg:divisor-prime-joint}
+从集合 $\set{1,2,\ldots,10}$ 中等可能任取一个整数 $N$，记 $X$ 为 $N$ 的正约数个数，$Y$ 为 $N$ 的不同素因子个数。写出 $(X,Y)$ 的联合分布律及 $X,Y$ 各自的边缘分布律。
+\begin{solution}
+逐一列出 $N=1,\ldots,10$ 对应的数对 $(X,Y)$：
+\[
+  1\mapsto(1,0),\;2,3,5,7\mapsto(2,1),\;4,9\mapsto(3,1),\;
+  8\mapsto(4,1),\;6,10\mapsto(4,2).
+\]
+统计频数并除以 $10$，将联合分布律及行和、列和汇总于下表：
+\[
+\begin{array}{c|ccc|c}
+  X\backslash Y & 0 & 1 & 2 & p_{i\cdot} \\ \hline
+  1 & 0.1 & 0 & 0 & 0.1 \\
+  2 & 0 & 0.4 & 0 & 0.4 \\
+  3 & 0 & 0.2 & 0 & 0.2 \\
+  4 & 0 & 0.1 & 0.2 & 0.3 \\ \hline
+  p_{\cdot j} & 0.1 & 0.7 & 0.2 & 1
+\end{array}
+\]
+右列即 $X$ 的边缘分布律，底行即 $Y$ 的边缘分布律。
+\end{solution}
+\end{example}
+
+\begin{example}[title={曲边区域上均匀分布的边缘密度}]
+\label{eg:curved-support-marginal}
+设二维随机变量 $(X,Y)$ 在由抛物线 $y=x^2$ 与直线 $y=x$ 所围成的平面区域 $D=\set{(x,y):0\le x\le 1,\,x^2\le y\le x}$ 上服从均匀分布，求边缘概率密度 $f_X(x)$ 与 $f_Y(y)$。
+\begin{solution}
+先求区域 $D$ 的面积：
+\[
+  S_D=\int_{0}^{1}(x-x^2)\dd x=\left[\frac{x^2}{2}-\frac{x^3}{3}\right]_{0}^{1}=\frac{1}{6}.
+\]
+故联合概率密度在 $D$ 内为 $f(x,y)=6$，在 $D$ 外为 $0$。
+
+求 $f_X(x)$ 时固定 $x$，对 $y$ 沿垂直切片积分：当 $0\le x\le 1$ 时，$y$ 的变化范围为 $[x^2,x]$，于是
+\[
+  f_X(x)=\int_{x^2}^{x}6\dd y=6(x-x^2),\qquad 0\le x\le 1,
+\]
+其他处 $f_X(x)=0$。
+
+求 $f_Y(y)$ 时固定 $y$，对 $x$ 沿水平切片积分：由 $x^2\le y\le x$ 解得 $y\le x\le\sqrt{y}$（当 $0\le y\le 1$ 时），于是
+\[
+  f_Y(y)=\int_{y}^{\sqrt{y}}6\dd x=6(\sqrt{y}-y),\qquad 0\le y\le 1,
+\]
+其他处 $f_Y(y)=0$。核验积分：$\int_{0}^{1}6(x-x^2)\dd x=1$，$\int_{0}^{1}6(\sqrt{y}-y)\dd y=6(\frac{2}{3}-\frac{1}{2})=1$。
+\end{solution}
+\end{example}
+
+值得注意的是，尽管 $(X,Y)$ 在区域 $D$ 上是均匀分布，但因为 $D$ 不是坐标轴对齐的矩形，边缘分量 $X$ 与 $Y$ 都不服从均匀分布。下面我们再验证二维正态分布的边缘分布。
+
+\begin{proposition}[二维正态分布的边缘分布]
+\label{prop:bivariate-normal-marginal}
+若 $(X,Y)\sim N(\mu_1,\mu_2,\sigma_1^2,\sigma_2^2,\rho)$，则其两个边缘分布均为一维正态分布：
+\[
+  X\sim N(\mu_1,\sigma_1^2),\qquad Y\sim N(\mu_2,\sigma_2^2).
+\]
+\end{proposition}
+\begin{proof}
+对\eqref{eq:bivariate-normal-density}指数括号内的二次型关于 $y$ 配方。记 $u=\frac{x-\mu_1}{\sigma_1}$，$v=\frac{y-\mu_2}{\sigma_2}$，则
+\[
+  \frac{u^2-2\rho uv+v^2}{1-\rho^2}
+  =u^2+\frac{(v-\rho u)^2}{1-\rho^2}.
+\]
+代入\eqref{eq:marginal-pdf}并作换元 $t=\dfrac{v-\rho u}{\sqrt{1-\rho^2}}$（此时 $\dd y=\sigma_2\dd v=\sigma_2\sqrt{1-\rho^2}\dd t$）：
+\[
+\begin{aligned}
+  f_X(x)&=\int_{-\infty}^{+\infty}f(x,y)\dd y\\
+  &=\frac{1}{\sqrt{2\pi}\,\sigma_1}\e^{-u^2/2}\cdot
+  \frac{1}{\sqrt{2\pi}}\int_{-\infty}^{+\infty}\e^{-t^2/2}\dd t
+  =\frac{1}{\sqrt{2\pi}\,\sigma_1}\exp\left[-\frac{(x-\mu_1)^2}{2\sigma_1^2}\right].
+\end{aligned}
+\]
+故 $X\sim N(\mu_1,\sigma_1^2)$。由 $x$ 与 $y$ 的对称性，同理得 $Y\sim N(\mu_2,\sigma_2^2)$。
+\end{proof}
+
+\cref{prop:bivariate-normal-marginal}揭示了一个重要事实：二维正态分布的边缘分布与参数 $\rho$ 无关。因此，改变 $\rho\in(-1,1)$ 会得到无穷多个不同的二维正态联合分布，但它们拥有完全相同的边缘分布。这说明\textbf{联合分布唯一决定边缘分布，但边缘分布一般不能唯一反推出联合分布}。
+
+\section{条件分布}
+\label{sec:conditional-distribution}
+
+第一章引入了事件的条件概率 $P(A\mid B)$。在二维随机变量 $(X,Y)$ 中，自然要问：当已知其中一个分量取某个特定值时，另一个分量的概率分布如何？这就是条件分布。
+
+\subsection{离散型随机变量的条件分布}
+
+\begin{definition}[离散型条件分布律]
+\label{def:discrete-conditional}
+设 $(X,Y)$ 是二维离散型随机变量，联合分布律为 $p_{ij}=P(X=x_i,Y=y_j)$，边缘分布律为 $p_{i\cdot}$ 与 $p_{\cdot j}$。
+\begin{enumerate}
+  \item 对固定的 $j$，若 $p_{\cdot j}=P(Y=y_j)>0$，则称
+  \begin{equation}
+    P(X=x_i\mid Y=y_j)=\frac{P(X=x_i,\,Y=y_j)}{P(Y=y_j)}=\frac{p_{ij}}{p_{\cdot j}},\qquad i=1,2,\ldots
+    \label{eq:discrete-cond-x}
+  \end{equation}
+  为在条件 $Y=y_j$ 下随机变量 $X$ 的\textbf{条件分布律}。
+  \item 对固定的 $i$，若 $p_{i\cdot}=P(X=x_i)>0$，则称
+  \begin{equation}
+    P(Y=y_j\mid X=x_i)=\frac{p_{ij}}{p_{i\cdot}},\qquad j=1,2,\ldots
+    \label{eq:discrete-cond-y}
+  \end{equation}
+  为在条件 $X=x_i$ 下随机变量 $Y$ 的\textbf{条件分布律}。
+\end{enumerate}
+\end{definition}
+
+容易验证，条件分布律满足分布律的两条基本性质：$p_{ij}/p_{\cdot j}\ge 0$ 且 $\sum_{i}\frac{p_{ij}}{p_{\cdot j}}=\frac{p_{\cdot j}}{p_{\cdot j}}=1$。
+
+\begin{example}[title={两条生产线零件分级的双向条件分布}]
+\label{eg:robot-conditional}
+某车间两条生产线（$X=1$ 表示一号产线，$X=2$ 表示二号产线）加工同型号零件，按精度分为一等品（$Y=1$）、二等品（$Y=2$）与废品（$Y=3$）。已知联合分布律如下表所示，求：(1) 给定产线 $X=1$ 时零件等级 $Y$ 的条件分布律；(2) 给定抽到废品 $Y=3$ 时产线 $X$ 的条件分布律。
+\[
+\begin{array}{c|ccc|c}
+  X\backslash Y & 1 & 2 & 3 & p_{i\cdot} \\ \hline
+  1 & 0.64 & 0.05 & 0.01 & 0.70 \\
+  2 & 0.26 & 0.03 & 0.01 & 0.30 \\ \hline
+  p_{\cdot j} & 0.90 & 0.08 & 0.02 & 1
+\end{array}
+\]
+\begin{solution}
+(1) 给定 $X=1$ 时，以行边缘 $p_{1\cdot}=0.70$ 归一化第一行，得
+\[
+  \begin{gathered}
+    P(Y=1\mid X=1)=\frac{0.64}{0.70}=\frac{32}{35},\qquad
+    P(Y=2\mid X=1)=\frac{0.05}{0.70}=\frac{1}{14},\\
+    P(Y=3\mid X=1)=\frac{0.01}{0.70}=\frac{1}{70}.
+  \end{gathered}
+\]
+
+(2) 给定 $Y=3$ 时，以列边缘 $p_{\cdot 3}=0.02$ 归一化第三列，得
+\[
+  P(X=1\mid Y=3)=\frac{0.01}{0.02}=0.5,\qquad
+  P(X=2\mid Y=3)=\frac{0.01}{0.02}=0.5.
+\]
+两产线虽然总产量之比为 $7:3$，但一旦发现废品，来自两条产线的后验概率恰好相等。
+\end{solution}
+\end{example}
+
+\begin{example}[title={重复射击直到两次命中的条件分布}]
+\label{eg:two-success-times}
+一射手进行独立重复射击，每次命中率为 $p\,(0<p<1)$，记 $q=1-p$。设 $X$ 为首次命中目标时的射击次数，$Y$ 为第 $2$ 次命中目标时的射击次数。求 $(X,Y)$ 的联合分布律、边缘分布律，以及两个方向的条件分布律。
+\begin{solution}
+事件 $\set{X=m,Y=n}$（其中整数 $1\le m<n$）表示第 $m$ 次和第 $n$ 次命中，其余 $n-2$ 次均未命中，故联合分布律为
+\[
+  P(X=m,\,Y=n)=p^2 q^{n-2},\qquad 1\le m<n.
+\]
+对 $n$ 求和得 $X$ 的边缘分布律（$m=1,2,\ldots$）：
+\[
+  P(X=m)=\sum_{n=m+1}^{\infty}p^2 q^{n-2}=p^2\frac{q^{m-1}}{1-q}=pq^{m-1},
+\]
+即 $X\sim G(p)$。对 $m$ 求和得 $Y$ 的边缘分布律（$n=2,3,\ldots$）：
+\[
+  P(Y=n)=\sum_{m=1}^{n-1}p^2 q^{n-2}=(n-1)p^2 q^{n-2},
+\]
+即 $Y\sim NB(2,p)$。由此求得两个方向的条件分布律：
+\begin{enumerate}
+  \item 给定 $Y=n\,(n\ge 2)$ 时，$X$ 的条件分布律为
+  \[
+    P(X=m\mid Y=n)=\frac{p^2 q^{n-2}}{(n-1)p^2 q^{n-2}}=\frac{1}{n-1},\qquad m=1,2,\ldots,n-1.
+  \]
+  也就是说，已知第 $2$ 次命中发生在第 $n$ 枪时，第 $1$ 次命中发生在前 $n-1$ 枪中哪一枪是完全等可能的（与命中率 $p$ 无关）。
+  \item 给定 $X=m\,(m\ge 1)$ 时，$Y$ 的条件分布律为
+  \[
+    P(Y=n\mid X=m)=\frac{p^2 q^{n-2}}{pq^{m-1}}=pq^{n-m-1},\qquad n=m+1,m+2,\ldots
+  \]
+  即第 $2$ 次命中比第 $1$ 次命中多出的射击次数 $Y-m$ 仍服从几何分布 $G(p)$。
+\end{enumerate}
+\end{solution}
+\end{example}
+
+\subsection{连续型随机变量的条件分布}
+
+对于二维连续型随机变量 $(X,Y)$，由于单点事件 $\set{Y=y}$ 的概率为零，不能直接套用 $P(X\le x,Y=y)/P(Y=y)$。为此，先考察窄带条件事件 $\set{y<Y\le y+\Delta y}\,(\Delta y>0)$，当 $f_Y(y)>0$ 且联合密度与边缘密度在该处连续时，取极限 $\Delta y\to 0^+$：
+\[
+\begin{aligned}
+  \lim_{\Delta y\to 0^+}P(X\le x\mid y<Y\le y+\Delta y)
+  &=\lim_{\Delta y\to 0^+}\frac{\int_{-\infty}^{x}\int_{y}^{y+\Delta y}f(u,v)\dd v\dd u}{\int_{y}^{y+\Delta y}f_Y(v)\dd v}\\
+  &=\frac{\int_{-\infty}^{x}f(u,y)\dd u}{f_Y(y)}
+  =\int_{-\infty}^{x}\frac{f(u,y)}{f_Y(y)}\dd u.
+\end{aligned}
+\]
+这自然引出连续型条件分布的定义。
+
+\begin{definition}[连续型条件概率密度与条件分布函数]
+\label{def:continuous-conditional}
+设二维连续型随机变量 $(X,Y)$ 的联合概率密度为 $f(x,y)$，边缘概率密度为 $f_X(x)$ 与 $f_Y(y)$。
+\begin{enumerate}
+  \item 若对给定的 $y$ 有 $f_Y(y)>0$，则称
+  \begin{equation}
+    f_{X\mid Y}(x\mid y)=\frac{f(x,y)}{f_Y(y)},\qquad
+    F_{X\mid Y}(x\mid y)=\int_{-\infty}^{x}f_{X\mid Y}(u\mid y)\dd u
+    \label{eq:cond-pdf-x}
+  \end{equation}
+  分别为在条件 $Y=y$ 下 $X$ 的\textbf{条件概率密度}与\textbf{条件分布函数}。
+  \item 类似地，若对给定的 $x$ 有 $f_X(x)>0$，则称
+  \begin{equation}
+    f_{Y\mid X}(y\mid x)=\frac{f(x,y)}{f_X(x)},\qquad
+    F_{Y\mid X}(y\mid x)=\int_{-\infty}^{y}f_{Y\mid X}(v\mid x)\dd v
+    \label{eq:cond-pdf-y}
+  \end{equation}
+  分别为在条件 $X=x$ 下 $Y$ 的\textbf{条件概率密度}与\textbf{条件分布函数}。
+\end{enumerate}
+\end{definition}
+
+由\eqref{eq:cond-pdf-x}与\eqref{eq:cond-pdf-y}立得连续型的\textbf{乘法公式}与\textbf{全概率公式}：
+\begin{equation}
+  f(x,y)=f_X(x)\,f_{Y\mid X}(y\mid x)=f_Y(y)\,f_{X\mid Y}(x\mid y),
+  \label{eq:continuous-chain-rule}
+\end{equation}
+\begin{equation}
+  f_Y(y)=\int_{-\infty}^{+\infty}f_X(x)\,f_{Y\mid X}(y\mid x)\dd x.
+  \label{eq:continuous-total-prob}
+\end{equation}
+在分层建模中，往往先给出边缘密度 $f_X(x)$ 与条件密度 $f_{Y\mid X}(y\mid x)$，再通过\eqref{eq:continuous-chain-rule}和\eqref{eq:continuous-total-prob}求得联合密度与另一边缘密度。
+
+\begin{example}[title={圆域均匀分布的条件密度与分层连续模型}]
+\label{eg:disk-and-hierarchical-cond}
+(1) 设 $(X,Y)$ 在单位圆域 $D=\set{(x,y):x^2+y^2\le 1}$ 上服从均匀分布，求条件概率密度 $f_{X\mid Y}(x\mid y)$。
+
+(2) 设 $X\sim U(0,1)$，在给定 $X=x\,(0<x<1)$ 时，$Y$ 在区间 $(0,x)$ 上服从均匀分布。求 $(X,Y)$ 的联合概率密度及 $Y$ 的边缘概率密度。
+\begin{solution}
+(1) 单位圆面积为 $\pi$，故在 $D$ 内 $f(x,y)=\frac{1}{\pi}$。当 $-1<y<1$ 时，水平弦 $x\in[-\sqrt{1-y^2},\sqrt{1-y^2}]$ 的长度为 $2\sqrt{1-y^2}$，于是边缘密度为
+\[
+  f_Y(y)=\int_{-\sqrt{1-y^2}}^{\sqrt{1-y^2}}\frac{1}{\pi}\dd x=\frac{2}{\pi}\sqrt{1-y^2},\qquad -1<y<1.
+\]
+代入\eqref{eq:cond-pdf-x}得，对任意 $y\in(-1,1)$，
+\[
+  f_{X\mid Y}(x\mid y)=\frac{1/\pi}{\frac{2}{\pi}\sqrt{1-y^2}}=\frac{1}{2\sqrt{1-y^2}},\qquad -\sqrt{1-y^2}\le x\le\sqrt{1-y^2},
+\]
+其他处为 $0$。可见给定纵坐标 $Y=y$ 后，$X$ 恰在对应的水平弦 $[-\sqrt{1-y^2},\sqrt{1-y^2}]$ 上服从均匀分布。
+
+(2) 由题意，$f_X(x)=1\,(0<x<1)$，且对 $0<x<1$ 有 $f_{Y\mid X}(y\mid x)=\frac{1}{x}\,(0<y<x)$。由\eqref{eq:continuous-chain-rule}，联合概率密度为
+\[
+  f(x,y)=f_X(x)f_{Y\mid X}(y\mid x)=
+  \begin{cases}
+    \dfrac{1}{x},& 0<y<x<1,\\
+    0,& \text{其他}.
+  \end{cases}
+\]
+对 $x$ 积分求 $Y$ 的边缘密度：当 $0<y<1$ 时 $x$ 的范围为 $(y,1)$，故
+\[
+  f_Y(y)=\int_{y}^{1}\frac{1}{x}\dd x=-\ln y,\qquad 0<y<1,
+\]
+其他处 $f_Y(y)=0$。
+\end{solution}
+\end{example}
+
+顺便指出，利用\cref{prop:bivariate-normal-marginal}证明中的配方恒等式，可直接写出二维正态随机变量 $(X,Y)\sim N(\mu_1,\mu_2,\sigma_1^2,\sigma_2^2,\rho)$ 的条件密度：
+\[
+  f_{Y\mid X}(y\mid x)=\frac{f(x,y)}{f_X(x)}
+  =\frac{1}{\sqrt{2\pi}\,\sigma_2\sqrt{1-\rho^2}}
+  \exp\left\{-\frac{\bigl[y-\mu_2-\rho\frac{\sigma_2}{\sigma_1}(x-\mu_1)\bigr]^2}{2\sigma_2^2(1-\rho^2)}\right\},
+\]
+即给定 $X=x$ 时，$Y$ 仍服从正态分布 $N\bigl(\mu_2+\rho\frac{\sigma_2}{\sigma_1}(x-\mu_1),\,\sigma_2^2(1-\rho^2)\bigr)$。
+
+\section{相互独立的随机变量}
+\label{sec:variable-independence}
+
+\begin{definition}[两个随机变量的相互独立性]
+\label{def:rv-independence}
+设 $(X,Y)$ 的联合分布函数为 $F(x,y)$，边缘分布函数为 $F_X(x)$ 与 $F_Y(y)$。若对所有实数 $x,y\in\R$ 均有
+\begin{equation}
+  P(X\le x,\,Y\le y)=P(X\le x)\,P(Y\le y),\qquad\text{即 }F(x,y)=F_X(x)F_Y(y),
+  \label{eq:rv-indep-cdf}
+\end{equation}
+则称随机变量 $X$ 与 $Y$ \textbf{相互独立}。
+\end{definition}
+
+由此立得离散型与连续型随机变量独立性的等价判据：
+\begin{enumerate}
+  \item 二维离散型随机变量 $X$ 与 $Y$ 相互独立，当且仅当对所有 $(x_i,y_j)$ 均有
+  \[
+    P(X=x_i,\,Y=y_j)=P(X=x_i)\,P(Y=y_j),\qquad\text{即 }p_{ij}=p_{i\cdot}\,p_{\cdot j}.
+  \]
+  \item 二维连续型随机变量 $X$ 与 $Y$ 相互独立，当且仅当几乎处处成立
+  \[
+    f(x,y)=f_X(x)\,f_Y(y).
+  \]
+\end{enumerate}
+
+\begin{example}[title={二维离散分布的独立性判别}]
+\label{eg:discrete-independent-table}
+判断\cref{eg:divisor-prime-joint}与下表中的二维离散随机变量 $(X,Y)$ 是否相互独立：
+\[
+\begin{array}{c|cc|c}
+  X\backslash Y & 0 & 1 & p_{i\cdot} \\ \hline
+  0 & 0.12 & 0.28 & 0.40 \\
+  1 & 0.18 & 0.42 & 0.60 \\ \hline
+  p_{\cdot j} & 0.30 & 0.70 & 1
+\end{array}
+\]
+\begin{solution}
+在\cref{eg:divisor-prime-joint}中，$p_{10}=0.1$，但 $p_{1\cdot}p_{\cdot 0}=0.1\times 0.1=0.01\ne 0.1$，故 $X$ 与 $Y$ 不独立（只需找到一格不满足 $p_{ij}=p_{i\cdot}p_{\cdot j}$ 即可否定独立）。
+
+对于上表，逐格核验四项乘积：
+\[
+  0.40\times 0.30=0.12,\quad 0.40\times 0.70=0.28,\quad
+  0.60\times 0.30=0.18,\quad 0.60\times 0.70=0.42,
+\]
+全部与表内联合概率一致，故该表中的 $X$ 与 $Y$ 相互独立。
+\end{solution}
+\end{example}
+
+在具体计算中，判断连续型随机变量是否独立有一个极为实用的\textbf{因子分解准则}：$X$ 与 $Y$ 相互独立，当且仅当联合密度可以写成 $f(x,y)=g(x)h(y)$ 的形式（其中 $g,h$ 为非负一元函数），且\textbf{非零支集必须是矩形区域 $I\times J$}。例如\cref{eg:curved-support-marginal}中 $f(x,y)=6$ 在 $D=\set{0\le x\le 1,\,x^2\le y\le x}$ 上虽为常数，但支集 $D$ 不是矩形（$y$ 的取值边界依赖于 $x$），因而 $X$ 与 $Y$ 不独立。
+
+\begin{proposition}[二维正态分布的独立性判据]
+\label{prop:bivariate-normal-indep}
+设 $(X,Y)\sim N(\mu_1,\mu_2,\sigma_1^2,\sigma_2^2,\rho)$，则 $X$ 与 $Y$ 相互独立的充要条件是 $\rho=0$。
+\end{proposition}
+\begin{proof}
+由\cref{prop:bivariate-normal-marginal}知
+\[
+  f_X(x)f_Y(y)=\frac{1}{2\pi\sigma_1\sigma_2}
+  \exp\left\{-\frac{1}{2}\left[\frac{(x-\mu_1)^2}{\sigma_1^2}+\frac{(y-\mu_2)^2}{\sigma_2^2}\right]\right\}.
+\]
+当 $\rho=0$ 时，代入\eqref{eq:bivariate-normal-density}直接得 $f(x,y)=f_X(x)f_Y(y)$，故 $X$ 与 $Y$ 相互独立。
+
+反之，若 $X$ 与 $Y$ 相互独立，则连续密度处处满足 $f(x,y)=f_X(x)f_Y(y)$。取 $x=\mu_1,\,y=\mu_2$ 代入比较峰值，立得
+\[
+  \frac{1}{2\pi\sigma_1\sigma_2\sqrt{1-\rho^2}}=\frac{1}{2\pi\sigma_1\sigma_2},
+\]
+从而 $\sqrt{1-\rho^2}=1$，即 $\rho=0$。
+\end{proof}
+
+\begin{example}[title={独立随机到达时刻的相遇概率}]
+\label{eg:arrival-strip}
+甲、乙两人约定在某时段会面：甲的到达时刻 $X\sim U(0,60)$（单位：分钟），乙的到达时刻 $Y\sim U(0,30)$，且 $X$ 与 $Y$ 相互独立。求两人到达时刻之差不超过 $5$ 分钟（即 $\abs{X-Y}\le 5$）的概率。
+\begin{solution}
+因 $X$ 与 $Y$ 相互独立，$(X,Y)$ 在矩形 $D=[0,60]\times[0,30]$（面积 $S_D=1800$）上服从均匀分布，$f(x,y)=\frac{1}{1800}$。事件 $A=\set{\abs{X-Y}\le 5}$ 在 $D$ 内对应带状区域 $G=\set{(x,y)\in D: y-5\le x\le y+5}$。按 $y$ 沿水平方向切片：
+\begin{itemize}
+  \item 当 $0\le y\le 5$ 时，$x$ 的范围为 $[0,y+5]$，切片长度为 $y+5$；
+  \item 当 $5<y\le 30$ 时，$x$ 的范围为 $[y-5,y+5]$（因 $y+5\le 35<60$），切片长度为 $10$。
+\end{itemize}
+因此区域 $G$ 的面积为
+\[
+  S_G=\int_{0}^{5}(y+5)\dd y+\int_{5}^{30}10\dd y=\frac{75}{2}+250=\frac{575}{2},
+\]
+故所求概率为
+\[
+  P(\abs{X-Y}\le 5)=\frac{S_G}{S_D}=\frac{575/2}{1800}=\frac{23}{144}\approx 0.1597.
+\]
+\end{solution}
+\end{example}
+
+\subsection{多维随机变量的独立性及其函数}
+
+对 $n$ 维随机变量 $(X_1,X_2,\ldots,X_n)$，若对任意实数 $x_1,\ldots,x_n$ 均有
+\[
+  F(x_1,x_2,\ldots,x_n)=F_{X_1}(x_1)F_{X_2}(x_2)\cdots F_{X_n}(x_n),
+\]
+则称 $X_1,X_2,\ldots,X_n$ \textbf{相互独立}。进一步地，若随机向量 $(X_1,\ldots,X_m)$ 与 $(Y_1,\ldots,Y_n)$ 的联合分布函数满足
+\[
+  F(x_1,\ldots,x_m,y_1,\ldots,y_n)=F_1(x_1,\ldots,x_m)\,F_2(y_1,\ldots,y_n),
+\]
+则称两随机向量相互独立。由此有以下常用性质。
+
+\begin{theorem}[独立随机变量的函数仍相互独立]
+\label{thm:indep-functions}
+若随机向量 $(X_1,\ldots,X_m)$ 与 $(Y_1,\ldots,Y_n)$ 相互独立，则对任意连续函数（更一般地，Borel 可测函数）$g:\R^m\to\R$ 与 $h:\R^n\to\R$，随机变量 $g(X_1,\ldots,X_m)$ 与 $h(Y_1,\ldots,Y_n)$ 相互独立。特别地，若 $X_1,\ldots,X_n$ 相互独立，则分组函数 $g(X_1,\ldots,X_k)$ 与 $h(X_{k+1},\ldots,X_n)$ 相互独立。
+\end{theorem}
+
+\section{两个随机变量的函数的分布}
+\label{sec:bivariate-transform}
+
+已知二维随机变量 $(X,Y)$ 的联合分布，求其函数 $Z=g(X,Y)$ 的分布，是概率论与数理统计中的基本运算。离散情形只需将使 $g(x_i,y_j)$ 取相同值的概率 $p_{ij}$ 合并相加；本节重点讨论连续情形中最常见的四类函数：和、商、积与极值，以及一般二维变换的雅可比方法。
+
+\subsection{和的分布与卷积公式}
+
+\begin{theorem}[和的分布与卷积公式]
+\label{thm:convolution}
+设二维连续型随机变量 $(X,Y)$ 的联合概率密度为 $f(x,y)$，则 $Z=X+Y$ 的概率密度为
+\begin{equation}
+  f_Z(z)=\int_{-\infty}^{+\infty}f(x,z-x)\dd x
+  =\int_{-\infty}^{+\infty}f(z-y,y)\dd y.
+  \label{eq:sum-density}
+\end{equation}
+特别地，当 $X$ 与 $Y$ 相互独立，边缘密度分别为 $f_X(x)$ 与 $f_Y(y)$ 时，\eqref{eq:sum-density}化为\textbf{卷积公式}：
+\begin{equation}
+  f_Z(z)=\int_{-\infty}^{+\infty}f_X(x)f_Y(z-x)\dd x
+  =\int_{-\infty}^{+\infty}f_X(z-y)f_Y(y)\dd y,
+  \label{eq:convolution}
+\end{equation}
+常记为 $f_Z=f_X * f_Y$。
+\end{theorem}
+\begin{proof}
+求 $Z=X+Y$ 的分布函数：
+\[
+  F_Z(z)=P(X+Y\le z)=\iint_{x+y\le z}f(x,y)\dd x\dd y
+  =\int_{-\infty}^{+\infty}\left[\int_{-\infty}^{z-x}f(x,y)\dd y\right]\dd x.
+\]
+在内层积分中作换元 $u=x+y$（固定 $x$，故 $\dd y=\dd u$），并交换积分次序得
+\[
+  F_Z(z)=\int_{-\infty}^{+\infty}\left[\int_{-\infty}^{z}f(x,u-x)\dd u\right]\dd x
+  =\int_{-\infty}^{z}\left[\int_{-\infty}^{+\infty}f(x,u-x)\dd x\right]\dd u.
+\]
+由概率密度的定义即得 $f_Z(z)=\int_{-\infty}^{+\infty}f(x,z-x)\dd x$。由 $x$ 与 $y$ 的对称性即得第二式；当 $X,Y$ 相互独立时令 $f(x,y)=f_X(x)f_Y(y)$ 即得\eqref{eq:convolution}。
+\end{proof}
+
+当 $f_X$ 与 $f_Y$ 仅在有界区间上非零时，使用卷积公式的关键在于确定被积函数非零的 $x$ 积分限，其几何意义是直线 $x+y=z$ 与联合支集矩形的交线段，如\cref{fig:convolution-domain}所示。
+
+\lcfigure[caption={两个独立 $U(0,1)$ 随机变量之和 $Z=X+Y$ 的积分区域示意图。直线 $x+y=z$ 在 $0<z\le 1$ 与 $1<z<2$ 时截过单位正方形 $[0,1]^2$ 的方式不同，决定卷积积分的分段上下限。},label=fig:convolution-domain]{ch03-convolution-domain}
+
+例如，若 $X,Y$ 独立且同服从 $U(0,1)$，由\cref{fig:convolution-domain}及卷积公式，被积函数 $f_X(x)f_Y(z-x)=1$ 要求 $0<x<1$ 且 $0<z-x<1$（即 $z-1<x<z$），从而
+\[
+  f_Z(z)=
+  \begin{cases}
+    \displaystyle\int_{0}^{z}1\dd x=z,& 0<z\le 1,\\[6pt]
+    \displaystyle\int_{z-1}^{1}1\dd x=2-z,& 1<z<2,\\
+    0,& \text{其他},
+  \end{cases}
+\]
+这就是著名的\textbf{三角分布}。再看一个非均匀支集的典型卷积例题。
+
+\begin{example}[title={串联两电阻的总电阻分布}]
+\label{eg:resistor-convolution}
+在一简单电路中，两个相互独立的电阻 $R_1$ 与 $R_2$ 串联连接，它们的概率密度相同，均为
+\[
+  f(x)=
+  \begin{cases}
+    \dfrac{10-x}{50},& 0<x<10,\\
+    0,& \text{其他}.
+  \end{cases}
+\]
+求总电阻 $R=R_1+R_2$ 的概率密度 $f_R(z)$。
+\begin{solution}
+由卷积公式，$f_R(z)=\int_{-\infty}^{+\infty}f(x)f(z-x)\dd x$。被积函数非零要求 $0<x<10$ 且 $0<z-x<10$，即 $\max\set{0,z-10}<x<\min\set{10,z}$，故 $f_R(z)$ 仅在 $0<z<20$ 内非零，分为两段计算：
+
+\textbf{当 $0<z\le 10$ 时}，积分限为 $0<x<z$：
+\[
+\begin{aligned}
+  f_R(z)&=\int_{0}^{z}\frac{10-x}{50}\cdot\frac{10-(z-x)}{50}\dd x
+  =\frac{1}{2500}\int_{0}^{z}\bigl[10(10-z)+zx-x^2\bigr]\dd x\\
+  &=\frac{1}{2500}\left[10(10-z)z+\frac{z^3}{2}-\frac{z^3}{3}\right]
+  =\frac{1}{15000}\bigl(600z-60z^2+z^3\bigr).
+\end{aligned}
+\]
+
+\textbf{当 $10<z<20$ 时}，积分限为 $z-10<x<10$。令 $u=10-x$，则 $x=10-u$，$10-z+x=20-z-u$，$u$ 从 $0$ 变到 $20-z$：
+\[
+  f_R(z)=\frac{1}{2500}\int_{0}^{20-z}u\bigl((20-z)-u\bigr)\dd u
+  =\frac{1}{2500}\cdot\frac{(20-z)^3}{6}
+  =\frac{(20-z)^3}{15000}.
+\]
+其他处 $f_R(z)=0$。核验连续性与归一化：在 $z=10$ 处两段值均为 $\frac{1000}{15000}=\frac{1}{15}$；两段积分分别为 $\frac{5}{6}$ 与 $\frac{1}{6}$，总和为 $1$。
+\end{solution}
+\end{example}
+
+下面利用卷积公式证明两类极为重要的\textbf{分布可加性}：正态分布的线性组合封闭性与 $\Gamma$ 分布的同尺度可加性。
+
+\begin{proposition}[独立正态随机变量的线性组合]
+\label{prop:independent-normal-linear}
+设 $X\sim N(\mu_1,\sigma_1^2)$ 与 $Y\sim N(\mu_2,\sigma_2^2)$ 相互独立，则
+\begin{equation}
+  X+Y\sim N\bigl(\mu_1+\mu_2,\,\sigma_1^2+\sigma_2^2\bigr).
+  \label{eq:normal-additivity}
+\end{equation}
+一般地，若 $X_1,\ldots,X_n$ 相互独立且 $X_i\sim N(\mu_i,\sigma_i^2)$，对任意不全为零的实常数 $c_1,\ldots,c_n$ 及实数 $c_0$，有
+\[
+  c_0+\sum_{i=1}^{n}c_i X_i\sim N\left(c_0+\sum_{i=1}^{n}c_i\mu_i,\,\sum_{i=1}^{n}c_i^2\sigma_i^2\right).
+\]
+\end{proposition}
+\begin{proof}
+先证 $\mu_1=\mu_2=0$ 的情形。由卷积公式，
+\[
+  f_{X+Y}(z)=\frac{1}{2\pi\sigma_1\sigma_2}
+  \int_{-\infty}^{+\infty}\exp\left[-\frac{x^2}{2\sigma_1^2}-\frac{(z-x)^2}{2\sigma_2^2}\right]\dd x.
+\]
+记 $\sigma^2=\sigma_1^2+\sigma_2^2$，将指数中的二次式关于 $x$ 配方：
+\[
+  \frac{x^2}{\sigma_1^2}+\frac{(z-x)^2}{\sigma_2^2}
+  =\frac{\sigma^2}{\sigma_1^2\sigma_2^2}\left(x-\frac{\sigma_1^2}{\sigma^2}z\right)^2
+  +\frac{z^2}{\sigma^2}.
+\]
+代入积分并利用高斯积分 $\int_{-\infty}^{+\infty}\exp\bigl[-\frac{\sigma^2}{2\sigma_1^2\sigma_2^2}(x-x_0)^2\bigr]\dd x=\sqrt{2\pi}\frac{\sigma_1\sigma_2}{\sigma}$，立得
+\[
+  f_{X+Y}(z)=\frac{1}{2\pi\sigma_1\sigma_2}\e^{-z^2/(2\sigma^2)}\cdot\sqrt{2\pi}\frac{\sigma_1\sigma_2}{\sigma}
+  =\frac{1}{\sqrt{2\pi}\,\sigma}\e^{-z^2/(2\sigma^2)},
+\]
+即 $X+Y\sim N(0,\sigma_1^2+\sigma_2^2)$。对一般均值，令 $X'=X-\mu_1\sim N(0,\sigma_1^2)$ 与 $Y'=Y-\mu_2\sim N(0,\sigma_2^2)$，则 $X+Y=(X'+Y')+(\mu_1+\mu_2)\sim N(\mu_1+\mu_2,\sigma_1^2+\sigma_2^2)$。结合\cref{eg:monotone-examples}的线性变换性质及数学归纳法，即得一般线性组合结论。
+\end{proof}
+
+\begin{definition}[$\Gamma$ 分布]
+\label{def:gamma-distribution}
+设 $\alpha>0,\,\theta>0$ 为常数，若连续型随机变量 $X$ 的概率密度为
+\begin{equation}
+  f(x)=
+  \begin{cases}
+    \dfrac{1}{\Gamma(\alpha)\,\theta^\alpha}\,x^{\alpha-1}\e^{-x/\theta},& x>0,\\
+    0,& x\le 0,
+  \end{cases}
+  \label{eq:gamma-density}
+\end{equation}
+其中 $\Gamma(\alpha)=\int_{0}^{+\infty}t^{\alpha-1}\e^{-t}\dd t$ 为伽马函数，则称 $X$ 服从形状参数为 $\alpha$、尺度参数为 $\theta$ 的\textbf{$\Gamma$ 分布}，记为 $X\sim\Gamma(\alpha,\theta)$。
+\end{definition}
+
+当 $\alpha=1$ 时，$\Gamma(1)=1$，\eqref{eq:gamma-density}退化为指数分布 $\operatorname{Exp}(\theta)$；当 $\alpha=n/2,\,\theta=2$ 时，\eqref{eq:gamma-density}就是数理统计中自由度为 $n$ 的 $\chi^2(n)$ 分布。
+
+\begin{proposition}[同尺度 $\Gamma$ 分布的可加性]
+\label{prop:gamma-additivity}
+设 $X\sim\Gamma(\alpha,\theta)$ 与 $Y\sim\Gamma(\beta,\theta)$ 相互独立（具有相同尺度参数 $\theta>0$），则
+\[
+  X+Y\sim\Gamma(\alpha+\beta,\theta).
+\]
+一般地，若 $X_1,\ldots,X_n$ 相互独立且 $X_i\sim\Gamma(\alpha_i,\theta)$，则 $\sum_{i=1}^{n}X_i\sim\Gamma\bigl(\sum_{i=1}^{n}\alpha_i,\theta\bigr)$；特别地，$n$ 个独立同服从 $\operatorname{Exp}(\theta)$ 的随机变量之和服从 $\Gamma(n,\theta)$。
+\end{proposition}
+\begin{proof}
+对 $z\le 0$ 显然 $f_{X+Y}(z)=0$。当 $z>0$ 时，由卷积公式，
+\[
+\begin{aligned}
+  f_{X+Y}(z)&=\int_{0}^{z}\frac{x^{\alpha-1}\e^{-x/\theta}}{\Gamma(\alpha)\theta^\alpha}\cdot
+  \frac{(z-x)^{\beta-1}\e^{-(z-x)/\theta}}{\Gamma(\beta)\theta^\beta}\dd x\\
+  &=\frac{\e^{-z/\theta}}{\Gamma(\alpha)\Gamma(\beta)\theta^{\alpha+\beta}}
+  \int_{0}^{z}x^{\alpha-1}(z-x)^{\beta-1}\dd x.
+\end{aligned}
+\]
+作换元 $x=zt\,(0<t<1)$，利用贝塔函数关系 $\int_{0}^{1}t^{\alpha-1}(1-t)^{\beta-1}\dd t=\mathrm{B}(\alpha,\beta)=\frac{\Gamma(\alpha)\Gamma(\beta)}{\Gamma(\alpha+\beta)}$，得
+\[
+  f_{X+Y}(z)=\frac{\e^{-z/\theta}}{\Gamma(\alpha)\Gamma(\beta)\theta^{\alpha+\beta}}\cdot
+  z^{\alpha+\beta-1}\frac{\Gamma(\alpha)\Gamma(\beta)}{\Gamma(\alpha+\beta)}
+  =\frac{1}{\Gamma(\alpha+\beta)\theta^{\alpha+\beta}}\,z^{\alpha+\beta-1}\e^{-z/\theta},
+\]
+即 $X+Y\sim\Gamma(\alpha+\beta,\theta)$。多变量情形由数学归纳法立得。
+\end{proof}
+
+\subsection{商与积的分布}
+
+\begin{theorem}[商与积的密度公式]
+\label{thm:ratio-product}
+设二维连续型随机变量 $(X,Y)$ 的联合概率密度为 $f(x,y)$，则：
+\begin{enumerate}
+  \item 商 $Z=Y/X$ 的概率密度为
+  \begin{equation}
+    f_{Y/X}(z)=\int_{-\infty}^{+\infty}\abs{x}\,f(x,xz)\dd x;
+    \label{eq:ratio-density}
+  \end{equation}
+  \item 积 $W=XY$ 的概率密度为
+  \begin{equation}
+    f_{XY}(w)=\int_{-\infty}^{+\infty}\frac{1}{\abs{x}}\,f\!\left(x,\frac{w}{x}\right)\dd x.
+    \label{eq:product-density}
+  \end{equation}
+\end{enumerate}
+当 $X$ 与 $Y$ 相互独立时，只需将 $f(x,y)$ 换为 $f_X(x)f_Y(y)$。
+\end{theorem}
+\begin{proof}
+证明\eqref{eq:ratio-density}。因为 $P(X=0)=0$，按 $X>0$ 与 $X<0$ 将事件 $\set{Y/X\le z}$ 分为两块：
+\[
+\begin{aligned}
+  F_{Y/X}(z)&=P(X>0,\,Y\le xz)+P(X<0,\,Y\ge xz)\\
+  &=\int_{0}^{+\infty}\dd x\int_{-\infty}^{xz}f(x,y)\dd y
+  +\int_{-\infty}^{0}\dd x\int_{xz}^{+\infty}f(x,y)\dd y.
+\end{aligned}
+\]
+在第一个内层积分中令 $y=xu\,(\dd y=x\dd u)$，在第二个内层积分中令 $y=xu\,(\dd y=x\dd u<0$，上下限随之反转$)$：
+\[
+\begin{aligned}
+  F_{Y/X}(z)&=\int_{0}^{+\infty}\dd x\int_{-\infty}^{z}x\,f(x,xu)\dd u
+  +\int_{-\infty}^{0}\dd x\int_{-\infty}^{z}(-x)\,f(x,xu)\dd u\\
+  &=\int_{-\infty}^{z}\left[\int_{-\infty}^{+\infty}\abs{x}\,f(x,xu)\dd x\right]\dd u.
+\end{aligned}
+\]
+对 $z$ 求导即得\eqref{eq:ratio-density}。同理按 $X>0$ 与 $X<0$ 划分 $\set{XY\le w}$ 并作换元 $y=v/x$，即得\eqref{eq:product-density}。
+\end{proof}
+
+\begin{example}[title={独立变量的商的分布}]
+\label{eg:insurance-ratio}
+设某项保险的保费收入 $Y$ 与赔付支出 $X$ 相互独立，其概率密度分别为
+\[
+  f_Y(y)=
+  \begin{cases}
+    \dfrac{1}{25}y\e^{-y/5},& y>0,\\
+    0,& y\le 0,
+  \end{cases}
+  \qquad
+  f_X(x)=
+  \begin{cases}
+    \dfrac{1}{5}\e^{-x/5},& x>0,\\
+    0,& x\le 0.
+  \end{cases}
+\]
+求收支比 $Z=Y/X$ 的概率密度。
+\begin{solution}
+因 $X>0,\,Y>0$，当 $z\le 0$ 时 $f_Z(z)=0$。当 $z>0$ 时，代入\eqref{eq:ratio-density}得
+\[
+\begin{aligned}
+  f_Z(z)&=\int_{0}^{+\infty}x\,f_X(x)f_Y(xz)\dd x
+  =\int_{0}^{+\infty}x\cdot\frac{1}{5}\e^{-x/5}\cdot\frac{xz}{25}\e^{-xz/5}\dd x\\
+  &=\frac{z}{125}\int_{0}^{+\infty}x^2\e^{-(1+z)x/5}\dd x.
+\end{aligned}
+\]
+令 $t=\frac{1+z}{5}x$，利用 $\int_{0}^{+\infty}t^2\e^{-t}\dd t=\Gamma(3)=2$，得
+\[
+  f_Z(z)=\frac{z}{125}\cdot\left(\frac{5}{1+z}\right)^3\cdot 2=\frac{2z}{(1+z)^3},\qquad z>0,
+\]
+其他处 $f_Z(z)=0$。
+\end{solution}
+\end{example}
+
+\subsection{一般二维连续变换的雅可比方法}
+
+若需要将 $(X,Y)$ 变换为新的二维随机向量 $(U,V)=\bigl(g_1(X,Y),g_2(X,Y)\bigr)$（求单变量函数时也可补充一个辅助变量，如令 $U=g(X,Y),\,V=X$，最后对 $V$ 积分求边缘），可采用多元微积分的雅可比换元定理。
+
+\begin{theorem}[二维连续变换的雅可比公式]
+\label{thm:jacobian-2d}
+设 $(X,Y)$ 的联合密度 $f_{X,Y}(x,y)$ 仅在开区域 $D\subset\R^2$ 上非零，映射 $(u,v)=\bigl(g_1(x,y),g_2(x,y)\bigr)$ 将 $D$ 一一映射到开区域 $G\subset\R^2$，其逆变换 $x=h_1(u,v),\,y=h_2(u,v)$ 具有连续偏导数，且雅可比行列式
+\[
+  J(u,v)=\frac{\partial(x,y)}{\partial(u,v)}=
+  \begin{vmatrix}
+    \dfrac{\partial h_1}{\partial u} & \dfrac{\partial h_1}{\partial v}\\[8pt]
+    \dfrac{\partial h_2}{\partial u} & \dfrac{\partial h_2}{\partial v}
+  \end{vmatrix}
+  \ne 0\qquad\bigl((u,v)\in G\bigr).
+\]
+则 $(U,V)$ 的联合概率密度为
+\begin{equation}
+  f_{U,V}(u,v)=
+  \begin{cases}
+    f_{X,Y}\bigl(h_1(u,v),h_2(u,v)\bigr)\abs{J(u,v)},& (u,v)\in G,\\
+    0,& \text{其他}.
+  \end{cases}
+  \label{eq:jacobian-2d}
+\end{equation}
+\end{theorem}
+
+\begin{example}[title={二维标准正态的极坐标变换（瑞利分布）}]
+\label{eg:rayleigh-transform}
+设 $X,Y$ 相互独立且同服从 $N(0,\sigma^2)$（如平面靶场上相互独立的横纵瞄准误差）。求落点到原点的距离 $R=\sqrt{X^2+Y^2}$ 与方位角 $\Theta\in[0,2\pi)$ 的联合密度及各自的边缘密度。
+\begin{solution}
+作极坐标逆变换 $x=r\cos\theta,\,y=r\sin\theta$（其中 $r>0,\,0\le\theta<2\pi$），雅可比行列式为
+\[
+  J(r,\theta)=
+  \begin{vmatrix}
+    \cos\theta & -r\sin\theta\\
+    \sin\theta & r\cos\theta
+  \end{vmatrix}=r>0.
+\]
+因 $f_{X,Y}(x,y)=\frac{1}{2\pi\sigma^2}\e^{-(x^2+y^2)/(2\sigma^2)}$，由\eqref{eq:jacobian-2d}得 $(R,\Theta)$ 的联合密度为
+\[
+  f_{R,\Theta}(r,\theta)=\frac{r}{2\pi\sigma^2}\e^{-r^2/(2\sigma^2)}
+  =\left(\frac{r}{\sigma^2}\e^{-r^2/(2\sigma^2)}\right)\cdot\frac{1}{2\pi},\qquad r>0,\;0\le\theta<2\pi.
+\]
+由此不仅立即看出 $R$ 与 $\Theta$ 相互独立，而且直接读出各自的边缘分布：方位角 $\Theta\sim U(0,2\pi)$，而径向距离 $R$ 服从\textbf{瑞利（Rayleigh）分布}，密度为
+\[
+  f_R(r)=
+  \begin{cases}
+    \dfrac{r}{\sigma^2}\e^{-r^2/(2\sigma^2)},& r>0,\\
+    0,& r\le 0.
+  \end{cases}
+\]
+\end{solution}
+\end{example}
+
+\subsection{极值分布}
+
+设 $X$ 与 $Y$ 是两个相互独立的随机变量，分布函数分别为 $F_X(x)$ 与 $F_Y(y)$。
+
+对于最大值 $M=\max\set{X,Y}$，事件 $\set{M\le z}$ 等价于 $\set{X\le z,Y\le z}$，由独立性立得
+\begin{equation}
+  F_{\max}(z)=P(X\le z,\,Y\le z)=F_X(z)F_Y(z).
+  \label{eq:max-cdf}
+\end{equation}
+对于最小值 $N=\min\set{X,Y}$，利用对立事件 $\set{N>z}=\set{X>z,Y>z}$，由独立性得
+\begin{equation}
+  F_{\min}(z)=1-P(X>z,\,Y>z)=1-\bigl[1-F_X(z)\bigr]\bigl[1-F_Y(z)\bigr].
+  \label{eq:min-cdf}
+\end{equation}
+
+上述结论立即推广到 $n$ 个相互独立的随机变量 $X_1,\ldots,X_n$：
+\[
+  F_{\max}(z)=\prod_{i=1}^{n}F_{X_i}(z),\qquad
+  F_{\min}(z)=1-\prod_{i=1}^{n}\bigl[1-F_{X_i}(z)\bigr].
+\]
+特别地，当 $X_1,\ldots,X_n$ 独立同分布（共同分布函数为 $F(x)$）时，有 $F_{\max}(z)=[F(z)]^n$，$F_{\min}(z)=1-[1-F(z)]^n$。
+
+\begin{example}[title={串联、并联与冷备用三种系统的寿命分布}]
+\label{eg:three-lifetime-systems}
+设系统 $L$ 由两个相互独立的子系统 $L_1,L_2$ 组成，其寿命 $X,Y$ 分别服从指数分布 $\operatorname{Exp}(\theta_1)$ 与 $\operatorname{Exp}(\theta_2)$（其中 $\theta_1>0,\,\theta_2>0$）。分别在以下三种连接方式下，求系统 $L$ 的寿命 $Z$ 的概率密度：
+(1) 串联；(2) 并联；(3) 冷备用（$L_1$ 先工作，损坏后立即启用全新的 $L_2$）。
+\begin{solution}
+$X$ 与 $Y$ 的分布函数在 $z>0$ 时分别为 $F_X(z)=1-\e^{-z/\theta_1}$ 与 $F_Y(z)=1-\e^{-z/\theta_2}$，在 $z\le 0$ 时均为 $0$。
+
+(1) \textbf{串联系统}：任一子系统损坏即导致系统停止工作，故 $Z=\min\set{X,Y}$。由\eqref{eq:min-cdf}，对 $z>0$ 有
+\[
+  F_Z(z)=1-\e^{-z/\theta_1}\e^{-z/\theta_2}=1-\exp\!\left[-\left(\frac{1}{\theta_1}+\frac{1}{\theta_2}\right)z\right].
+\]
+求导得 $Z\sim\operatorname{Exp}\!\left(\frac{\theta_1\theta_2}{\theta_1+\theta_2}\right)$，即对 $z>0$ 有
+\[
+  f_Z(z)=\left(\frac{1}{\theta_1}+\frac{1}{\theta_2}\right)\exp\!\left[-\left(\frac{1}{\theta_1}+\frac{1}{\theta_2}\right)z\right],
+\]
+其他处为 $0$。可见两独立指数寿命的最小值仍服从指数分布，且失效率为两失效率之和。
+
+(2) \textbf{并联系统}：两子系统同时损坏系统才停止工作，故 $Z=\max\set{X,Y}$。由\eqref{eq:max-cdf}，对 $z>0$ 有
+\[
+  F_Z(z)=\bigl(1-\e^{-z/\theta_1}\bigr)\bigl(1-\e^{-z/\theta_2}\bigr)
+  =1-\e^{-z/\theta_1}-\e^{-z/\theta_2}+\e^{-(1/\theta_1+1/\theta_2)z}.
+\]
+求导得对 $z>0$ 有
+\[
+  f_Z(z)=\frac{1}{\theta_1}\e^{-z/\theta_1}+\frac{1}{\theta_2}\e^{-z/\theta_2}
+  -\left(\frac{1}{\theta_1}+\frac{1}{\theta_2}\right)\exp\!\left[-\left(\frac{1}{\theta_1}+\frac{1}{\theta_2}\right)z\right],
+\]
+其他处为 $0$。
+
+(3) \textbf{冷备用系统}：总寿命为 $Z=X+Y$。由卷积公式，对 $z>0$ 有
+\[
+  f_Z(z)=\int_{0}^{z}\frac{1}{\theta_1}\e^{-x/\theta_1}\cdot\frac{1}{\theta_2}\e^{-(z-x)/\theta_2}\dd x
+  =\frac{\e^{-z/\theta_2}}{\theta_1\theta_2}\int_{0}^{z}\exp\!\left[\left(\frac{1}{\theta_2}-\frac{1}{\theta_1}\right)x\right]\dd x.
+\]
+\begin{itemize}
+  \item 当 $\theta_1\ne\theta_2$ 时，直接积分得
+  \[
+    f_Z(z)=\frac{1}{\theta_1-\theta_2}\left(\e^{-z/\theta_1}-\e^{-z/\theta_2}\right),\qquad z>0;
+  \]
+  \item 当 $\theta_1=\theta_2=\theta$ 时，被积函数恒为 $1$，直接得
+  \[
+    f_Z(z)=\frac{z}{\theta^2}\e^{-z/\theta},\qquad z>0,
+  \]
+  即 $Z\sim\Gamma(2,\theta)$（与\cref{prop:gamma-additivity}一致）。
+\end{itemize}
+其他处 $f_Z(z)=0$。从尾概率 $P(Z>z)$ 容易看出，同一时刻的生存概率满足：冷备用 $>$ 并联 $>$ 串联。
+\end{solution}
+\end{example}
+
+\begin{method}[二维函数分布与积分定限的通用策略]
+处理多维连续型随机变量的边缘、条件及函数分布时，可按以下四步稳妥操作：
+\begin{enumerate}
+  \item \textbf{先画支集}：在 $(x,y)$ 平面画出联合密度非零区域 $D$，明确每条边界曲线的方程与交点；
+  \item \textbf{定清切片}：求 $f_X(x)$ 时作垂直切片（固定 $x$ 找 $y$ 的上下界），求 $f_Y(y)$ 时作水平切片（固定 $y$ 找 $x$ 的左右界）；
+  \item \textbf{按类型选法}：求 $X+Y$ 用卷积公式（注意支集交集的分段），求 $Y/X$ 或 $XY$ 套用\cref{thm:ratio-product}（留意 $x$ 的正负号），求 $\max/\min$ 直接用分布函数法，求复杂二维变换用雅可比行列式；
+  \item \textbf{随手验算}：检查所得密度是否非负、分段端点是否衔接、全区间积分是否为 $1$。
+\end{enumerate}
+\end{method}
+
+\begin{pitfall}[多维分布中的三类常见误区]
+\begin{enumerate}
+  \item \textbf{忽略支集形状而误判独立}：联合密度表达式能写成常数或乘积，并不保证独立，必须同时核验非零支集是否为坐标轴平行的矩形区域。
+  \item \textbf{卷积与商积分漏掉分段或符号}：卷积积分的上下限由 $x$ 与 $z-x$ 共同落在各自支集内决定，往往需要按 $z$ 分段；商公式\eqref{eq:ratio-density}与积公式\eqref{eq:product-density}中绝对值 $\abs{x}$ 源于 $x<0$ 时的不等号反转，当 $X$ 可取负值时切不可漏掉。
+  \item \textbf{同参数情形直接代入异参数公式}：如冷备用寿命公式在 $\theta_1=\theta_2$ 时出现 $0/0$ 型，须回到卷积积分或取极限得到 $\Gamma(2,\theta)$。
+\end{enumerate}
+\end{pitfall}
+
+\begin{summary}[第三章核心脉络]
+本章将一维分布体系完整推广至二维与多维：联合分布函数 $F(x,y)$（及联合分布律 $p_{ij}$、联合密度 $f(x,y)$）完整刻画多个随机变量的共同规律；通过求和或积分消元得到边缘分布，以边缘作归一化分母得到条件分布；当联合分布等于边缘之积时称为相互独立（二维正态独立等价于 $\rho=0$）。在多维函数分布中，核心掌握和的卷积公式（及正态与同尺度 $\Gamma$ 分布的可加性）、商与积的密度公式、二维雅可比变换以及独立极值 $\max/\min$ 的分布函数法。
+\end{summary}

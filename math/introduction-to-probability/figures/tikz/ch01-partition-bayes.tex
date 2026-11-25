@@ -1,0 +1,26 @@
+\begin{tikzpicture}
+  % Sample space S
+  \draw[draw=lc-ink,line width=0.6pt] (0,0) rectangle (8.5,3.8);
+  \node[lc label,anchor=north west] at (0.12,3.68) {$S$};
+
+  % Highlight slice AB_3
+  \begin{scope}
+    \clip (3.4,0) rectangle (5.1,3.8);
+    \fill[lc fill] (4.25,1.85) ellipse (3.15 and 1.12);
+  \end{scope}
+
+  % Partition boundaries B_1 .. B_5
+  \foreach \x in {1.7,3.4,5.1,6.8} {
+    \draw[lc aux] (\x,0) -- (\x,3.8);
+  }
+  \node[lc label] at (0.85,0.38) {$B_1$};
+  \node[lc label] at (2.55,0.38) {$B_2$};
+  \node[lc label] at (4.25,0.38) {$B_3$};
+  \node[lc label] at (5.95,0.38) {$B_4$};
+  \node[lc label] at (7.65,0.38) {$B_5$};
+
+  % Event A ellipse
+  \draw[lc curve 1,line width=1.0pt] (4.25,1.85) ellipse (3.15 and 1.12);
+  \node[lc label,anchor=south] at (2.4,2.85) {$A$};
+  \node[lc label] at (4.25,1.85) {$AB_3$};
+\end{tikzpicture}

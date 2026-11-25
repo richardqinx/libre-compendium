@@ -1,0 +1,57 @@
+\begin{tikzpicture}
+  % Left panel: repeated sampling coverage of true parameter theta
+  \begin{scope}[shift={(0,0)}]
+    \draw[lc axis] (0,0) -- (5.2,0) node[lc label,right] {$\theta$};
+    \draw[lc aux,line width=0.9pt] (2.6,0) -- (2.6,4.0);
+    \node[lc label,below] at (2.6,-0.08) {$\theta_{\text{真值}}$};
+    % 6 covered random intervals
+    \foreach \y/\a/\b/\m in {
+      0.55/1.55/3.55/2.55,
+      1.05/1.90/3.85/2.875,
+      2.05/1.40/3.20/2.30,
+      2.55/1.80/3.65/2.725,
+      3.05/1.25/3.10/2.175,
+      3.55/2.00/4.05/3.025} {
+      \draw[lc curve 1,line width=1.1pt] (\a,\y) -- (\b,\y);
+      \draw[lc curve 1,line width=0.9pt] (\a,\y-0.09) -- (\a,\y+0.09);
+      \draw[lc curve 1,line width=0.9pt] (\b,\y-0.09) -- (\b,\y+0.09);
+      \fill[lc-curve1] (\m,\y) circle (1.5pt);
+    }
+    % 1 missed random interval
+    \draw[lc curve 2,line width=1.1pt] (0.65,1.55) -- (2.35,1.55);
+    \draw[lc curve 2,line width=0.9pt] (0.65,1.46) -- (0.65,1.64);
+    \draw[lc curve 2,line width=0.9pt] (2.35,1.46) -- (2.35,1.64);
+    \fill[lc-curve2] (1.50,1.55) circle (1.5pt);
+    \node[lc label,anchor=west] at (2.75,1.55) {未覆盖};
+    \node[lc label,anchor=north] at (2.6,-0.62) {(1) 随机区间覆盖};
+  \end{scope}
+
+  % Right panel: symmetric pivot distribution with alpha/2 tails
+  \begin{axis}[
+    at={(6.2cm,0cm)},
+    width=6.6cm,
+    height=4.8cm,
+    lc plot,
+    clip=false,
+    xmin=-3.6, xmax=3.6,
+    ymin=0, ymax=0.46,
+    xtick={-1.96,0,1.96},
+    xticklabels={$-z_{\alpha/2}$,$0$,$z_{\alpha/2}$},
+    ytick=\empty,
+    xlabel={$w$},
+    ylabel={$\varphi(w)$},
+    every axis x label/.style={at={(ticklabel* cs:1.0)},anchor=west,font=\small},
+    every axis y label/.style={at={(ticklabel* cs:1.0)},anchor=south,font=\small},
+    samples=120
+  ]
+    \addplot[lc fill,domain=-3.4:-1.96] {1/sqrt(2*pi)*exp(-x^2/2)} \closedcycle;
+    \addplot[lc fill,domain=1.96:3.4] {1/sqrt(2*pi)*exp(-x^2/2)} \closedcycle;
+    \addplot[lc curve 1,thick,domain=-3.4:3.4] {1/sqrt(2*pi)*exp(-x^2/2)};
+    \draw[lc aux] (axis cs:-1.96,0) -- (axis cs:-1.96,0.058);
+    \draw[lc aux] (axis cs:1.96,0) -- (axis cs:1.96,0.058);
+    \node[lc label,fill=white,inner sep=1pt] at (axis cs:0,0.16) {$1-\alpha$};
+    \node[lc label,anchor=south] at (axis cs:-2.6,0.04) {$\alpha/2$};
+    \node[lc label,anchor=south] at (axis cs:2.6,0.04) {$\alpha/2$};
+    \node[lc label,anchor=north] at (axis cs:0,-0.11) {(2) 枢轴量双侧分位点};
+  \end{axis}
+\end{tikzpicture}

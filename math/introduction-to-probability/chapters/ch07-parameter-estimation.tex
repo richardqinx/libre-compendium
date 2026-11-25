@@ -1,0 +1,490 @@
+% libre-compendium
+%
+% Copyright (C) 2026 Richard Qin
+%
+% This document is dual-licensed under either:
+% - GNU Free Documentation License, Version 1.3 or any later version
+%   published by the Free Software Foundation; with no Invariant Sections,
+%   no Front-Cover Texts, and no Back-Cover Texts (see COPYING.DOC); or
+% - Creative Commons Attribution-ShareAlike 4.0 International License
+%   (see LICENSE-CC-BY-SA-4.0).
+
+\chapter{参数估计}
+\label{ch:parameter-estimation}
+
+统计推断的两大基本问题是\textbf{参数估计}与\textbf{假设检验}。本章研究参数估计：在已知总体分布类型但含有一个或多个未知参数的前提下，利用简单随机样本构造未知参数的点估计量，建立评价估计量优劣的准则，并进一步构造具有指定置信水平的双侧与单侧置信区间。
+
+\section{点估计}
+\label{sec:point-estimation}
+
+设总体 $X$ 的分布函数 $F(x;\theta)$ 的形式已知，$\theta\in\Theta$ 为待估未知参数（$\Theta$ 为参数空间，允许 $\theta$ 为多维参数向量）。设 $X_1,\ldots,X_n$ 是来自总体 $X$ 的样本，$x_1,\ldots,x_n$ 为样本值。所谓\textbf{点估计}，就是构造一个适当的统计量 $\hat{\theta}=\hat{\theta}(X_1,\ldots,X_n)$，以其观察值 $\hat{\theta}(x_1,\ldots,x_n)$ 作为 $\theta$ 真值的近似值；称 $\hat{\theta}(X_1,\ldots,X_n)$ 为\textbf{估计量}，$\hat{\theta}(x_1,\ldots,x_n)$ 为\textbf{估计值}。
+
+下面介绍构造点估计量的两种最基本方法：矩估计法与最大似然估计法。
+
+\subsection{矩估计法}
+
+设总体分布含 $k$ 个未知参数 $\theta_1,\ldots,\theta_k$，且总体的前 $k$ 阶原点矩 $\mu_l=E(X^l)\,(l=1,\ldots,k)$ 均存在（它们是 $\theta_1,\ldots,\theta_k$ 的函数）。在第六章中已由辛钦大数定律知样本 $l$ 阶原点矩 $A_l=\frac{1}{n}\sum_{i=1}^{n}X_i^l\xrightarrow{P}\mu_l$。因此，用样本矩 $A_l$ 替换总体矩 $\mu_l$，联立方程组
+\begin{equation}
+  \mu_l(\theta_1,\ldots,\theta_k)=A_l,\qquad l=1,2,\ldots,k,
+  \label{eq:moment-equations}
+\end{equation}
+解出未知参数 $\hat{\theta}_j=\hat{\theta}_j(A_1,\ldots,A_k)\,(j=1,\ldots,k)$，即称为 $\theta_1,\ldots,\theta_k$ 的\textbf{矩估计量}。
+
+\begin{example}[title={均匀分布与一般总体均值、方差的矩估计}]
+\label{eg:moment-estimation}
+(1) 设总体 $X\sim U(a,b)$（$a,b$ 未知），求 $a,b$ 的矩估计量。
+
+(2) 设总体 $X$ 具有未知的有限均值 $\mu$ 与方差 $\sigma^2>0$，求 $\mu$ 与 $\sigma^2$ 的矩估计量。
+\begin{solution}
+(1) 均匀分布的前两阶原点矩为
+\[
+  \mu_1=E(X)=\frac{a+b}{2},\qquad
+  \mu_2=E(X^2)=D(X)+\bigl[E(X)\bigr]^2=\frac{(b-a)^2}{12}+\frac{(a+b)^2}{4}.
+\]
+由此得 $a+b=2\mu_1$ 与 $b-a=\sqrt{12(\mu_2-\mu_1^2)}$，解得
+\[
+  a=\mu_1-\sqrt{3(\mu_2-\mu_1^2)},\qquad
+  b=\mu_1+\sqrt{3(\mu_2-\mu_1^2)}.
+\]
+以 $A_1=\bar{X}$ 与 $A_2=\frac{1}{n}\sum_{i=1}^{n}X_i^2$ 分别替换 $\mu_1,\mu_2$，注意到 $A_2-A_1^2=\frac{1}{n}\sum_{i=1}^{n}(X_i-\bar{X})^2=B_2$，即得
+\[
+  \hat{a}=\bar{X}-\sqrt{\frac{3}{n}\sum_{i=1}^{n}(X_i-\bar{X})^2},\qquad
+  \hat{b}=\bar{X}+\sqrt{\frac{3}{n}\sum_{i=1}^{n}(X_i-\bar{X})^2}.
+\]
+
+(2) 由 $\mu_1=\mu$ 与 $\mu_2=\sigma^2+\mu^2$，解得 $\mu=\mu_1$、$\sigma^2=\mu_2-\mu_1^2$。代入样本矩得
+\[
+  \hat{\mu}=\bar{X},\qquad
+  \hat{\sigma}^2=A_2-A_1^2=\frac{1}{n}\sum_{i=1}^{n}(X_i-\bar{X})^2.
+\]
+可见总体均值与方差的矩估计表达式不因总体分布形式而异；特别地，对正态总体 $N(\mu,\sigma^2)$ 亦有 $\hat{\mu}=\bar{X},\,\hat{\sigma}^2=B_2$。
+\end{solution}
+\end{example}
+
+\subsection{最大似然估计法}
+
+矩估计法简便直观，但它仅用到总体分布的低阶矩信息。费希尔（R. A. Fisher）提出的最大似然估计法则充分利用样本的完整联合分布。
+
+\begin{definition}[似然函数与最大似然估计]
+\label{def:mle}
+设 $(x_1,x_2,\ldots,x_n)$ 为来自总体 $X$ 的一个固定样本值，$\theta\in\Theta$ 为未知参数：
+\begin{enumerate}
+  \item 若 $X$ 为离散型，分布律为 $p(x;\theta)$，称
+  \begin{equation}
+    L(\theta)=L(x_1,\ldots,x_n;\theta)=\prod_{i=1}^{n}p(x_i;\theta)
+    \label{eq:likelihood-discrete}
+  \end{equation}
+  为样本的\textbf{似然函数}；
+  \item 若 $X$ 为连续型，概率密度为 $f(x;\theta)$，称
+  \begin{equation}
+    L(\theta)=L(x_1,\ldots,x_n;\theta)=\prod_{i=1}^{n}f(x_i;\theta)
+    \label{eq:likelihood-continuous}
+  \end{equation}
+  为样本的\textbf{似然函数}。
+\end{enumerate}
+若存在 $\hat{\theta}=\hat{\theta}(x_1,\ldots,x_n)\in\Theta$ 使似然函数达到最大：
+\[
+  L(x_1,\ldots,x_n;\hat{\theta})=\max_{\theta\in\Theta}L(x_1,\ldots,x_n;\theta),
+\]
+则称 $\hat{\theta}(x_1,\ldots,x_n)$ 为 $\theta$ 的\textbf{最大似然估计值}，相应的统计量 $\hat{\theta}(X_1,\ldots,X_n)$ 称为\textbf{最大似然估计量}（简记 MLE）。
+\end{definition}
+
+最大似然法的直观原则极为自然：既然已经实际观测到样本 $(x_1,\ldots,x_n)$，就应当选择使“观测到该样本的概率（或邻域概率密度）最大”的参数值作为估计。因为 $\ln u$ 严格单调递增，$L(\theta)$ 与对数似然函数 $\ln L(\theta)$ 在同一处取最大值；当 $L(\theta)>0$ 且关于参数 $\theta_1,\ldots,\theta_k$ 可微时，极大值点常由\textbf{对数似然方程（组）}求得：
+\begin{equation}
+  \frac{\partial}{\partial\theta_j}\ln L(\theta_1,\ldots,\theta_k)=0,\qquad j=1,2,\ldots,k.
+  \label{eq:log-likelihood-eq}
+\end{equation}
+
+\begin{example}[title={两点分布、正态分布与均匀分布的最大似然估计}]
+\label{eg:mle-classics}
+设 $X_1,\ldots,X_n$ 为简单随机样本，观察值为 $x_1,\ldots,x_n$，分别求以下三个总体的未知参数的最大似然估计量：
+(1) $X\sim b(1,p)$（$p\in(0,1)$ 未知）；
+(2) $X\sim N(\mu,\sigma^2)$（$\mu\in\R,\,\sigma^2>0$ 未知）；
+(3) $X\sim U(a,b)$（$a<b$ 未知）。
+\begin{solution}
+(1) 似然函数为 $L(p)=\prod_{i=1}^{n}p^{x_i}(1-p)^{1-x_i}=p^{\sum x_i}(1-p)^{n-\sum x_i}$。取对数并求导令为零：
+\[
+  \ln L(p)=\left(\sum_{i=1}^{n}x_i\right)\ln p+\left(n-\sum_{i=1}^{n}x_i\right)\ln(1-p),
+\]
+\[
+  \frac{\dd\ln L}{\dd p}=\frac{\sum_{i=1}^{n}x_i}{p}-\frac{n-\sum_{i=1}^{n}x_i}{1-p}=0
+  \implies \hat{p}=\frac{1}{n}\sum_{i=1}^{n}x_i=\bar{x}.
+\]
+故最大似然估计量为 $\hat{p}=\bar{X}$（与矩估计相同）。
+
+(2) 正态样本的似然函数与对数似然函数为
+\[
+  L(\mu,\sigma^2)=(2\pi\sigma^2)^{-n/2}\exp\!\left[-\frac{1}{2\sigma^2}\sum_{i=1}^{n}(x_i-\mu)^2\right],
+\]
+\[
+  \ln L(\mu,\sigma^2)=-\frac{n}{2}\ln(2\pi)-\frac{n}{2}\ln\sigma^2-\frac{1}{2\sigma^2}\sum_{i=1}^{n}(x_i-\mu)^2.
+\]
+对 $\mu$ 与 $\sigma^2$ 分别求偏导令为零：
+\[
+  \frac{\partial\ln L}{\partial\mu}=\frac{1}{\sigma^2}\sum_{i=1}^{n}(x_i-\mu)=0,\qquad
+  \frac{\partial\ln L}{\partial(\sigma^2)}=-\frac{n}{2\sigma^2}+\frac{1}{2\sigma^4}\sum_{i=1}^{n}(x_i-\mu)^2=0.
+\]
+由第一式解得 $\hat{\mu}=\bar{x}$，代入第二式解得 $\hat{\sigma}^2=\frac{1}{n}\sum_{i=1}^{n}(x_i-\bar{x})^2$。因此最大似然估计量为
+\[
+  \hat{\mu}=\bar{X},\qquad \hat{\sigma}^2=\frac{1}{n}\sum_{i=1}^{n}(X_i-\bar{X})^2.
+\]
+
+(3) 记 $x_{(1)}=\min_i x_i,\,x_{(n)}=\max_i x_i$。因全体 $x_i\in[a,b]$ 等价于 $a\le x_{(1)}$ 且 $b\ge x_{(n)}$，似然函数为
+\[
+  L(a,b)=
+  \begin{cases}
+    \dfrac{1}{(b-a)^n},& a\le x_{(1)}\text{ 且 }b\ge x_{(n)},\\
+    0,& \text{其他}.
+  \end{cases}
+\]
+此处 $L(a,b)$ 在边界处不连续且无法用求导法，直接按单调性求极大值：要使 $(b-a)^{-n}$ 最大，须使区间长度 $b-a$ 尽可能小，在约束 $a\le x_{(1)}$ 与 $b\ge x_{(n)}$ 下，当且仅当 $\hat{a}=x_{(1)}$ 且 $\hat{b}=x_{(n)}$ 时取唯一最大值。故最大似然估计量为
+\[
+  \hat{a}=\min\set{X_1,\ldots,X_n},\qquad \hat{b}=\max\set{X_1,\ldots,X_n}.
+\]
+\end{solution}
+\end{example}
+
+\begin{proposition}[最大似然估计的不变性]
+\label{prop:mle-invariance}
+设函数 $u=u(\theta)\,(\theta\in\Theta)$ 具有单值反函数 $\theta=\theta(u)\,(u\in\mathcal{U})$。若 $\hat{\theta}$ 是 $\theta$ 的最大似然估计，则 $\hat{u}=u(\hat{\theta})$ 必是 $u(\theta)$ 的最大似然估计。
+\end{proposition}
+\begin{proof}
+由最大似然估计的定义，对任意 $u\in\mathcal{U}$，记 $\theta=\theta(u)\in\Theta$，有
+\[
+  L\bigl(x_1,\ldots,x_n;\theta(\hat{u})\bigr)
+  =L(x_1,\ldots,x_n;\hat{\theta})
+  =\max_{\theta\in\Theta}L(x_1,\ldots,x_n;\theta)
+  =\max_{u\in\mathcal{U}}L\bigl(x_1,\ldots,x_n;\theta(u)\bigr),
+\]
+故 $\hat{u}=u(\hat{\theta})$ 使以 $u$ 为参数的似然函数达到最大。
+\end{proof}
+
+例如，由\cref{eg:mle-classics}(2)知正态方差 $\sigma^2$ 的最大似然估计为 $\hat{\sigma}^2=\frac{1}{n}\sum_{i=1}^{n}(X_i-\bar{X})^2$，由不变性立得标准差 $\sigma=\sqrt{\sigma^2}$ 的最大似然估计为 $\hat{\sigma}=\sqrt{\frac{1}{n}\sum_{i=1}^{n}(X_i-\bar{X})^2}$。
+
+\section{*基于截尾样本的最大似然估计}
+\label{sec:censored-mle}
+
+在可靠性寿命试验中，若等待全部 $n$ 个样品都失效才结束试验（完全样本），往往耗时过长。工程上常采用\textbf{截尾寿命试验}：
+\begin{itemize}
+  \item \textbf{定时截尾}：在预先规定的时刻 $t_0$ 停止试验，记录截至 $t_0$ 时失效的 $m$ 个样品的失效时刻 $0<t_1\le t_2\le\cdots\le t_m\le t_0$（此时失效个数 $m$ 为随机变量，另有 $n-m$ 个样品在 $t_0$ 时尚未失效）；
+  \item \textbf{定数截尾}：预先规定失效个数 $m\,(m<n)$，试验进行到第 $m$ 个样品失效时立即停止，记录失效时刻 $0<t_1\le t_2\le\cdots\le t_m$（此时终止时刻 $t_m$ 为随机变量，另有 $n-m$ 个样品的寿命超过 $t_m$）。
+\end{itemize}
+
+设产品寿命服从指数分布 $\operatorname{Exp}(\theta)\,(\theta>0)$，密度 $f(t;\theta)=\frac{1}{\theta}\e^{-t/\theta}\,(t>0)$，尾概率 $P(T>t)=\e^{-t/\theta}$。在定数截尾下，恰有 $m$ 个样品依次在时刻 $t_1,\ldots,t_m$ 附近失效且其余 $n-m$ 个样品寿命超过 $t_m$ 的似然函数（忽略与 $\theta$ 无关的组合常数）为
+\[
+  L(\theta)=\left(\prod_{i=1}^{m}\frac{1}{\theta}\e^{-t_i/\theta}\right)\cdot\left(\e^{-t_m/\theta}\right)^{n-m}
+  =\theta^{-m}\exp\!\left[-\frac{s(t_m)}{\theta}\right],
+\]
+其中 $s(t_m)=\sum_{i=1}^{m}t_i+(n-m)t_m$ 称为\textbf{总试验时间}（即全部 $n$ 个样品累计运行的总时长）。取对数并令导数为零：
+\[
+  \ln L(\theta)=-m\ln\theta-\frac{s(t_m)}{\theta},\qquad
+  \frac{\dd\ln L}{\dd\theta}=-\frac{m}{\theta}+\frac{s(t_m)}{\theta^2}=0,
+\]
+解得定数截尾下平均寿命 $\theta$ 的最大似然估计为
+\begin{equation}
+  \hat{\theta}=\frac{s(t_m)}{m}=\frac{1}{m}\left[\sum_{i=1}^{m}t_i+(n-m)t_m\right].
+  \label{eq:mle-type2-censored}
+\end{equation}
+同理，在定时截尾下（失效个数 $m\ge 1$），总试验时间为 $s(t_0)=\sum_{i=1}^{m}t_i+(n-m)t_0$，最大似然估计具有完全相同的直观形式：$\hat{\theta}=\dfrac{s(t_0)}{m}$（总试验时间除以失效个数）。
+
+\begin{example}[title={电池定数截尾寿命试验的极大似然估计}]
+\label{eg:censored-battery}
+设某批电池的寿命服从指数分布 $\operatorname{Exp}(\theta)$。随机取 $n=50$ 只电池同时投入测试，规定试验进行到有 $m=15$ 只电池失效时停止，测得这 $15$ 只电池的失效时间（单位：$\mathrm{h}$）依次为：
+\[
+  115,119,131,138,142,147,148,155,158,159,163,166,167,170,172.
+\]
+求平均寿命 $\theta$ 的最大似然估计值。
+\begin{solution}
+先求 $15$ 个失效时间之和：$\sum_{i=1}^{15}t_i=2250$。第 $15$ 个失效时刻为 $t_{15}=172$，其余 $50-15=35$ 只未失效电池各运行了 $172\text{ h}$，故总试验时间为
+\[
+  s(t_{15})=2250+35\times 172=2250+6020=8270\text{（h）}.
+\]
+由\eqref{eq:mle-type2-censored}，平均寿命的最大似然估计值为
+\[
+  \hat{\theta}=\frac{8270}{15}\approx 551.33\text{（h）}.
+\]
+\end{solution}
+\end{example}
+
+\section{估计量的评选标准}
+\label{sec:estimator-criteria}
+
+同一未知参数往往可以构造出多种不同的点估计量（例如均匀分布 $U(a,b)$ 的矩估计与最大似然估计就完全不同）。为了从整体统计性能上比较估计量的优劣，引入无偏性、有效性与相合性三条基本标准。
+
+\begin{definition}[无偏性、有效性与相合性]
+\label{def:estimator-criteria}
+设 $\hat{\theta}=\hat{\theta}(X_1,\ldots,X_n)$ 是参数 $\theta\in\Theta$ 的估计量：
+\begin{enumerate}
+  \item \textbf{无偏性}：若对一切 $\theta\in\Theta$ 均有 $E(\hat{\theta})=\theta$，则称 $\hat{\theta}$ 为 $\theta$ 的\textbf{无偏估计量}（称 $E(\hat{\theta})-\theta$ 为系统误差，无偏即无系统误差）。
+  \item \textbf{有效性}：设 $\hat{\theta}_1$ 与 $\hat{\theta}_2$ 都是 $\theta$ 的无偏估计量。若对一切 $\theta\in\Theta$ 均有 $D(\hat{\theta}_1)\le D(\hat{\theta}_2)$，且至少存在一个 $\theta\in\Theta$ 使严格不等号成立，则称 $\hat{\theta}_1$ 比 $\hat{\theta}_2$ \textbf{更有效}。
+  \item \textbf{相合性（一致性）}：若对一切 $\theta\in\Theta$，当 $n\to\infty$ 时有 $\hat{\theta}(X_1,\ldots,X_n)\xrightarrow{P}\theta$，则称 $\hat{\theta}$ 为 $\theta$ 的\textbf{相合估计量}。
+\end{enumerate}
+\end{definition}
+
+由第六章\cref{prop:sample-mean-var-moments}可知，不论总体服从何种分布（只要二阶矩存在），样本均值 $\bar{X}$ 恒为 $\mu$ 的无偏估计，样本方差 $S^2$ 恒为 $\sigma^2$ 的无偏估计；而正态方差的最大似然估计 $B_2=\frac{n-1}{n}S^2$ 满足 $E(B_2)=\frac{n-1}{n}\sigma^2\ne\sigma^2$，是有偏估计（不过当 $n\to\infty$ 时 $E(B_2)\to\sigma^2$，称为\textbf{渐近无偏}，且仍是相合估计）。
+
+\begin{example}[title={指数分布参数的两个无偏估计量及其有效性比较}]
+\label{eg:unbiased-efficient-exp}
+设 $X_1,X_2,\ldots,X_n\,(n>1)$ 是来自指数分布总体 $\operatorname{Exp}(\theta)\,(\theta>0)$ 的样本，记 $Z=\min\set{X_1,\ldots,X_n}$。证明 $\hat{\theta}_1=\bar{X}$ 与 $\hat{\theta}_2=nZ$ 都是 $\theta$ 的无偏估计量，并比较两者的有效性。
+\begin{solution}
+因 $E(X_i)=\theta,\,D(X_i)=\theta^2$，立得
+\[
+  E(\hat{\theta}_1)=E(\bar{X})=\theta,\qquad
+  D(\hat{\theta}_1)=D(\bar{X})=\frac{\theta^2}{n}.
+\]
+另一方面，由极值分布公式，$Z=\min\set{X_1,\ldots,X_n}\sim\operatorname{Exp}(\theta/n)$，其期望为 $E(Z)=\frac{\theta}{n}$、方差为 $D(Z)=\frac{\theta^2}{n^2}$。于是
+\[
+  E(\hat{\theta}_2)=E(nZ)=n\cdot\frac{\theta}{n}=\theta,\qquad
+  D(\hat{\theta}_2)=D(nZ)=n^2\cdot\frac{\theta^2}{n^2}=\theta^2.
+\]
+因此 $\hat{\theta}_1$ 与 $\hat{\theta}_2$ 都是 $\theta$ 的无偏估计量。当 $n>1$ 时，对一切 $\theta>0$ 均有 $D(\hat{\theta}_1)=\frac{\theta^2}{n}<\theta^2=D(\hat{\theta}_2)$，故 $\bar{X}$ 比 $nZ$ 更有效（而且 $\hat{\theta}_1$ 具有相合性，而 $D(\hat{\theta}_2)=\theta^2$ 不随 $n$ 趋于零，$\hat{\theta}_2$ 甚至不是相合估计量）。
+\end{solution}
+\end{example}
+
+相合性是衡量大样本下估计量能否随样本量增大而逼近真值的基本底线。由辛钦大数定律与连续映射性质，只要总体各阶矩存在且变换函数连续，\textbf{矩估计量天然具有相合性}。
+
+\section{区间估计}
+\label{sec:interval-estimation}
+
+点估计只给出未知参数的一个近似数值，未能体现估计的精度与可靠程度。为此引入区间估计。
+
+\begin{definition}[置信区间与置信水平]
+\label{def:confidence-interval}
+设总体分布函数 $F(x;\theta)$ 含未知参数 $\theta\in\Theta$。给定 $\alpha\in(0,1)$，若由样本 $X_1,\ldots,X_n$ 确定的两个统计量 $\hat{\theta}_L=\hat{\theta}_L(X_1,\ldots,X_n)$ 与 $\hat{\theta}_U=\hat{\theta}_U(X_1,\ldots,X_n)$（满足 $\hat{\theta}_L<\hat{\theta}_U$）对一切 $\theta\in\Theta$ 均成立
+\begin{equation}
+  P\bigl(\hat{\theta}_L<\theta<\hat{\theta}_U\bigr)\ge 1-\alpha,
+  \label{eq:ci-def}
+\end{equation}
+则称随机区间 $(\hat{\theta}_L,\hat{\theta}_U)$ 为 $\theta$ 的置信水平为 $1-\alpha$ 的\textbf{双侧置信区间}，$\hat{\theta}_L$ 与 $\hat{\theta}_U$ 分别称为\textbf{置信下限}与\textbf{置信上限}，$1-\alpha$ 称为\textbf{置信水平}。
+\end{definition}
+
+对连续型总体，通常直接按等式 $P(\hat{\theta}_L<\theta<\hat{\theta}_U)=1-\alpha$ 求解置信区间。\eqref{eq:ci-def}的频率含义如\cref{fig:confidence-interval}左图所示：待估参数 $\theta$ 是一个固定的未知常数，真正随机的是区间的左右端点；若以相同样本容量反复抽样很多次，由每次样本算出的众多具体区间中，约有 $100(1-\alpha)\%$ 会覆盖真值 $\theta$。
+
+\lcfigure[caption={置信区间的几何与频率意义。左图展示重复抽样生成的随机区间围绕固定真值 $\theta$ 的覆盖情况（蓝色覆盖、红色未覆盖）；右图展示对称枢轴量分布的双侧 $\alpha/2$ 尾区与中心 $1-\alpha$ 覆盖区。},label=fig:confidence-interval]{ch07-confidence-interval}
+
+构造置信区间的核心工具是\textbf{枢轴量法}：
+\begin{enumerate}
+  \item 构造一个样本与未知参数 $\theta$ 的函数 $W=W(X_1,\ldots,X_n;\theta)$，使其分布\textbf{完全已知且不依赖任何未知参数}，称 $W$ 为\textbf{枢轴量}；
+  \item 对给定的置信水平 $1-\alpha$，选定常数 $a,b$ 使 $P(a<W<b)=1-\alpha$（对称单峰分布通常取等尾分位点以使区间长度最短）；
+  \item 将不等式 $a<W(X_1,\ldots,X_n;\theta)<b$ 等价变形为 $\hat{\theta}_L<\theta<\hat{\theta}_U$，即得置信区间 $(\hat{\theta}_L,\hat{\theta}_U)$。
+\end{enumerate}
+
+以总体 $N(\mu,\sigma^2)$（$\sigma^2$ 已知、$\mu$ 未知）为例，取枢轴量 $W=\dfrac{\bar{X}-\mu}{\sigma/\sqrt{n}}\sim N(0,1)$。由标准正态上 $\alpha/2$ 分位数（见\cref{fig:confidence-interval}右图），
+\[
+  P\!\left(\left|\frac{\bar{X}-\mu}{\sigma/\sqrt{n}}\right|<z_{\alpha/2}\right)=1-\alpha
+  \iff P\!\left(\bar{X}-\frac{\sigma}{\sqrt{n}}z_{\alpha/2}<\mu<\bar{X}+\frac{\sigma}{\sqrt{n}}z_{\alpha/2}\right)=1-\alpha,
+\]
+得到 $\mu$ 的置信水平为 $1-\alpha$ 的置信区间 $\left(\bar{X}\pm\dfrac{\sigma}{\sqrt{n}}z_{\alpha/2}\right)$。若改用不对称的尾部划分（如 $\alpha=0.05$ 时取左尾 $0.04$、右尾 $0.01$），区间长度将由 $2z_{0.025}\frac{\sigma}{\sqrt{n}}=3.92\frac{\sigma}{\sqrt{n}}$ 增至 $(z_{0.04}+z_{0.01})\frac{\sigma}{\sqrt{n}}\approx 4.08\frac{\sigma}{\sqrt{n}}$，精度更差；因此对称分布一律采用等尾分位点。
+
+\section{正态总体均值与方差的区间估计}
+\label{sec:normal-ci}
+
+结合第六章\cref{thm:normal-sampling-one}与\cref{thm:normal-sampling-two}中的枢轴量，下面系统推导单个与两个独立正态总体的全部双侧置信区间。
+
+\subsection{单个正态总体的区间估计}
+
+\begin{enumerate}
+  \item \textbf{均值 $\mu$（$\sigma^2$ 已知）}：枢轴量 $\dfrac{\bar{X}-\mu}{\sigma/\sqrt{n}}\sim N(0,1)$，置信区间为
+  \begin{equation}
+    \left(\bar{X}-\frac{\sigma}{\sqrt{n}}z_{\alpha/2},\;\bar{X}+\frac{\sigma}{\sqrt{n}}z_{\alpha/2}\right).
+    \label{eq:ci-mu-known}
+  \end{equation}
+  \item \textbf{均值 $\mu$（$\sigma^2$ 未知）}：用样本标准差 $S$ 替代 $\sigma$，取枢轴量 $\dfrac{\bar{X}-\mu}{S/\sqrt{n}}\sim t(n-1)$，由对称性 $P\bigl(\abs{T}<t_{\alpha/2}(n-1)\bigr)=1-\alpha$ 解得
+  \begin{equation}
+    \left(\bar{X}-\frac{S}{\sqrt{n}}t_{\alpha/2}(n-1),\;\bar{X}+\frac{S}{\sqrt{n}}t_{\alpha/2}(n-1)\right).
+    \label{eq:ci-mu-unknown}
+  \end{equation}
+  \item \textbf{方差 $\sigma^2$ 与标准差 $\sigma$（$\mu$ 未知）}：取枢轴量 $\dfrac{(n-1)S^2}{\sigma^2}\sim\chi^2(n-1)$。按习惯取等尾分位点，由
+  \[
+    P\!\left(\chi_{1-\alpha/2}^2(n-1)<\frac{(n-1)S^2}{\sigma^2}<\chi_{\alpha/2}^2(n-1)\right)=1-\alpha
+  \]
+  取倒数不等号反转，即得 $\sigma^2$ 与 $\sigma$ 的置信水平为 $1-\alpha$ 的置信区间：
+  \begin{equation}
+    \left(\frac{(n-1)S^2}{\chi_{\alpha/2}^2(n-1)},\;\frac{(n-1)S^2}{\chi_{1-\alpha/2}^2(n-1)}\right),
+    \qquad
+    \left(\frac{\sqrt{n-1}\,S}{\sqrt{\chi_{\alpha/2}^2(n-1)}},\;\frac{\sqrt{n-1}\,S}{\sqrt{\chi_{1-\alpha/2}^2(n-1)}}\right).
+    \label{eq:ci-sigma2}
+  \end{equation}
+\end{enumerate}
+
+\begin{example}[title={袋装糖果质量的均值与标准差置信区间}]
+\label{eg:candy-ci}
+从一大批正态分布的袋装糖果中随机抽取 $n=16$ 袋，算得样本均值 $\bar{x}=503.75\text{ g}$，样本标准差 $s=6.2022\text{ g}$。求总体均值 $\mu$ 与标准差 $\sigma$ 的置信水平为 $0.95$ 的置信区间（查表知 $t_{0.025}(15)=2.1315$，$\chi_{0.025}^2(15)=27.488$，$\chi_{0.975}^2(15)=6.262$）。
+\begin{solution}
+由\eqref{eq:ci-mu-unknown}，总体均值 $\mu$ 的 $0.95$ 置信区间为
+\[
+  \left(503.75\pm\frac{6.2022}{\sqrt{16}}\times 2.1315\right)=(503.75\pm 3.305)\approx(500.4,\,507.1)\text{（g）}.
+\]
+由\eqref{eq:ci-sigma2}，总体标准差 $\sigma$ 的 $0.95$ 置信区间为
+\[
+  \left(\frac{\sqrt{15}\times 6.2022}{\sqrt{27.488}},\;\frac{\sqrt{15}\times 6.2022}{\sqrt{6.262}}\right)
+  \approx(4.58,\,9.60)\text{（g）}.
+\]
+\end{solution}
+\end{example}
+
+\subsection{两个独立正态总体的区间估计}
+
+设两独立样本容量分别为 $n_1,n_2$，样本均值与样本方差分别为 $\bar{X},\bar{Y}$ 与 $S_1^2,S_2^2$。
+
+\begin{enumerate}
+  \item \textbf{均值差 $\mu_1-\mu_2$（$\sigma_1^2,\sigma_2^2$ 已知）}：取枢轴量 $\dfrac{(\bar{X}-\bar{Y})-(\mu_1-\mu_2)}{\sqrt{\sigma_1^2/n_1+\sigma_2^2/n_2}}\sim N(0,1)$，得
+  \begin{equation}
+    \left(\bar{X}-\bar{Y}\pm z_{\alpha/2}\sqrt{\frac{\sigma_1^2}{n_1}+\frac{\sigma_2^2}{n_2}}\right).
+    \label{eq:ci-diff-known}
+  \end{equation}
+  \item \textbf{均值差 $\mu_1-\mu_2$（$\sigma_1^2=\sigma_2^2=\sigma^2$ 未知）}：利用\cref{thm:normal-sampling-two}(2)的枢轴量\eqref{eq:two-sample-t}，得
+  \begin{equation}
+    \left(\bar{X}-\bar{Y}\pm t_{\alpha/2}(n_1+n_2-2)\,S_w\sqrt{\frac{1}{n_1}+\frac{1}{n_2}}\right),
+    \label{eq:ci-diff-pooled}
+  \end{equation}
+  其中合并样本方差 $S_w^2=\dfrac{(n_1-1)S_1^2+(n_2-1)S_2^2}{n_1+n_2-2}$。
+  \item \textbf{方差比 $\sigma_1^2/\sigma_2^2$（$\mu_1,\mu_2$ 未知）}：取枢轴量 $\dfrac{S_1^2/\sigma_1^2}{S_2^2/\sigma_2^2}\sim F(n_1-1,n_2-1)$，由
+  \[
+    P\!\left(F_{1-\alpha/2}(n_1-1,n_2-1)<\frac{S_1^2/S_2^2}{\sigma_1^2/\sigma_2^2}<F_{\alpha/2}(n_1-1,n_2-1)\right)=1-\alpha
+  \]
+  解得 $\sigma_1^2/\sigma_2^2$ 的置信水平为 $1-\alpha$ 的置信区间（注意可利用\eqref{eq:f-quantile-recip}将 $F_{1-\alpha/2}(n_1-1,n_2-1)$ 换算为 $1/F_{\alpha/2}(n_2-1,n_1-1)$）：
+  \begin{equation}
+    \left(\frac{S_1^2}{S_2^2}\cdot\frac{1}{F_{\alpha/2}(n_1-1,n_2-1)},\;\frac{S_1^2}{S_2^2}\cdot F_{\alpha/2}(n_2-1,n_1-1)\right).
+    \label{eq:ci-var-ratio}
+  \end{equation}
+\end{enumerate}
+
+\begin{example}[title={两正态总体的均值差与方差比置信区间}]
+\label{eg:two-normal-ci}
+(1) 随机抽测 I 型子弹 $n_1=10$ 发，枪口速度均值 $\bar{x}=500\text{ m/s}$、样本标准差 $s_1=1.10\text{ m/s}$；抽测 II 型子弹 $n_2=20$ 发，得 $\bar{y}=496\text{ m/s}$、$s_2=1.20\text{ m/s}$。设两总体正态且方差相等、样本独立，求 $\mu_1-\mu_2$ 的 $0.95$ 置信区间（$t_{0.025}(28)=2.0484$）。
+
+(2) 抽测机器 A 生产的钢管 $n_1=18$ 只得 $s_1^2=0.34$，机器 B 生产的钢管 $n_2=13$ 只得 $s_2^2=0.29$。设两正态样本独立，求方差比 $\sigma_1^2/\sigma_2^2$ 的 $0.90$ 置信区间（$F_{0.05}(17,12)=2.59$，$F_{0.05}(12,17)=2.38$）。
+\begin{solution}
+(1) 计算合并样本标准差：
+\[
+  s_w=\sqrt{\frac{9\times 1.10^2+19\times 1.20^2}{10+20-2}}=\sqrt{\frac{38.25}{28}}\approx 1.1688.
+\]
+代入\eqref{eq:ci-diff-pooled}，得 $\mu_1-\mu_2$ 的 $0.95$ 置信区间为
+\[
+  \left(500-496\pm 2.0484\times 1.1688\sqrt{\frac{1}{10}+\frac{1}{20}}\right)
+  =(4\pm 0.93)=(3.07,\,4.93)\text{（m/s）}.
+\]
+该区间全部位于零的右侧，说明 I 型子弹的平均枪口速度显著高于 II 型。
+
+(2) 代入\eqref{eq:ci-var-ratio}，得 $\sigma_1^2/\sigma_2^2$ 的 $0.90$ 置信区间为
+\[
+  \left(\frac{0.34}{0.29}\times\frac{1}{2.59},\;\frac{0.34}{0.29}\times 2.38\right)
+  \approx(0.45,\,2.79).
+\]
+区间包含 $1$，表明现有数据下两台机器生产精度的方差无显著差异。
+\end{solution}
+\end{example}
+
+\section{(0--1) 分布参数的区间估计}
+\label{sec:bernoulli-ci}
+
+设大样本 $X_1,\ldots,X_n\,(n>50)$ 来自两点分布总体 $b(1,p)$（$p\in(0,1)$ 未知）。由中心极限定理，
+\[
+  \frac{n\bar{X}-np}{\sqrt{np(1-p)}}\;\dot{\sim}\;N(0,1),
+\]
+于是近似有
+\[
+  P\!\left(\left|\frac{n\bar{X}-np}{\sqrt{np(1-p)}}\right|\le z_{\alpha/2}\right)\approx 1-\alpha.
+\]
+将绝对值不等式两边平方整理，等价于关于 $p$ 的一元二次不等式：
+\begin{equation}
+  (n+z_{\alpha/2}^2)p^2-(2n\bar{X}+z_{\alpha/2}^2)p+n\bar{X}^2\le 0.
+  \label{eq:wilson-quadratic}
+\end{equation}
+记 $a=n+z_{\alpha/2}^2$，$b=-(2n\bar{X}+z_{\alpha/2}^2)$，$c=n\bar{X}^2$，解出两个实根
+\[
+  p_1=\frac{-b-\sqrt{b^2-4ac}}{2a},\qquad p_2=\frac{-b+\sqrt{b^2-4ac}}{2a},
+\]
+即得 $p$ 的置信水平为 $1-\alpha$ 的近似置信区间 $(p_1,p_2)$（若 $n$ 更大，亦常以 $\bar{X}(1-\bar{X})$ 替代分母中的 $p(1-p)$，得到简便近似区间 $\bar{X}\pm z_{\alpha/2}\sqrt{\frac{\bar{X}(1-\bar{X})}{n}}$）。
+
+\begin{example}[title={产品一级品率的近似置信区间}]
+\label{eg:bernoulli-ci-example}
+从一大批产品中随机抽取 $n=100$ 件，检出一级品 $60$ 件。求该批产品一级品率 $p$ 的置信水平为 $0.95$ 的近似置信区间（$z_{0.025}=1.96$）。
+\begin{solution}
+这里 $n=100$，$\bar{x}=0.6$，$z_{0.025}^2=1.96^2=3.8416$。代入\eqref{eq:wilson-quadratic}的系数：
+\[
+  a=103.8416,\qquad b=-(120+3.8416)=-123.8416,\qquad c=100\times 0.36=36.
+\]
+求根得
+\[
+  p_{1,2}=\frac{123.8416\mp\sqrt{123.8416^2-4\times 103.8416\times 36}}{2\times 103.8416}
+  \approx 0.5963\mp 0.0942,
+\]
+故 $p$ 的 $0.95$ 近似置信区间为 $(0.502,\,0.691)$（取两位小数为 $(0.50,\,0.69)$）。
+\end{solution}
+\end{example}
+
+\section{单侧置信区间}
+\label{sec:one-sided-ci}
+
+在许多工程问题中，我们只关心参数的单侧界限：例如对元件平均寿命关心其“下限”，对药品杂质含量或方差关心其“上限”。
+
+\begin{definition}[单侧置信区间与单侧置信限]
+\label{def:one-sided-ci}
+给定 $\alpha\in(0,1)$：
+\begin{enumerate}
+  \item 若统计量 $\hat{\theta}_L$ 对一切 $\theta\in\Theta$ 满足 $P(\theta>\hat{\theta}_L)\ge 1-\alpha$，则称 $(\hat{\theta}_L,+\infty)$ 为 $\theta$ 的置信水平为 $1-\alpha$ 的单侧置信区间，$\hat{\theta}_L$ 称为\textbf{单侧置信下限}；
+  \item 若统计量 $\hat{\theta}_U$ 对一切 $\theta\in\Theta$ 满足 $P(\theta<\hat{\theta}_U)\ge 1-\alpha$，则称 $(-\infty,\hat{\theta}_U)$ 为 $\theta$ 的置信水平为 $1-\alpha$ 的单侧置信区间，$\hat{\theta}_U$ 称为\textbf{单侧置信上限}。
+\end{enumerate}
+\end{definition}
+
+形式上，只需将双侧置信区间中的分位点概率 $\alpha/2$ 替换为 $\alpha$，即可立即写出正态总体的各类单侧置信限。例如对未知方差的正态总体 $N(\mu,\sigma^2)$：
+\begin{itemize}
+  \item 由 $P\!\left(\frac{\bar{X}-\mu}{S/\sqrt{n}}<t_\alpha(n-1)\right)=1-\alpha$，得 $\mu$ 的单侧置信下限 $\hat{\mu}_L=\bar{X}-\dfrac{S}{\sqrt{n}}t_\alpha(n-1)$；
+  \item 由 $P\!\left(\frac{(n-1)S^2}{\sigma^2}>\chi_{1-\alpha}^2(n-1)\right)=1-\alpha$，得 $\sigma^2$ 的单侧置信上限 $\hat{\sigma}_U^2=\dfrac{(n-1)S^2}{\chi_{1-\alpha}^2(n-1)}$。
+\end{itemize}
+
+\begin{example}[title={灯泡平均寿命的单侧置信下限}]
+\label{eg:bulb-one-sided}
+从一批正态分布的灯泡中随机抽取 $5$ 只测得寿命（单位：$\mathrm{h}$）为 $1050,1100,1120,1250,1280$。求平均寿命 $\mu$ 的置信水平为 $0.95$ 的单侧置信下限（$t_{0.05}(4)=2.1318$）。
+\begin{solution}
+算得样本均值 $\bar{x}=1160\text{ h}$，样本方差 $s^2=9950$（$s\approx 99.75\text{ h}$）。单侧置信下限为
+\[
+  \hat{\mu}_L=\bar{x}-\frac{s}{\sqrt{5}}t_{0.05}(4)
+  =1160-\frac{\sqrt{9950}}{\sqrt{5}}\times 2.1318\approx 1064.9\text{（h）}.
+\]
+\end{solution}
+\end{example}
+
+\cref{tab:normal-ci-summary}汇总了正态总体全部常用的双侧与单侧置信区间公式，便于系统查用。
+
+\begin{table}[htbp]
+\centering
+\caption{正态总体参数的双侧置信区间（置信水平 $1-\alpha$；单侧限将 $\alpha/2$ 换为 $\alpha$）}
+\label{tab:normal-ci-summary}
+\renewcommand{\arraystretch}{1.6}
+\footnotesize
+\begin{tabularx}{\textwidth}{@{}llXl@{}}
+\toprule
+待估参数 & 已知条件 & 枢轴量与分布 & 双侧置信区间 \\
+\midrule
+$\mu$ & $\sigma^2$ 已知 & $\dfrac{\bar{X}-\mu}{\sigma/\sqrt{n}}\sim N(0,1)$ & $\bar{X}\pm\dfrac{\sigma}{\sqrt{n}}z_{\alpha/2}$ \\
+$\mu$ & $\sigma^2$ 未知 & $\dfrac{\bar{X}-\mu}{S/\sqrt{n}}\sim t(n-1)$ & $\bar{X}\pm\dfrac{S}{\sqrt{n}}t_{\alpha/2}(n-1)$ \\
+$\sigma^2$ & $\mu$ 未知 & $\dfrac{(n-1)S^2}{\sigma^2}\sim\chi^2(n-1)$ & $\left(\dfrac{(n-1)S^2}{\chi_{\alpha/2}^2(n-1)},\;\dfrac{(n-1)S^2}{\chi_{1-\alpha/2}^2(n-1)}\right)$ \\
+$\mu_1-\mu_2$ & $\sigma_1^2,\sigma_2^2$ 已知 & $\dfrac{(\bar{X}-\bar{Y})-(\mu_1-\mu_2)}{\sqrt{\sigma_1^2/n_1+\sigma_2^2/n_2}}\sim N(0,1)$ & $\bar{X}-\bar{Y}\pm z_{\alpha/2}\sqrt{\dfrac{\sigma_1^2}{n_1}+\dfrac{\sigma_2^2}{n_2}}$ \\
+$\mu_1-\mu_2$ & $\sigma_1^2=\sigma_2^2$ 未知 & $\dfrac{(\bar{X}-\bar{Y})-(\mu_1-\mu_2)}{S_w\sqrt{1/n_1+1/n_2}}\sim t(n_1+n_2-2)$ & $\bar{X}-\bar{Y}\pm t_{\alpha/2}(n_1+n_2-2)S_w\sqrt{\dfrac{1}{n_1}+\dfrac{1}{n_2}}$ \\
+$\sigma_1^2/\sigma_2^2$ & $\mu_1,\mu_2$ 未知 & $\dfrac{S_1^2/\sigma_1^2}{S_2^2/\sigma_2^2}\sim F(n_1-1,n_2-1)$ & $\left(\dfrac{S_1^2/S_2^2}{F_{\alpha/2}(n_1-1,n_2-1)},\;\dfrac{S_1^2}{S_2^2}F_{\alpha/2}(n_2-1,n_1-1)\right)$ \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+\begin{method}[参数估计解题选型策略]
+\begin{enumerate}
+  \item \textbf{求点估计}：矩估计先算理论原点矩 $\mu_1,\mu_2$ 再代入 $A_1,A_2$；最大似然估计先写出似然函数 $L(\theta)$，若支集不含参数则取对数求偏导，若支集边界含参数（如 $U(a,b)$、移位指数分布）则直接按单调性找边界极值；
+  \item \textbf{评估计量}：先验 $E(\hat{\theta})=\theta$（无偏），再比 $D(\hat{\theta})$ 大小（有效），最后用大数定律或切比雪夫不等式验 $\hat{\theta}\xrightarrow{P}\theta$（相合）；
+  \item \textbf{求置信区间}：按“是否已知方差、单总体还是双总体、双侧还是单侧”对号选定枢轴量，注意 $\chi^2$ 与 $F$ 分布的非对称分位点在取倒数后左右对调。
+\end{enumerate}
+\end{method}
+
+\begin{pitfall}[参数估计中的三类常见误区]
+\begin{enumerate}
+  \item \textbf{对含参数的支集盲目求导}：例如 $X\sim U(0,\theta)$ 时 $L(\theta)=\theta^{-n}\,(\theta\ge x_{(n)})$，导数 $-\frac{n}{\theta^{n+1}}$ 恒不为零，最大值取在边界 $\hat{\theta}=\max_i X_i$ 处。
+  \item \textbf{混淆随机置信区间与具体数字区间}：抽样前可以说 $P(\hat{\theta}_L<\theta<\hat{\theta}_U)=0.95$；一旦代入样本值算出具体区间如 $(500.4,507.1)$，则该区间要么包含 $\mu$ 要么不包含 $\mu$，切勿写成 $P(500.4<\mu<507.1)=0.95$。
+  \item \textbf{混淆双侧与单侧分位点}：置信水平为 $1-\alpha$ 的双侧区间查 $\alpha/2$ 分位点，单侧区间查 $\alpha$ 分位点，两者不可混用。
+\end{enumerate}
+\end{pitfall}
+
+\begin{summary}[第七章核心脉络]
+本章建立了经典参数统计估计的完整框架：点估计以矩估计法与最大似然估计法（含截尾样本 MLE 及不变性）为核心，以无偏性、有效性、相合性衡量估计量优劣；区间估计以枢轴量法为统一桥梁，系统给出了单个与两个正态总体的均值、方差、均值差、方差比以及大样本 $(0\text{--}1)$ 分布的双侧与单侧置信区间，构成了现代统计推断的基石。
+\end{summary}

@@ -1,0 +1,35 @@
+\begin{tikzpicture}
+  % Standardized Binomial b(20, 0.3): mu = 6, sigma = sqrt(4.2) = 2.04939
+  % Bin width dz = 1/sigma = 0.48795; bar height = P(X=k)*sigma
+  \begin{axis}[
+    width=9.8cm,
+    height=5.2cm,
+    lc plot,
+    clip=false,
+    xmin=-3.4, xmax=3.4,
+    ymin=0, ymax=0.46,
+    xtick={-3,-2,-1,0,1,2,3},
+    xlabel={$z$},
+    ylabel={密度 / 标准化概率},
+    every axis x label/.style={at={(ticklabel* cs:1.0)},anchor=west,font=\small},
+    every axis y label/.style={at={(ticklabel* cs:1.0)},anchor=south,font=\small}
+  ]
+    \addplot[ybar interval,lc fill,draw=lc-curve2,line width=0.5pt] coordinates {
+      (-2.6837,0.0140)
+      (-2.1958,0.0571)
+      (-1.7078,0.1467)
+      (-1.2199,0.2673)
+      (-0.7319,0.3666)
+      (-0.2440,0.3927)
+      ( 0.2440,0.3366)
+      ( 0.7319,0.2344)
+      ( 1.2199,0.1340)
+      ( 1.7078,0.0632)
+      ( 2.1958,0.0246)
+      ( 2.6837,0.0079)
+      ( 3.1717,0.0000)
+    };
+    \addplot[lc curve 1,thick,samples=120,domain=-3.3:3.3] {1/sqrt(2*pi)*exp(-x^2/2)};
+    \node[lc label,anchor=west] at (axis cs:1.05,0.36) {$\varphi(z)$};
+  \end{axis}
+\end{tikzpicture}

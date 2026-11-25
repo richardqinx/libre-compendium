@@ -1,0 +1,388 @@
+% libre-compendium
+%
+% Copyright (C) 2026 Richard Qin
+%
+% This document is dual-licensed under either:
+% - GNU Free Documentation License, Version 1.3 or any later version
+%   published by the Free Software Foundation; with no Invariant Sections,
+%   no Front-Cover Texts, and no Back-Cover Texts (see COPYING.DOC); or
+% - Creative Commons Attribution-ShareAlike 4.0 International License
+%   (see LICENSE-CC-BY-SA-4.0).
+
+\chapter{概率论的测度基础与极限理论证明}
+\label{app:foundations}
+
+正文前五章以初等集合与微积分语言建立了本科概率论的核心体系，并将三类需要进一步分析工具的理论问题留作本附录展开：其一，不可列样本空间上的事件域（$\sigma$-代数）与概率空间构造，以及分布函数充分性的显式证明；其二，随机变量的 Borel 可测性与运算封闭性；其三，特征函数工具及辛钦弱大数定律、林德伯格—莱维中心极限定理的严格证明。
+
+\section{\texorpdfstring{$\sigma$}{σ}-代数、Borel 集与概率空间}
+\label{sec:app-sigma-algebra}
+
+当样本空间 $S$ 有限或可列时，可以毫无障碍地把 $S$ 的全体子集构成的幂集 $2^S$ 都当作事件并赋予概率。然而当 $S$ 不可列时（例如 $S=[0,1)$ 上的均匀随机取点），试图对 $S$ 的\textbf{一切}子集同时赋予满足可列可加性与平移不变性的概率会导致逻辑矛盾。
+
+简述其反例（维塔利集合）：在 $[0,1)$ 上定义等价关系 $x\sim y\iff x-y\in\Q$，由选择公理从每个等价类中各取一个代表元组成集合 $V\subset[0,1)$。将 $V$ 按所有有理数 $r\in\Q\cap[0,1)$ 作模 $1$ 平移，得可列个互不相容的集合 $V_r=(V+r)\bmod 1$，且它们的并恰为 $[0,1)$。若 $V$ 可赋概率 $P(V)=c$ 且 $P$ 平移不变，则每个 $P(V_r)=c$，由可列可加性得 $1=P([0,1))=\sum_{r}c$：若 $c=0$ 则右端为 $0\ne 1$，若 $c>0$ 则右端为 $+\infty\ne 1$，矛盾。
+
+因此，在一般公理化概率论中，事件并非任意子集，而是限定在满足封闭性公理的子集族——$\sigma$-代数之内。
+
+\begin{definition}[$\sigma$-代数]
+\label{def:sigma-algebra}
+设 $S$ 为非空集合，$\mathcal{F}$ 是由 $S$ 的若干子集构成的集合族（$\mathcal{F}\subset 2^S$）。若 $\mathcal{F}$ 满足以下三条公理：
+\begin{enumerate}
+  \item $S\in\mathcal{F}$；
+  \item \textbf{对补集封闭}：若 $A\in\mathcal{F}$，则 $\overline{A}=S\setminus A\in\mathcal{F}$；
+  \item \textbf{对可列并封闭}：若 $A_1,A_2,\ldots\in\mathcal{F}$，则 $\bigcup_{n=1}^{\infty}A_n\in\mathcal{F}$，
+\end{enumerate}
+则称 $\mathcal{F}$ 为 $S$ 上的一个\textbf{$\sigma$-代数}（又称\textbf{$\sigma$-域}或\textbf{事件域}），二元组 $(S,\mathcal{F})$ 称为\textbf{可测空间}。
+\end{definition}
+
+\begin{proposition}[$\sigma$-代数的基本封闭性]
+\label{prop:sigma-algebra-closure}
+若 $\mathcal{F}$ 是 $S$ 上的 $\sigma$-代数，则：
+\begin{enumerate}
+  \item $\varnothing\in\mathcal{F}$；
+  \item 若 $A_1,\ldots,A_n\in\mathcal{F}$，则 $\bigcup_{k=1}^{n}A_k\in\mathcal{F}$；
+  \item 若 $A_1,A_2,\ldots\in\mathcal{F}$，则 $\bigcap_{n=1}^{\infty}A_n\in\mathcal{F}$（特别地，对有限交封闭）；
+  \item 若 $A,B\in\mathcal{F}$，则差集 $A\setminus B\in\mathcal{F}$ 与对称差 $A\triangle B\in\mathcal{F}$。
+\end{enumerate}
+\end{proposition}
+\begin{proof}
+(1) 由公理 1 与 2，$\varnothing=\overline{S}\in\mathcal{F}$。
+
+(2) 令 $A_k=\varnothing\,(k>n)$，则 $\bigcup_{k=1}^{n}A_k=\bigcup_{k=1}^{\infty}A_k\in\mathcal{F}$。
+
+(3) 由德摩根律 $\bigcap_{n=1}^{\infty}A_n=\overline{\bigcup_{n=1}^{\infty}\overline{A_n}}$ 及公理 2、3 立得 $\bigcap_{n=1}^{\infty}A_n\in\mathcal{F}$。
+
+(4) $A\setminus B=A\cap\overline{B}\in\mathcal{F}$，$A\triangle B=(A\setminus B)\cup(B\setminus A)\in\mathcal{F}$。
+\end{proof}
+
+容易验证，任意多个 $\sigma$-代数的交集仍是 $\sigma$-代数。由此，对 $S$ 的任意子集族 $\mathcal{C}\subset 2^S$，将所有包含 $\mathcal{C}$ 的 $\sigma$-代数（至少包含幂集 $2^S$）取交，便得到包含 $\mathcal{C}$ 的\textbf{最小 $\sigma$-代数}，称为由 $\mathcal{C}$ 生成的 $\sigma$-代数，记作 $\sigma(\mathcal{C})$。
+
+\begin{definition}[实轴上的 Borel $\sigma$-代数]
+\label{def:borel-sigma-algebra}
+在实数集 $\R$ 上，由全体开区间 $\mathcal{O}=\set{(a,b):a<b}$ 生成的 $\sigma$-代数称为 $\R$ 上的\textbf{博雷尔（Borel）$\sigma$-代数}，记为 $\mathcal{B}(\R)=\sigma(\mathcal{O})$，其中的集合称为\textbf{Borel 集}。
+\end{definition}
+
+\begin{proposition}[Borel $\sigma$-代数的等价生成系]
+\label{prop:borel-generators}
+记 $\mathcal{C}_1=\set{(-\infty,x]:x\in\R}$，$\mathcal{C}_2=\set{(-\infty,x):x\in\R}$，$\mathcal{C}_3=\set{[a,b]:a\le b}$，则
+\[
+  \sigma(\mathcal{C}_1)=\sigma(\mathcal{C}_2)=\sigma(\mathcal{C}_3)=\mathcal{B}(\R).
+\]
+\end{proposition}
+\begin{proof}
+先证 $\sigma(\mathcal{C}_1)\subset\mathcal{B}(\R)$：对任意 $x\in\R$，
+\[
+  (-\infty,x]=\bigcap_{n=1}^{\infty}\bigcup_{m=1}^{\infty}\left(x-m,\,x+\frac{1}{n}\right)\in\mathcal{B}(\R),
+\]
+故 $\mathcal{C}_1\subset\mathcal{B}(\R)$，由最小性得 $\sigma(\mathcal{C}_1)\subset\mathcal{B}(\R)$。
+
+再证 $\mathcal{B}(\R)\subset\sigma(\mathcal{C}_1)$：对任意开区间 $(a,b)$，
+\[
+  (a,b)=\bigcup_{n=1}^{\infty}\left(a,\,b-\frac{1}{n}\right]
+  =\bigcup_{n=1}^{\infty}\left[\left(-\infty,b-\frac{1}{n}\right]\setminus(-\infty,a]\right]\in\sigma(\mathcal{C}_1),
+\]
+故 $\mathcal{O}\subset\sigma(\mathcal{C}_1)$，从而 $\mathcal{B}(\R)\subset\sigma(\mathcal{C}_1)$。两相包含即得 $\sigma(\mathcal{C}_1)=\mathcal{B}(\R)$。
+
+同理，由 $(-\infty,x)=\bigcup_{n=1}^{\infty}\bigl(-\infty,x-\frac{1}{n}\bigr]$ 与 $(-\infty,x]=\bigcap_{n=1}^{\infty}\bigl(-\infty,x+\frac{1}{n}\bigr)$ 得 $\sigma(\mathcal{C}_2)=\sigma(\mathcal{C}_1)$；由 $(a,b)=\bigcup_{n=1}^{\infty}\bigl[a+\frac{1}{n},b-\frac{1}{n}\bigr]$ 与 $[a,b]=\bigcap_{n=1}^{\infty}\bigl(a-\frac{1}{n},b+\frac{1}{n}\bigr)$ 得 $\sigma(\mathcal{C}_3)=\mathcal{B}(\R)$。
+\end{proof}
+
+\begin{definition}[概率空间]
+\label{def:prob-space}
+设 $(S,\mathcal{F})$ 为可测空间，若集函数 $P:\mathcal{F}\to[0,1]$ 满足非负性（$P(A)\ge 0$）、规范性（$P(S)=1$）与可列可加性（对两两互不相容的事件列 $A_1,A_2,\ldots\in\mathcal{F}$ 有 $P\bigl(\bigcup_{n=1}^{\infty}A_n\bigr)=\sum_{n=1}^{\infty}P(A_n)$），则称 $P$ 为\textbf{概率测度}，称三元组 $(S,\mathcal{F},P)$ 为\textbf{概率空间}。
+\end{definition}
+
+借助单位区间上的勒贝格概率空间 $\bigl((0,1),\mathcal{B}(0,1),\lambda\bigr)$（其中 $\lambda((a,b))=b-a$），我们可以完全初等地证明\cref{thm:cdf-properties}后提及的\textbf{分布函数充分性}：
+
+\begin{theorem}[分布函数的充分性（分位函数构造）]
+\label{thm:cdf-sufficiency}
+设实函数 $F:\R\to[0,1]$ 满足单调不减、右连续，且 $\lim_{x\to-\infty}F(x)=0$、$\lim_{x\to+\infty}F(x)=1$。在概率空间 $\bigl((0,1),\mathcal{B}(0,1),\lambda\bigr)$ 上定义广义逆函数（分位函数）
+\begin{equation}
+  X(\omega)=\inf\set{x\in\R: F(x)\ge\omega},\qquad \omega\in(0,1).
+  \label{eq:quantile-construction}
+\end{equation}
+则 $X$ 是该概率空间上的随机变量，且其分布函数恰好等于 $F(x)$。
+\end{theorem}
+\begin{proof}
+对任意 $\omega\in(0,1)$，因 $F(-\infty)=0<\omega<1=F(+\infty)$，集合 $A_\omega=\set{x\in\R: F(x)\ge\omega}$ 非空且有下界，故 $X(\omega)\in\R$ 良定义。
+
+我们证明对任意 $x\in\R$ 与 $\omega\in(0,1)$，等价关系
+\begin{equation}
+  X(\omega)\le x \iff \omega\le F(x)
+  \label{eq:quantile-equiv}
+\end{equation}
+成立：
+\begin{itemize}
+  \item 若 $\omega\le F(x)$，则 $x\in A_\omega$，由下确界定义立得 $X(\omega)\le x$；
+  \item 反之，若 $X(\omega)\le x$，则对任意正整数 $n$ 均有 $X(\omega)<x+\frac{1}{n}$，由下确界性质存在 $x_n\in A_\omega$ 使 $x_n<x+\frac{1}{n}$，再由 $F$ 单调不减得 $\omega\le F(x_n)\le F\bigl(x+\frac{1}{n}\bigr)$；令 $n\to\infty$，由 $F$ 右连续即得 $\omega\le F(x+0)=F(x)$。
+\end{itemize}
+由\eqref{eq:quantile-equiv}，对任意 $x\in\R$ 有
+\[
+  \set{\omega\in(0,1): X(\omega)\le x}=\set{\omega\in(0,1): \omega\le F(x)}=(0,1)\cap(-\infty,F(x)]\in\mathcal{B}(0,1),
+\]
+这既证明了 $X$ 是可测随机变量，又直接给出其分布函数：
+\[
+  P(X\le x)=\lambda\bigl((0,1)\cap(-\infty,F(x)]\bigr)=F(x).
+\]
+\end{proof}
+
+\section{随机变量的可测性与分布测度}
+\label{sec:app-measurability}
+
+\begin{definition}[随机变量的严格定义]
+\label{def:measurable-rv}
+设 $(S,\mathcal{F},P)$ 为概率空间，映射 $X:S\to\R$ 称为\textbf{随机变量}（或 $\mathcal{F}$-可测函数），如果对任意 Borel 集 $B\in\mathcal{B}(\R)$，其原像均属于事件域 $\mathcal{F}$：
+\[
+  X^{-1}(B)=\set{e\in S: X(e)\in B}\in\mathcal{F}.
+\]
+\end{definition}
+
+实际检验时无需对所有复杂的 Borel 集逐一验证，只需验证左半无穷区间即可。
+
+\begin{proposition}[可测性的等价判别准则]
+\label{prop:measurability-criterion}
+映射 $X:S\to\R$ 为随机变量，当且仅当对任意实数 $x\in\R$ 均有 $\set{e\in S: X(e)\le x}\in\mathcal{F}$。
+\end{proposition}
+\begin{proof}
+必要性显然，因 $(-\infty,x]\in\mathcal{B}(\R)$。下证充分性：考察集合族
+\[
+  \mathcal{G}=\set{B\subset\R: X^{-1}(B)\in\mathcal{F}}.
+\]
+因为原像运算严格保持全集、补集与任意并：
+\[
+  X^{-1}(\R)=S\in\mathcal{F},\qquad
+  X^{-1}(\overline{B})=\overline{X^{-1}(B)},\qquad
+  X^{-1}\!\left(\bigcup_{n=1}^{\infty}B_n\right)=\bigcup_{n=1}^{\infty}X^{-1}(B_n),
+\]
+结合 $\mathcal{F}$ 是 $\sigma$-代数，立知 $\mathcal{G}$ 是 $\R$ 上的一个 $\sigma$-代数。由题设，$\mathcal{C}_1=\set{(-\infty,x]:x\in\R}\subset\mathcal{G}$；按生成 $\sigma$-代数的最小性与\cref{prop:borel-generators}，必有 $\mathcal{B}(\R)=\sigma(\mathcal{C}_1)\subset\mathcal{G}$，即对一切 $B\in\mathcal{B}(\R)$ 均有 $X^{-1}(B)\in\mathcal{F}$。
+\end{proof}
+
+\begin{proposition}[复合函数的可测性]
+\label{prop:measurable-composition}
+若 $X$ 是 $(S,\mathcal{F},P)$ 上的随机变量，$g:\R\to\R$ 为连续函数（更一般地，Borel 可测函数，即对一切 $B\in\mathcal{B}(\R)$ 有 $g^{-1}(B)\in\mathcal{B}(\R)$），则复合映射 $Y=g(X)$ 仍是随机变量。
+\end{proposition}
+\begin{proof}
+若 $g$ 连续，则任意开区间 $(a,b)$ 的原像 $g^{-1}((a,b))$ 为 $\R$ 中的开集，而 $\R$ 中任一开集均可表为至多可列个互不相交开区间之并，故属于 $\mathcal{B}(\R)$。与\cref{prop:measurability-criterion}同理，集合族 $\set{B\subset\R:g^{-1}(B)\in\mathcal{B}(\R)}$ 是包含全体开区间的 $\sigma$-代数，从而包含 $\mathcal{B}(\R)$，即连续函数必 Borel 可测。于是对任意 $B\in\mathcal{B}(\R)$，$Y^{-1}(B)=X^{-1}\bigl(g^{-1}(B)\bigr)\in\mathcal{F}$，故 $Y=g(X)$ 为随机变量。
+\end{proof}
+
+同理可证：若 $X,Y$ 为随机变量，则 $X\pm Y$、$XY$、$X/Y$（当 $Y\ne 0$）、$\max\set{X,Y}$、$\min\set{X,Y}$ 以及随机变量列 $\set{X_n}$ 的 $\sup_n X_n$、$\inf_n X_n$、$\limsup_n X_n$、$\liminf_n X_n$（从而逐点极限）全都是随机变量。
+
+从测度论视角看，任一随机变量 $X$ 在 $(\R,\mathcal{B}(\R))$ 上诱导出概率测度 $\mu_X(B)=P\bigl(X^{-1}(B)\bigr)$，称为 $X$ 的\textbf{分布测度}。$X$ 的数学期望统一定义为勒贝格积分
+\[
+  E(X)=\int_{S}X(e)\dd P(e)=\int_{\R}x\dd\mu_X(x)=\int_{-\infty}^{+\infty}x\dd F_X(x),
+\]
+当 $\mu_X$ 为离散点测度或关于勒贝格测度绝对连续（存在密度 $f_X$）时，该积分便分别退化为第四章的级数求和\eqref{eq:expectation-discrete}与黎曼广义积分\eqref{eq:expectation-continuous}，并统一涵盖既非离散又非连续的混合型分布。
+
+\section{特征函数与极限定理的严格证明}
+\label{sec:app-characteristic-clt}
+
+在第五章中，辛钦弱大数定律（无方差条件）与林德伯格—莱维中心极限定理的严格证明都依赖于傅里叶分析工具——\textbf{特征函数}。与矩母函数不同，特征函数对一切随机变量恒存在且处处有界。
+
+\subsection{特征函数的定义与基本性质}
+
+\begin{definition}[特征函数]
+\label{def:characteristic-function}
+设 $X$ 为随机变量，对任意实数 $t\in\R$，称复值函数
+\begin{equation}
+  \varphi_X(t)=E\bigl(\e^{\ii tX}\bigr)=E(\cos tX)+\ii\,E(\sin tX)
+  \label{eq:char-func-def}
+\end{equation}
+为 $X$ 的\textbf{特征函数}。具体地，离散型为 $\varphi_X(t)=\sum_{k}\e^{\ii tx_k}p_k$，连续型为 $\varphi_X(t)=\int_{-\infty}^{+\infty}\e^{\ii tx}f_X(x)\dd x$。
+\end{definition}
+
+由于 $\abs{\e^{\ii tx}}=1$ 恒成立，期望 $E(\e^{\ii tX})$ 对任意随机变量和任意 $t\in\R$ 均绝对收敛。
+
+\begin{proposition}[特征函数的基本性质]
+\label{prop:char-func-properties}
+\begin{enumerate}
+  \item $\varphi_X(0)=1$，$\abs{\varphi_X(t)}\le 1$，$\varphi_X(-t)=\overline{\varphi_X(t)}$，且 $\varphi_X(t)$ 在 $\R$ 上一致连续；
+  \item 对任意实常数 $a,b$，$\varphi_{aX+b}(t)=\e^{\ii bt}\varphi_X(at)$；
+  \item 若 $X$ 与 $Y$ 相互独立，则 $\varphi_{X+Y}(t)=\varphi_X(t)\varphi_Y(t)$；推广到 $n$ 个相互独立的随机变量 $X_1,\ldots,X_n$，有 $\varphi_{\sum_{k=1}^{n}X_k}(t)=\prod_{k=1}^{n}\varphi_{X_k}(t)$；
+  \item \textbf{原点处的泰勒展开}：
+  \begin{itemize}
+    \item 若 $E\abs{X}<+\infty$ 且 $E(X)=\mu$，则当 $t\to 0$ 时
+    \begin{equation}
+      \varphi_X(t)=1+\ii\mu t+o(t);
+      \label{eq:cf-taylor-1}
+    \end{equation}
+    \item 若 $E(X^2)<+\infty$ 且 $E(X)=\mu$，则当 $t\to 0$ 时
+    \begin{equation}
+      \varphi_X(t)=1+\ii\mu t-\frac{1}{2}E(X^2)\,t^2+o(t^2).
+      \label{eq:cf-taylor-2}
+    \end{equation}
+  \end{itemize}
+\end{enumerate}
+\end{proposition}
+\begin{proof}
+(1) $\varphi_X(0)=E(1)=1$，$\abs{\varphi_X(t)}\le E\abs{\e^{\ii tX}}=1$，$\varphi_X(-t)=E(\e^{-\ii tX})=\overline{\varphi_X(t)}$。对任意 $t,h\in\R$，
+\[
+  \abs{\varphi_X(t+h)-\varphi_X(t)}
+  =\abs{E\bigl[\e^{\ii tX}(\e^{\ii hX}-1)\bigr]}
+  \le E\abs{\e^{\ii hX}-1}.
+\]
+因 $\abs{\e^{\ii hX}-1}\le 2$ 且当 $h\to 0$ 时 $\e^{\ii hX}-1\to 0$，由有界控制收敛定理知 $E\abs{\e^{\ii hX}-1}\to 0$（与 $t$ 无关），故 $\varphi_X$ 在 $\R$ 上一致连续。
+
+(2) $\varphi_{aX+b}(t)=E\bigl(\e^{\ii t(aX+b)}\bigr)=\e^{\ii bt}E\bigl(\e^{\ii(at)X}\bigr)=\e^{\ii bt}\varphi_X(at)$。
+
+(3) 因 $X$ 与 $Y$ 相互独立，由\cref{thm:indep-functions}知 $\e^{\ii tX}$ 与 $\e^{\ii tY}$ 的实部、虚部均相互独立，故 $E(\e^{\ii t(X+Y)})=E(\e^{\ii tX}\e^{\ii tY})=E(\e^{\ii tX})E(\e^{\ii tY})=\varphi_X(t)\varphi_Y(t)$。
+
+(4) 对任意实数 $u\in\R$，利用初等微积分估计 $\abs{\e^{\ii u}-1}=\abs{\int_{0}^{u}\ii\e^{\ii s}\dd s}\le\min\set{2,\abs{u}}$，逐次积分得
+\[
+  \abs{\e^{\ii u}-1-\ii u}\le\min\!\left\{2\abs{u},\,\frac{u^2}{2}\right\},\qquad
+  \abs{\e^{\ii u}-1-\ii u+\frac{u^2}{2}}\le\min\!\left\{u^2,\,\frac{\abs{u}^3}{6}\right\}.
+\]
+当 $E\abs{X}<+\infty$ 时，令 $u=tX\,(t\ne 0)$，记 $R_1(t,X)=\frac{\e^{\ii tX}-1-\ii tX}{t}$。则 $\abs{R_1(t,X)}\le 2\abs{X}$（可积控制函数），且对固定的 $X$，当 $t\to 0$ 时 $\abs{R_1(t,X)}\le\frac{1}{2}\abs{t}X^2\to 0$。由控制收敛定理得
+\[
+  \frac{\varphi_X(t)-1-\ii\mu t}{t}=E\bigl[R_1(t,X)\bigr]\xrightarrow{t\to 0} 0,
+\]
+即证\eqref{eq:cf-taylor-1}。同理，当 $E(X^2)<+\infty$ 时，记 $R_2(t,X)=\frac{\e^{\ii tX}-1-\ii tX+\frac{1}{2}t^2 X^2}{t^2}$，有 $\abs{R_2(t,X)}\le X^2$（可积控制函数）且对固定 $X$ 有 $\abs{R_2(t,X)}\le\frac{1}{6}\abs{t}\abs{X}^3\to 0\,(t\to 0)$，再由控制收敛定理即得\eqref{eq:cf-taylor-2}。
+\end{proof}
+
+\begin{proposition}[标准正态分布的特征函数]
+\label{prop:normal-cf}
+若 $Z\sim N(0,1)$，则其特征函数为
+\begin{equation}
+  \varphi_Z(t)=\e^{-t^2/2},\qquad t\in\R.
+  \label{eq:std-normal-cf}
+\end{equation}
+一般地，若 $X\sim N(\mu,\sigma^2)$，则 $\varphi_X(t)=\exp\!\left(\ii\mu t-\dfrac{\sigma^2 t^2}{2}\right)$。
+\end{proposition}
+\begin{proof}
+因 $\abs{z\e^{\ii tz}\varphi(z)}=\abs{z}\varphi(z)$ 可积，可对积分号下关于 $t$ 求导，并随后作分部积分（利用 $\varphi'(z)=-z\varphi(z)$）：
+\[
+\begin{aligned}
+  \varphi_Z'(t)&=\int_{-\infty}^{+\infty}\ii z\,\e^{\ii tz}\varphi(z)\dd z
+  =-\ii\int_{-\infty}^{+\infty}\e^{\ii tz}\varphi'(z)\dd z\\
+  &=-\ii\Bigl[\e^{\ii tz}\varphi(z)\Bigr]_{-\infty}^{+\infty}
+   +\ii\int_{-\infty}^{+\infty}\ii t\,\e^{\ii tz}\varphi(z)\dd z
+  =-t\varphi_Z(t).
+\end{aligned}
+\]
+解此初值问题 $\varphi_Z'(t)=-t\varphi_Z(t),\,\varphi_Z(0)=1$：由 $\frac{\dd}{\dd t}\bigl(\e^{t^2/2}\varphi_Z(t)\bigr)=\e^{t^2/2}\bigl(\varphi_Z'(t)+t\varphi_Z(t)\bigr)=0$，知 $\e^{t^2/2}\varphi_Z(t)\equiv\varphi_Z(0)=1$，即 $\varphi_Z(t)=\e^{-t^2/2}$。对一般正态变量 $X=\mu+\sigma Z$，由\cref{prop:char-func-properties}(2)即得 $\varphi_X(t)=\e^{\ii\mu t}\varphi_Z(\sigma t)=\exp\!\left(\ii\mu t-\frac{1}{2}\sigma^2 t^2\right)$。
+\end{proof}
+
+特征函数之所以能将“分布函数的弱收敛”转化为“复值函数的逐点收敛”，核心在于以下两个深刻的分析定理（其完整证明依赖傅里叶反演公式与赫利选择定理，此处直接引用）：
+
+\begin{theorem}[唯一性定理与莱维（Lévy）连续性定理]
+\label{thm:levy-continuity}
+\begin{enumerate}
+  \item \textbf{唯一性定理}：分布函数由其特征函数唯一决定；即若 $\varphi_X(t)=\varphi_Y(t)$ 对一切 $t\in\R$ 成立，则 $F_X(x)=F_Y(x)$ 对一切 $x\in\R$ 成立。
+  \item \textbf{莱维连续性定理}：设随机变量列 $\set{Y_n}$ 对应的分布函数与特征函数分别为 $F_n(x)$ 与 $\varphi_n(t)$。若对每个 $t\in\R$，极限 $\varphi(t)=\lim_{n\to\infty}\varphi_n(t)$ 存在，且 $\varphi(t)$ 在 $t=0$ 处连续，则 $\varphi(t)$ 必为某个随机变量 $Y$（分布函数记为 $F$）的特征函数，且在 $F$ 的每个连续点 $x$ 处均有 $\lim_{n\to\infty}F_n(x)=F(x)$（即 $Y_n$ \textbf{依分布收敛}于 $Y$，记作 $Y_n\xrightarrow{d} Y$）。
+\end{enumerate}
+\end{theorem}
+
+在应用莱维连续性定理证明辛钦弱大数定律之前，再补一个简洁的桥梁引理。
+
+\begin{lemma}[依分布收敛于常数等价于依概率收敛]
+\label{lem:conv-d-to-const}
+设 $c\in\R$ 为常数，若随机变量列 $\set{Y_n}$ 依分布收敛于退化在 $c$ 处的常数分布（即对一切 $x<c$ 有 $F_n(x)\to 0$，对一切 $x>c$ 有 $F_n(x)\to 1$），则 $Y_n\xrightarrow{P} c$。
+\end{lemma}
+\begin{proof}
+任取 $\varepsilon>0$。由于 $c-\varepsilon/2<c$ 且 $c+\varepsilon>c$ 均为退化分布函数的连续点，有
+\[
+  P\bigl(\abs{Y_n-c}<\varepsilon\bigr)
+  \ge P\!\left(c-\frac{\varepsilon}{2}<Y_n\le c+\varepsilon\right)
+  =F_n(c+\varepsilon)-F_n\!\left(c-\frac{\varepsilon}{2}\right)
+  \xrightarrow{n\to\infty} 1-0=1,
+\]
+故 $Y_n\xrightarrow{P} c$。
+\end{proof}
+
+\subsection{辛钦弱大数定律与中心极限定理的证明}
+
+现在我们利用上述特征函数工具，一步不漏地完成第五章两核心定理的证明。
+
+\begin{proof}[辛钦弱大数定律（\cref{thm:khinchin-lln}）的证明]
+设 $X_1,X_2,\ldots$ 独立同分布，共同特征函数为 $\varphi(t)$，且 $E\abs{X_1}<+\infty$，$E(X_1)=\mu$。记 $\bar{X}_n=\frac{1}{n}\sum_{k=1}^{n}X_k$。由\cref{prop:char-func-properties}(2)、(3)，$\bar{X}_n$ 的特征函数为
+\[
+  \varphi_{\bar{X}_n}(t)=\prod_{k=1}^{n}\varphi_{X_k}\!\left(\frac{t}{n}\right)
+  =\left[\varphi\!\left(\frac{t}{n}\right)\right]^n.
+\]
+固定任意 $t\in\R$，当 $n\to\infty$ 时 $t/n\to 0$。代入一阶泰勒展开\eqref{eq:cf-taylor-1}得
+\[
+  \varphi\!\left(\frac{t}{n}\right)=1+\frac{\ii\mu t}{n}+o\!\left(\frac{1}{n}\right).
+\]
+利用复数基本极限 $\lim_{n\to\infty}\bigl(1+\frac{z_n}{n}\bigr)^n=\e^z$（当 $z_n\to z\in\C$ 时成立），立即得到
+\[
+  \lim_{n\to\infty}\varphi_{\bar{X}_n}(t)
+  =\lim_{n\to\infty}\left[1+\frac{\ii\mu t+o(1)}{n}\right]^n
+  =\e^{\ii\mu t}.
+\]
+极限函数 $\e^{\ii\mu t}$ 在 $t=0$ 处连续，且恰为退化常数 $\mu$ 的特征函数 $E(\e^{\ii t\mu})=\e^{\ii\mu t}$。由莱维连续性定理（\cref{thm:levy-continuity}），$\bar{X}_n$ 依分布收敛于常数 $\mu$；再由\cref{lem:conv-d-to-const}，立得 $\bar{X}_n\xrightarrow{P}\mu$。
+\end{proof}
+
+\begin{proof}[独立同分布中心极限定理（\cref{thm:lindeberg-levy}）的证明]
+设 $X_1,X_2,\ldots$ 独立同分布，$E(X_k)=\mu$，$D(X_k)=\sigma^2>0$。引入标准化变量 $Z_k=\dfrac{X_k-\mu}{\sigma}\,(k=1,2,\ldots)$，则 $Z_1,Z_2,\ldots$ 独立同分布，且 $E(Z_k)=0$，$E(Z_k^2)=D(Z_k)=1$。记其共同特征函数为 $\varphi_Z(t)$。
+
+标准化和可写为 $Y_n=\dfrac{\sum_{k=1}^{n}X_k-n\mu}{\sqrt{n}\,\sigma}=\dfrac{1}{\sqrt{n}}\sum_{k=1}^{n}Z_k$。由\cref{prop:char-func-properties}(2)、(3)，$Y_n$ 的特征函数为
+\[
+  \varphi_{Y_n}(t)=\left[\varphi_Z\!\left(\frac{t}{\sqrt{n}}\right)\right]^n.
+\]
+固定任意 $t\in\R$，当 $n\to\infty$ 时 $t/\sqrt{n}\to 0$。将 $E(Z_1)=0$ 与 $E(Z_1^2)=1$ 代入二阶泰勒展开\eqref{eq:cf-taylor-2}，得
+\[
+  \varphi_Z\!\left(\frac{t}{\sqrt{n}}\right)
+  =1-\frac{t^2}{2n}+o\!\left(\frac{1}{n}\right).
+\]
+再取 $n$ 次幂并令 $n\to\infty$：
+\[
+  \lim_{n\to\infty}\varphi_{Y_n}(t)
+  =\lim_{n\to\infty}\left[1+\frac{-t^2/2+o(1)}{n}\right]^n
+  =\e^{-t^2/2}.
+\]
+由\cref{prop:normal-cf}，极限函数 $\e^{-t^2/2}$ 在 $t=0$ 处连续，且恰为标准正态分布 $N(0,1)$ 的特征函数。由于标准正态分布函数 $\Phi(x)$ 在 $\R$ 上处处连续，由莱维连续性定理（\cref{thm:levy-continuity}），对一切 $x\in\R$ 均有
+\[
+  \lim_{n\to\infty}P(Y_n\le x)=\Phi(x).
+\]
+\end{proof}
+
+最后，利用完全相同的特征函数框架配合复数乘积伸缩估计，给出不同分布情形下的李雅普诺夫中心极限定理的完整证明。
+
+\begin{proof}[李雅普诺夫中心极限定理（\cref{thm:lyapunov-clt}）的证明]
+记中心化变量 $\tilde{X}_k=X_k-\mu_k$，则 $E(\tilde{X}_k)=0$，$E(\tilde{X}_k^2)=\sigma_k^2$，$B_n^2=\sum_{k=1}^{n}\sigma_k^2$，标准化和为 $Z_n=\frac{1}{B_n}\sum_{k=1}^{n}\tilde{X}_k$。先记李雅普诺夫比值
+\[
+  L_n(\delta)=\frac{1}{B_n^{2+\delta}}\sum_{k=1}^{n}E\bigl[\abs{\tilde{X}_k}^{2+\delta}\bigr]\xrightarrow{n\to\infty} 0.
+\]
+
+\textbf{第一步：归约到 $0<\delta\le 1$。} 若题设 $\delta>1$，由赫尔德不等式（对指数 $p=\delta,\,q=\frac{\delta}{\delta-1}$）及 $\abs{\tilde{X}_k}^3=\abs{\tilde{X}_k}^{(2+\delta)/\delta}\cdot\abs{\tilde{X}_k}^{2(\delta-1)/\delta}$，先对期望再用求和赫尔德不等式得
+\[
+  \sum_{k=1}^{n}E\bigl[\abs{\tilde{X}_k}^3\bigr]
+  \le\left(\sum_{k=1}^{n}E\bigl[\abs{\tilde{X}_k}^{2+\delta}\bigr]\right)^{1/\delta}
+     \left(\sum_{k=1}^{n}\sigma_k^2\right)^{(\delta-1)/\delta},
+\]
+两边除以 $B_n^3=B_n^{(2+\delta)/\delta}B_n^{2(\delta-1)/\delta}$，立得 $L_n(1)\le\bigl[L_n(\delta)\bigr]^{1/\delta}\to 0$。故以下不妨假设 $0<\delta\le 1$。
+
+\textbf{第二步：单个方差占比趋于零。} 对每个 $k$，由詹森不等式（函数 $s\mapsto s^{1+\delta/2}$ 下凸）有 $(\sigma_k^2)^{1+\delta/2}=\bigl[E(\tilde{X}_k^2)\bigr]^{1+\delta/2}\le E\bigl[\abs{\tilde{X}_k}^{2+\delta}\bigr]$，从而
+\[
+  \max_{1\le k\le n}\left(\frac{\sigma_k^2}{B_n^2}\right)^{1+\delta/2}
+  \le\frac{1}{B_n^{2+\delta}}\sum_{k=1}^{n}E\bigl[\abs{\tilde{X}_k}^{2+\delta}\bigr]=L_n(\delta)\xrightarrow{n\to\infty} 0,
+\]
+故 $\max_{1\le k\le n}\dfrac{\sigma_k^2}{B_n^2}\to 0$。
+
+\textbf{第三步：特征函数逐项逼近。} 对任意实数 $u\in\R$ 及 $0<\delta\le 1$，结合\cref{prop:char-func-properties}(4)中的余项界，容易验证
+\[
+  \left|\e^{\ii u}-1-\ii u+\frac{u^2}{2}\right|
+  \le\min\!\left\{u^2,\,\frac{\abs{u}^3}{6}\right\}
+  \le\abs{u}^{2+\delta}
+\]
+（当 $\abs{u}\le 1$ 时 $\frac{\abs{u}^3}{6}\le\abs{u}^{2+\delta}$；当 $\abs{u}>1$ 时 $u^2<\abs{u}^{2+\delta}$）。令 $u=t\tilde{X}_k/B_n$ 并取数学期望，利用 $E(\tilde{X}_k)=0$ 与 $E(\tilde{X}_k^2)=\sigma_k^2$，得
+\[
+  \left|\varphi_{\tilde{X}_k}\!\left(\frac{t}{B_n}\right)-\left(1-\frac{t^2\sigma_k^2}{2B_n^2}\right)\right|
+  \le\frac{\abs{t}^{2+\delta}}{B_n^{2+\delta}}\,E\bigl[\abs{\tilde{X}_k}^{2+\delta}\bigr].
+\]
+另一方面，对任意 $s\ge 0$ 由泰勒定理有 $\abs{\e^{-s}-(1-s)}\le\frac{s^2}{2}$。令 $s=\frac{t^2\sigma_k^2}{2B_n^2}$，由三角不等式得
+\[
+  \left|\varphi_{\tilde{X}_k}\!\left(\frac{t}{B_n}\right)-\exp\!\left(-\frac{t^2\sigma_k^2}{2B_n^2}\right)\right|
+  \le\frac{\abs{t}^{2+\delta}}{B_n^{2+\delta}}\,E\bigl[\abs{\tilde{X}_k}^{2+\delta}\bigr]
+   +\frac{t^4\sigma_k^4}{8B_n^4}.
+\]
+
+\textbf{第四步：复数乘积伸缩估计。} 对任意满足 $\abs{z_k}\le 1$ 与 $\abs{w_k}\le 1$ 的复数，由归纳法易证 $\left|\prod_{k=1}^{n}z_k-\prod_{k=1}^{n}w_k\right|\le\sum_{k=1}^{n}\abs{z_k-w_k}$。取 $z_k=\varphi_{\tilde{X}_k}(t/B_n)$ 与 $w_k=\exp\!\left(-\frac{t^2\sigma_k^2}{2B_n^2}\right)$，注意到 $\prod_{k=1}^{n}z_k=\varphi_{Z_n}(t)$ 且 $\prod_{k=1}^{n}w_k=\e^{-t^2/2}$，立得
+\[
+\begin{aligned}
+  \left|\varphi_{Z_n}(t)-\e^{-t^2/2}\right|
+  &\le\sum_{k=1}^{n}\left[\frac{\abs{t}^{2+\delta}}{B_n^{2+\delta}}\,E\bigl[\abs{\tilde{X}_k}^{2+\delta}\bigr]+\frac{t^4\sigma_k^4}{8B_n^4}\right]\\
+  &\le\abs{t}^{2+\delta}L_n(\delta)+\frac{t^4}{8}\left(\max_{1\le k\le n}\frac{\sigma_k^2}{B_n^2}\right)\sum_{k=1}^{n}\frac{\sigma_k^2}{B_n^2}\\
+  &=\abs{t}^{2+\delta}L_n(\delta)+\frac{t^4}{8}\max_{1\le k\le n}\frac{\sigma_k^2}{B_n^2}
+  \xrightarrow{n\to\infty} 0.
+\end{aligned}
+\]
+由莱维连续性定理（\cref{thm:levy-continuity}），对一切 $x\in\R$ 均有 $\lim_{n\to\infty}P(Z_n\le x)=\Phi(x)$。
+\end{proof}

@@ -1,0 +1,61 @@
+\begin{tikzpicture}
+  % Left panel: effect of sigma (mu fixed at 0)
+  \begin{axis}[
+    name=leftax,
+    width=6.4cm,
+    height=4.8cm,
+    lc plot,
+    clip=false,
+    xmin=-3.4, xmax=3.4,
+    ymin=0, ymax=0.92,
+    xtick={0},
+    xticklabels={$\mu$},
+    ytick={0.399,0.798},
+    yticklabels={$0.40$,$0.80$},
+    yticklabel style={fill=white,inner sep=1pt},
+    xlabel={$x$},
+    ylabel={$f(x)$},
+    every axis x label/.style={at={(ticklabel* cs:1.0)},anchor=west,font=\small},
+    every axis y label/.style={at={(ticklabel* cs:1.0)},anchor=south,font=\small},
+    samples=120,
+    domain=-3.2:3.2
+  ]
+    \addplot[lc curve 1,thick] {1/(sqrt(2*pi)*0.5)*exp(-x^2/(2*0.25))};
+    \addplot[lc curve 2,thick] {1/(sqrt(2*pi)*1.0)*exp(-x^2/2)};
+    \addplot[lc curve 3,thick] {1/(sqrt(2*pi)*1.5)*exp(-x^2/(2*2.25))};
+    \node[lc label,anchor=west] at (axis cs:0.55,0.74) {$\sigma=0.5$};
+    \node[lc label,anchor=west] at (axis cs:1.15,0.34) {$\sigma=1.0$};
+    \node[lc label,anchor=west] at (axis cs:1.80,0.16) {$\sigma=1.5$};
+  \end{axis}
+
+  % Right panel: 3-sigma rule on standard normal
+  \begin{axis}[
+    at={(leftax.outer east)},
+    anchor=outer west,
+    xshift=0.9cm,
+    width=6.8cm,
+    height=4.8cm,
+    lc plot,
+    clip=false,
+    xmin=-3.6, xmax=3.6,
+    ymin=0, ymax=0.48,
+    xtick={-3,-2,-1,0,1,2,3},
+    xticklabels={$-3$,$-2$,$-1$,$0$,$1$,$2$,$3$},
+    ytick=\empty,
+    xlabel={$z$},
+    ylabel={$\varphi(z)$},
+    every axis x label/.style={at={(ticklabel* cs:1.0)},anchor=west,font=\small},
+    every axis y label/.style={at={(ticklabel* cs:1.0)},anchor=south,font=\small},
+    samples=120
+  ]
+    \addplot[lc fill,domain=-1:1] {1/sqrt(2*pi)*exp(-x^2/2)} \closedcycle;
+    \addplot[lc curve 1,thick,domain=-3.4:3.4] {1/sqrt(2*pi)*exp(-x^2/2)};
+    \draw[lc aux] (axis cs:-1,0) -- (axis cs:-1,0.242);
+    \draw[lc aux] (axis cs:1,0) -- (axis cs:1,0.242);
+    \draw[lc aux] (axis cs:-2,0) -- (axis cs:-2,0.054);
+    \draw[lc aux] (axis cs:2,0) -- (axis cs:2,0.054);
+    \node[lc label] at (axis cs:0,0.15) {$68.27\%$};
+    \draw[lc aux,<->] (axis cs:-2,-0.09) -- (axis cs:2,-0.09) node[midway,below,lc label] {$95.45\%$};
+    \draw[lc aux,<->] (axis cs:-3,-0.17) -- (axis cs:3,-0.17) node[midway,below,lc label] {$99.73\%$};
+  \end{axis}
+\end{tikzpicture}

@@ -1,0 +1,27 @@
+\begin{tikzpicture}
+  \begin{axis}[
+    width=8.8cm,
+    height=4.8cm,
+    lc plot,
+    clip=false,
+    xmin=-3.6, xmax=3.6,
+    ymin=0, ymax=0.48,
+    xtick={-1.5,0,1.5},
+    xticklabels={$\mu-\varepsilon$,$\mu$,$\mu+\varepsilon$},
+    ytick=\empty,
+    xlabel={$x$},
+    ylabel={$f(x)$},
+    every axis x label/.style={at={(ticklabel* cs:1.0)},anchor=west,font=\small},
+    every axis y label/.style={at={(ticklabel* cs:1.0)},anchor=south,font=\small},
+    samples=120
+  ]
+    \addplot[lc fill,domain=-3.4:-1.5] {1/sqrt(2*pi)*exp(-x^2/2)} \closedcycle;
+    \addplot[lc fill,domain=1.5:3.4] {1/sqrt(2*pi)*exp(-x^2/2)} \closedcycle;
+    \addplot[lc curve 1,thick,domain=-3.4:3.4] {1/sqrt(2*pi)*exp(-x^2/2)};
+    \draw[lc aux] (axis cs:0,0) -- (axis cs:0,0.40);
+    \draw[lc aux] (axis cs:-1.5,0) -- (axis cs:-1.5,0.13);
+    \draw[lc aux] (axis cs:1.5,0) -- (axis cs:1.5,0.13);
+    \node[lc label,anchor=south] at (axis cs:-2.25,0.06) {左尾};
+    \node[lc label,anchor=south] at (axis cs:2.25,0.06) {右尾};
+  \end{axis}
+\end{tikzpicture}

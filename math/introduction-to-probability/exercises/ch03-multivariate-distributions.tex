@@ -1,0 +1,307 @@
+% libre-compendium
+%
+% Copyright (C) 2026 Richard Qin
+%
+% This document is dual-licensed under either:
+% - GNU Free Documentation License, Version 1.3 or any later version
+%   published by the Free Software Foundation; with no Invariant Sections,
+%   no Front-Cover Texts, and no Back-Cover Texts (see COPYING.DOC); or
+% - Creative Commons Attribution-ShareAlike 4.0 International License
+%   (see LICENSE-CC-BY-SA-4.0).
+\section{多维随机变量及其分布}
+
+\begin{exercise}
+已知二维离散型随机变量 $(X,Y)$ 的联合分布律如下表所示（其中 $a,b$ 为待定常数）：
+\[
+\begin{array}{c|ccc}
+  X\backslash Y & 0 & 1 & 2 \\ \hline
+  0 & 0.15 & a & 0.15 \\
+  1 & b & 0.20 & 0.10
+\end{array}
+\]
+(1) 若 $X$ 与 $Y$ 相互独立，求 $a,b$ 的值；(2) 在 (1) 的条件下，求 $P(X+Y\le 1)$ 及 $P(Y=2\mid X=1)$。
+\begin{answer}
+(1) $a=0.30$，$b=0.10$；(2) $P(X+Y\le 1)=0.55$，$P(Y=2\mid X=1)=0.25$。
+\end{answer}
+\begin{solution}
+(1) 由总概率为 $1$，得 $0.15+a+0.15+b+0.20+0.10=1$，即 $a+b=0.40$。边缘分布律为：
+\[
+  p_{0\cdot}=0.30+a,\quad p_{1\cdot}=0.30+b;\qquad
+  p_{\cdot 0}=0.15+b,\quad p_{\cdot 1}=a+0.20,\quad p_{\cdot 2}=0.25.
+\]
+因 $X$ 与 $Y$ 相互独立，故 $p_{02}=p_{0\cdot}p_{\cdot 2}$，即 $0.15=(0.30+a)\times 0.25$，解得 $0.30+a=0.60$，从而 $a=0.30$，$b=0.40-0.30=0.10$。容易逐格验算其余各格均满足 $p_{ij}=p_{i\cdot}p_{\cdot j}$。
+
+(2) 由表直接累加得
+\[
+  P(X+Y\le 1)=p_{00}+p_{01}+p_{10}=0.15+0.30+0.10=0.55.
+\]
+又由独立性（或条件分布定义），
+\[
+  P(Y=2\mid X=1)=\frac{p_{12}}{p_{1\cdot}}=\frac{0.10}{0.40}=0.25.
+\]
+\end{solution}
+\end{exercise}
+
+\begin{exercise}
+设二维随机变量 $(X,Y)$ 的联合概率密度为
+\[
+  f(x,y)=
+  \begin{cases}
+    c(x+2y),& 0\le x\le 1,\;0\le y\le 1,\\
+    0,& \text{其他}.
+  \end{cases}
+\]
+(1) 求常数 $c$；(2) 求边缘概率密度 $f_X(x)$ 与 $f_Y(y)$，并判断 $X$ 与 $Y$ 是否相互独立；(3) 求概率 $P(X+Y\le 1)$。
+\begin{answer}
+(1) $c=\frac{2}{3}$；(2) $f_X(x)=\frac{2}{3}(x+1)\,(0\le x\le 1)$，$f_Y(y)=\frac{1+4y}{3}\,(0\le y\le 1)$（其他处均为 $0$），不独立；(3) $\frac{1}{3}$。
+\end{answer}
+\begin{solution}
+(1) 由规范性，
+\[
+  1=\int_{0}^{1}\int_{0}^{1}c(x+2y)\dd y\dd x
+  =c\int_{0}^{1}(x+1)\dd x=\frac{3}{2}c,
+\]
+故 $c=\frac{2}{3}$。
+
+(2) 当 $0\le x\le 1$ 时，$f_X(x)=\int_{0}^{1}\frac{2}{3}(x+2y)\dd y=\frac{2}{3}(x+1)$；当 $0\le y\le 1$ 时，$f_Y(y)=\int_{0}^{1}\frac{2}{3}(x+2y)\dd x=\frac{2}{3}\bigl(\frac{1}{2}+2y\bigr)=\frac{1+4y}{3}$（其他处均为 $0$）。在 $[0,1]^2$ 内 $f_X(x)f_Y(y)=\frac{2}{9}(x+1)(1+4y)\ne\frac{2}{3}(x+2y)=f(x,y)$，故 $X$ 与 $Y$ 不独立。
+
+(3) 区域 $\set{0\le x\le 1,\,0\le y\le 1-x}$ 上的积分为
+\[
+  P(X+Y\le 1)=\int_{0}^{1}\dd x\int_{0}^{1-x}\frac{2}{3}(x+2y)\dd y
+  =\frac{2}{3}\int_{0}^{1}\bigl[x(1-x)+(1-x)^2\bigr]\dd x
+  =\frac{2}{3}\int_{0}^{1}(1-x)\dd x=\frac{1}{3}.
+\]
+\end{solution}
+\end{exercise}
+
+\begin{exercise}
+设二维随机变量 $(X,Y)$ 的联合概率密度为
+\[
+  f(x,y)=
+  \begin{cases}
+    k\e^{-y},& 0<x<y,\\
+    0,& \text{其他}.
+  \end{cases}
+\]
+(1) 求常数 $k$；(2) 求边缘概率密度 $f_X(x)$ 与 $f_Y(y)$；(3) 求条件概率密度 $f_{X\mid Y}(x\mid y)$ 与 $f_{Y\mid X}(y\mid x)$。
+\begin{answer}
+(1) $k=1$；(2) $f_X(x)=\e^{-x}\,(x>0)$，$f_Y(y)=y\e^{-y}\,(y>0)$；(3) 对 $y>0$，$f_{X\mid Y}(x\mid y)=\frac{1}{y}\,(0<x<y)$；对 $x>0$，$f_{Y\mid X}(y\mid x)=\e^{-(y-x)}\,(y>x)$。
+\end{answer}
+\begin{solution}
+(1) 由规范性，
+\[
+  1=\int_{0}^{+\infty}\dd x\int_{x}^{+\infty}k\e^{-y}\dd y
+  =k\int_{0}^{+\infty}\e^{-x}\dd x=k,
+\]
+故 $k=1$。
+
+(2) 对 $x>0$，$f_X(x)=\int_{x}^{+\infty}\e^{-y}\dd y=\e^{-x}$（即 $X\sim\operatorname{Exp}(1)$）；对 $y>0$，$f_Y(y)=\int_{0}^{y}\e^{-y}\dd x=y\e^{-y}$（即 $Y\sim\Gamma(2,1)$）；其他处均为 $0$。
+
+(3) 对 $y>0$，
+\[
+  f_{X\mid Y}(x\mid y)=\frac{f(x,y)}{f_Y(y)}=\frac{\e^{-y}}{y\e^{-y}}=\frac{1}{y},\qquad 0<x<y
+\]
+（其他处为 $0$），即给定 $Y=y$ 时 $X\sim U(0,y)$。对 $x>0$，
+\[
+  f_{Y\mid X}(y\mid x)=\frac{f(x,y)}{f_X(x)}=\frac{\e^{-y}}{\e^{-x}}=\e^{-(y-x)},\qquad y>x
+\]
+（其他处为 $0$）。
+\end{solution}
+\end{exercise}
+
+\begin{exercise}
+甲、乙两人约定在 $12:00$ 至 $13:00$ 之间在某地会面，两人到达的时刻相互独立，且各自都在该小时内服从均匀分布。先到者等待 $15$ 分钟后若另一人尚未到达即离去，求两人能够会面的概率。
+\begin{answer}
+$\frac{7}{16}=0.4375$。
+\end{answer}
+\begin{solution}
+以 $12:00$ 为零点，记甲、乙到达时刻分别为 $X,Y$（单位：分钟），则 $X,Y$ 相互独立且同服从 $U(0,60)$，即 $(X,Y)$ 在正方形 $D=[0,60]\times[0,60]$ 上均匀分布。两人能会面当且仅当 $\abs{X-Y}\le 15$。
+
+其对立事件 $\set{\abs{X-Y}>15}$ 在 $D$ 内对应左上与右下两个直角边均为 $45$ 的等腰直角三角形，总面积为 $2\times\frac{1}{2}\times 45^2=45^2$。因此
+\[
+  P(\abs{X-Y}\le 15)=1-\frac{45^2}{60^2}=1-\frac{9}{16}=\frac{7}{16}=0.4375.
+\]
+\end{solution}
+\end{exercise}
+
+\begin{exercise}
+设随机变量 $X$ 服从 $\Gamma(2,1)$ 分布（密度 $f_X(x)=x\e^{-x},\,x>0$），在给定 $X=x\,(x>0)$ 的条件下，随机变量 $Y$ 服从区间 $(0,x)$ 上的均匀分布。求：(1) $(X,Y)$ 的联合概率密度 $f(x,y)$；(2) $Y$ 的边缘概率密度 $f_Y(y)$；(3) 给定 $Y=y\,(y>0)$ 时 $X$ 的条件概率密度 $f_{X\mid Y}(x\mid y)$。
+\begin{answer}
+(1) $f(x,y)=\e^{-x}\,(0<y<x)$；(2) $f_Y(y)=\e^{-y}\,(y>0)$；(3) $f_{X\mid Y}(x\mid y)=\e^{-(x-y)}\,(x>y)$。
+\end{answer}
+\begin{solution}
+(1) 由题意，$f_X(x)=x\e^{-x}\,(x>0)$，$f_{Y\mid X}(y\mid x)=\frac{1}{x}\,(0<y<x)$。由连续型乘法公式，
+\[
+  f(x,y)=f_X(x)f_{Y\mid X}(y\mid x)=x\e^{-x}\cdot\frac{1}{x}=\e^{-x},\qquad 0<y<x,
+\]
+其他处为 $0$。
+
+(2) 对 $y>0$，$x$ 的积分范围为 $(y,+\infty)$，故
+\[
+  f_Y(y)=\int_{y}^{+\infty}\e^{-x}\dd x=\e^{-y},\qquad y>0,
+\]
+其他处为 $0$，即 $Y\sim\operatorname{Exp}(1)$。
+
+(3) 对 $y>0$，
+\[
+  f_{X\mid Y}(x\mid y)=\frac{f(x,y)}{f_Y(y)}=\frac{\e^{-x}}{\e^{-y}}=\e^{-(x-y)},\qquad x>y,
+\]
+其他处为 $0$。
+\end{solution}
+\end{exercise}
+
+\begin{exercise}
+设二维正态随机变量 $(X,Y)\sim N(1,2,4,9,1/2)$。(1) 写出 $X$ 与 $Y$ 的边缘分布，判断它们是否相互独立；(2) 求给定 $X=3$ 时 $Y$ 的条件分布；(3) 求条件概率 $P(Y>3.5\mid X=3)$。
+\begin{answer}
+(1) $X\sim N(1,4)$，$Y\sim N(2,9)$，不独立；(2) $N(3.5,\,27/4)$；(3) $1/2$。
+\end{answer}
+\begin{solution}
+(1) 由二维正态分布的边缘性质，直接读出 $X\sim N(1,4)$ 与 $Y\sim N(2,9)$。因 $\rho=\frac{1}{2}\ne 0$，故 $X$ 与 $Y$ 不独立。
+
+(2) 这里 $\mu_1=1,\,\mu_2=2,\,\sigma_1=2,\,\sigma_2=3,\,\rho=\frac{1}{2}$。给定 $X=3$ 时，$Y$ 服从正态分布，其条件均值与条件方差分别为
+\[
+  \mu_{Y\mid X=3}=\mu_2+\rho\frac{\sigma_2}{\sigma_1}(3-\mu_1)=2+\frac{1}{2}\cdot\frac{3}{2}\cdot 2=3.5,
+\]
+\[
+  \sigma_{Y\mid X=3}^2=\sigma_2^2(1-\rho^2)=9\left(1-\frac{1}{4}\right)=\frac{27}{4},
+\]
+即 $Y\mid X=3\sim N(3.5,\,27/4)$。
+
+(3) 因 $3.5$ 恰为该正态条件分布的对称中心，故 $P(Y>3.5\mid X=3)=\frac{1}{2}$。
+\end{solution}
+\end{exercise}
+
+\begin{exercise}
+设 $X\sim U(0,1)$ 与 $Y\sim U(0,2)$ 相互独立，求 $Z=X+Y$ 的概率密度 $f_Z(z)$。
+\begin{answer}
+$f_Z(z)=\begin{cases} z/2,& 0<z\le 1,\\ 1/2,& 1<z\le 2,\\ (3-z)/2,& 2<z<3,\\ 0,& \text{其他}. \end{cases}$
+\end{answer}
+\begin{solution}
+已知 $f_X(x)=1\,(0<x<1)$，$f_Y(y)=\frac{1}{2}\,(0<y<2)$。由卷积公式 $f_Z(z)=\int_{-\infty}^{+\infty}f_X(x)f_Y(z-x)\dd x$，被积函数非零要求 $0<x<1$ 且 $0<z-x<2$（即 $z-2<x<z$），故仅当 $0<z<3$ 时非零：
+\begin{itemize}
+  \item 当 $0<z\le 1$ 时，$x\in(0,z)$，得 $f_Z(z)=\int_{0}^{z}\frac{1}{2}\dd x=\dfrac{z}{2}$；
+  \item 当 $1<z\le 2$ 时，$x\in(0,1)$，得 $f_Z(z)=\int_{0}^{1}\frac{1}{2}\dd x=\dfrac{1}{2}$；
+  \item 当 $2<z<3$ 时，$x\in(z-2,1)$，得 $f_Z(z)=\int_{z-2}^{1}\frac{1}{2}\dd x=\dfrac{3-z}{2}$；
+  \item 其他处 $f_Z(z)=0$。
+\end{itemize}
+核验总积分：$\frac{1}{4}+\frac{1}{2}+\frac{1}{4}=1$。
+\end{solution}
+\end{exercise}
+
+\begin{exercise}
+设 $X\sim U(0,1)$ 与 $Y\sim\operatorname{Exp}(1)$ 相互独立，求 $Z=X+Y$ 的概率密度 $f_Z(z)$。
+\begin{answer}
+$f_Z(z)=\begin{cases} 1-\e^{-z},& 0<z\le 1,\\ (\e-1)\e^{-z},& z>1,\\ 0,& z\le 0. \end{cases}$
+\end{answer}
+\begin{solution}
+由卷积公式 $f_Z(z)=\int_{-\infty}^{+\infty}f_X(x)f_Y(z-x)\dd x$，被积函数非零要求 $0<x<1$ 且 $z-x>0$（即 $x<z$）。
+\begin{itemize}
+  \item 当 $z\le 0$ 时，$f_Z(z)=0$；
+  \item 当 $0<z\le 1$ 时，$x\in(0,z)$，得
+  \[
+    f_Z(z)=\int_{0}^{z}\e^{-(z-x)}\dd x=\e^{-z}\bigl[\e^x\bigr]_{0}^{z}=1-\e^{-z};
+  \]
+  \item 当 $z>1$ 时，$x\in(0,1)$，得
+  \[
+    f_Z(z)=\int_{0}^{1}\e^{-(z-x)}\dd x=\e^{-z}(\e-1)=(\e-1)\e^{-z}.
+  \]
+\end{itemize}
+核验连续性与归一化：在 $z=1$ 处两段值均为 $1-\e^{-1}$；总积分为 $\int_{0}^{1}(1-\e^{-z})\dd z+(\e-1)\int_{1}^{+\infty}\e^{-z}\dd z=\e^{-1}+(1-\e^{-1})=1$。
+\end{solution}
+\end{exercise}
+
+\begin{exercise}
+设 $X$ 与 $Y$ 相互独立，且同服从指数分布 $\operatorname{Exp}(\theta)\,(\theta>0)$，求商 $Z=Y/X$ 的概率密度 $f_Z(z)$。
+\begin{answer}
+$f_Z(z)=\begin{cases} \dfrac{1}{(1+z)^2},& z>0,\\ 0,& z\le 0. \end{cases}$
+\end{answer}
+\begin{solution}
+因 $X>0,\,Y>0$，当 $z\le 0$ 时 $f_Z(z)=0$。当 $z>0$ 时，由商的密度公式得
+\[
+  f_Z(z)=\int_{0}^{+\infty}x\,f_X(x)f_Y(xz)\dd x
+  =\frac{1}{\theta^2}\int_{0}^{+\infty}x\,\e^{-(1+z)x/\theta}\dd x.
+\]
+令 $t=\frac{1+z}{\theta}x$，则 $x=\frac{\theta}{1+z}t$，$\dd x=\frac{\theta}{1+z}\dd t$，代入并利用 $\int_{0}^{+\infty}t\e^{-t}\dd t=1$ 得
+\[
+  f_Z(z)=\frac{1}{\theta^2}\cdot\left(\frac{\theta}{1+z}\right)^2\int_{0}^{+\infty}t\e^{-t}\dd t
+  =\frac{1}{(1+z)^2},\qquad z>0.
+\]
+该分布与尺度参数 $\theta$ 无关。
+\end{solution}
+\end{exercise}
+
+\begin{exercise}
+某电子装置由 $3$ 个相互独立的同型号元件组成，各元件寿命均服从指数分布 $\operatorname{Exp}(\theta)\,(\theta>0)$。分别求：(1) 三个元件串联时系统寿命 $N=\min\set{X_1,X_2,X_3}$ 的概率密度；(2) 三个元件并联时系统寿命 $M=\max\set{X_1,X_2,X_3}$ 的概率密度。
+\begin{answer}
+(1) $f_N(z)=\frac{3}{\theta}\e^{-3z/\theta}\,(z>0)$；(2) $f_M(z)=\frac{3}{\theta}(1-\e^{-z/\theta})^2\e^{-z/\theta}\,(z>0)$（$z\le 0$ 时均为 $0$）。
+\end{answer}
+\begin{solution}
+每个元件寿命的分布函数在 $z>0$ 时为 $F(z)=1-\e^{-z/\theta}$，在 $z\le 0$ 时为 $0$。
+
+(1) 串联系统寿命 $N=\min\set{X_1,X_2,X_3}$ 的分布函数在 $z>0$ 时为
+\[
+  F_N(z)=1-\bigl[1-F(z)\bigr]^3=1-\e^{-3z/\theta},
+\]
+求导得 $f_N(z)=\frac{3}{\theta}\e^{-3z/\theta}\,(z>0)$，其他处为 $0$，即 $N\sim\operatorname{Exp}(\theta/3)$。
+
+(2) 并联系统寿命 $M=\max\set{X_1,X_2,X_3}$ 的分布函数在 $z>0$ 时为
+\[
+  F_M(z)=\bigl[F(z)\bigr]^3=\left(1-\e^{-z/\theta}\right)^3,
+\]
+求导得 $f_M(z)=\frac{3}{\theta}\left(1-\e^{-z/\theta}\right)^2\e^{-z/\theta}\,(z>0)$，其他处为 $0$。
+\end{solution}
+\end{exercise}
+
+\begin{exercise}
+设 $X\sim\pi(\lambda_1)$ 与 $Y\sim\pi(\lambda_2)$ 相互独立（$\lambda_1>0,\,\lambda_2>0$）。(1) 证明 $X+Y\sim\pi(\lambda_1+\lambda_2)$；(2) 对任意非负整数 $n$，求给定 $X+Y=n$ 时 $X$ 的条件分布律。
+\begin{answer}
+(1) 见解答；(2) $X\mid (X+Y=n)\sim b\!\left(n,\dfrac{\lambda_1}{\lambda_1+\lambda_2}\right)$。
+\end{answer}
+\begin{solution}
+(1) 对任意非负整数 $n$，由离散卷积公式与二项式定理，
+\[
+\begin{aligned}
+  P(X+Y=n)&=\sum_{k=0}^{n}P(X=k)\,P(Y=n-k)
+  =\sum_{k=0}^{n}\frac{\lambda_1^k\e^{-\lambda_1}}{k!}\cdot\frac{\lambda_2^{n-k}\e^{-\lambda_2}}{(n-k)!}\\
+  &=\frac{\e^{-(\lambda_1+\lambda_2)}}{n!}\sum_{k=0}^{n}\binom{n}{k}\lambda_1^k\lambda_2^{n-k}
+  =\frac{(\lambda_1+\lambda_2)^n\e^{-(\lambda_1+\lambda_2)}}{n!},
+\end{aligned}
+\]
+故 $X+Y\sim\pi(\lambda_1+\lambda_2)$。
+
+(2) 对 $k=0,1,\ldots,n$，由条件概率定义，
+\[
+\begin{aligned}
+  P(X=k\mid X+Y=n)
+  &=\frac{P(X=k,\,Y=n-k)}{P(X+Y=n)}
+  =\frac{\dfrac{\lambda_1^k\e^{-\lambda_1}}{k!}\cdot\dfrac{\lambda_2^{n-k}\e^{-\lambda_2}}{(n-k)!}}{\dfrac{(\lambda_1+\lambda_2)^n\e^{-(\lambda_1+\lambda_2)}}{n!}}\\
+  &=\binom{n}{k}\left(\frac{\lambda_1}{\lambda_1+\lambda_2}\right)^k\left(\frac{\lambda_2}{\lambda_1+\lambda_2}\right)^{n-k},
+\end{aligned}
+\]
+即给定 $X+Y=n$ 时，$X$ 服从参数为 $n$ 与 $p=\frac{\lambda_1}{\lambda_1+\lambda_2}$ 的二项分布。
+\end{solution}
+\end{exercise}
+
+\begin{exercise}
+设 $X$ 与 $Y$ 相互独立，且同服从标准正态分布 $N(0,1)$。证明商 $Z=Y/X$ 服从标准柯西（Cauchy）分布，即其概率密度为
+\[
+  f_Z(z)=\frac{1}{\pi(1+z^2)},\qquad -\infty<z<+\infty.
+\]
+\begin{answer}
+见解答。
+\end{answer}
+\begin{solution}
+因 $X,Y$ 相互独立且 $f_X(x)=f_Y(x)=\frac{1}{\sqrt{2\pi}}\e^{-x^2/2}$，由商的密度公式（注意 $X$ 取正负值均有可能，须保留绝对值 $\abs{x}$），对任意 $z\in\R$ 有
+\[
+\begin{aligned}
+  f_Z(z)&=\int_{-\infty}^{+\infty}\abs{x}\,f_X(x)f_Y(xz)\dd x
+  =\frac{1}{2\pi}\int_{-\infty}^{+\infty}\abs{x}\exp\!\left[-\frac{1+z^2}{2}x^2\right]\dd x\\
+  &=\frac{1}{\pi}\int_{0}^{+\infty}x\exp\!\left[-\frac{1+z^2}{2}x^2\right]\dd x.
+\end{aligned}
+\]
+令 $t=\frac{1+z^2}{2}x^2$，则 $\dd t=(1+z^2)x\dd x$，故
+\[
+  f_Z(z)=\frac{1}{\pi(1+z^2)}\int_{0}^{+\infty}\e^{-t}\dd t=\frac{1}{\pi(1+z^2)},\qquad -\infty<z<+\infty.
+\]
+\end{solution}
+\end{exercise}

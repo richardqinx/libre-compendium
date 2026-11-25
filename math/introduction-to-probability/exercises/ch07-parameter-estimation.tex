@@ -1,0 +1,223 @@
+% libre-compendium
+%
+% Copyright (C) 2026 Richard Qin
+%
+% This document is dual-licensed under either:
+% - GNU Free Documentation License, Version 1.3 or any later version
+%   published by the Free Software Foundation; with no Invariant Sections,
+%   no Front-Cover Texts, and no Back-Cover Texts (see COPYING.DOC); or
+% - Creative Commons Attribution-ShareAlike 4.0 International License
+%   (see LICENSE-CC-BY-SA-4.0).
+\section{参数估计}
+
+\begin{exercise}
+随机抽取 $8$ 只活塞环，测得其直径（单位：$\mathrm{mm}$）为：
+\[
+  74.001,\;74.005,\;74.003,\;74.001,\;74.000,\;73.998,\;74.006,\;74.002.
+\]
+求总体均值 $\mu$ 与方差 $\sigma^2$ 的矩估计值，并求样本方差 $s^2$。
+\begin{answer}
+$\hat{\mu}=74.002\text{ mm}$，$\hat{\sigma}^2=6.0\times 10^{-6}\text{ mm}^2$，$s^2=\frac{48}{7}\times 10^{-6}\approx 6.857\times 10^{-6}\text{ mm}^2$。
+\end{answer}
+\begin{solution}
+作平移 $y_i=1000(x_i-74.000)$，得 $1,5,3,1,0,-2,6,2$，其和为 $16$，故 $\bar{y}=2$，即 $\bar{x}=74.002\text{ mm}$，此即 $\mu$ 的矩估计值。
+
+再算离差平方和 $\sum_{i=1}^{8}(y_i-2)^2=(-1)^2+3^2+1^2+(-1)^2+(-2)^2+(-4)^2+4^2+0^2=48$，故
+\[
+  \hat{\sigma}^2=\frac{48}{8}\times 10^{-6}=6.0\times 10^{-6},\qquad
+  s^2=\frac{48}{7}\times 10^{-6}\approx 6.857\times 10^{-6}.
+\]
+\end{solution}
+\end{exercise}
+
+\begin{exercise}
+设总体 $X$ 的概率密度为 $f(x;\theta)=(\theta+1)x^\theta\,(0<x<1)$，其他处为 $0$，其中 $\theta>-1$ 未知。设 $X_1,\ldots,X_n$ 为简单随机样本，求 $\theta$ 的：(1) 矩估计量；(2) 最大似然估计量。
+\begin{answer}
+(1) $\hat{\theta}_{\mathrm{M}}=\dfrac{2\bar{X}-1}{1-\bar{X}}$；(2) $\hat{\theta}_{\mathrm{MLE}}=-\dfrac{n}{\sum_{i=1}^{n}\ln X_i}-1$。
+\end{answer}
+\begin{solution}
+(1) 计算一阶原点矩：$E(X)=\int_{0}^{1}(\theta+1)x^{\theta+1}\dd x=\frac{\theta+1}{\theta+2}$。令 $\frac{\theta+1}{\theta+2}=\bar{X}$，解得矩估计量 $\hat{\theta}_{\mathrm{M}}=\dfrac{2\bar{X}-1}{1-\bar{X}}$。
+
+(2) 似然函数与对数似然函数为
+\[
+  L(\theta)=(\theta+1)^n\prod_{i=1}^{n}x_i^\theta,\qquad
+  \ln L(\theta)=n\ln(\theta+1)+\theta\sum_{i=1}^{n}\ln x_i.
+\]
+令 $\frac{\dd\ln L}{\dd\theta}=\frac{n}{\theta+1}+\sum_{i=1}^{n}\ln x_i=0$，解得最大似然估计量为 $\hat{\theta}_{\mathrm{MLE}}=-\dfrac{n}{\sum_{i=1}^{n}\ln X_i}-1$。
+\end{solution}
+\end{exercise}
+
+\begin{exercise}
+设总体 $X$ 服从参数为 $\lambda>0$ 的泊松分布 $\pi(\lambda)$，$X_1,\ldots,X_n$ 为样本。(1) 求 $\lambda$ 的矩估计量与最大似然估计量；(2) 利用不变性求概率 $p=P(X=0)=\e^{-\lambda}$ 的最大似然估计量。
+\begin{answer}
+(1) 两者均为 $\hat{\lambda}=\bar{X}$；(2) $\hat{p}=\e^{-\bar{X}}$。
+\end{answer}
+\begin{solution}
+(1) 因 $E(X)=\lambda$，故矩估计量为 $\hat{\lambda}=\bar{X}$。似然函数为 $L(\lambda)=\prod_{i=1}^{n}\frac{\lambda^{x_i}\e^{-\lambda}}{x_i!}=\frac{\lambda^{\sum x_i}\e^{-n\lambda}}{\prod x_i!}$，取对数求导令为零：
+\[
+  \frac{\dd\ln L}{\dd\lambda}=\frac{\sum_{i=1}^{n}x_i}{\lambda}-n=0 \implies \hat{\lambda}=\bar{X}.
+\]
+
+(2) 函数 $u(\lambda)=\e^{-\lambda}\,(\lambda>0)$ 严格递减有单值反函数，由最大似然估计的不变性，立即得 $\hat{p}=\e^{-\bar{X}}$。
+\end{solution}
+\end{exercise}
+
+\begin{exercise}
+设总体 $X$ 服从双参数移位指数分布，其概率密度为
+\[
+  f(x;c,\theta)=
+  \begin{cases}
+    \dfrac{1}{\theta}\e^{-(x-c)/\theta},& x>c,\\
+    0,& x\le c
+  \end{cases}
+  \qquad(c\in\R,\;\theta>0\text{ 未知}).
+\]
+设样本观察值为 $x_1,\ldots,x_n$，求 $c$ 与 $\theta$ 的最大似然估计值。
+\begin{answer}
+$\hat{c}=x_{(1)}=\min_i x_i$，$\hat{\theta}=\bar{x}-x_{(1)}$。
+\end{answer}
+\begin{solution}
+当 $c\le x_{(1)}=\min_i x_i$ 时，似然函数为
+\[
+  L(c,\theta)=\theta^{-n}\exp\!\left[-\frac{1}{\theta}\sum_{i=1}^{n}(x_i-c)\right],
+\]
+当 $c>x_{(1)}$ 时 $L(c,\theta)=0$。对任意固定的 $\theta>0$，$\sum_{i=1}^{n}(x_i-c)$ 随 $c$ 增大而严格减小，故 $L(c,\theta)$ 关于 $c$ 严格递增，必在右边界 $\hat{c}=x_{(1)}$ 处取极大值。将 $c=x_{(1)}$ 代入对数似然函数并对 $\theta$ 求导令为零：
+\[
+  \frac{\partial\ln L}{\partial\theta}=-\frac{n}{\theta}+\frac{1}{\theta^2}\sum_{i=1}^{n}\bigl(x_i-x_{(1)}\bigr)=0
+  \implies \hat{\theta}=\frac{1}{n}\sum_{i=1}^{n}\bigl(x_i-x_{(1)}\bigr)=\bar{x}-x_{(1)}.
+\]
+\end{solution}
+\end{exercise}
+
+\begin{exercise}
+设 $X_1,X_2,X_3,X_4$ 是来自指数分布总体 $\operatorname{Exp}(\theta)\,(\theta>0)$ 的样本，考察三个估计量：
+\[
+  T_1=\frac{1}{2}(X_1+X_2),\qquad
+  T_2=\frac{1}{10}(X_1+2X_2+3X_3+4X_4),\qquad
+  T_3=\frac{1}{4}(X_1+X_2+X_3+X_4).
+\]
+(1) 验证三个估计量都是 $\theta$ 的无偏估计量；(2) 比较三者的有效性。
+\begin{answer}
+(1) 均无偏；(2) $D(T_3)=\frac{1}{4}\theta^2<D(T_2)=\frac{3}{10}\theta^2<D(T_1)=\frac{1}{2}\theta^2$，故 $T_3$ 最有效。
+\end{answer}
+\begin{solution}
+(1) 由 $E(X_i)=\theta$，线性组合系数之和分别为 $\frac{1}{2}+\frac{1}{2}=1$、$\frac{1+2+3+4}{10}=1$、$\frac{4}{4}=1$，故 $E(T_1)=E(T_2)=E(T_3)=\theta$，三者均为无偏估计量。
+
+(2) 由独立性与 $D(X_i)=\theta^2$，分别算得
+\[
+  D(T_1)=\frac{1+1}{4}\theta^2=\frac{1}{2}\theta^2,\quad
+  D(T_2)=\frac{1+4+9+16}{100}\theta^2=\frac{3}{10}\theta^2,\quad
+  D(T_3)=\frac{4}{16}\theta^2=\frac{1}{4}\theta^2.
+\]
+因 $D(T_3)<D(T_2)<D(T_1)$，故 $T_3=\bar{X}$ 最有效。
+\end{solution}
+\end{exercise}
+
+\begin{exercise}
+设 $X_1,\ldots,X_n$ 来自均匀分布 $U(0,\theta)\,(\theta>0)$。(1) 证明最大似然估计 $\hat{\theta}=\max\set{X_1,\ldots,X_n}$ 不是 $\theta$ 的无偏估计量，并构造一个修正后的无偏估计量 $\tilde{\theta}$；(2) 证明 $\hat{\theta}$ 与 $\tilde{\theta}$ 都是 $\theta$ 的相合估计量。
+\begin{answer}
+(1) $E(\hat{\theta})=\frac{n}{n+1}\theta\ne\theta$，修正无偏估计量为 $\tilde{\theta}=\frac{n+1}{n}\max\set{X_1,\ldots,X_n}$；(2) 证明见解答。
+\end{answer}
+\begin{solution}
+(1) 由极值分布，当 $0<x<\theta$ 时 $f_{\hat{\theta}}(x)=\frac{n x^{n-1}}{\theta^n}$，积分得 $E(\hat{\theta})=\frac{n}{n+1}\theta\ne\theta$，故 $\hat{\theta}$ 有偏。令 $\tilde{\theta}=\frac{n+1}{n}\hat{\theta}$，则 $E(\tilde{\theta})=\theta$，为无偏估计量。
+
+(2) 对任意 $\varepsilon\in(0,\theta)$，直接由分布函数得
+\[
+  P\bigl(\abs{\hat{\theta}-\theta}\ge\varepsilon\bigr)
+  =P(\hat{\theta}\le\theta-\varepsilon)
+  =\left(\frac{\theta-\varepsilon}{\theta}\right)^n
+  =\left(1-\frac{\varepsilon}{\theta}\right)^n\xrightarrow{n\to\infty} 0,
+\]
+故 $\hat{\theta}\xrightarrow{P}\theta$；又因 $\frac{n+1}{n}\to 1$，故 $\tilde{\theta}\xrightarrow{P}\theta$，两者皆为相合估计量。
+\end{solution}
+\end{exercise}
+
+\begin{exercise}
+设有 $k$ 台仪器独立测量同一未知物理量 $\theta$，第 $i$ 台仪器的测量值 $X_i$ 满足 $E(X_i)=\theta,\,D(X_i)=\sigma_i^2>0\,(i=1,\ldots,k)$。在所有线性无偏估计量 $\hat{\theta}=\sum_{i=1}^{k}w_i X_i$（满足 $\sum_{i=1}^{k}w_i=1$）中，求使方差 $D(\hat{\theta})$ 最小的权重 $w_1,\ldots,w_k$。
+\begin{answer}
+$w_i=\dfrac{1/\sigma_i^2}{\sum_{j=1}^{k}(1/\sigma_j^2)}\,(i=1,\ldots,k)$（按方差倒数加权）。
+\end{answer}
+\begin{solution}
+问题归结为在约束 $\sum_{i=1}^{k}w_i=1$ 下求 $D(\hat{\theta})=\sum_{i=1}^{k}w_i^2\sigma_i^2$ 的最小值。由柯西—施瓦茨不等式，
+\[
+  1=\left(\sum_{i=1}^{k}w_i\right)^2
+  =\left(\sum_{i=1}^{k}(w_i\sigma_i)\cdot\frac{1}{\sigma_i}\right)^2
+  \le\left(\sum_{i=1}^{k}w_i^2\sigma_i^2\right)\left(\sum_{i=1}^{k}\frac{1}{\sigma_i^2}\right).
+\]
+等号成立当且仅当 $w_i\sigma_i$ 与 $1/\sigma_i$ 成正比，即 $w_i=\frac{c}{\sigma_i^2}$。由 $\sum_{i=1}^{k}w_i=1$ 确定常数 $c=\left(\sum_{j=1}^{k}\frac{1}{\sigma_j^2}\right)^{-1}$，得最优权重 $w_i=\dfrac{1/\sigma_i^2}{\sum_{j=1}^{k}(1/\sigma_j^2)}$。精度越高（方差越小）的仪器所占权重越大。
+\end{solution}
+\end{exercise}
+
+\begin{exercise}
+测得某清漆 $n=9$ 个样品的干燥时间（单位：$\mathrm{h}$）的样本均值为 $\bar{x}=6.0\text{ h}$，样本标准差为 $s=0.5831\text{ h}$。设干燥时间服从正态分布 $N(\mu,\sigma^2)$，分别求 $\mu$ 的置信水平为 $0.95$ 的双侧置信区间：(1) 已知 $\sigma=0.6\text{ h}$（$z_{0.025}=1.96$）；(2) $\sigma$ 未知（$t_{0.025}(8)=2.3060$）。
+\begin{answer}
+(1) $(5.608,\,6.392)\text{ h}$；(2) $(5.552,\,6.448)\text{ h}$。
+\end{answer}
+\begin{solution}
+(1) $\sigma=0.6$ 已知，用 $z$ 区间：
+\[
+  \left(6.0\pm\frac{0.6}{\sqrt{9}}\times 1.96\right)=(6.0\pm 0.392)=(5.608,\,6.392)\text{（h）}.
+\]
+
+(2) $\sigma$ 未知，用 $t$ 区间：
+\[
+  \left(6.0\pm\frac{0.5831}{\sqrt{9}}\times 2.3060\right)\approx(6.0\pm 0.448)=(5.552,\,6.448)\text{（h）}.
+\]
+\end{solution}
+\end{exercise}
+
+\begin{exercise}
+随机抽测某型号炮弹 $n=9$ 发，测得炮口速度的样本标准差 $s=11\text{ m/s}$。设炮口速度服从正态分布，求总体标准差 $\sigma$ 的置信水平为 $0.95$ 的双侧置信区间（已知 $\chi_{0.025}^2(8)=17.535,\,\chi_{0.975}^2(8)=2.180$）。
+\begin{answer}
+$(7.43,\,21.07)\text{ m/s}$。
+\end{answer}
+\begin{solution}
+由标准差 $\chi^2$ 置信区间公式（$n-1=8$），
+\[
+  \left(\frac{\sqrt{8}\times 11}{\sqrt{17.535}},\;\frac{\sqrt{8}\times 11}{\sqrt{2.180}}\right)
+  \approx(7.43,\,21.07)\text{（m/s）}.
+\]
+\end{solution}
+\end{exercise}
+
+\begin{exercise}
+两位化验员 A、B 独立对某种聚合物的含氯量各作 $10$ 次测定，测得样本方差分别为 $s_1^2=0.5419$ 与 $s_2^2=0.6065$。设总体均为正态且两样本独立，求方差比 $\sigma_1^2/\sigma_2^2$ 的置信水平为 $0.95$ 的双侧置信区间（已知 $F_{0.025}(9,9)=4.03$）。
+\begin{answer}
+$(0.222,\,3.601)$。
+\end{answer}
+\begin{solution}
+这里 $n_1-1=n_2-1=9$，$s_1^2/s_2^2=0.5419/0.6065\approx 0.8935$。代入方差比 $F$ 区间公式得
+\[
+  \left(\frac{0.8935}{4.03},\;0.8935\times 4.03\right)\approx(0.222,\,3.601).
+\]
+\end{solution}
+\end{exercise}
+
+\begin{exercise}
+从一批货物中随机抽检 $n=100$ 件，发现次品 $16$ 件。求这批货物次品率 $p$ 的置信水平为 $0.95$ 的近似置信区间（$z_{0.025}=1.96$）。
+\begin{answer}
+$(0.101,\,0.244)$（按简化的 Wald 公式约为 $(0.088,\,0.232)$）。
+\end{answer}
+\begin{solution}
+这里 $n=100,\,\bar{x}=0.16,\,z_{0.025}^2=3.8416$。代入二次不等式系数：$a=103.8416$，$b=-(32+3.8416)=-35.8416$，$c=100\times 0.16^2=2.56$。求根得
+\[
+  p_{1,2}=\frac{35.8416\mp\sqrt{35.8416^2-4\times 103.8416\times 2.56}}{2\times 103.8416}
+  \approx 0.1726\mp 0.0719,
+\]
+故近似置信区间为 $(0.101,\,0.244)$。
+\end{solution}
+\end{exercise}
+
+\begin{exercise}
+随机测试 $16$ 只汽车轮胎直至磨坏，测得行驶里程（单位：$\mathrm{km}$）的样本均值为 $\bar{x}=41\,116.875\text{ km}$，样本标准差为 $s=1358.2\text{ km}$。设里程服从正态分布，求平均行驶里程 $\mu$ 的置信水平为 $0.95$ 的单侧置信下限（$t_{0.05}(15)=1.7531$）。
+\begin{answer}
+$40\,521.6\text{ km}$。
+\end{answer}
+\begin{solution}
+由正态均值单侧置信下限公式（$n=16,\,n-1=15$），
+\[
+  \hat{\mu}_L=\bar{x}-\frac{s}{\sqrt{16}}t_{0.05}(15)
+  =41\,116.875-\frac{1358.2}{4}\times 1.7531\approx 40\,521.6\text{（km）}.
+\]
+\end{solution}
+\end{exercise}

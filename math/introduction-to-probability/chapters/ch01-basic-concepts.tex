@@ -1,0 +1,952 @@
+% libre-compendium
+%
+% Copyright (C) 2026 Richard Qin
+%
+% This document is dual-licensed under either:
+% - GNU Free Documentation License, Version 1.3 or any later version
+%   published by the Free Software Foundation; with no Invariant Sections,
+%   no Front-Cover Texts, and no Back-Cover Texts (see COPYING.DOC); or
+% - Creative Commons Attribution-ShareAlike 4.0 International License
+%   (see LICENSE-CC-BY-SA-4.0).
+\chapter{概率论的基本概念}
+\label{ch:basic-concepts}
+
+自然界与工程实践中的现象大致可分为两类：一类在给定条件下结果唯一确定，称为确定性现象；另一类在单次试验中呈现出不确定性，但在大量重复试验中其结果的比例又呈现出稳定的统计规律，称为随机现象。概率论正是研究随机现象统计规律性的数学学科。本章从随机试验与样本空间出发，建立概率的公理化体系，并依次讨论等可能概型、条件概率、全概率与贝叶斯公式以及事件的独立性。
+
+\section{随机试验}
+\label{sec:random-experiment}
+
+在概率论中，“试验”泛指各种科学实验以及对事物某一特征的观察与测量。
+
+\begin{definition}[随机试验]
+\label{def:random-experiment}
+具有以下三个特征的试验称为\textbf{随机试验}，通常记为 $E$：
+\begin{enumerate}
+  \item 可以在相同条件下重复进行；
+  \item 每次试验的可能结果不止一个，且能事先明确试验的全部可能结果；
+  \item 进行一次试验之前无法确定哪一个结果会出现。
+\end{enumerate}
+\end{definition}
+
+随机性与统计规律性并不矛盾：单次试验结果不可预知，但大量重复试验下各类结果出现的频度趋于稳定。同一物理过程若观察的指标不同，便对应不同的随机试验。
+
+\begin{example}[title={若干典型随机试验}]
+\label{eg:seven-sample-spaces}
+考察以下七个随机试验：
+\begin{itemize}
+  \item $E_1$：抛一枚硬币，观察正面 $H$、反面 $T$ 出现的情况；
+  \item $E_2$：将一枚硬币抛掷三次，按次序记录每次出现的正反面；
+  \item $E_3$：将一枚硬币抛掷三次，只记录出现正面的总次数；
+  \item $E_4$：抛一颗骰子，观察出现的点数；
+  \item $E_5$：记录某城市急救电话台在一昼夜内接到的呼唤次数；
+  \item $E_6$：从一批灯泡中任取一只，测试其使用寿命（单位：$\mathrm{h}$）；
+  \item $E_7$：记录某地一昼夜的最低温度 $x$ 与最高温度 $y$（单位：$^\circ\mathrm{C}$，设该地温度介于 $T_0$ 与 $T_1$ 之间）。
+\end{itemize}
+$E_2$ 与 $E_3$ 物理操作完全相同，但 $E_2$ 保留了投掷顺序（共有 $8$ 种有序结果），而 $E_3$ 只记录计数（仅有 $0,1,2,3$ 四种结果）。在后续建模中，结果描述的粗细必须与所求问题及等可能假设保持一致。
+\end{example}
+
+\section{样本空间与随机事件}
+\label{sec:sample-events}
+
+\subsection{样本空间与事件}
+
+\begin{definition}[样本空间、样本点与随机事件]
+\label{def:sample-space-event}
+随机试验 $E$ 的全部可能结果组成的集合称为 $E$ 的\textbf{样本空间}，记为 $S$；样本空间的元素 $e$ 称为\textbf{样本点}。样本空间 $S$ 的子集称为 $E$ 的\textbf{随机事件}，简称\textbf{事件}。在一次试验中，当且仅当子集 $A$ 中的某个样本点出现时，称事件 $A$ 发生。
+\end{definition}
+
+由单个样本点组成的单点集 $\set{e}$ 称为\textbf{基本事件}。样本空间 $S$ 自身包含全部样本点，每次试验必然发生，称为\textbf{必然事件}；空集 $\varnothing$ 不含任何样本点，每次试验均不发生，称为\textbf{不可能事件}。
+
+对照\cref{eg:seven-sample-spaces}中的七个试验，相应的样本空间依次为
+\[
+\begin{aligned}
+  S_1 &= \set{H,T},\\
+  S_2 &= \set{HHH,HHT,HTH,THH,HTT,THT,TTH,TTT},\\
+  S_3 &= \set{0,1,2,3},\\
+  S_4 &= \set{1,2,3,4,5,6},\\
+  S_5 &= \set{0,1,2,3,\ldots},\\
+  S_6 &= \set{t\mid t\ge 0},\\
+  S_7 &= \set{(x,y)\mid T_0\le x\le y\le T_1}.
+\end{aligned}
+\]
+其中 $S_1$ 至 $S_4$ 为有限集，$S_5$ 为可列无限集，$S_6$ 与 $S_7$ 为不可列无限集。
+
+\begin{remark}[不可列样本空间与事件域]
+当 $S$ 为有限集或可列无限集时，其任意子集都可作为事件赋予概率；当 $S$ 为不可列集（如实轴或平面区域）时，严格的公理化理论会将事件限定在某个对取补和可列并封闭的子集族（即 $\sigma$-代数 $\mathcal{F}$，常见为由区间生成的 Borel 集）内，从而构成概率空间 $(S,\mathcal{F},P)$。这一测度论背景将在文末附录中专门展开；正文涉及的区间、平面区域及通常集合运算均属于合法事件。
+\end{remark}
+
+\subsection{事件间的关系与运算}
+
+事件本质上是样本空间的子集，因此事件间的关系与运算完全对应于集合论中的关系与运算，只是在概率论中赋予了“事件发生”的语言含义。
+
+\begin{definition}[事件的关系与运算]
+\label{def:event-operations}
+设 $A,B,A_k\,(k=1,2,\ldots)$ 是样本空间 $S$ 的子集：
+\begin{enumerate}
+  \item \textbf{包含与相等}：若 $A\subset B$，称事件 $B$ 包含事件 $A$，表示 $A$ 发生必导致 $B$ 发生。若 $A\subset B$ 且 $B\subset A$，则称 $A$ 与 $B$ 相等，记为 $A=B$。
+  \item \textbf{和事件（并）}：$A\cup B=\set{e\mid e\in A\text{ 或 }e\in B}$，当且仅当 $A,B$ 中至少有一个发生时发生。推广地，$\bigcup_{k=1}^{n}A_k$ 与 $\bigcup_{k=1}^{\infty}A_k$ 分别表示有限个与可列个事件的和事件。
+  \item \textbf{积事件（交）}：$A\cap B=\set{e\mid e\in A\text{ 且 }e\in B}$（常简记为 $AB$），当且仅当 $A,B$ 同时发生时发生。推广地，$\bigcap_{k=1}^{n}A_k$ 与 $\bigcap_{k=1}^{\infty}A_k$ 分别表示有限个与可列个事件的积事件。
+  \item \textbf{差事件}：$A-B=\set{e\mid e\in A\text{ 且 }e\notin B}=A\overline{B}$，当且仅当 $A$ 发生而 $B$ 不发生时发生。
+  \item \textbf{互不相容（互斥）}：若 $AB=\varnothing$，称 $A$ 与 $B$ 互不相容（或互斥），表示 $A$ 与 $B$ 无法同时发生。任意两个不同的基本事件总是互不相容的。
+  \item \textbf{对立事件（逆事件）}：若 $A\cup B=S$ 且 $AB=\varnothing$，称 $A$ 与 $B$ 互为对立事件（或逆事件），记 $A$ 的对立事件为 $\overline{A}=S-A$。每次试验中 $A$ 与 $\overline{A}$ 必发生且仅发生其一。
+\end{enumerate}
+\end{definition}
+
+\lcfigure[caption={六种基本事件关系与集合运算的维恩图表示。阴影区域对应相应事件；图 (5) 所示互斥事件允许两者同时不发生，图 (6) 所示对立事件则穷尽整个样本空间。},label=fig:event-venn]{ch01-event-venn}
+
+\begin{pitfall}[互斥与对立的区别]
+互斥只要求两事件没有公共样本点（$AB=\varnothing$），它们可以同时不发生；对立则在此基础上额外要求二者并集为整个样本空间（$A\cup B=S$）。对立一定互斥，互斥未必对立。此外，互斥是两个事件以上的成对关系，而一个事件的对立事件是唯一的。
+\end{pitfall}
+
+\begin{proposition}[事件运算律]
+\label{prop:event-laws}
+设 $A,B,C$ 及 $A_1,A_2,\ldots$ 为同一样本空间中的事件，则满足：
+\begin{enumerate}
+  \item \textbf{交换律}：$A\cup B=B\cup A$，$AB=BA$；
+  \item \textbf{结合律}：$A\cup(B\cup C)=(A\cup B)\cup C$，$A(BC)=(AB)C$；
+  \item \textbf{分配律}：$A\cup(BC)=(A\cup B)(A\cup C)$，$A(B\cup C)=AB\cup AC$；
+  \item \textbf{德摩根（De Morgan）律}：
+  \begin{equation}
+    \overline{A\cup B}=\overline{A}\cap\overline{B},\qquad
+    \overline{A\cap B}=\overline{A}\cup\overline{B},
+    \label{eq:de-morgan}
+  \end{equation}
+  且对任意可列事件族同样成立
+  \[
+    \overline{\bigcup_{k=1}^{\infty}A_k}=\bigcap_{k=1}^{\infty}\overline{A_k},\qquad
+    \overline{\bigcap_{k=1}^{\infty}A_k}=\bigcup_{k=1}^{\infty}\overline{A_k}.
+  \]
+\end{enumerate}
+\end{proposition}
+\begin{proof}
+交换律、结合律与分配律直接由逻辑联结词“或”与“且”的等价关系得到。对可列德摩根律第一式，任取样本点 $e\in S$，有
+\[
+  e\in\overline{\bigcup_{k=1}^{\infty}A_k}
+  \iff e\notin\bigcup_{k=1}^{\infty}A_k
+  \iff \forall k\ge 1,\;e\notin A_k
+  \iff e\in\bigcap_{k=1}^{\infty}\overline{A_k}.
+\]
+对第二式，同理有
+\[
+  e\in\overline{\bigcap_{k=1}^{\infty}A_k}
+  \iff \exists k\ge 1,\;e\notin A_k
+  \iff e\in\bigcup_{k=1}^{\infty}\overline{A_k}.
+\]
+取 $A_1=A$、$A_2=B$ 且其余 $A_k=\varnothing$（或 $S$）即化为\eqref{eq:de-morgan}。
+\end{proof}
+
+\begin{example}[title={将自然语言表述转化为事件运算}]
+\label{eg:event-language}
+设 $A,B,C$ 为三个事件，用 $A,B,C$ 的运算表示下列事件：(1) 仅 $A$ 发生；(2) 至少有一个发生；(3) 恰好有一个发生；(4) 至多有一个发生；(5) 至少有两个发生。
+\begin{solution}
+逐项按事件发生的充分必要条件拆解：
+\begin{enumerate}
+  \item “仅 $A$ 发生”要求 $A$ 发生且 $B,C$ 均不发生，即 $A\overline{B}\overline{C}$。
+  \item “至少有一个发生”即和事件 $A\cup B\cup C$。
+  \item “恰好有一个发生”按哪一个发生分为三种互斥情形：
+  \[
+    A\overline{B}\overline{C}\cup\overline{A}B\overline{C}\cup\overline{A}\overline{B}C.
+  \]
+  \item “至多有一个发生”等价于“零个发生或恰好一个发生”，也可写成“任意两个不同时发生”：
+  \[
+    \overline{A}\overline{B}\overline{C}\cup A\overline{B}\overline{C}\cup\overline{A}B\overline{C}\cup\overline{A}\overline{B}C
+    =\overline{AB\cup AC\cup BC}
+    =\overline{A}\overline{B}\cup\overline{A}\overline{C}\cup\overline{B}\overline{C}.
+  \]
+  \item “至少有两个发生”即 $AB\cup AC\cup BC$；若需拆成互斥并，则写为 $AB\overline{C}\cup A\overline{B}C\cup\overline{A}BC\cup ABC$。
+\end{enumerate}
+\end{solution}
+\end{example}
+
+\begin{example}[title={开关电路通路的事件表达}]
+\label{eg:switch-event-algebra}
+设某电路中开关 $K_1$ 与由 $K_2,K_3$ 并联组成的支路串联连接。记事件 $A_i=\set{\text{开关 }K_i\text{ 闭合}}\,(i=1,2,3)$，分别用 $A_1,A_2,A_3$ 的运算表示事件 $E=\set{\text{电路接通}}$ 及其对立事件 $\overline{E}=\set{\text{电路断开}}$。
+\begin{solution}
+并联支路接通当且仅当 $K_2$ 或 $K_3$ 至少闭合一个，即 $A_2\cup A_3$；再与 $K_1$ 串联，故电路接通事件为
+\[
+  E=A_1(A_2\cup A_3)=A_1 A_2\cup A_1 A_3.
+\]
+利用德摩根律求对立事件，电路断开事件为
+\[
+  \overline{E}=\overline{A_1(A_2\cup A_3)}
+  =\overline{A}_1\cup\overline{A_2\cup A_3}
+  =\overline{A}_1\cup\overline{A}_2\overline{A}_3,
+\]
+即“$K_1$ 断开，或 $K_2$ 与 $K_3$ 同时断开”。
+\end{solution}
+\end{example}
+
+\section{频率与概率}
+\label{sec:probability-axioms}
+
+\subsection{频率及其稳定性}
+
+为度量事件在一次试验中发生的可能性大小，先考察重复试验中事件出现的频繁程度。
+
+\begin{definition}[频数与频率]
+\label{def:frequency}
+在相同条件下进行 $n$ 次试验，若事件 $A$ 发生了 $n_A$ 次，则称 $n_A$ 为事件 $A$ 发生的\textbf{频数}，比值
+\[
+  f_n(A)=\frac{n_A}{n}
+\]
+称为事件 $A$ 发生的\textbf{频率}。
+\end{definition}
+
+\begin{proposition}[频率的基本性质]
+\label{prop:frequency-properties}
+在同一组 $n$ 次试验记录下，频率满足：
+\begin{enumerate}
+  \item 非负性与有界性：$0\le f_n(A)\le 1$；
+  \item 规范性：$f_n(S)=1$，$f_n(\varnothing)=0$；
+  \item 有限可加性：若 $A_1,A_2,\ldots,A_k$ 两两互不相容，则
+  \[
+    f_n(A_1\cup A_2\cup\cdots\cup A_k)=f_n(A_1)+f_n(A_2)+\cdots+f_n(A_k).
+  \]
+\end{enumerate}
+\end{proposition}
+\begin{proof}
+每次试验中事件 $A$ 至多发生一次，故 $0\le n_A\le n$，两端同除以 $n$ 得 $0\le f_n(A)\le 1$。必然事件每次皆发生，空事件从不发生，于是 $n_S=n$、$n_\varnothing=0$。若 $A_1,\ldots,A_k$ 两两互斥，则单次试验中它们至多有一个发生，故并事件的总频数等于各事件频数之和，即 $n_{A_1\cup\cdots\cup A_k}=\sum_{j=1}^k n_{A_j}$，除以 $n$ 即得有限可加性。
+\end{proof}
+
+大量重复试验表明，当试验次数 $n$ 较小时，频率 $f_n(A)$ 随机波动幅度较大；但随着 $n$ 不断增大，$f_n(A)$ 会在某个固定常数附近摆动并逐渐趋于稳定。例如反复抛掷均匀硬币时，正面出现的频率随次数增加稳定在 $0.5$ 附近。这种\textbf{频率稳定性}揭示了事件发生可能性大小的客观存在，其严格的数学表述将在第五章的\cref{thm:bernoulli-lln}中给出。
+
+\subsection{概率的公理化定义与性质}
+
+从频率的基本性质抽象而来，并补充处理无穷序列事件所需的“可列可加性”，柯尔莫哥洛夫（Kolmogorov）在 1933 年建立了概率的公理化定义。
+
+\begin{definition}[概率的公理化定义]
+\label{def:probability-axioms}
+设 $E$ 是随机试验，$S$ 是它的样本空间。对 $E$ 的每个事件 $A$ 赋予一个实数 $P(A)$，若集合函数 $P(\cdot)$ 满足以下三条公理：
+\begin{enumerate}
+  \item \textbf{非负性}：对每一事件 $A$，有 $P(A)\ge 0$；
+  \item \textbf{规范性}：对必然事件 $S$，有 $P(S)=1$；
+  \item \textbf{可列可加性}：若 $A_1,A_2,\ldots$ 是两两互不相容的事件，即 $A_iA_j=\varnothing\,(i\ne j)$，则
+  \begin{equation}
+    P\left(\bigcup_{i=1}^{\infty}A_i\right)=\sum_{i=1}^{\infty}P(A_i),
+    \label{eq:countable-additivity}
+  \end{equation}
+\end{enumerate}
+则称 $P(A)$ 为事件 $A$ 的\textbf{概率}。
+\end{definition}
+
+仅由上述三条公理，便可推导出概率运算的全部基本法则。
+
+\begin{theorem}[概率的基本性质]
+\label{thm:probability-properties}
+设 $P$ 是满足\cref{def:probability-axioms}的概率函数，则：
+\begin{enumerate}
+  \item $P(\varnothing)=0$；
+  \item \textbf{有限可加性}：若 $A_1,A_2,\ldots,A_n$ 两两互不相容，则
+  \begin{equation}
+    P\left(\bigcup_{i=1}^{n}A_i\right)=\sum_{i=1}^{n}P(A_i);
+    \label{eq:finite-additivity}
+  \end{equation}
+  \item \textbf{单调性与减法公式}：若 $A\subset B$，则
+  \begin{equation}
+    P(B-A)=P(B)-P(A),\qquad P(A)\le P(B);
+    \label{eq:monotonicity}
+  \end{equation}
+  \item \textbf{有界性}：对任一事件 $A$，有 $0\le P(A)\le 1$；
+  \item \textbf{对立事件公式}：对任一事件 $A$，有 $P(\overline{A})=1-P(A)$；
+  \item \textbf{广义减法与加法公式}：对任意两事件 $A,B$，有
+  \begin{equation}
+    P(B-A)=P(B)-P(AB),\qquad P(A\cup B)=P(A)+P(B)-P(AB).
+    \label{eq:addition-probability}
+  \end{equation}
+\end{enumerate}
+\end{theorem}
+\begin{proof}
+(1) 令 $A_k=\varnothing\,(k=1,2,\ldots)$，则 $A_k$ 两两互斥且 $\bigcup_{k=1}^{\infty}A_k=\varnothing$。由可列可加性\eqref{eq:countable-additivity}得
+\[
+  P(\varnothing)=\sum_{k=1}^{\infty}P(\varnothing).
+\]
+由于 $P(\varnothing)\ge 0$ 为有限实数，上式仅当 $P(\varnothing)=0$ 时成立。
+
+(2) 令 $A_{n+1}=A_{n+2}=\cdots=\varnothing$，则 $A_1,A_2,\ldots$ 两两互斥。由\eqref{eq:countable-additivity}与性质 (1) 得
+\[
+  P\left(\bigcup_{i=1}^{n}A_i\right)
+  =P\left(\bigcup_{i=1}^{\infty}A_i\right)
+  =\sum_{i=1}^{n}P(A_i)+\sum_{i=n+1}^{\infty}P(\varnothing)
+  =\sum_{i=1}^{n}P(A_i).
+\]
+
+(3) 当 $A\subset B$ 时，$B=A\cup(B-A)$ 且 $A(B-A)=\varnothing$。由有限可加性得 $P(B)=P(A)+P(B-A)$，移项即得 $P(B-A)=P(B)-P(A)$；再由非负性 $P(B-A)\ge 0$ 得 $P(A)\le P(B)$。
+
+(4) 因 $A\subset S$，由非负性及性质 (3) 得 $0\le P(A)\le P(S)=1$。
+
+(5) 因 $A\cup\overline{A}=S$ 且 $A\overline{A}=\varnothing$，由有限可加性与规范性得 $1=P(S)=P(A)+P(\overline{A})$，故 $P(\overline{A})=1-P(A)$。
+
+(6) 对任意 $A,B$，有 $AB\subset B$ 且 $B-A=B-AB$，应用性质 (3) 得 $P(B-A)=P(B)-P(AB)$。又 $A\cup B=A\cup(B-A)$ 且 $A(B-A)=\varnothing$，由有限可加性得
+\[
+  P(A\cup B)=P(A)+P(B-A)=P(A)+P(B)-P(AB).
+\]
+\end{proof}
+
+将两事件的加法公式推广到多个事件，得到容斥公式与次可加性。
+
+\begin{theorem}[容斥公式与次可加性]
+\label{thm:inclusion-exclusion}
+对任意 $n$ 个事件 $A_1,A_2,\ldots,A_n$，有\textbf{容斥公式}
+\begin{equation}
+  P\left(\bigcup_{i=1}^{n}A_i\right)
+  =\sum_{k=1}^{n}(-1)^{k-1}
+  \sum_{1\le i_1<\cdots<i_k\le n}P(A_{i_1}A_{i_2}\cdots A_{i_k}).
+  \label{eq:inclusion-exclusion}
+\end{equation}
+特别地，当 $n=3$ 时，
+\[
+  P(A_1\cup A_2\cup A_3)
+  =P(A_1)+P(A_2)+P(A_3)-P(A_1A_2)-P(A_1A_3)-P(A_2A_3)+P(A_1A_2A_3).
+\]
+此外，对任意有限或可列事件族 $\set{A_i}$，成立\textbf{次可加性}（布尔不等式）：
+\begin{equation}
+  P\left(\bigcup_{i}A_i\right)\le \sum_{i}P(A_i).
+  \label{eq:subadditivity}
+\end{equation}
+\end{theorem}
+\begin{proof}
+对\eqref{eq:inclusion-exclusion}关于 $n$ 施数学归纳法。$n=1$ 时显然成立；$n=2$ 即\eqref{eq:addition-probability}。假设对 $n-1$ 个事件结论成立。记 $B=\bigcup_{i=1}^{n-1}A_i$，对 $B$ 与 $A_n$ 应用加法公式：
+\[
+  P\left(\bigcup_{i=1}^{n}A_i\right)
+  =P(B)+P(A_n)-P(BA_n)
+  =P\left(\bigcup_{i=1}^{n-1}A_i\right)+P(A_n)-P\left(\bigcup_{i=1}^{n-1}(A_iA_n)\right).
+\]
+对第一项与第三项分别应用归纳假设。对任意 $1\le k\le n$，任一 $k$ 元下标组 $(i_1,\ldots,i_k)$：若 $i_k<n$，它仅出现在第一项中，系数为 $(-1)^{k-1}$；若 $i_k=n$ 且 $k=1$，它即第二项 $P(A_n)$，系数为 $+1$；若 $i_k=n$ 且 $k\ge 2$，它来自第三项中取 $(k-1)$ 个事件 $A_{i_1}A_n,\ldots,A_{i_{k-1}}A_n$ 的交，前带负号，故总系数为 $-(-1)^{(k-1)-1}=(-1)^{k-1}$。合并各项即得 $n$ 时的容斥公式。
+
+对次可加性\eqref{eq:subadditivity}，令 $B_1=A_1$，$B_k=A_k-\bigcup_{j=1}^{k-1}A_j\,(k\ge 2)$。则 $B_1,B_2,\ldots$ 两两互斥，$\bigcup_k B_k=\bigcup_k A_k$，且 $B_k\subset A_k$。由可列可加性与单调性得
+\[
+  P\left(\bigcup_{k}A_k\right)=P\left(\bigcup_{k}B_k\right)=\sum_{k}P(B_k)\le\sum_{k}P(A_k).
+\]
+\end{proof}
+
+\begin{theorem}[概率对单调事件列的连续性]
+\label{thm:probability-continuity}
+设 $A_1,A_2,\ldots$ 为事件列：
+\begin{enumerate}
+  \item \textbf{下连续性}：若 $A_1\subset A_2\subset\cdots$（单调递增），则
+  \[
+    P\left(\bigcup_{n=1}^{\infty}A_n\right)=\lim_{n\to\infty}P(A_n);
+  \]
+  \item \textbf{上连续性}：若 $A_1\supset A_2\supset\cdots$（单调递减），则
+  \[
+    P\left(\bigcap_{n=1}^{\infty}A_n\right)=\lim_{n\to\infty}P(A_n).
+  \]
+\end{enumerate}
+\end{theorem}
+\begin{proof}
+(1) 令 $B_1=A_1$，$B_k=A_k-A_{k-1}\,(k\ge 2)$。由递增性，$B_1,B_2,\ldots$ 两两互斥，且对任意 $n\ge 1$ 有 $A_n=\bigcup_{k=1}^{n}B_k$、$\bigcup_{n=1}^{\infty}A_n=\bigcup_{k=1}^{\infty}B_k$。由可列可加性与有限可加性得
+\[
+  P\left(\bigcup_{n=1}^{\infty}A_n\right)
+  =\sum_{k=1}^{\infty}P(B_k)
+  =\lim_{n\to\infty}\sum_{k=1}^{n}P(B_k)
+  =\lim_{n\to\infty}P(A_n).
+\]
+(2) 当 $A_n$ 单调递减时，$\overline{A_n}$ 单调递增。由德摩根律及已证下连续性，
+\[
+  P\left(\bigcap_{n=1}^{\infty}A_n\right)
+  =1-P\left(\overline{\bigcap_{n=1}^{\infty}A_n}\right)
+  =1-P\left(\bigcup_{n=1}^{\infty}\overline{A_n}\right)
+  =1-\lim_{n\to\infty}P(\overline{A_n})
+  =\lim_{n\to\infty}P(A_n).
+\]
+\end{proof}
+
+\begin{remark}[零概率事件与不可能事件]
+由\cref{thm:probability-properties}知 $A=\varnothing\implies P(A)=0$，但逆命题一般不成立。例如在区间 $[0,1]$ 上均匀取一点，取到某个指定点 $x_0$ 的概率为 $0$，而 $\set{x_0}\ne\varnothing$。相应地，$P(A)=1$ 也未必意味着 $A=S$。
+\end{remark}
+
+\begin{example}[title={利用概率运算性质求复合事件概率}]
+\label{eg:prob-algebra}
+已知 $P(A)=1/2$，$P(B)=1/3$，$P(C)=1/5$，$P(AB)=1/10$，$P(AC)=1/15$，$P(BC)=1/20$，$P(ABC)=1/30$。求 $P(A\cup B\cup C)$、$P(\overline{A}\overline{B}\overline{C})$ 与 $P(\overline{A}\overline{B}C)$。
+\begin{solution}
+由三事件容斥公式，
+\[
+  P(A\cup B\cup C)
+  =\frac{1}{2}+\frac{1}{3}+\frac{1}{5}-\frac{1}{10}-\frac{1}{15}-\frac{1}{20}+\frac{1}{30}
+  =\frac{17}{20}.
+\]
+由德摩根律与对立公式，
+\[
+  P(\overline{A}\overline{B}\overline{C})
+  =P(\overline{A\cup B\cup C})
+  =1-\frac{17}{20}=\frac{3}{20}.
+\]
+对第三项，将事件写为差事件 $\overline{A}\overline{B}C=C-(A\cup B)C=C-(AC\cup BC)$，再利用广义减法与加法公式：
+\[
+\begin{aligned}
+  P(\overline{A}\overline{B}C)
+  &=P(C)-P(AC\cup BC)\\
+  &=P(C)-\bigl[P(AC)+P(BC)-P(ABC)\bigr]\\
+  &=\frac{1}{5}-\left(\frac{1}{15}+\frac{1}{20}-\frac{1}{30}\right)
+  =\frac{7}{60}.
+\end{aligned}
+\]
+\end{solution}
+\end{example}
+
+\section{等可能概型}
+\label{sec:classical-model}
+
+概率的公理化定义规定了概率必须遵循的运算法则，但并未给出单个事件概率的具体数值。在最基本的一类有限模型中，可以由对称性直接确定概率。
+
+\begin{definition}[等可能概型（古典概型）]
+\label{def:classical-model}
+若随机试验 $E$ 满足：
+\begin{enumerate}
+  \item 样本空间 $S=\set{e_1,e_2,\ldots,e_n}$ 仅包含有限个样本点；
+  \item 每个基本事件发生的可能性相同，即 $P(\set{e_1})=P(\set{e_2})=\cdots=P(\set{e_n})$，
+\end{enumerate}
+则称该试验为\textbf{等可能概型}（又称\textbf{古典概型}）。
+\end{definition}
+
+由于基本事件两两互斥且并集为 $S$，由规范性与有限可加性得
+\[
+  1=P(S)=\sum_{i=1}^{n}P(\set{e_i})=nP(\set{e_1}),\qquad P(\set{e_i})=\frac{1}{n}.
+\]
+若事件 $A$ 包含 $k$ 个基本事件，则
+\begin{equation}
+  P(A)=\frac{k}{n}=\frac{\abs{A}}{\abs{S}}.
+  \label{eq:classical-probability}
+\end{equation}
+
+\begin{method}[古典概型计数要点]
+\begin{enumerate}
+  \item \textbf{核实等可能性}：选取样本空间时，应使每个基本事件地位对称。例如抛两枚硬币时，有序空间 $\set{HH,HT,TH,TT}$ 等可能，而按正面次数划分的 $\set{0,1,2}$ 不等可能。
+  \item \textbf{统一计数方法}：分子 $\abs{A}$ 与分母 $\abs{S}$ 必须采用相同的有序或无序约定。记从 $N$ 个不同元素中取 $n$ 个的排列数与组合数分别为
+  \[
+    A_N^n=\frac{N!}{(N-n)!},\qquad \binom{N}{n}=\frac{N!}{n!(N-n)!}\quad(0\le n\le N).
+  \]
+  \item \textbf{善用对立事件}：遇到“至少”“不完全相同”等包含多种重叠情形的事件时，先求对立事件概率往往更简洁。
+\end{enumerate}
+\end{method}
+
+\begin{example}[title={放回抽样与不放回抽样}]
+\label{eg:sampling-comparison}
+一袋中装有 $6$ 只球，其中 $4$ 只白球、$2$ 只红球。从袋中随机取球两次，每次取一只。分别在 (a) 放回抽样与 (b) 不放回抽样两种方式下，求：(1) 两球均为白球的概率；(2) 两球同色的概率；(3) 至少有一只白球的概率。
+\begin{solution}
+记 $A$ 为“两球皆白”，$B$ 为“两球皆红”，$C$ 为“至少一白”。则“两球同色”为互斥并 $A\cup B$，且 $C=\overline{B}$。按抽取先后次序计数：
+
+(a) \textbf{放回抽样}：每次均有 $6$ 种取法，总基本事件数为 $6\times 6=36$；$A$ 含 $4\times 4=16$ 个样本点，$B$ 含 $2\times 2=4$ 个样本点，故
+\[
+  P(A)=\frac{16}{36}=\frac{4}{9},\qquad
+  P(B)=\frac{4}{36}=\frac{1}{9}.
+\]
+于是 $P(A\cup B)=\frac{4}{9}+\frac{1}{9}=\frac{5}{9}$，$P(C)=1-P(B)=\frac{8}{9}$。
+
+(b) \textbf{不放回抽样}：第一次有 $6$ 种取法，第二次仅剩 $5$ 种，总基本事件数为 $A_6^2=30$；$A$ 含 $A_4^2=12$ 个样本点，$B$ 含 $A_2^2=2$ 个样本点，故
+\[
+  P(A)=\frac{12}{30}=\frac{2}{5},\qquad
+  P(B)=\frac{2}{30}=\frac{1}{15},
+\]
+从而 $P(A\cup B)=\frac{2}{5}+\frac{1}{15}=\frac{7}{15}$，$P(C)=1-\frac{1}{15}=\frac{14}{15}$。若不记录次序改用组合数，有 $P(A)=\binom{4}{2}/\binom{6}{2}=\frac{2}{5}$，$P(B)=\binom{2}{2}/\binom{6}{2}=\frac{1}{15}$，结果完全一致。
+\end{solution}
+\end{example}
+
+\begin{example}[title={分房问题与生日问题}]
+\label{eg:birthday-problem}
+将 $n$ 只球随机放入 $N\,(N\ge n)$ 个容量不限的盒子中，求每个盒子至多有一只球的概率；进而求 $n$ 个人中至少有两人生日相同的概率（设每年 $365$ 天且每人生日在各天等可能）。
+\begin{solution}
+每只球有 $N$ 种放法，全部放法共 $N^n$ 种且等可能。使每盒至多一球，即 $n$ 只球占据 $n$ 个不同盒子，共有 $A_N^n=N(N-1)\cdots(N-n+1)$ 种放法，故所求概率为
+\[
+  p=\frac{A_N^n}{N^n}=\frac{N(N-1)\cdots(N-n+1)}{N^n}.
+\]
+对于生日问题，把 $n$ 个人看作 $n$ 只球、$365$ 天看作 $365$ 个盒子。直接计算“至少两人同日”需分类讨论多对重合，改求对立事件“$n$ 人生日互不相同”的概率，即取 $N=365$ 得
+\[
+  P(\text{至少两人生日相同})=1-\frac{A_{365}^n}{365^n}
+  =1-\prod_{j=0}^{n-1}\left(1-\frac{j}{365}\right).
+\]
+当 $n=23$ 时该概率已达 $0.507$，超过一半；当 $n=50$ 时为 $0.970$；当 $n=64$ 时高达 $0.997$。因为人数为 $n$ 时两两配对数为 $\binom{n}{2}$，增长速度远快于 $n$，故较小数目的人数便足以使重合概率接近 $1$。
+\end{solution}
+\end{example}
+
+\begin{example}[title={超几何抽样与抽签公平性}]
+\label{eg:hypergeometric-lottery}
+(1) 设 $N$ 件产品中有 $M$ 件次品，不放回任取 $n$ 件，求其中恰有 $k$ 件次品的概率。
+(2) 袋中有 $a$ 只白球、$b$ 只红球，$k\,(1\le k\le a+b)$ 个人依次不放回各取一球，求第 $i\,(1\le i\le k)$ 个人取到白球的概率。
+\begin{solution}
+(1) 采用无序组合计数，从 $N$ 件中任取 $n$ 件共有 $\binom{N}{n}$ 种等可能取法；恰取 $k$ 件次品且取 $n-k$ 件正品共有 $\binom{M}{k}\binom{N-M}{n-k}$ 种取法（其中 $\max\set{0,n-N+M}\le k\le\min\set{n,M}$）。因此
+\begin{equation}
+  P(A_k)=\frac{\binom{M}{k}\binom{N-M}{n-k}}{\binom{N}{n}}.
+  \label{eq:hypergeometric-prob}
+\end{equation}
+这一公式将在第二章引出超几何分布。
+
+(2) 按 $k$ 人依次取球排列计数，样本点总数为 $A_{a+b}^k$。记 $B_i$ 为“第 $i$ 人取到白球”：先为第 $i$ 个位置选一只白球，有 $a$ 种选法；其余 $k-1$ 个位置从剩下的 $a+b-1$ 只球中任取排列，有 $A_{a+b-1}^{k-1}$ 种选法。于是
+\[
+  P(B_i)=\frac{a\,A_{a+b-1}^{k-1}}{A_{a+b}^k}=\frac{a}{a+b}.
+\]
+该概率与抽取次序 $i$ 无关，且与放回抽样时的单次概率相同，这正是抽签公平性的数学依据。
+\end{solution}
+\end{example}
+
+\begin{example}[title={整除计数与容斥公式}]
+\label{eg:divisibility-count}
+从 $1,2,\ldots,200$ 这 $200$ 个整数中等可能任取一个数，求该数既不能被 $6$ 整除也不能被 $8$ 整除的概率。
+\begin{solution}
+记 $A$ 表示“取出的数能被 $6$ 整除”，$B$ 表示“取出的数能被 $8$ 整除”。所求事件为 $\overline{A\cup B}$。因为 $\operatorname{lcm}(6,8)=24$，故 $AB$ 表示“能被 $24$ 整除”。利用向下取整计数：
+\[
+  \abs{A}=\left\lfloor\frac{200}{6}\right\rfloor=33,\qquad
+  \abs{B}=\left\lfloor\frac{200}{8}\right\rfloor=25,\qquad
+  \abs{AB}=\left\lfloor\frac{200}{24}\right\rfloor=8.
+\]
+由加法公式得 $P(A\cup B)=\frac{33+25-8}{200}=\frac{50}{200}=\frac{1}{4}$，从而
+\[
+  P(\overline{A\cup B})=1-P(A\cup B)=1-\frac{1}{4}=\frac{3}{4}.
+\]
+\end{solution}
+\end{example}
+
+\begin{example}[title={等额分班问题}]
+\label{eg:balanced-assignment}
+将 $15$ 名新生随机平均分成 $3$ 个班，每班 $5$ 人。已知其中有 $3$ 名优秀生，求：(1) 每班各分到 $1$ 名优秀生的概率；(2) $3$ 名优秀生全部分在同一班的概率。
+\begin{solution}
+将 $3$ 个班视作共 $15$ 个已编号的座位（每班 $5$ 个座位），只需考察 $3$ 名优秀生占据哪 $3$ 个座位，总选法为 $\binom{15}{3}=455$ 种（等可能）。
+
+(1) 每班各选 $1$ 个座位给优秀生，共有 $5\times 5\times 5=125$ 种选法，故所求概率为
+\[
+  p_1=\frac{125}{\binom{15}{3}}=\frac{125}{455}=\frac{25}{91}\approx 0.2747.
+\]
+
+(2) 先选定 $3$ 个班中的 $1$ 个班（$3$ 种选法），再从该班 $5$ 个座位中选 $3$ 个（$\binom{5}{3}=10$ 种选法），共有 $3\times 10=30$ 种选法，故所求概率为
+\[
+  p_2=\frac{3\binom{5}{3}}{\binom{15}{3}}=\frac{30}{455}=\frac{6}{91}\approx 0.0659.
+\]
+\end{solution}
+\end{example}
+
+\begin{example}[title={实际推断原理（小概率原理）}]
+\label{rem:practical-inference}
+某接待站在一周内共接待 $12$ 次来访，且这 $12$ 次来访全部集中在周二和周四。试判断是否可以推断该接待站的接待时间是有规定的。
+\begin{solution}
+假设接待时间没有规定，每次来访等可能落在一周七天中的任意一天，则 $12$ 次来访全落在周二、周四的概率为
+\[
+  p=\left(\frac{2}{7}\right)^{12}\approx 3.0\times 10^{-7}.
+\]
+实践经验表明，\textbf{概率很小的事件在一次试验中实际上几乎不会发生}，这一原则称为\textbf{实际推断原理}。在上述假设下极难发生的事件竟然在一次观察中发生了，由此有充分理由怀疑原假设，从而推断该接待站的接待时间是有规定的。这一推理思想也是数理统计中假设检验的出发点。
+\end{solution}
+\end{example}
+
+\begin{remark}[几何概型]
+当样本空间为欧氏空间中具有有限非零度量（长度、面积或体积）的区域 $G$，且试验结果落在 $G$ 内任意子区域 $D\subset G$ 的概率只与 $D$ 的度量成正比而与其位置、形状无关时，称为\textbf{几何概型}，事件 $D$ 的概率为
+\[
+  P(D)=\frac{\text{区域 }D\text{ 的度量}}{\text{区域 }G\text{ 的度量}}.
+\]
+\end{remark}
+
+\begin{example}[title={会面问题}]
+\label{eg:meeting-problem}
+甲、乙两人约定在某小时内任意时刻独立到达会面地点，先到者最多等待 $15$ 分钟后离去。求两人能够会面的概率。
+\begin{solution}
+以小时为单位，分别记甲、乙到达时刻为 $x,y\in[0,1]$，则样本空间为平面单位正方形 $G=\set{(x,y)\mid 0\le x\le 1,\,0\le y\le 1}$，面积为 $1$。两人能会面当且仅当 $\abs{x-y}\le 1/4$。
+
+直接求带状区域面积不如用正方形减去对立区域 $\set{y-x>1/4}\cup\set{x-y>1/4}$，该对立区域由两个直角边长为 $3/4$ 的等腰直角三角形组成，故
+\[
+  P(\text{会面})=1-2\times\frac{1}{2}\left(\frac{3}{4}\right)^2=\frac{7}{16}.
+\]
+\end{solution}
+\end{example}
+
+\section{条件概率}
+\label{sec:conditional-probability}
+
+\subsection{条件概率的定义与性质}
+
+在实际问题中，常常需要在已知某一事件 $A$ 已经发生的条件下，重新评估另一事件 $B$ 发生的可能性。先看古典概型的启发：设总样本点为 $n$，事件 $A$ 含 $m>0$ 个样本点，$AB$ 含 $k$ 个样本点。已知 $A$ 发生后，所有不属于 $A$ 的样本点被排除，样本空间缩减为 $A$，其中属于 $B$ 的样本点恰为 $AB$，故此时 $B$ 发生的概率为
+\[
+  \frac{k}{m}=\frac{k/n}{m/n}=\frac{P(AB)}{P(A)}.
+\]
+将这一关系推广到一般概率空间，即得条件概率的定义。
+
+\begin{definition}[条件概率]
+\label{def:conditional-probability}
+设 $A,B$ 是两个事件，且 $P(A)>0$，称
+\begin{equation}
+  P(B\mid A)=\frac{P(AB)}{P(A)}
+  \label{eq:conditional-probability}
+\end{equation}
+为在事件 $A$ 发生的条件下事件 $B$ 发生的\textbf{条件概率}。
+\end{definition}
+
+\begin{proposition}[条件概率满足概率公理]
+\label{prop:conditional-axioms}
+固定事件 $A$（$P(A)>0$），集函数 $Q(B)=P(B\mid A)$ 满足概率的三条公理：
+\begin{enumerate}
+  \item 非负性：对任一事件 $B$，有 $P(B\mid A)\ge 0$；
+  \item 规范性：$P(S\mid A)=1$；
+  \item 可列可加性：若 $B_1,B_2,\ldots$ 两两互斥，则
+  \[
+    P\left(\bigcup_{i=1}^{\infty}B_i\,\middle|\,A\right)=\sum_{i=1}^{\infty}P(B_i\mid A).
+  \]
+\end{enumerate}
+\end{proposition}
+\begin{proof}
+由 $P(AB)\ge 0$ 与 $P(A)>0$ 即得 $P(B\mid A)\ge 0$。规范性由 $P(S\mid A)=P(SA)/P(A)=P(A)/P(A)=1$ 得到。若 $B_1,B_2,\ldots$ 两两互斥，则 $B_1A,B_2A,\ldots$ 也两两互斥，且 $\left(\bigcup_{i=1}^{\infty}B_i\right)A=\bigcup_{i=1}^{\infty}(B_iA)$，故由原概率的可列可加性得
+\[
+  P\left(\bigcup_{i=1}^{\infty}B_i\,\middle|\,A\right)
+  =\frac{P\left(\bigcup_{i=1}^{\infty}(B_iA)\right)}{P(A)}
+  =\sum_{i=1}^{\infty}\frac{P(B_iA)}{P(A)}
+  =\sum_{i=1}^{\infty}P(B_i\mid A).
+\]
+\end{proof}
+
+由此可见，\cref{thm:probability-properties}中的一切性质对固定条件 $A$ 下的条件概率均成立，例如
+\[
+  P(\overline{B}\mid A)=1-P(B\mid A),\qquad
+  P(B_1\cup B_2\mid A)=P(B_1\mid A)+P(B_2\mid A)-P(B_1B_2\mid A).
+\]
+
+\begin{method}[计算条件概率的两种途径]
+\begin{enumerate}
+  \item \textbf{定义公式法}：在原样本空间 $S$ 中分别计算 $P(A)$ 与 $P(AB)$，再代入\eqref{eq:conditional-probability}求比值；适合不易直接列举缩减空间的场合。
+  \item \textbf{缩减样本空间法}：直接将样本空间缩小到条件事件 $A$，在 $A$ 内统计有利结果占比；在古典概型中往往更直观快捷。
+\end{enumerate}
+\end{method}
+
+\begin{example}[title={用两种方法求条件概率}]
+\label{eg:cond-two-ways}
+盒中有 $4$ 件产品，其中 $3$ 件一等品、$1$ 件二等品。不放回依次任取两件，设 $A$ 为“第一次取到一等品”，$B$ 为“第二次取到一等品”，求 $P(B\mid A)$。
+\begin{solution}
+\textbf{方法一（定义公式法）}：记 $1,2,3$ 号为一等品，$4$ 号为二等品，有序抽取共有 $A_4^2=12$ 个等可能样本点。$A$ 含 $3\times 3=9$ 个样本点，$AB$ 含 $3\times 2=6$ 个样本点，故
+\[
+  P(B\mid A)=\frac{P(AB)}{P(A)}=\frac{6/12}{9/12}=\frac{2}{3}.
+\]
+\textbf{方法二（缩减样本空间法）}：已知第一次已取走一件一等品后，盒中剩余 $3$ 件产品（其中 $2$ 件一等品、$1$ 件二等品），从中任取一件为一等品的概率立即可得为 $2/3$。
+\end{solution}
+\end{example}
+
+\subsection{乘法定理}
+
+将条件概率定义式\eqref{eq:conditional-probability}两端同乘以 $P(A)$，便得到由条件概率求积事件概率的乘法公式。
+
+\begin{theorem}[乘法定理]
+\label{thm:multiplication}
+设 $P(A)>0$，则
+\begin{equation}
+  P(AB)=P(A)P(B\mid A).
+  \label{eq:multiplication-two}
+\end{equation}
+一般地，设 $A_1,A_2,\ldots,A_n\,(n\ge 2)$ 为事件，且 $P(A_1A_2\cdots A_{n-1})>0$，则
+\begin{equation}
+  P(A_1A_2\cdots A_n)=P(A_1)P(A_2\mid A_1)P(A_3\mid A_1A_2)\cdots P(A_n\mid A_1A_2\cdots A_{n-1}).
+  \label{eq:multiplication-n}
+\end{equation}
+\end{theorem}
+\begin{proof}
+当 $P(A_1A_2\cdots A_{n-1})>0$ 时，由单调性对所有 $1\le k\le n-1$ 均有 $P(A_1\cdots A_k)\ge P(A_1\cdots A_{n-1})>0$，故等式右侧各条件概率均有意义。逐项展开为比值并约去中间项：
+\[
+  P(A_1)\cdot\frac{P(A_1A_2)}{P(A_1)}\cdot\frac{P(A_1A_2A_3)}{P(A_1A_2)}\cdots\frac{P(A_1\cdots A_n)}{P(A_1\cdots A_{n-1})}
+  =P(A_1A_2\cdots A_n).
+\]
+\end{proof}
+
+\begin{example}[title={波利亚坛子（P\'olya urn）模型}]
+\label{eg:polya-urn}
+袋中装有 $r$ 只红球、$t$ 只白球。每次随机取一球，观察颜色后放回袋中，并再放入 $a\,(a\ge 0)$ 只同色球。连续取球四次，求前两次取到红球且后两次取到白球的概率。
+\begin{solution}
+记 $A_i\,(i=1,2,3,4)$ 为“第 $i$ 次取到红球”，则所求事件为 $A_1A_2\overline{A}_3\overline{A}_4$。每次抽取前袋中红、白球数目由前几次结果决定，按链式乘法公式\eqref{eq:multiplication-n}依次写出每步条件概率：
+\[
+\begin{aligned}
+  P(A_1A_2\overline{A}_3\overline{A}_4)
+  &=P(A_1)P(A_2\mid A_1)P(\overline{A}_3\mid A_1A_2)P(\overline{A}_4\mid A_1A_2\overline{A}_3)\\
+  &=\frac{r}{r+t}\cdot\frac{r+a}{r+t+a}\cdot\frac{t}{r+t+2a}\cdot\frac{t+a}{r+t+3a}.
+\end{aligned}
+\]
+当 $a=0$ 时退化为放回抽样；当 $a>0$ 时，先抽出的颜色会增加后续抽中同色的概率，这常用来刻画传染或正反馈过程。
+\end{solution}
+\end{example}
+
+\begin{example}[title={光学透镜跌落破损的条件生存计算}]
+\label{eg:lens-survival}
+设某光学透镜第一次跌落时破损的概率为 $0.5$；若第一次未破，第二次跌落时破损的概率为 $0.7$；若前两次均未破，第三次跌落时破损的概率为 $0.9$。求透镜在跌落三次以内（含三次）破损的概率。
+\begin{solution}
+记 $A_i\,(i=1,2,3)$ 为“第 $i$ 次跌落时破损”，则所求事件为 $B=A_1\cup A_2\cup A_3$。按题意，$P(A_1)=0.5$，$P(A_2\mid\overline{A}_1)=0.7$，$P(A_3\mid\overline{A}_1\overline{A}_2)=0.9$。
+
+\textbf{方法一（对立事件与条件连乘）}：三次均未破损的事件为 $\overline{B}=\overline{A}_1\overline{A}_2\overline{A}_3$。由乘法定理，
+\[
+  P(\overline{B})=P(\overline{A}_1)\,P(\overline{A}_2\mid\overline{A}_1)\,P(\overline{A}_3\mid\overline{A}_1\overline{A}_2)
+  =0.5\times(1-0.7)\times(1-0.9)=0.015,
+\]
+故 $P(B)=1-P(\overline{B})=1-0.015=0.985$。
+
+\textbf{方法二（按首次破损次序互斥分解）}：将 $B$ 拆为三个两两互斥事件 $B=A_1\cup\overline{A}_1 A_2\cup\overline{A}_1\overline{A}_2 A_3$，得
+\[
+  P(B)=0.5+0.5\times 0.7+0.5\times 0.3\times 0.9=0.5+0.35+0.135=0.985.
+\]
+\end{solution}
+\end{example}
+
+\subsection{全概率公式与贝叶斯公式}
+
+许多复杂事件的概率难以直接计算，但若能将其按某种互斥且完备的“原因”或“情形”拆解，在每种情形下条件概率往往很容易求得。
+
+\begin{definition}[样本空间的划分]
+\label{def:partition}
+设 $S$ 为试验 $E$ 的样本空间，$B_1,B_2,\ldots,B_n$ 为 $E$ 的一组事件。若满足：
+\begin{enumerate}
+  \item 两两互斥：$B_iB_j=\varnothing\,(i\ne j,\;i,j=1,2,\ldots,n)$；
+  \item 穷尽空间：$\bigcup_{i=1}^{n}B_i=S$，
+\end{enumerate}
+则称 $B_1,B_2,\ldots,B_n$ 为样本空间 $S$ 的一个\textbf{划分}（或\textbf{完备事件组}）。
+\end{definition}
+
+对每次试验而言，划分中的事件 $B_1,\ldots,B_n$ 必发生且仅发生其一。
+
+\begin{theorem}[全概率公式与贝叶斯公式]
+\label{thm:total-bayes}
+设 $B_1,B_2,\ldots,B_n$ 是样本空间 $S$ 的一个划分，且 $P(B_i)>0\,(i=1,2,\ldots,n)$，则对任意事件 $A$，有\textbf{全概率公式}：
+\begin{equation}
+  P(A)=\sum_{i=1}^{n}P(B_i)P(A\mid B_i).
+  \label{eq:total-probability}
+\end{equation}
+进一步，若 $P(A)>0$，则对每个 $j=1,2,\ldots,n$，有\textbf{贝叶斯（Bayes）公式}：
+\begin{equation}
+  P(B_j\mid A)=\frac{P(B_j)P(A\mid B_j)}{\sum_{i=1}^{n}P(B_i)P(A\mid B_i)}.
+  \label{eq:bayes}
+\end{equation}
+\end{theorem}
+\begin{proof}
+因 $B_1,\ldots,B_n$ 为 $S$ 的划分，事件 $A$ 可分解为
+\[
+  A=AS=A\left(\bigcup_{i=1}^{n}B_i\right)=\bigcup_{i=1}^{n}(AB_i),
+\]
+且 $(AB_i)(AB_j)=A(B_iB_j)=\varnothing\,(i\ne j)$。由有限可加性与乘法公式\eqref{eq:multiplication-two}即得
+\[
+  P(A)=\sum_{i=1}^{n}P(AB_i)=\sum_{i=1}^{n}P(B_i)P(A\mid B_i).
+\]
+再由条件概率定义及乘法公式，对 $P(A)>0$ 有
+\[
+  P(B_j\mid A)=\frac{P(AB_j)}{P(A)}=\frac{P(B_j)P(A\mid B_j)}{\sum_{i=1}^{n}P(B_i)P(A\mid B_i)}.
+\]
+\end{proof}
+
+若将划分推广为可列族 $B_1,B_2,\ldots$（两两互斥且 $\bigcup_{i=1}^{\infty}B_i=S$，$P(B_i)>0$），利用可列可加性同样成立上述两式，只需把有限和改为级数求和。特别地，取 $n=2$ 的对立划分 $B,\overline{B}$（$0<P(B)<1$），得到最常用的二元形式：
+\[
+  P(A)=P(B)P(A\mid B)+P(\overline{B})P(A\mid\overline{B}),\qquad
+  P(B\mid A)=\frac{P(B)P(A\mid B)}{P(B)P(A\mid B)+P(\overline{B})P(A\mid\overline{B})}.
+\]
+
+\lcfigure[caption={样本空间的划分与事件分解。事件 $A$ 横跨各个互斥条带 $B_i$，阴影部分为子事件 $AB_3$；全概率公式将各交块概率相加，贝叶斯公式计算某一交块 $AB_j$ 在总事件 $A$ 中所占的比重。},label=fig:partition-bayes]{ch01-partition-bayes}
+
+从因果视角看，全概率公式是“\textbf{由因推果}”：已知各原因 $B_i$ 发生的\textbf{先验概率} $P(B_i)$ 及在原因 $B_i$ 下结果 $A$ 发生的条件概率 $P(A\mid B_i)$，加权汇总得到结果 $A$ 的总概率；贝叶斯公式则是“\textbf{由果溯因}”：在观察到结果 $A$ 发生后，重新修正各原因的\textbf{后验概率} $P(B_j\mid A)$。
+
+\begin{example}[title={三厂供货的次品率与溯源}]
+\label{eg:bayes-factory}
+某电子设备厂所用元件由三家工厂提供，三厂供货份额依次为 $15\%$、$80\%$、$5\%$，各厂元件的次品率依次为 $2\%$、$1\%$、$3\%$。元件在仓库中均匀混合。现随机抽取一只元件：(1) 求该元件为次品的概率；(2) 若抽得次品，求它分别来自三家工厂的后验概率。
+\begin{solution}
+记 $A$ 为“抽得次品”，$B_i\,(i=1,2,3)$ 为“元件来自第 $i$ 家工厂”。则 $B_1,B_2,B_3$ 构成样本空间的一个划分，且
+\[
+\begin{aligned}
+  P(B_1)&=0.15,& P(B_2)&=0.80,& P(B_3)&=0.05,\\
+  P(A\mid B_1)&=0.02,& P(A\mid B_2)&=0.01,& P(A\mid B_3)&=0.03.
+\end{aligned}
+\]
+(1) 由全概率公式\eqref{eq:total-probability}，
+\[
+  P(A)=0.15\times 0.02+0.80\times 0.01+0.05\times 0.03=0.0125.
+\]
+(2) 由贝叶斯公式\eqref{eq:bayes}，
+\[
+  P(B_1\mid A)=\frac{0.0030}{0.0125}=0.24,\quad
+  P(B_2\mid A)=\frac{0.0080}{0.0125}=0.64,\quad
+  P(B_3\mid A)=\frac{0.0015}{0.0125}=0.12.
+\]
+尽管第 $2$ 厂次品率最低，但因其供货份额高达 $80\%$，一旦发现次品，来自第 $2$ 厂的后验概率仍最大；而第 $3$ 厂次品率最高，其后验概率从先验的 $0.05$ 升至 $0.12$。
+\end{solution}
+\end{example}
+
+\begin{example}[title={疾病普查中的后验概率}]
+\label{eg:bayes-screening}
+某疾病筛查试验的灵敏度为 $P(A\mid C)=0.95$，特异度为 $P(\overline{A}\mid\overline{C})=0.95$，其中 $C$ 表示“被检者患病”，$A$ 表示“检测呈阳性”。若在自然人群中该病患病率为 $P(C)=0.005$，求一名检测呈阳性者确实患病的概率 $P(C\mid A)$。
+\begin{solution}
+由题意，$P(\overline{C})=0.995$，假阳性率为 $P(A\mid\overline{C})=1-0.95=0.05$。由贝叶斯公式得
+\[
+\begin{aligned}
+  P(C\mid A)
+  &=\frac{P(C)P(A\mid C)}{P(C)P(A\mid C)+P(\overline{C})P(A\mid\overline{C})}\\
+  &=\frac{0.005\times 0.95}{0.005\times 0.95+0.995\times 0.05}
+  =\frac{0.00475}{0.05450}\approx 0.0872.
+\end{aligned}
+\]
+尽管单次检测的准确率看似高达 $95\%$，但由于人群基数中健康者占比极大（$99.5\%$），$5\%$ 的假阳性绝对人数远超过真正的患者人数，因此单次普查呈阳性者中真正患病的比例仅约 $8.7\%$。这一结果清楚地展示了混淆 $P(A\mid C)$ 与 $P(C\mid A)$（即忽略先验基率）所带来的偏差。
+\end{solution}
+\end{example}
+
+\section{独立性}
+\label{sec:event-independence}
+
+\subsection{两事件的相互独立}
+
+一般而言，事件 $A$ 的发生会影响事件 $B$ 发生的概率，即 $P(B\mid A)\ne P(B)$。当这种影响不存在时，有 $P(B\mid A)=P(B)$，代入乘法公式即化为 $P(AB)=P(A)P(B)$。后一等式对称且不要求 $P(A)>0$，因而更适合作为一般定义。
+
+\begin{definition}[两事件的独立性]
+\label{def:two-independence}
+设 $A,B$ 是两个事件，若满足
+\begin{equation}
+  P(AB)=P(A)P(B),
+  \label{eq:two-independence}
+\end{equation}
+则称事件 $A$ 与 $B$ \textbf{相互独立}，简称\textbf{独立}。
+\end{definition}
+
+\begin{proposition}[独立性的等价条件与对立保持性]
+\label{prop:two-indep-props}
+设 $A,B$ 为两个事件：
+\begin{enumerate}
+  \item 若 $P(A)>0$，则 $A,B$ 相互独立当且仅当 $P(B\mid A)=P(B)$。
+  \item 若 $A$ 与 $B$ 相互独立，则 $A$ 与 $\overline{B}$、$\overline{A}$ 与 $B$、$\overline{A}$ 与 $\overline{B}$ 也分别相互独立。
+  \item 若 $P(A)=0$ 或 $P(A)=1$，则 $A$ 与任意事件 $B$ 相互独立。
+\end{enumerate}
+\end{proposition}
+\begin{proof}
+(1) 由条件概率定义 $P(AB)=P(A)P(B\mid A)$ 与 $P(A)>0$ 直接等价。
+
+(2) 由互斥分解 $A=AB\cup A\overline{B}$ 与有限可加性，
+\[
+  P(A\overline{B})=P(A)-P(AB)=P(A)-P(A)P(B)=P(A)\bigl[1-P(B)\bigr]=P(A)P(\overline{B}),
+\]
+故 $A$ 与 $\overline{B}$ 独立。将此结论应用于独立对 $(A,\overline{B})$ 的第一分量，得 $\overline{A}$ 与 $\overline{B}$ 独立；再对其第二分量取对立，得 $\overline{A}$ 与 $B$ 独立。
+
+(3) 若 $P(A)=0$，由 $AB\subset A$ 得 $0\le P(AB)\le P(A)=0$，故 $P(AB)=0=P(A)P(B)$。若 $P(A)=1$，则 $P(\overline{A})=0$，由前述知 $\overline{A}$ 与 $B$ 独立，再由 (2) 得 $A$ 与 $B$ 独立。
+\end{proof}
+
+\begin{pitfall}[独立性与互不相容的关系]
+独立性反映的是事件概率上的乘法分解（发生与否互不提供信息），互不相容反映的是样本集合的不相交（无法同时发生）。当 $P(A)>0$ 且 $P(B)>0$ 时：
+\begin{itemize}
+  \item 若 $A,B$ 互不相容，则 $P(AB)=0<P(A)P(B)$，故必不独立；
+  \item 若 $A,B$ 相互独立，则 $P(AB)=P(A)P(B)>0$，故必不互斥。
+\end{itemize}
+二者仅当至少有一个事件概率为零时才可能同时成立。
+\end{pitfall}
+
+\subsection{多个事件的相互独立}
+
+\begin{definition}[多个事件的相互独立]
+\label{def:n-independence}
+设 $A_1,A_2,\ldots,A_n\,(n\ge 2)$ 为 $n$ 个事件。若对任意 $2\le k\le n$ 及任意满足 $1\le i_1<i_2<\cdots<i_k\le n$ 的下标组，均成立
+\begin{equation}
+  P(A_{i_1}A_{i_2}\cdots A_{i_k})=P(A_{i_1})P(A_{i_2})\cdots P(A_{i_k}),
+  \label{eq:n-independence}
+\end{equation}
+则称 $A_1,A_2,\ldots,A_n$ \textbf{相互独立}。若仅对所有 $k=2$ 的成对事件满足 $P(A_iA_j)=P(A_i)P(A_j)\,(i\ne j)$，则称它们\textbf{两两独立}。
+\end{definition}
+
+特别地，三个事件 $A,B,C$ 相互独立需同时满足四个等式：
+\[
+  P(AB)=P(A)P(B),\quad P(BC)=P(B)P(C),\quad P(AC)=P(A)P(C),\quad P(ABC)=P(A)P(B)P(C).
+\]
+一般地，$n$ 个事件相互独立共需满足 $\sum_{k=2}^{n}\binom{n}{k}=2^n-n-1$ 个等式。
+
+\begin{example}[title={两两独立不蕴含相互独立}]
+\label{eg:pairwise-not-mutual}
+盒中有编号为 $1,2,3,4$ 的四只球，随机取出一球。记 $A=\set{1,2}$，$B=\set{1,3}$，$C=\set{1,4}$，判断 $A,B,C$ 的独立性。
+\begin{solution}
+样本空间 $S=\set{1,2,3,4}$ 等可能，故 $P(A)=P(B)=P(C)=\frac{1}{2}$。又 $AB=AC=BC=\set{1}$，从而
+\[
+  P(AB)=P(AC)=P(BC)=\frac{1}{4}=\frac{1}{2}\times\frac{1}{2},
+\]
+因此 $A,B,C$ 两两独立。但 $ABC=\set{1}$，其概率为
+\[
+  P(ABC)=\frac{1}{4}\ne\frac{1}{8}=P(A)P(B)P(C),
+\]
+故 $A,B,C$ 并不相互独立。直观上，一旦已知 $A$ 与 $B$ 同时发生，取出的必为 $1$ 号球，事件 $C$ 随之确定发生，不再独立。
+\end{solution}
+\end{example}
+
+\begin{proposition}[多事件独立的子族与取补性质]
+\label{prop:n-indep-props}
+设 $A_1,A_2,\ldots,A_n\,(n\ge 2)$ 相互独立，则：
+\begin{enumerate}
+  \item 其中任意 $k\,(2\le k\le n)$ 个事件仍相互独立；
+  \item 将其中任意若干个事件替换为各自的对立事件后，所得的 $n$ 个事件仍相互独立。
+\end{enumerate}
+\end{proposition}
+\begin{proof}
+性质 (1) 直接由\cref{def:n-independence}包含所有子族乘积等式即得。对性质 (2)，只需证明将单个事件（不妨设为 $A_1$）替换为 $\overline{A}_1$ 后，事件组 $\overline{A}_1,A_2,\ldots,A_n$ 仍相互独立，其余情形逐次替换即可。对任意不含下标 $1$ 的子族，乘积等式未变；对包含下标 $1$ 的任意子族，记其余事件的交为 $C=A_{i_2}\cdots A_{i_k}$，则由互斥分解 $C=A_1C\cup\overline{A}_1C$ 与原独立性得
+\[
+  P(\overline{A}_1C)=P(C)-P(A_1C)=P(C)-P(A_1)P(C)
+  =P(\overline{A}_1)P(C)
+  =P(\overline{A}_1)P(A_{i_2})\cdots P(A_{i_k}).
+\]
+\end{proof}
+
+在实际建模中，多个事件的独立性往往由物理或试验背景的互不干扰性直接确立，进而作为概率计算的已知前提。
+
+\subsection{伯努利试验与系统可靠性}
+
+\begin{definition}[伯努利试验与 $n$ 重伯努利试验]
+\label{def:bernoulli-trials}
+只有两个可能结果（记为成功 $A$ 与失败 $\overline{A}$）的随机试验称为\textbf{伯努利（Bernoulli）试验}。若在相同条件下将此试验独立重复进行 $n$ 次，每次成功概率均为 $p\,(0<p<1)$，则称为\textbf{$n$ 重伯努利试验}。
+\end{definition}
+
+记 $q=1-p$。在 $n$ 重伯努利试验中，指定哪 $k$ 次成功、其余 $n-k$ 次失败，由独立性与\cref{prop:n-indep-props}，该具体次序的概率为 $p^k q^{n-k}$；这样的位置组合共有 $\binom{n}{k}$ 种且两两互斥，故恰成功 $k$ 次的概率为
+\begin{equation}
+  P_n(k)=\binom{n}{k}p^k q^{n-k},\qquad k=0,1,\ldots,n.
+  \label{eq:bernoulli-count}
+\end{equation}
+
+\begin{example}[title={串并联系统的可靠性}]
+\label{eg:series-parallel}
+一个元件或系统正常工作的概率称为其可靠性。设有 $4$ 个独立工作的元件 $1,2,3,4$，可靠性分别为 $p_1,p_2,p_3,p_4$。其中元件 $1,2$ 串联构成支路 $\mathrm{I}$，元件 $3,4$ 串联构成支路 $\mathrm{II}$，再将两支路并联构成串并联系统。求该系统的可靠性。
+\begin{solution}
+记 $A_i$ 为“第 $i$ 个元件正常工作”，$A$ 为“系统正常工作”。支路 $\mathrm{I}$ 正常即 $A_1A_2$，支路 $\mathrm{II}$ 正常即 $A_3A_4$，系统正常当且仅当至少一条支路正常，即 $A=A_1A_2\cup A_3A_4$。由加法公式与各元件独立性，
+\[
+\begin{aligned}
+  P(A)&=P(A_1A_2)+P(A_3A_4)-P(A_1A_2A_3A_4)\\
+      &=p_1p_2+p_3p_4-p_1p_2p_3p_4.
+\end{aligned}
+\]
+也可利用对立事件：系统失效当且仅当两支路均失效，即 $\overline{A}=\overline{A_1A_2}\cap\overline{A_3A_4}$，因两支路所含元件互不相交，由独立性得
+\[
+  P(A)=1-P(\overline{A_1A_2})P(\overline{A_3A_4})=1-(1-p_1p_2)(1-p_3p_4),
+\]
+展开后与上式完全一致。
+\end{solution}
+\end{example}
+
+\begin{example}[title={抽检中的误判与独立重复检验}]
+\label{eg:inspection-errors}
+某批产品的正品率为 $0.96$，次品率为 $0.04$。自动检测仪存在一定误差：将正品误判为次品的概率为 $0.02$，将次品误判为正品的概率为 $0.05$。若从该批产品中独立随机抽检 $4$ 件（各件真伪及检测误差均相互独立），求这 $4$ 件全部被判为正品的概率。
+\begin{solution}
+先求单件产品被判为正品的概率。记 $G$ 为“所取产品为正品”，$A$ 为“被仪器判为正品”。由全概率公式，
+\[
+\begin{aligned}
+  P(A)&=P(G)P(A\mid G)+P(\overline{G})P(A\mid\overline{G})\\
+      &=0.96\times(1-0.02)+0.04\times 0.05=0.9408+0.0020=0.9428.
+\end{aligned}
+\]
+因 $4$ 次抽检相互独立，全部被判为正品的概率为
+\[
+  p=\bigl[P(A)\bigr]^4=0.9428^4\approx 0.7901.
+\]
+\end{solution}
+\end{example}
+
+\begin{example}[title={三局两胜制与五局三胜制的比较}]
+\label{eg:match-format}
+甲、乙两人进行乒乓球比赛，每局甲胜的概率为 $p\,(p>1/2)$，各局胜负相互独立。比较三局两胜制与五局三胜制下甲最终获胜的概率。
+\begin{solution}
+在三局两胜制下，甲获胜需在末局胜出，按总比赛局数分为两类互斥情形：共赛 $2$ 局（甲连胜 $2$ 局）或共赛 $3$ 局（前 $2$ 局甲胜 $1$ 局且第 $3$ 局甲胜）。记 $q=1-p$，则甲胜概率为
+\[
+  p_3=p^2+\binom{2}{1}pq\cdot p=p^2(1+2q)=p^2(3-2p).
+\]
+在五局三胜制下，按共赛 $3,4,5$ 局分类，末局必为甲胜，此前甲恰胜 $2$ 局，故
+\[
+  p_5=p^3+\binom{3}{2}p^2q\cdot p+\binom{4}{2}p^2q^2\cdot p
+     =p^3(1+3q+6q^2).
+\]
+作差因式分解（利用 $q=1-p$）：
+\[
+\begin{aligned}
+  p_5-p_3
+  &=p^2\bigl[p(1+3q+6q^2)-(1+2q)\bigr]\\
+  &=p^2\bigl[(1-q)(1+3q+6q^2)-1-2q\bigr]\\
+  &=p^2\bigl(3q^2-6q^3\bigr)=3p^2q^2(1-2q)=3p^2(1-p)^2(2p-1).
+\end{aligned}
+\]
+当 $p>1/2$ 时，上式严格大于 $0$，即 $p_5>p_3$。由此可见，当单局实力占优时，增加赛程局数能进一步放大实力优势、降低偶然波动对最终胜负的影响。
+\end{solution}
+\end{example}
+
+\begin{summary}[第一章核心脉络]
+本章建立了概率论的语言与计算基础：先由随机试验抽象出样本空间 $S$ 与随机事件，借助集合运算与德摩根律翻译复杂事件；再由频率稳定性引出概率的三条公理（非负性、规范性、可列可加性），推出加法公式、容斥公式与单调连续性。在此基础上，有限对称情形由古典概型计数公式求解，信息更新问题由条件概率、乘法公式、全概率公式（由因推果）与贝叶斯公式（由果溯因）处理，而各试验互不干扰的情形则由独立性与 $n$ 重伯努利试验刻画。
+\end{summary}

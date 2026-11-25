@@ -1,0 +1,314 @@
+% libre-compendium
+%
+% Copyright (C) 2026 Richard Qin
+%
+% This document is dual-licensed under either:
+% - GNU Free Documentation License, Version 1.3 or any later version
+%   published by the Free Software Foundation; with no Invariant Sections,
+%   no Front-Cover Texts, and no Back-Cover Texts (see COPYING.DOC); or
+% - Creative Commons Attribution-ShareAlike 4.0 International License
+%   (see LICENSE-CC-BY-SA-4.0).
+
+\chapter{大数定律及中心极限定理}
+\label{ch:limit-theorems}
+
+前四章讨论的都是单个或有限个随机变量的分布与数字特征。然而，概率论最深刻的现象往往出现在\textbf{大量随机因素共同作用}之时：当独立重复试验次数 $n$ 不断增大时，随机的算术平均值会呈现出确定性的稳定趋势（\textbf{大数定律}），而总和围绕均值的标准化随机涨落则会普遍趋近于标准正态分布（\textbf{中心极限定理}）。这两大极限理论既为第一章的“频率稳定性”提供了严格的数学论证，也为数理统计的大样本推断奠定了理论基础。
+
+\section{大数定律}
+\label{sec:law-large-numbers}
+
+\subsection{依概率收敛}
+
+随机变量序列的收敛方式不同于普通实数列。下面引入概率论中最基本的收敛概念之一——依概率收敛。
+
+\begin{definition}[依概率收敛]
+\label{def:convergence-in-prob}
+设 $Y_1,Y_2,\ldots,Y_n,\ldots$ 是一个随机变量序列，$a$ 是一个常数。若对任意正数 $\varepsilon>0$，均有
+\begin{equation}
+  \lim_{n\to\infty}P\bigl(\abs{Y_n-a}<\varepsilon\bigr)=1
+  \qquad\Bigl(\text{等价地，}\lim_{n\to\infty}P\bigl(\abs{Y_n-a}\ge\varepsilon\bigr)=0\Bigr),
+  \label{eq:conv-in-prob}
+\end{equation}
+则称序列 $\set{Y_n}$ \textbf{依概率收敛}于 $a$，记作 $Y_n\xrightarrow{P} a$。
+\end{definition}
+
+依概率收敛的含义是：对任意给定的误差容限 $\varepsilon>0$，当 $n$ 充分大时，$Y_n$ 落在 $(a-\varepsilon,a+\varepsilon)$ 之外的概率可以任意小。它保持连续运算：
+
+\begin{proposition}[依概率收敛的连续映射性质]
+\label{prop:conv-prob-continuous}
+设 $X_n\xrightarrow{P} a$，$Y_n\xrightarrow{P} b$，二元函数 $g(x,y)$ 在点 $(a,b)$ 处连续，则
+\[
+  g(X_n,Y_n)\xrightarrow{P} g(a,b).
+\]
+\end{proposition}
+\begin{proof}
+任给 $\varepsilon>0$。由 $g$ 在 $(a,b)$ 处连续，存在 $\delta>0$，使得只要 $\abs{x-a}<\delta$ 且 $\abs{y-b}<\delta$，必有 $\abs{g(x,y)-g(a,b)}<\varepsilon$。取逆否命题得事件包含关系
+\[
+  \set{\abs{g(X_n,Y_n)-g(a,b)}\ge\varepsilon}
+  \subset\set{\abs{X_n-a}\ge\delta}\cup\set{\abs{Y_n-b}\ge\delta}.
+\]
+由概率的单调性与次可加性，
+\[
+  P\bigl(\abs{g(X_n,Y_n)-g(a,b)}\ge\varepsilon\bigr)
+  \le P\bigl(\abs{X_n-a}\ge\delta\bigr)+P\bigl(\abs{Y_n-b}\ge\delta\bigr)
+  \xrightarrow{n\to\infty} 0,
+\]
+故 $g(X_n,Y_n)\xrightarrow{P} g(a,b)$。
+\end{proof}
+
+\subsection{切比雪夫、辛钦与伯努利大数定律}
+
+利用第四章的切比雪夫不等式，可以非常直接地证明一类相当一般的大数定律。
+
+\begin{theorem}[切比雪夫大数定律]
+\label{thm:chebyshev-lln}
+设随机变量序列 $X_1,X_2,\ldots,X_n,\ldots$ 相互独立（或仅两两不相关），各自具有有限的数学期望 $\mu_k=E(X_k)$ 与方差 $\sigma_k^2=D(X_k)$，且方差一致有界，即存在常数 $C>0$ 使 $\sigma_k^2\le C\,(k=1,2,\ldots)$。则对任意 $\varepsilon>0$，有
+\begin{equation}
+  \lim_{n\to\infty}P\!\left(\left|\frac{1}{n}\sum_{k=1}^{n}X_k-\frac{1}{n}\sum_{k=1}^{n}\mu_k\right|<\varepsilon\right)=1.
+  \label{eq:chebyshev-lln}
+\end{equation}
+\end{theorem}
+\begin{proof}
+记 $\bar{X}_n=\frac{1}{n}\sum_{k=1}^{n}X_k$，$\bar{\mu}_n=\frac{1}{n}\sum_{k=1}^{n}\mu_k$。由期望线性性与两两不相关变量的方差可加性，
+\[
+  E(\bar{X}_n)=\bar{\mu}_n,\qquad
+  D(\bar{X}_n)=\frac{1}{n^2}\sum_{k=1}^{n}D(X_k)\le\frac{nC}{n^2}=\frac{C}{n}.
+\]
+对 $\bar{X}_n$ 应用切比雪夫不等式（\cref{thm:chebyshev}），对任意 $\varepsilon>0$ 有
+\[
+  1\ge P\bigl(\abs{\bar{X}_n-\bar{\mu}_n}<\varepsilon\bigr)
+  \ge 1-\frac{D(\bar{X}_n)}{\varepsilon^2}
+  \ge 1-\frac{C}{n\varepsilon^2}.
+\]
+令 $n\to\infty$，右端趋于 $1$，由夹逼准则立得\eqref{eq:chebyshev-lln}。
+\end{proof}
+
+当 $X_1,X_2,\ldots$ 独立同分布时，大数定律的条件还可以进一步放宽到无需假定方差存在。
+
+\begin{theorem}[辛钦（Khinchin）弱大数定律]
+\label{thm:khinchin-lln}
+设随机变量序列 $X_1,X_2,\ldots$ 相互独立、服从同一分布，且具有有限数学期望 $E(X_k)=\mu\,(k=1,2,\ldots)$。记算术平均 $\bar{X}_n=\dfrac{1}{n}\sum_{k=1}^{n}X_k$，则
+\begin{equation}
+  \bar{X}_n\xrightarrow{P}\mu,
+  \qquad\text{即对任意 }\varepsilon>0,\quad
+  \lim_{n\to\infty}P\!\left(\left|\frac{1}{n}\sum_{k=1}^{n}X_k-\mu\right|<\varepsilon\right)=1.
+  \label{eq:khinchin-lln}
+\end{equation}
+\end{theorem}
+
+当方差 $D(X_k)=\sigma^2<+\infty$ 存在时，\cref{thm:khinchin-lln}是\cref{thm:chebyshev-lln}的特例（取 $\mu_k=\mu,\,C=\sigma^2$ 即得）。当仅假定一阶矩 $E\abs{X_1}<+\infty$ 而方差未必存在时，可通过截断法或特征函数证明\eqref{eq:khinchin-lln}（特征函数方法见附录）。
+
+作为辛钦大数定律最著名的推论，我们得到频率稳定性的严格理论表述。
+
+\begin{theorem}[伯努利（Bernoulli）大数定律]
+\label{thm:bernoulli-lln}
+设 $f_A$ 是 $n$ 次独立重复试验中事件 $A$ 发生的次数，$p=P(A)$ 是事件 $A$ 在每次试验中发生的概率。则对任意 $\varepsilon>0$，有
+\begin{equation}
+  \lim_{n\to\infty}P\!\left(\left|\frac{f_A}{n}-p\right|<\varepsilon\right)=1,
+  \qquad\text{即 }\frac{f_A}{n}\xrightarrow{P} p.
+  \label{eq:bernoulli-lln}
+\end{equation}
+\end{theorem}
+\begin{proof}
+引入指示变量 $X_k\,(k=1,2,\ldots,n)$：若第 $k$ 次试验中事件 $A$ 发生则 $X_k=1$，否则 $X_k=0$。则 $X_1,\ldots,X_n$ 相互独立且同服从 $b(1,p)$，具有共同期望 $E(X_k)=p$ 与方差 $D(X_k)=p(1-p)\le\frac{1}{4}$，且事件 $A$ 的频率恰为算术平均 $\dfrac{f_A}{n}=\dfrac{1}{n}\sum_{k=1}^{n}X_k$。由\cref{thm:chebyshev-lln}（或\cref{thm:khinchin-lln}）立即得到\eqref{eq:bernoulli-lln}。
+\end{proof}
+
+至此，我们与第一章形成了完整的逻辑闭环：第一章从频率的经验稳定性出发，抽象出概率的公理化定义；在公理化体系内推导出伯努利大数定律后，反过来严格证明了只要独立重复试验次数 $n$ 充分大，频率 $f_A/n$ 与概率 $p$ 的偏差超过任意指定误差 $\varepsilon$ 的概率将趋于零——这为“大样本下以频率估计概率、以样本均值估计总体均值”提供了坚实的理论依据。
+
+\begin{example}[title={蒙特卡洛（Monte Carlo）随机投点求积分}]
+\label{eg:monte-carlo}
+设 $g(x)$ 是 $[0,1]$ 上的连续函数，求定积分 $I=\int_{0}^{1}g(x)\dd x$。生成 $n$ 个相互独立且同服从 $U(0,1)$ 的随机数 $U_1,U_2,\ldots,U_n$，构造估计量 $\hat{I}_n=\dfrac{1}{n}\sum_{k=1}^{n}g(U_k)$。证明 $\hat{I}_n\xrightarrow{P} I$。
+\begin{solution}
+令 $X_k=g(U_k)\,(k=1,2,\ldots,n)$。因 $U_1,\ldots,U_n$ 独立同分布且 $g$ 在 $[0,1]$ 上连续有界，故 $X_1,\ldots,X_n$ 相互独立同分布，且期望与方差均有限：
+\[
+  E(X_k)=E\bigl[g(U_k)\bigr]=\int_{0}^{1}g(x)\cdot 1\dd x=I.
+\]
+由辛钦大数定律（\cref{thm:khinchin-lln}），立得 $\hat{I}_n=\frac{1}{n}\sum_{k=1}^{n}X_k\xrightarrow{P} I$。这一原理在高维定积分的数值计算中威力巨大，因为其收敛阶 $O(n^{-1/2})$ 与积分维数无关。
+\end{solution}
+\end{example}
+
+\begin{remark}[弱大数定律与强大数定律]
+本章讨论的依概率收敛型大数定律称为\textbf{弱大数定律}。在高等概率论中还有更强的\textbf{柯尔莫哥洛夫强大数定律}：在独立同分布且 $E\abs{X_1}<+\infty$ 的相同条件下，成立几乎必然收敛 $P\bigl(\lim_{n\to\infty}\bar{X}_n=\mu\bigr)=1$。依概率收敛仅断言在足够大的固定 $n$ 处偏离概率很小，而几乎必然收敛进一步断言几乎每条样本轨道本身都收敛于 $\mu$。
+\end{remark}
+
+\section{中心极限定理}
+\label{sec:central-limit}
+
+大数定律指出了独立随机变量算术平均 $\bar{X}_n$ 的收敛极限 $\mu$，但它并未告诉我们：在 $n$ 很大但有限时，误差 $\bar{X}_n-\mu$（或总和 $S_n=\sum_{k=1}^{n}X_k$）究竟服从什么分布，从而无法精确计算区间概率。中心极限定理回答的正是这一核心问题：只要各加项相互独立且单个加项不起支配作用，标准化之和的极限分布一律是标准正态分布 $N(0,1)$。
+
+\subsection{三个基本中心极限定理}
+
+\begin{theorem}[独立同分布的中心极限定理（林德伯格—莱维定理）]
+\label{thm:lindeberg-levy}
+设随机变量序列 $X_1,X_2,\ldots,X_n,\ldots$ 相互独立、服从同一分布，且具有有限的数学期望与正方差：$E(X_k)=\mu$，$D(X_k)=\sigma^2>0\,(k=1,2,\ldots)$。记随机变量之和 $S_n=\sum_{k=1}^{n}X_k$ 的标准化变量为
+\[
+  Y_n=\frac{S_n-E(S_n)}{\sqrt{D(S_n)}}=\frac{\displaystyle\sum_{k=1}^{n}X_k-n\mu}{\sqrt{n}\,\sigma},
+\]
+则对任意实数 $x\in\R$，其分布函数 $F_n(x)=P(Y_n\le x)$ 满足
+\begin{equation}
+  \lim_{n\to\infty}F_n(x)
+  =\lim_{n\to\infty}P\!\left(\frac{\displaystyle\sum_{k=1}^{n}X_k-n\mu}{\sqrt{n}\,\sigma}\le x\right)
+  =\int_{-\infty}^{x}\frac{1}{\sqrt{2\pi}}\e^{-t^2/2}\dd t=\Phi(x).
+  \label{eq:lindeberg-levy}
+\end{equation}
+\end{theorem}
+
+\cref{thm:lindeberg-levy}的严格证明需要借助特征函数与莱维连续性定理（见附录）。在应用层面上，\eqref{eq:lindeberg-levy}表明当 $n$ 充分大时，有如下等价的正态近似关系：
+\begin{equation}
+  \sum_{k=1}^{n}X_k\;\dot{\sim}\;N(n\mu,\,n\sigma^2),\qquad
+  \bar{X}_n=\frac{1}{n}\sum_{k=1}^{n}X_k\;\dot{\sim}\;N\!\left(\mu,\,\frac{\sigma^2}{n}\right).
+  \label{eq:clt-approx}
+\end{equation}
+这里最令人惊叹之处在于：\textbf{无论单个变量 $X_k$ 服从何种分布（离散、均匀、指数、偏态均可），只要独立同分布且方差有限，其总和与样本均值在大样本下都近似服从正态分布}。
+
+若去掉“同分布”要求，只要每个独立加项的高阶矩受到控制、不出现个别项主导整体波动的情形，正态极限仍然成立。
+
+\begin{theorem}[李雅普诺夫（Lyapunov）中心极限定理]
+\label{thm:lyapunov-clt}
+设随机变量序列 $X_1,X_2,\ldots,X_n,\ldots$ 相互独立，具有有限数学期望 $E(X_k)=\mu_k$ 与正方差 $D(X_k)=\sigma_k^2>0$，记 $B_n^2=\sum_{k=1}^{n}\sigma_k^2$。若存在常数 $\delta>0$，使得当 $n\to\infty$ 时成立\textbf{李雅普诺夫条件}：
+\begin{equation}
+  \lim_{n\to\infty}\frac{1}{B_n^{2+\delta}}\sum_{k=1}^{n}E\bigl[\abs{X_k-\mu_k}^{2+\delta}\bigr]=0,
+  \label{eq:lyapunov-cond}
+\end{equation}
+则标准化变量 $Z_n=\dfrac{\sum_{k=1}^{n}X_k-\sum_{k=1}^{n}\mu_k}{B_n}$ 对任意 $x\in\R$ 满足
+\begin{equation}
+  \lim_{n\to\infty}P\!\left(\frac{\displaystyle\sum_{k=1}^{n}X_k-\sum_{k=1}^{n}\mu_k}{B_n}\le x\right)=\Phi(x).
+  \label{eq:lyapunov-clt}
+\end{equation}
+\end{theorem}
+
+李雅普诺夫定理深刻解释了正态分布的普遍起源：自然界与工程中的测量误差、城市总用电负荷、群体身高体重等随机量，往往是成百上千个微小独立随机因素叠加的综合结果，单个因素无须同分布，也不起决定性作用，因而总和天然呈现钟形正态分布。
+
+将\cref{thm:lindeberg-levy}应用于二项分布，便得到历史上最早的中心极限定理。
+
+\begin{theorem}[棣莫弗—拉普拉斯（De Moivre--Laplace）定理]
+\label{thm:de-moivre-laplace}
+设随机变量 $\eta_n\sim b(n,p)\,(0<p<1,\,n=1,2,\ldots)$，则对任意实数 $x\in\R$，有
+\begin{equation}
+  \lim_{n\to\infty}P\!\left(\frac{\eta_n-np}{\sqrt{np(1-p)}}\le x\right)=\Phi(x).
+  \label{eq:de-moivre-laplace}
+\end{equation}
+\end{theorem}
+\begin{proof}
+将 $\eta_n$ 表示为 $n$ 个相互独立、同服从两点分布 $b(1,p)$ 的随机变量之和 $\eta_n=\sum_{k=1}^{n}X_k$。每个 $X_k$ 满足 $E(X_k)=p$，$D(X_k)=p(1-p)>0$。直接套用\cref{thm:lindeberg-levy}即得\eqref{eq:de-moivre-laplace}。
+\end{proof}
+
+\cref{fig:clt-approx}直观展示了即使 $n=20$（$p=0.3$）时，标准化二项分布 $b(20,0.3)$ 的概率直方图轮廓已与标准正态密度曲线 $\varphi(z)$ 高度吻合。
+
+\lcfigure[caption={棣莫弗—拉普拉斯定理的数值直观：将 $X\sim b(20,0.3)$（$\mu=6,\,\sigma=\sqrt{4.2}\approx 2.049$）标准化后绘制的概率密度直方图，已紧贴标准正态密度曲线 $\varphi(z)$。},label=fig:clt-approx]{ch05-clt-approx}
+
+\begin{remark}[离散变量正态近似的连续性修正]
+用连续的正态分布近似离散整数值变量 $\eta_n\sim b(n,p)$ 的区间概率 $P(a\le\eta_n\le b)$（$a,b$ 为整数）时，当 $n$ 为中等规模（如 $20\le n\le 100$），将区间端点各向外扩展 $0.5$（即用 $[a-0.5,\,b+0.5]$ 对应的面积近似整数点 $a,\ldots,b$ 的直方柱总面积）：
+\[
+  P(a\le\eta_n\le b)\approx\Phi\!\left(\frac{b+0.5-np}{\sqrt{np(1-p)}}\right)-\Phi\!\left(\frac{a-0.5-np}{\sqrt{np(1-p)}}\right),
+\]
+可显著提升近似精度，这称为\textbf{连续性修正}。当 $n$ 极大（如 $n\ge 1000$）时，$\frac{0.5}{\sqrt{np(1-p)}}$ 极小，是否修正差别甚微。
+\end{remark}
+
+\subsection{中心极限定理的典型应用}
+
+\begin{example}[title={独立噪声电压之和的概率近似}]
+\label{eg:noise-voltage}
+一加法器同时收到 $20$ 个相互独立的噪声电压 $V_1,V_2,\ldots,V_{20}$，每个 $V_k$ 均在区间 $(0,10)$ 上服从均匀分布。记总电压 $V=\sum_{k=1}^{20}V_k$，求 $P(V>105)$ 的近似值。
+\begin{solution}
+每个 $V_k\sim U(0,10)$ 的期望与方差为
+\[
+  \mu=E(V_k)=5,\qquad \sigma^2=D(V_k)=\frac{10^2}{12}=\frac{25}{3}.
+\]
+于是 $E(V)=20\times 5=100$，$D(V)=20\times\frac{25}{3}=\frac{500}{3}$，标准差 $\sqrt{D(V)}=\sqrt{\frac{500}{3}}\approx 12.910$。由\cref{thm:lindeberg-levy}，
+\[
+  P(V>105)=1-P\!\left(\frac{V-100}{\sqrt{500/3}}\le\frac{105-100}{\sqrt{500/3}}\right)
+  \approx 1-\Phi(0.3873)\approx 1-0.6507=0.3493.
+\]
+\end{solution}
+\end{example}
+
+\begin{example}[title={大样本二项分布的正态近似}]
+\label{eg:ship-wave}
+一船舶在某海区航行，每次遭受波浪冲击时纵摇角大于 $3^\circ$ 的概率为 $p=1/3$，各次冲击相互独立。若船舶遭受 $90\,000$ 次波浪冲击，求其中纵摇角大于 $3^\circ$ 的次数在 $29\,500$ 至 $30\,500$ 次之间的概率。
+\begin{solution}
+记满足条件的次数为 $X$，则 $X\sim b(90\,000,\,1/3)$，其期望与标准差为
+\[
+  np=90\,000\times\frac{1}{3}=30\,000,\qquad
+  \sqrt{np(1-p)}=\sqrt{90\,000\times\frac{1}{3}\times\frac{2}{3}}=100\sqrt{2}.
+\]
+由棣莫弗—拉普拉斯定理（\cref{thm:de-moivre-laplace}），
+\[
+\begin{aligned}
+  P(29\,500\le X\le 30\,500)
+  &\approx\Phi\!\left(\frac{30\,500-30\,000}{100\sqrt{2}}\right)-\Phi\!\left(\frac{29\,500-30\,000}{100\sqrt{2}}\right)\\
+  &=\Phi\!\left(\frac{5}{\sqrt{2}}\right)-\Phi\!\left(-\frac{5}{\sqrt{2}}\right)
+  =2\Phi(3.536)-1\approx 0.9996.
+\end{aligned}
+\]
+\end{solution}
+\end{example}
+
+\begin{example}[title={家长会人数的两类中心极限定理计算}]
+\label{eg:parent-meeting}
+某校共有 $400$ 名学生，每名学生来参加家长会的家长人数相互独立且服从同一分布：无家长、$1$ 名家长、$2$ 名家长到场的概率分别为 $0.05,\,0.80,\,0.15$。(1) 求到会家长总人数 $X$ 超过 $450$ 的概率；(2) 求恰有 $1$ 名家长到场的学生人数 $Y$ 不多于 $340$ 的概率。
+\begin{solution}
+(1) 记第 $k$ 名学生到会的家长人数为 $X_k\,(k=1,\ldots,400)$，则
+\[
+  E(X_k)=0\times 0.05+1\times 0.80+2\times 0.15=1.1,
+\]
+\[
+  E(X_k^2)=0\times 0.05+1\times 0.80+4\times 0.15=1.4,\qquad
+  D(X_k)=1.4-1.1^2=0.19.
+\]
+总人数 $X=\sum_{k=1}^{400}X_k$ 的期望为 $400\times 1.1=440$，标准差为 $\sqrt{400\times 0.19}=20\sqrt{0.19}\approx 8.718$。由\cref{thm:lindeberg-levy}，
+\[
+  P(X>450)=1-P\!\left(\frac{X-440}{20\sqrt{0.19}}\le\frac{450-440}{20\sqrt{0.19}}\right)
+  \approx 1-\Phi(1.147)\approx 1-0.8743=0.1257.
+\]
+
+(2) 记恰有 $1$ 名家长到场的学生人数为 $Y$，则 $Y\sim b(400,0.8)$，其期望为 $400\times 0.8=320$，标准差为 $\sqrt{400\times 0.8\times 0.2}=8$。由棣莫弗—拉普拉斯定理，
+\[
+  P(Y\le 340)\approx\Phi\!\left(\frac{340-320}{8}\right)=\Phi(2.5)\approx 0.9938.
+\]
+\end{solution}
+\end{example}
+
+\begin{example}[title={由精度与置信度反求样本容量}]
+\label{eg:sample-size-clt}
+某种电子器件的寿命具有未知数学期望 $\mu$（单位：小时）与已知方差 $\sigma^2=400$。随机抽取 $n$ 只独立测试，以样本均值 $\bar{X}_n=\frac{1}{n}\sum_{k=1}^{n}X_k$ 估计 $\mu$。要使估计误差小于 $1$ 小时的概率不低于 $0.95$（即 $P(\abs{\bar{X}_n-\mu}<1)\ge 0.95$），至少需要测试多少只器件？并与切比雪夫不等式的结果比较。
+\begin{solution}
+由\cref{thm:lindeberg-levy}，$\frac{\bar{X}_n-\mu}{\sigma/\sqrt{n}}\,\dot{\sim}\,N(0,1)$，其中 $\sigma=20$。因此
+\[
+  P\bigl(\abs{\bar{X}_n-\mu}<1\bigr)
+  =P\!\left(\left|\frac{\bar{X}_n-\mu}{20/\sqrt{n}}\right|<\frac{\sqrt{n}}{20}\right)
+  \approx 2\Phi\!\left(\frac{\sqrt{n}}{20}\right)-1\ge 0.95,
+\]
+即 $\Phi\!\left(\frac{\sqrt{n}}{20}\right)\ge 0.975$。查标准正态上分位点 $z_{0.025}\approx 1.96$，得
+\[
+  \frac{\sqrt{n}}{20}\ge 1.96 \implies n\ge (39.2)^2=1536.64,
+\]
+故至少需要测试 $n=1537$ 只器件。
+
+作为对照，若改用切比雪夫不等式 $P(\abs{\bar{X}_n-\mu}<1)\ge 1-\frac{400}{n}\ge 0.95$，则解得 $n\ge 8000$。切比雪夫界完全不依赖近似而给出绝对保守的保证；中心极限定理则给出了大样本下更为贴合实际的样本容量估计。
+\end{solution}
+\end{example}
+
+\begin{method}[中心极限定理四步法与二项分布近似选型]
+\textbf{中心极限定理应用四步法}：
+\begin{enumerate}
+  \item \textbf{写成独立和}：将目标变量明确表示为 $S_n=\sum_{k=1}^{n}X_k$ 或 $\bar{X}_n=\frac{1}{n}S_n$；
+  \item \textbf{算单项均值与方差}：求出 $\mu=E(X_k)$ 与 $\sigma^2=D(X_k)$（从而得 $E(S_n)=n\mu,\,\sqrt{D(S_n)}=\sqrt{n}\sigma$）；
+  \item \textbf{标准化}：将所求事件转化为 $\frac{S_n-n\mu}{\sqrt{n}\sigma}$ 的不等式（中等样本离散情形可视需要做 $\pm 0.5$ 连续性修正）；
+  \item \textbf{查 $\Phi(x)$ 表求解}：利用 $\Phi(-x)=1-\Phi(x)$ 完成正态概率或反求参数计算。
+\end{enumerate}
+
+\textbf{二项分布 $b(n,p)$ 的近似选型经验}：当 $n$ 很大且 $p$ 极小、$np$ 适中（如 $n\ge 20,\,p\le 0.05$）时，优先用\textbf{泊松定理}近似；当 $n$ 较大且 $p$ 不极端接近 $0$ 或 $1$（如 $np\ge 5$ 且 $n(1-p)\ge 5$）时，优先用\textbf{棣莫弗—拉普拉斯定理}正态近似。
+\end{method}
+
+\begin{pitfall}[极限应用中的三类常见误区]
+\begin{enumerate}
+  \item \textbf{忘记对方差开根号}：标准化分母是标准差 $\sqrt{n}\,\sigma$（样本均值分母为 $\sigma/\sqrt{n}$），切勿误写为方差 $n\sigma^2$ 或 $\sigma^2/n$。
+  \item \textbf{混淆总体分布与和的分布}：中心极限定理说的是\textbf{大量独立变量之和或均值}近似服从正态分布，而不是单个变量 $X_k$ 本身趋于正态分布。
+  \item \textbf{忽视方差存在条件}：中心极限定理要求方差有限（例如独立标准柯西变量的算术平均 $\bar{X}_n$ 仍服从标准柯西分布，既不满足大数定律也不服从中心极限定理）。
+\end{enumerate}
+\end{pitfall}
+
+\begin{summary}[第五章核心脉络]
+本章揭示了独立随机变量在大样本下的两条根本规律：\textbf{大数定律}（切比雪夫、辛钦、伯努利）从依概率收敛的角度证明了算术平均收敛于期望、频率收敛于概率，使概率论与频率直观形成闭环；\textbf{中心极限定理}（林德伯格—莱维、李雅普诺夫、棣莫弗—拉普拉斯）进一步刻画了标准化总和的渐近正态性，既解释了正态分布的普遍来源，又为复杂求和概率计算与样本容量设计提供了统一工具。
+\end{summary}

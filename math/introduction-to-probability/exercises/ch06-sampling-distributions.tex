@@ -1,0 +1,215 @@
+% libre-compendium
+%
+% Copyright (C) 2026 Richard Qin
+%
+% This document is dual-licensed under either:
+% - GNU Free Documentation License, Version 1.3 or any later version
+%   published by the Free Software Foundation; with no Invariant Sections,
+%   no Front-Cover Texts, and no Back-Cover Texts (see COPYING.DOC); or
+% - Creative Commons Attribution-ShareAlike 4.0 International License
+%   (see LICENSE-CC-BY-SA-4.0).
+\section{样本及抽样分布}
+
+\begin{exercise}
+在正态总体 $N(52,\,6.3^2)$ 中随机抽取容量为 $36$ 的样本，求样本均值 $\bar{X}$ 落在 $50.8$ 到 $53.8$ 之间的概率（已知 $\Phi(1.714)\approx 0.9567,\,\Phi(1.143)\approx 0.8735$）。
+\begin{answer}
+$0.8302$。
+\end{answer}
+\begin{solution}
+由正态抽样定理，$\bar{X}\sim N\bigl(52,\,6.3^2/36\bigr)=N(52,\,1.05^2)$，标准差为 $1.05$。标准化得
+\[
+  P(50.8<\bar{X}<53.8)
+  =\Phi\!\left(\frac{53.8-52}{1.05}\right)-\Phi\!\left(\frac{50.8-52}{1.05}\right)
+  =\Phi(1.714)-\Phi(-1.143)
+  \approx 0.9567+0.8735-1=0.8302.
+\]
+\end{solution}
+\end{exercise}
+
+\begin{exercise}
+在正态总体 $N(12,4)$ 中随机抽取容量为 $5$ 的样本 $X_1,\ldots,X_5$。求：(1) $P(\abs{\bar{X}-12}>1)$（已知 $\Phi(1.118)\approx 0.8682$）；(2) $P\bigl(\max\set{X_1,\ldots,X_5}>15\bigr)$（已知 $\Phi(1.5)\approx 0.9332$）。
+\begin{answer}
+(1) $0.2636$；(2) $0.2923$。
+\end{answer}
+\begin{solution}
+(1) $\bar{X}\sim N(12,\,4/5)$，标准差为 $2/\sqrt{5}\approx 0.8944$，故
+\[
+  P(\abs{\bar{X}-12}>1)=2\left[1-\Phi\!\left(\frac{1}{2/\sqrt{5}}\right)\right]
+  =2\bigl[1-\Phi(1.118)\bigr]\approx 2\times(1-0.8682)=0.2636.
+\]
+
+(2) 对单个变量 $X_i\sim N(12,4)$，$P(X_i\le 15)=\Phi\bigl(\frac{15-12}{2}\bigr)=\Phi(1.5)\approx 0.9332$。由独立性，
+\[
+  P\bigl(\max\set{X_1,\ldots,X_5}>15\bigr)=1-\bigl[P(X_1\le 15)\bigr]^5
+  \approx 1-0.9332^5\approx 0.2923.
+\]
+\end{solution}
+\end{exercise}
+
+\begin{exercise}
+从正态总体 $N(20,3)$ 中抽取容量分别为 $10$ 与 $15$ 的两个独立样本，求两样本均值之差的绝对值大于 $0.3$ 的概率（已知 $\Phi(0.424)\approx 0.6642$）。
+\begin{answer}
+$0.6716$。
+\end{answer}
+\begin{solution}
+$\bar{X}\sim N(20,\,3/10)$ 与 $\bar{Y}\sim N(20,\,3/15)$ 相互独立，故 $\bar{X}-\bar{Y}\sim N\bigl(0,\,\frac{3}{10}+\frac{3}{15}\bigr)=N(0,\,0.5)$，标准差为 $\sqrt{0.5}\approx 0.7071$。于是
+\[
+  P(\abs{\bar{X}-\bar{Y}}>0.3)=2\left[1-\Phi\!\left(\frac{0.3}{\sqrt{0.5}}\right)\right]
+  =2\bigl[1-\Phi(0.424)\bigr]\approx 2\times(1-0.6642)=0.6716.
+\]
+\end{solution}
+\end{exercise}
+
+\begin{exercise}
+设 $X_1,X_2,\ldots,X_5$ 是来自标准正态总体 $N(0,1)$ 的样本，求常数 $C$ 使统计量
+\[
+  Y=\frac{C(X_1+X_2)}{\sqrt{X_3^2+X_4^2+X_5^2}}
+\]
+服从 $t$ 分布，并指出其自由度。
+\begin{answer}
+$C=\sqrt{3/2}$，自由度为 $3$。
+\end{answer}
+\begin{solution}
+因 $X_1+X_2\sim N(0,2)$，故 $U=\frac{X_1+X_2}{\sqrt{2}}\sim N(0,1)$；又 $V=X_3^2+X_4^2+X_5^2\sim\chi^2(3)$ 且与 $U$ 相互独立。由 $t$ 分布定义，
+\[
+  \frac{U}{\sqrt{V/3}}=\frac{(X_1+X_2)/\sqrt{2}}{\sqrt{(X_3^2+X_4^2+X_5^2)/3}}
+  =\sqrt{\frac{3}{2}}\,\frac{X_1+X_2}{\sqrt{X_3^2+X_4^2+X_5^2}}\sim t(3),
+\]
+故取 $C=\sqrt{3/2}$，自由度为 $3$。
+\end{solution}
+\end{exercise}
+
+\begin{exercise}
+已知随机变量 $T\sim t(n)$，证明 $T^2\sim F(1,n)$；并据此说明 $F_\alpha(1,n)=\bigl[t_{\alpha/2}(n)\bigr]^2$。
+\begin{answer}
+证明见解答。
+\end{answer}
+\begin{solution}
+由 $t$ 分布定义，可写 $T=\frac{X}{\sqrt{Y/n}}$，其中 $X\sim N(0,1)$，$Y\sim\chi^2(n)$ 且两者相互独立。平方得
+\[
+  T^2=\frac{X^2/1}{Y/n}.
+\]
+因 $X^2\sim\chi^2(1)$ 且与 $Y\sim\chi^2(n)$ 相互独立，由 $F$ 分布定义立得 $T^2\sim F(1,n)$。又因 $t(n)$ 关于原点对称，
+\[
+  \alpha=P\bigl(\abs{T}>t_{\alpha/2}(n)\bigr)=P\Bigl(T^2>\bigl[t_{\alpha/2}(n)\bigr]^2\Bigr),
+\]
+对照 $F(1,n)$ 上 $\alpha$ 分位数定义即得 $F_\alpha(1,n)=\bigl[t_{\alpha/2}(n)\bigr]^2$。
+\end{solution}
+\end{exercise}
+
+\begin{exercise}
+设总体 $X\sim b(1,p)$，$X_1,X_2,\ldots,X_n$ 是来自 $X$ 的样本。(1) 写出样本的联合分布律；(2) 求 $E(\bar{X})$、$D(\bar{X})$ 与 $E(S^2)$。
+\begin{answer}
+(1) $P(X_1=x_1,\ldots,X_n=x_n)=p^{\sum x_i}(1-p)^{n-\sum x_i}\,(x_i\in\set{0,1})$；(2) $E(\bar{X})=p$，$D(\bar{X})=\frac{p(1-p)}{n}$，$E(S^2)=p(1-p)$。
+\end{answer}
+\begin{solution}
+(1) 单个变量分布律为 $P(X_i=x_i)=p^{x_i}(1-p)^{1-x_i}\,(x_i=0,1)$，由独立同分布得联合分布律为
+\[
+  P(X_1=x_1,\ldots,X_n=x_n)=\prod_{i=1}^{n}p^{x_i}(1-p)^{1-x_i}
+  =p^{\sum_{i=1}^{n}x_i}(1-p)^{n-\sum_{i=1}^{n}x_i}.
+\]
+
+(2) 因 $E(X)=p,\,D(X)=p(1-p)$，直接由样本均值与样本方差的矩公式得
+\[
+  E(\bar{X})=p,\qquad D(\bar{X})=\frac{p(1-p)}{n},\qquad E(S^2)=D(X)=p(1-p).
+\]
+\end{solution}
+\end{exercise}
+
+\begin{exercise}
+设总体 $X\sim\pi(\lambda)$，$X_1,X_2,\ldots,X_{10}$ 是来自 $X$ 的样本，求 $E(\bar{X})$、$D(\bar{X})$、$E(S^2)$ 以及 $E\bigl(\sum_{i=1}^{10}X_i^2\bigr)$。
+\begin{answer}
+$E(\bar{X})=\lambda$，$D(\bar{X})=\frac{\lambda}{10}$，$E(S^2)=\lambda$，$E\bigl(\sum_{i=1}^{10}X_i^2\bigr)=10(\lambda^2+\lambda)$。
+\end{answer}
+\begin{solution}
+对 $X\sim\pi(\lambda)$ 有 $E(X)=\lambda,\,D(X)=\lambda$，故 $E(X^2)=D(X)+[E(X)]^2=\lambda^2+\lambda$。由此得
+\[
+  E(\bar{X})=\lambda,\qquad D(\bar{X})=\frac{\lambda}{10},\qquad E(S^2)=\lambda,
+\]
+\[
+  E\!\left(\sum_{i=1}^{10}X_i^2\right)=10E(X^2)=10(\lambda^2+\lambda).
+\]
+\end{solution}
+\end{exercise}
+
+\begin{exercise}
+已知一组容量为 $8$ 的收缩压观察值（单位：$\mathrm{mmHg}$，已排序）为 $102,110,117,118,122,123,132,150$。求样本的五数概括 $(\min,Q_1,M,Q_3,\max)$、四分位距 $\mathrm{IQR}$，并判断 $150$ 是否为疑似异常值。
+\begin{answer}
+五数概括为 $(102,\,113.5,\,120,\,127.5,\,150)$，$\mathrm{IQR}=14$；上界为 $148.5$，故 $150$ 为疑似异常值。
+\end{answer}
+\begin{solution}
+最小值 $102$，最大值 $150$。因 $n=8$，
+\begin{itemize}
+  \item $8\times 0.25=2$（整数），故 $Q_1=\frac{1}{2}(x_{(2)}+x_{(3)})=\frac{110+117}{2}=113.5$；
+  \item $8\times 0.50=4$（整数），故 $M=\frac{1}{2}(x_{(4)}+x_{(5)})=\frac{118+122}{2}=120$；
+  \item $8\times 0.75=6$（整数），故 $Q_3=\frac{1}{2}(x_{(6)}+x_{(7)})=\frac{123+132}{2}=127.5$。
+\end{itemize}
+于是 $\mathrm{IQR}=Q_3-Q_1=14$，上界 $Q_3+1.5\mathrm{IQR}=127.5+21=148.5$，下界 $Q_1-1.5\mathrm{IQR}=113.5-21=92.5$。因 $150>148.5$，故 $150$ 为疑似异常值。
+\end{solution}
+\end{exercise}
+
+\begin{exercise}
+设 $X_1,\ldots,X_n$ 是来自正态总体 $N(\mu,\sigma^2)$ 的样本，$\mu$ 已知而 $\sigma^2$ 未知。记 $S_0^2=\frac{1}{n}\sum_{i=1}^{n}(X_i-\mu)^2$，求 $\dfrac{nS_0^2}{\sigma^2}$ 的抽样分布，并求 $E(S_0^2)$ 与 $D(S_0^2)$。
+\begin{answer}
+$\dfrac{nS_0^2}{\sigma^2}\sim\chi^2(n)$；$E(S_0^2)=\sigma^2$，$D(S_0^2)=\dfrac{2\sigma^4}{n}$。
+\end{answer}
+\begin{solution}
+令 $Z_i=\frac{X_i-\mu}{\sigma}\,(i=1,\ldots,n)$，则 $Z_1,\ldots,Z_n$ 相互独立且同服从 $N(0,1)$。因此
+\[
+  \frac{nS_0^2}{\sigma^2}=\sum_{i=1}^{n}\left(\frac{X_i-\mu}{\sigma}\right)^2=\sum_{i=1}^{n}Z_i^2\sim\chi^2(n).
+\]
+由 $\chi^2(n)$ 的期望 $n$ 与方差 $2n$，立得
+\[
+  E(S_0^2)=\frac{\sigma^2}{n}\cdot n=\sigma^2,\qquad
+  D(S_0^2)=\left(\frac{\sigma^2}{n}\right)^2\cdot 2n=\frac{2\sigma^4}{n}.
+\]
+\end{solution}
+\end{exercise}
+
+\begin{exercise}
+设 $X_1,\ldots,X_n$ 来自正态总体 $N(0,\sigma^2)$，$Y_1,\ldots,Y_m$ 来自正态总体 $N(0,2\sigma^2)$，两样本相互独立。求统计量
+\[
+  W=\frac{m\sum_{i=1}^{n}X_i^2}{n\sum_{j=1}^{m}Y_j^2}
+\]
+乘以何常数后服从 $F$ 分布，并写出其自由度。
+\begin{answer}
+$2W\sim F(n,m)$。
+\end{answer}
+\begin{solution}
+由题意，$U=\frac{1}{\sigma^2}\sum_{i=1}^{n}X_i^2\sim\chi^2(n)$，$V=\frac{1}{2\sigma^2}\sum_{j=1}^{m}Y_j^2\sim\chi^2(m)$，且 $U$ 与 $V$ 相互独立。由 $F$ 分布定义，
+\[
+  \frac{U/n}{V/m}=\frac{\frac{1}{n\sigma^2}\sum_{i=1}^{n}X_i^2}{\frac{1}{2m\sigma^2}\sum_{j=1}^{m}Y_j^2}
+  =\frac{2m\sum_{i=1}^{n}X_i^2}{n\sum_{j=1}^{m}Y_j^2}=2W\sim F(n,m).
+\]
+\end{solution}
+\end{exercise}
+
+\begin{exercise}
+设 $X_1,\ldots,X_n$ 来自总体 $N(\mu,\sigma^2)$，$S^2$ 为样本方差。求样本标准差 $S$ 的数学期望 $E(S)$，并说明 $S$ 不是 $\sigma$ 的无偏估计（但当 $n\to\infty$ 时渐近无偏）。
+\begin{answer}
+$E(S)=\sqrt{\dfrac{2}{n-1}}\,\dfrac{\Gamma(n/2)}{\Gamma\bigl((n-1)/2\bigr)}\,\sigma<\sigma$。
+\end{answer}
+\begin{solution}
+记 $W=\frac{(n-1)S^2}{\sigma^2}\sim\chi^2(n-1)$，则 $S=\frac{\sigma}{\sqrt{n-1}}\sqrt{W}$。利用 $\chi^2(k)$ 密度积分求 $E(\sqrt{W})$（令 $k=n-1$，换元 $t=w/2$）：
+\[
+  E(\sqrt{W})=\int_{0}^{+\infty}w^{1/2}\frac{w^{k/2-1}\e^{-w/2}}{2^{k/2}\Gamma(k/2)}\dd w
+  =\frac{\sqrt{2}}{\Gamma(k/2)}\int_{0}^{+\infty}t^{(k+1)/2-1}\e^{-t}\dd t
+  =\sqrt{2}\,\frac{\Gamma\bigl((k+1)/2\bigr)}{\Gamma(k/2)}.
+\]
+代入 $k=n-1$ 即得 $E(S)=\sqrt{\dfrac{2}{n-1}}\,\dfrac{\Gamma(n/2)}{\Gamma\bigl((n-1)/2\bigr)}\,\sigma$。又因 $D(S)=E(S^2)-[E(S)]^2>0$，必有 $[E(S)]^2<E(S^2)=\sigma^2$，即 $E(S)<\sigma$，故 $S$ 对 $\sigma$ 略偏低。
+\end{solution}
+\end{exercise}
+
+\begin{exercise}
+设总体 $X$ 具有有限的四阶中心矩，证明样本均值 $\bar{X}$ 与任意样本方差（样本二阶中心矩）$B_2=\frac{1}{n}\sum_{i=1}^{n}(X_i-\bar{X})^2$ 在 $n\to\infty$ 时均有 $B_2\xrightarrow{P}\sigma^2$，进而 $S^2\xrightarrow{P}\sigma^2$。
+\begin{answer}
+证明见解答。
+\end{answer}
+\begin{solution}
+将 $B_2$ 改写为 $B_2=\frac{1}{n}\sum_{i=1}^{n}X_i^2-\bar{X}^2=A_2-A_1^2$。由辛钦弱大数定律，$A_1\xrightarrow{P}\mu$ 且 $A_2\xrightarrow{P} E(X^2)=\sigma^2+\mu^2$。由依概率收敛的连续映射性质，得
+\[
+  B_2=A_2-A_1^2\xrightarrow{P}(\sigma^2+\mu^2)-\mu^2=\sigma^2.
+\]
+又 $S^2=\frac{n}{n-1}B_2$ 且 $\frac{n}{n-1}\to 1$，故 $S^2\xrightarrow{P}\sigma^2$。
+\end{solution}
+\end{exercise}

@@ -1,0 +1,302 @@
+% libre-compendium
+%
+% Copyright (C) 2026 Richard Qin
+%
+% This document is dual-licensed under either:
+% - GNU Free Documentation License, Version 1.3 or any later version
+%   published by the Free Software Foundation; with no Invariant Sections,
+%   no Front-Cover Texts, and no Back-Cover Texts (see COPYING.DOC); or
+% - Creative Commons Attribution-ShareAlike 4.0 International License
+%   (see LICENSE-CC-BY-SA-4.0).
+\section{随机变量的数字特征}
+
+\begin{exercise}
+设离散型随机变量 $X$ 的分布律为
+\[
+\begin{array}{c|cccc}
+  X & -1 & 0 & 1 & 2 \\ \hline
+  p_k & 0.2 & 0.3 & 0.3 & 0.2
+\end{array}
+\]
+求：(1) $E(X)$ 与 $D(X)$；(2) $E(2X^2-3X+1)$。
+\begin{answer}
+(1) $E(X)=0.5$，$D(X)=1.05$；(2) $2.1$。
+\end{answer}
+\begin{solution}
+(1) 由定义直接计算一阶、二阶原点矩：
+\[
+  E(X)=(-1)\times 0.2+0\times 0.3+1\times 0.3+2\times 0.2=0.5,
+\]
+\[
+  E(X^2)=1\times 0.2+0\times 0.3+1\times 0.3+4\times 0.2=1.3,
+\]
+故 $D(X)=E(X^2)-[E(X)]^2=1.3-0.25=1.05$。
+
+(2) 由数学期望的线性性，
+\[
+  E(2X^2-3X+1)=2E(X^2)-3E(X)+1=2\times 1.3-3\times 0.5+1=2.1.
+\]
+\end{solution}
+\end{exercise}
+
+\begin{exercise}
+设连续型随机变量 $X$ 的概率密度为 $f(x)=3x^2\,(0<x<1)$，其他处为 $0$。求 $E(X)$、$D(X)$ 及 $E(1/X)$。
+\begin{answer}
+$E(X)=\frac{3}{4}$，$D(X)=\frac{3}{80}$，$E(1/X)=\frac{3}{2}$。
+\end{answer}
+\begin{solution}
+由函数期望公式，
+\[
+  E(X)=\int_{0}^{1}3x^3\dd x=\frac{3}{4},\qquad
+  E(X^2)=\int_{0}^{1}3x^4\dd x=\frac{3}{5},
+\]
+故 $D(X)=E(X^2)-[E(X)]^2=\frac{3}{5}-\frac{9}{16}=\frac{3}{80}$。又
+\[
+  E\!\left(\frac{1}{X}\right)=\int_{0}^{1}\frac{1}{x}\cdot 3x^2\dd x=\int_{0}^{1}3x\dd x=\frac{3}{2}.
+\]
+\end{solution}
+\end{exercise}
+
+\begin{exercise}
+将 $n\,(n\ge 2)$ 封写好不同收信人的信件随机装入 $n$ 个写好对应地址的信封中，每个信封装一封信。记装对地址的信件数为 $X$，求 $E(X)$ 与 $D(X)$。
+\begin{answer}
+$E(X)=1$，$D(X)=1$。
+\end{answer}
+\begin{solution}
+引入指示变量 $I_i\,(i=1,\ldots,n)$：若第 $i$ 封信装入正确信封则 $I_i=1$，否则 $I_i=0$，则 $X=\sum_{i=1}^{n}I_i$。
+
+对任意 $i$，$P(I_i=1)=\frac{(n-1)!}{n!}=\frac{1}{n}$，故 $E(I_i)=\frac{1}{n}$，$D(I_i)=\frac{1}{n}\left(1-\frac{1}{n}\right)$。由期望线性性，
+\[
+  E(X)=\sum_{i=1}^{n}E(I_i)=n\cdot\frac{1}{n}=1.
+\]
+对任意 $i\ne j$，$E(I_i I_j)=P(I_i=1,I_j=1)=\frac{(n-2)!}{n!}=\frac{1}{n(n-1)}$，故
+\[
+  \operatorname{Cov}(I_i,I_j)=E(I_i I_j)-E(I_i)E(I_j)
+  =\frac{1}{n(n-1)}-\frac{1}{n^2}=\frac{1}{n^2(n-1)}.
+\]
+由一般和的方差公式（共有 $n(n-1)$ 个有序对 $(i,j)\,(i\ne j)$），
+\[
+  D(X)=\sum_{i=1}^{n}D(I_i)+\sum_{i\ne j}\operatorname{Cov}(I_i,I_j)
+  =n\cdot\frac{1}{n}\left(1-\frac{1}{n}\right)+n(n-1)\cdot\frac{1}{n^2(n-1)}
+  =\left(1-\frac{1}{n}\right)+\frac{1}{n}=1.
+\]
+\end{solution}
+\end{exercise}
+
+\begin{exercise}
+设二维随机变量 $(X,Y)$ 的联合概率密度为
+\[
+  f(x,y)=
+  \begin{cases}
+    8xy,& 0<x<y<1,\\
+    0,& \text{其他}.
+  \end{cases}
+\]
+求 $E(X)$、$E(Y)$、$E(XY)$ 及 $\operatorname{Cov}(X,Y)$。
+\begin{answer}
+$E(X)=\frac{8}{15}$，$E(Y)=\frac{4}{5}$，$E(XY)=\frac{4}{9}$，$\operatorname{Cov}(X,Y)=\frac{4}{225}$。
+\end{answer}
+\begin{solution}
+按 $0<y<1,\,0<x<y$ 积分：
+\[
+  E(X)=\int_{0}^{1}\dd y\int_{0}^{y}8x^2 y\dd x
+  =\frac{8}{3}\int_{0}^{1}y^4\dd y=\frac{8}{15},
+\]
+\[
+  E(Y)=\int_{0}^{1}\dd y\int_{0}^{y}8x y^2\dd x
+  =4\int_{0}^{1}y^4\dd y=\frac{4}{5},
+\]
+\[
+  E(XY)=\int_{0}^{1}\dd y\int_{0}^{y}8x^2 y^2\dd x
+  =\frac{8}{3}\int_{0}^{1}y^5\dd y=\frac{4}{9}.
+\]
+因此
+\[
+  \operatorname{Cov}(X,Y)=E(XY)-E(X)E(Y)=\frac{4}{9}-\frac{8}{15}\cdot\frac{4}{5}
+  =\frac{4}{9}-\frac{32}{75}=\frac{4}{225}.
+\]
+\end{solution}
+\end{exercise}
+
+\begin{exercise}
+设随机变量 $X\sim b(10,0.4)$，$Y\sim\pi(3)$，$Z\sim N(2,9)$ 相互独立，求 $E(2X-Y+3Z)$ 与 $D(2X-Y+3Z)$。
+\begin{answer}
+$E(2X-Y+3Z)=11$，$D(2X-Y+3Z)=93.6$。
+\end{answer}
+\begin{solution}
+由常用分布的数字特征公式：
+\[
+  E(X)=10\times 0.4=4,\quad D(X)=10\times 0.4\times 0.6=2.4;
+\]
+\[
+  E(Y)=3,\quad D(Y)=3;\qquad E(Z)=2,\quad D(Z)=9.
+\]
+由期望线性性与独立变量方差性质，
+\[
+  E(2X-Y+3Z)=2E(X)-E(Y)+3E(Z)=2\times 4-3+3\times 2=11,
+\]
+\[
+  D(2X-Y+3Z)=2^2 D(X)+(-1)^2 D(Y)+3^2 D(Z)=4\times 2.4+3+9\times 9=93.6.
+\]
+\end{solution}
+\end{exercise}
+
+\begin{exercise}
+设随机变量 $R$ 服从瑞利分布，其概率密度为
+\[
+  f(r)=
+  \begin{cases}
+    \dfrac{r}{\sigma^2}\e^{-r^2/(2\sigma^2)},& r>0,\\
+    0,& r\le 0
+  \end{cases}
+  \qquad(\sigma>0).
+\]
+求 $E(R)$ 与 $D(R)$。
+\begin{answer}
+$E(R)=\sqrt{\dfrac{\pi}{2}}\,\sigma$，$D(R)=\left(2-\dfrac{\pi}{2}\right)\sigma^2$。
+\end{answer}
+\begin{solution}
+作换元 $t=r/\sigma$，利用分部积分与高斯积分 $\int_{0}^{+\infty}\e^{-t^2/2}\dd t=\sqrt{\frac{\pi}{2}}$：
+\[
+  E(R)=\int_{0}^{+\infty}\frac{r^2}{\sigma^2}\e^{-r^2/(2\sigma^2)}\dd r
+  =\sigma\int_{0}^{+\infty}t\cdot t\e^{-t^2/2}\dd t
+  =\sigma\left(\Bigl[-t\e^{-t^2/2}\Bigr]_{0}^{+\infty}+\int_{0}^{+\infty}\e^{-t^2/2}\dd t\right)
+  =\sqrt{\frac{\pi}{2}}\,\sigma.
+\]
+再令 $u=r^2/(2\sigma^2)$（$\dd u=\frac{r}{\sigma^2}\dd r$）求二阶原点矩：
+\[
+  E(R^2)=\int_{0}^{+\infty}\frac{r^3}{\sigma^2}\e^{-r^2/(2\sigma^2)}\dd r
+  =2\sigma^2\int_{0}^{+\infty}u\e^{-u}\dd u=2\sigma^2.
+\]
+故 $D(R)=E(R^2)-[E(R)]^2=\left(2-\dfrac{\pi}{2}\right)\sigma^2$。
+\end{solution}
+\end{exercise}
+
+\begin{exercise}
+已知随机变量 $X$ 满足 $E(X)=10,\,D(X)=4$。(1) 利用切比雪夫不等式估计 $P(6<X<14)$ 的下界与 $P(\abs{X-10}\ge 6)$ 的上界；(2) 若进一步已知 $X\sim N(10,4)$，求这两个概率的精确近似值并与 (1) 的界比较（已知 $\Phi(2)\approx 0.9772,\,\Phi(3)\approx 0.99865$）。
+\begin{answer}
+(1) $P(6<X<14)\ge 0.75$，$P(\abs{X-10}\ge 6)\le\frac{1}{9}\approx 0.1111$；(2) 正态精确值分别为 $0.9544$ 与 $0.0027$。
+\end{answer}
+\begin{solution}
+(1) 由切比雪夫不等式，
+\[
+  P(6<X<14)=P(\abs{X-10}<4)\ge 1-\frac{D(X)}{4^2}=1-\frac{4}{16}=0.75,
+\]
+\[
+  P(\abs{X-10}\ge 6)\le\frac{D(X)}{6^2}=\frac{4}{36}=\frac{1}{9}\approx 0.1111.
+\]
+(2) 当 $X\sim N(10,2^2)$ 时，标准化得
+\[
+  P(\abs{X-10}<4)=2\Phi(2)-1\approx 2\times 0.9772-1=0.9544,
+\]
+\[
+  P(\abs{X-10}\ge 6)=2\bigl[1-\Phi(3)\bigr]\approx 2\times(1-0.99865)=0.0027.
+\]
+切比雪夫界对任意分布普遍成立，因此比正态分布的精确概率宽松得多。
+\end{solution}
+\end{exercise}
+
+\begin{exercise}
+已知随机变量 $X$ 与 $Y$ 满足 $D(X)=4,\,D(Y)=9,\,\rho_{XY}=0.5$。求：(1) $D(3X-2Y+1)$；(2) $\operatorname{Cov}(X+Y,\,X-Y)$，并判断 $X+Y$ 与 $X-Y$ 是否不相关。
+\begin{answer}
+(1) $36$；(2) $-5$，相关（不满足不相关）。
+\end{answer}
+\begin{solution}
+先求协方差：$\operatorname{Cov}(X,Y)=\rho_{XY}\sqrt{D(X)D(Y)}=0.5\times 2\times 3=3$。
+
+(1) 由方差与协方差性质，
+\[
+  D(3X-2Y+1)=9D(X)+4D(Y)-12\operatorname{Cov}(X,Y)=36+36-36=36.
+\]
+
+(2) 由协方差的双线性性，
+\[
+  \operatorname{Cov}(X+Y,\,X-Y)=D(X)-\operatorname{Cov}(X,Y)+\operatorname{Cov}(Y,X)-D(Y)=D(X)-D(Y)=4-9=-5\ne 0,
+\]
+故 $X+Y$ 与 $X-Y$ 相关。
+\end{solution}
+\end{exercise}
+
+\begin{exercise}
+已知随机变量 $X$ 与 $Y$ 满足 $E(X)=2,\,E(Y)=5,\,D(X)=4,\,D(Y)=16,\,\rho_{XY}=-0.6$。求用 $X$ 的线性函数 $\hat{Y}=a+bX$ 在均方误差最小意义下预测 $Y$ 时的最佳线性预测函数，并求最小均方误差。
+\begin{answer}
+$\hat{Y}=7.4-1.2X$，最小均方误差为 $10.24$。
+\end{answer}
+\begin{solution}
+这里 $\mu_X=2,\,\mu_Y=5,\,\sigma_X=2,\,\sigma_Y=4,\,\rho_{XY}=-0.6$。由最佳线性预测公式，
+\[
+  b^*=\rho_{XY}\frac{\sigma_Y}{\sigma_X}=(-0.6)\times\frac{4}{2}=-1.2,
+\]
+\[
+  a^*=\mu_Y-b^*\mu_X=5-(-1.2)\times 2=7.4,
+\]
+故最佳线性预测函数为 $\hat{Y}=7.4-1.2X$。最小均方误差为
+\[
+  \min_{a,b}E\bigl[(Y-a-bX)^2\bigr]=\sigma_Y^2(1-\rho_{XY}^2)=16\times(1-0.36)=10.24.
+\]
+\end{solution}
+\end{exercise}
+
+\begin{exercise}
+设 $X$ 与 $Y$ 相互独立且同服从标准正态分布 $N(0,1)$，令 $U=X+Y,\,V=X-Y$。求随机向量 $(U,V)^{\mathsf{T}}$ 的协方差矩阵，并证明 $U$ 与 $V$ 相互独立。
+\begin{answer}
+$\bm{C}=\begin{pmatrix} 2 & 0 \\ 0 & 2 \end{pmatrix}$，证明见解答。
+\end{answer}
+\begin{solution}
+由独立性，$D(U)=D(X)+D(Y)=2$，$D(V)=D(X)+D(Y)=2$，且
+\[
+  \operatorname{Cov}(U,V)=\operatorname{Cov}(X+Y,\,X-Y)=D(X)-D(Y)=1-1=0.
+\]
+因此 $(U,V)^{\mathsf{T}}$ 的协方差矩阵为 $\bm{C}=\begin{pmatrix} 2 & 0 \\ 0 & 2 \end{pmatrix}$。
+
+又因 $(X,Y)^{\mathsf{T}}\sim N(\bm{0},\bm{I}_2)$ 且变换矩阵 $\bm{A}=\begin{pmatrix} 1 & 1 \\ 1 & -1 \end{pmatrix}$ 可逆，故 $(U,V)^{\mathsf{T}}=\bm{A}(X,Y)^{\mathsf{T}}$ 仍服从二维正态分布。在二维正态分布中不相关等价于相互独立，由 $\operatorname{Cov}(U,V)=0$ 即得 $U$ 与 $V$ 相互独立。
+\end{solution}
+\end{exercise}
+
+\begin{exercise}
+设 $X_1,X_2,\ldots,X_n$ 相互独立且同服从均匀分布 $U(0,\theta)\,(\theta>0)$，令 $M=\max\set{X_1,\ldots,X_n}$。求 $E(M)$ 与 $D(M)$。
+\begin{answer}
+$E(M)=\dfrac{n}{n+1}\theta$，$D(M)=\dfrac{n}{(n+1)^2(n+2)}\theta^2$。
+\end{answer}
+\begin{solution}
+当 $0<x<\theta$ 时，$F_M(x)=\bigl[F(x)\bigr]^n=\left(\dfrac{x}{\theta}\right)^n$，求导得概率密度
+\[
+  f_M(x)=\frac{n x^{n-1}}{\theta^n},\qquad 0<x<\theta
+\]
+（其他处为 $0$）。由此直接积分：
+\[
+  E(M)=\int_{0}^{\theta}\frac{n x^n}{\theta^n}\dd x=\frac{n}{n+1}\theta,\qquad
+  E(M^2)=\int_{0}^{\theta}\frac{n x^{n+1}}{\theta^n}\dd x=\frac{n}{n+2}\theta^2,
+\]
+故
+\[
+  D(M)=E(M^2)-\bigl[E(M)\bigr]^2
+  =\left[\frac{n}{n+2}-\frac{n^2}{(n+1)^2}\right]\theta^2
+  =\frac{n}{(n+1)^2(n+2)}\theta^2.
+\]
+\end{solution}
+\end{exercise}
+
+\begin{exercise}
+设非负连续型随机变量 $X$ 的分布函数为 $F(x)$，概率密度为 $f(x)$，且数学期望 $E(X)$ 有限。证明：
+\[
+  E(X)=\int_{0}^{+\infty}\bigl[1-F(x)\bigr]\dd x,
+\]
+并利用此公式直接求指数分布 $\operatorname{Exp}(\theta)$ 的数学期望。
+\begin{answer}
+证明见解答；$E(X)=\theta$。
+\end{answer}
+\begin{solution}
+因 $X\ge 0$，$1-F(x)=P(X>x)=\int_{x}^{+\infty}f(t)\dd t$。由被积函数非负可交换积分次序（区域 $\set{0<x<t<+\infty}$），
+\[
+  \int_{0}^{+\infty}\bigl[1-F(x)\bigr]\dd x
+  =\int_{0}^{+\infty}\left[\int_{x}^{+\infty}f(t)\dd t\right]\dd x
+  =\int_{0}^{+\infty}f(t)\left[\int_{0}^{t}\dd x\right]\dd t
+  =\int_{0}^{+\infty}t f(t)\dd t=E(X).
+\]
+对 $X\sim\operatorname{Exp}(\theta)$，当 $x>0$ 时 $1-F(x)=\e^{-x/\theta}$，立即得到
+\[
+  E(X)=\int_{0}^{+\infty}\e^{-x/\theta}\dd x=\theta.
+\]
+\end{solution}
+\end{exercise}

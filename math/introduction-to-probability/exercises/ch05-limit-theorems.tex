@@ -1,0 +1,210 @@
+% libre-compendium
+%
+% Copyright (C) 2026 Richard Qin
+%
+% This document is dual-licensed under either:
+% - GNU Free Documentation License, Version 1.3 or any later version
+%   published by the Free Software Foundation; with no Invariant Sections,
+%   no Front-Cover Texts, and no Back-Cover Texts (see COPYING.DOC); or
+% - Creative Commons Attribution-ShareAlike 4.0 International License
+%   (see LICENSE-CC-BY-SA-4.0).
+\section{大数定律及中心极限定理}
+
+\begin{exercise}
+设 $X_1,X_2,\ldots$ 独立同分布，具有有限的数学期望 $\mu$、方差 $\sigma^2$ 以及有限的四阶矩。记 $\bar{X}_n=\frac{1}{n}\sum_{k=1}^{n}X_k$，证明：
+(1) $\dfrac{1}{n}\sum_{k=1}^{n}X_k^2\xrightarrow{P}\mu^2+\sigma^2$；
+(2) $\dfrac{1}{n}\sum_{k=1}^{n}(X_k-\bar{X}_n)^2\xrightarrow{P}\sigma^2$。
+\begin{answer}
+证明见解答。
+\end{answer}
+\begin{solution}
+(1) 令 $Y_k=X_k^2\,(k=1,2,\ldots)$。因 $X_1,X_2,\ldots$ 独立同分布且四阶矩有限，故 $Y_1,Y_2,\ldots$ 独立同分布，且 $E(Y_k)=E(X_k^2)=\mu^2+\sigma^2$、方差 $D(Y_k)$ 有限。由辛钦大数定律，立得
+\[
+  \frac{1}{n}\sum_{k=1}^{n}X_k^2=\frac{1}{n}\sum_{k=1}^{n}Y_k\xrightarrow{P}\mu^2+\sigma^2.
+\]
+
+(2) 将样本二阶中心矩展开为
+\[
+  \frac{1}{n}\sum_{k=1}^{n}(X_k-\bar{X}_n)^2
+  =\frac{1}{n}\sum_{k=1}^{n}X_k^2-\bar{X}_n^2.
+\]
+由辛钦大数定律有 $\bar{X}_n\xrightarrow{P}\mu$，又由 (1) 有 $\frac{1}{n}\sum_{k=1}^{n}X_k^2\xrightarrow{P}\mu^2+\sigma^2$。取连续函数 $g(u,v)=u-v^2$，由依概率收敛的连续映射性质，即得
+\[
+  \frac{1}{n}\sum_{k=1}^{n}(X_k-\bar{X}_n)^2\xrightarrow{P}(\mu^2+\sigma^2)-\mu^2=\sigma^2.
+\]
+\end{solution}
+\end{exercise}
+
+\begin{exercise}
+设随机变量序列 $X_1,X_2,\ldots$ 相互独立，且对每个 $k\ge 1$，分布律为
+\[
+  P(X_k=1)=P(X_k=-1)=\frac{1}{2k},\qquad P(X_k=0)=1-\frac{1}{k}.
+\]
+验证该序列满足切比雪夫大数定律，并写出其极限结论。
+\begin{answer}
+$\dfrac{1}{n}\sum_{k=1}^{n}X_k\xrightarrow{P} 0$。
+\end{answer}
+\begin{solution}
+对每个 $k\ge 1$，直接算得
+\[
+  E(X_k)=1\cdot\frac{1}{2k}+(-1)\cdot\frac{1}{2k}+0\cdot\left(1-\frac{1}{k}\right)=0,
+\]
+\[
+  D(X_k)=E(X_k^2)=1\cdot\frac{1}{2k}+1\cdot\frac{1}{2k}=\frac{1}{k}\le 1.
+\]
+由于 $X_1,X_2,\ldots$ 相互独立且方差一致有界（$D(X_k)\le 1$），满足切比雪夫大数定律的条件，从而 $\dfrac{1}{n}\sum_{k=1}^{n}X_k\xrightarrow{P} 0$。
+\end{solution}
+\end{exercise}
+
+\begin{exercise}
+某种电器元件的寿命服从均值为 $100\text{ h}$ 的指数分布 $\operatorname{Exp}(100)$。随机独立地抽取 $16$ 只该元件，利用中心极限定理求这 $16$ 只元件的寿命总和大于 $1920\text{ h}$ 的近似概率（已知 $\Phi(0.8)\approx 0.7881$）。
+\begin{answer}
+$0.2119$。
+\end{answer}
+\begin{solution}
+记第 $k$ 只元件的寿命为 $X_k\sim\operatorname{Exp}(100)\,(k=1,\ldots,16)$，则 $E(X_k)=100$，$D(X_k)=100^2=10\,000$。记总寿命 $S=\sum_{k=1}^{16}X_k$，则 $E(S)=16\times 100=1600$，$\sqrt{D(S)}=\sqrt{16}\times 100=400$。由中心极限定理，
+\[
+  P(S>1920)=1-P\!\left(\frac{S-1600}{400}\le\frac{1920-1600}{400}\right)
+  \approx 1-\Phi(0.8)\approx 1-0.7881=0.2119.
+\]
+\end{solution}
+\end{exercise}
+
+\begin{exercise}
+计算器在进行加法时，将每个加数舍入到最靠近它的整数。设所有舍入误差相互独立且均服从均匀分布 $U(-0.5,0.5)$。(1) 将 $1500$ 个数相加，求误差总和的绝对值超过 $15$ 的近似概率（已知 $\Phi(1.342)\approx 0.9102$）；(2) 最多允许多少个数相加，才能使误差总和的绝对值小于 $10$ 的概率不低于 $0.90$（已知 $z_{0.05}\approx 1.645$）？
+\begin{answer}
+(1) $0.1796$；(2) $443$ 个。
+\end{answer}
+\begin{solution}
+记第 $k$ 个数的舍入误差为 $X_k\sim U(-0.5,0.5)$，则 $E(X_k)=0$，$D(X_k)=\frac{1}{12}$。记 $n$ 个误差之和为 $S_n=\sum_{k=1}^{n}X_k$，则 $E(S_n)=0$，$D(S_n)=\frac{n}{12}$。
+
+(1) 当 $n=1500$ 时，$D(S_{1500})=\frac{1500}{12}=125$，$\sqrt{D(S_{1500})}=5\sqrt{5}\approx 11.180$。由中心极限定理，
+\[
+  P(\abs{S_{1500}}>15)
+  =P\!\left(\frac{\abs{S_{1500}}}{5\sqrt{5}}>\frac{15}{5\sqrt{5}}\right)
+  \approx 2\bigl[1-\Phi(1.342)\bigr]\approx 2\times(1-0.9102)=0.1796.
+\]
+
+(2) 要求 $P(\abs{S_n}<10)\approx 2\Phi\!\left(\frac{10}{\sqrt{n/12}}\right)-1\ge 0.90$，即 $\Phi\!\left(\frac{10\sqrt{12}}{\sqrt{n}}\right)\ge 0.95$。由 $z_{0.05}\approx 1.645$ 得
+\[
+  \frac{10\sqrt{12}}{\sqrt{n}}\ge 1.645 \implies n\le\frac{1200}{1.645^2}\approx 443.46,
+\]
+故最多可有 $443$ 个数相加。
+\end{solution}
+\end{exercise}
+
+\begin{exercise}
+设某批零件的质量相互独立同分布，单件质量的数学期望为 $0.5\text{ kg}$，标准差为 $0.1\text{ kg}$。求 $5000$ 个零件的总质量超过 $2510\text{ kg}$ 的近似概率（已知 $\Phi(1.414)\approx 0.9213$）。
+\begin{answer}
+$0.0787$。
+\end{answer}
+\begin{solution}
+记总质量为 $S=\sum_{k=1}^{5000}X_k$，则 $E(S)=5000\times 0.5=2500$，$\sqrt{D(S)}=\sqrt{5000}\times 0.1=5\sqrt{2}\approx 7.071$。由中心极限定理，
+\[
+  P(S>2510)\approx 1-\Phi\!\left(\frac{2510-2500}{5\sqrt{2}}\right)
+  =1-\Phi(\sqrt{2})\approx 1-0.9213=0.0787.
+\]
+\end{solution}
+\end{exercise}
+
+\begin{exercise}
+一复杂系统由 $100$ 个相互独立工作的部件组成，运行期间每个部件损坏的概率均为 $0.1$。系统正常运转要求至少有 $85$ 个部件正常工作。利用棣莫弗—拉普拉斯定理求系统正常运转的近似概率（分别给出不带连续性修正与带连续性修正的结果；已知 $\Phi(1.667)\approx 0.9522,\,\Phi(1.833)\approx 0.9666$）。
+\begin{answer}
+不带修正约 $0.9522$；带连续性修正约 $0.9666$。
+\end{answer}
+\begin{solution}
+记正常工作的部件数为 $X$，则 $X\sim b(100,0.9)$，期望 $np=90$，标准差 $\sqrt{np(1-p)}=\sqrt{100\times 0.9\times 0.1}=3$。
+
+不带连续性修正时，
+\[
+  P(X\ge 85)\approx 1-\Phi\!\left(\frac{85-90}{3}\right)=\Phi\!\left(\frac{5}{3}\right)\approx 0.9522.
+\]
+带连续性修正（以 $84.5$ 代替 $85$）时，
+\[
+  P(X\ge 85)\approx 1-\Phi\!\left(\frac{84.5-90}{3}\right)=\Phi\!\left(\frac{11}{6}\right)\approx 0.9666.
+\]
+\end{solution}
+\end{exercise}
+
+\begin{exercise}
+某公寓共有 $200$ 户住户，各户拥有汽车的辆数相互独立且服从同一分布：拥有 $0,1,2$ 辆车的概率分别为 $0.1,\,0.6,\,0.3$。问公寓至少需要规划多少个车位，才能以不低于 $0.95$ 的概率保证每辆汽车都有车位（已知 $z_{0.05}\approx 1.645$）？
+\begin{answer}
+$254$ 个。
+\end{answer}
+\begin{solution}
+记第 $k$ 户的汽车辆数为 $X_k\,(k=1,\ldots,200)$，则
+\[
+  E(X_k)=0\times 0.1+1\times 0.6+2\times 0.3=1.2,
+\]
+\[
+  E(X_k^2)=0.6+4\times 0.3=1.8,\qquad D(X_k)=1.8-1.2^2=0.36.
+\]
+记总车辆数 $S=\sum_{k=1}^{200}X_k$，则 $E(S)=200\times 1.2=240$，$\sqrt{D(S)}=\sqrt{200\times 0.36}=6\sqrt{2}\approx 8.485$。设车位数为 $m$，要求
+\[
+  P(S\le m)\approx\Phi\!\left(\frac{m-240}{6\sqrt{2}}\right)\ge 0.95.
+\]
+于是 $\frac{m-240}{6\sqrt{2}}\ge 1.645$，解得 $m\ge 240+1.645\times 8.485\approx 253.96$，故至少需要 $254$ 个车位。
+\end{solution}
+\end{exercise}
+
+\begin{exercise}
+在两个实验室中分别随机抽取 $80$ 名学生独立测量某化合物的 $\mathrm{pH}$ 值，每人测量结果相互独立同分布，数学期望为 $5$，方差为 $0.3$。以 $\bar{X}$ 与 $\bar{Y}$ 分别表示两组测量的算术平均值，利用中心极限定理求：(1) $P(4.9<\bar{X}<5.1)$；(2) $P(-0.1<\bar{X}-\bar{Y}<0.1)$（已知 $\Phi(1.633)\approx 0.9488,\,\Phi(1.155)\approx 0.8759$）。
+\begin{answer}
+(1) $0.8976$；(2) $0.7518$。
+\end{answer}
+\begin{solution}
+(1) 由中心极限定理，$\bar{X}\,\dot{\sim}\,N\bigl(5,\,\frac{0.3}{80}\bigr)$，标准差为 $\sqrt{\frac{0.3}{80}}=\sqrt{0.00375}\approx 0.06124$。故
+\[
+  P(4.9<\bar{X}<5.1)
+  \approx 2\Phi\!\left(\frac{0.1}{0.06124}\right)-1
+  =2\Phi(1.633)-1\approx 2\times 0.9488-1=0.8976.
+\]
+
+(2) 因 $\bar{X}$ 与 $\bar{Y}$ 相互独立且均近似正态，故 $\bar{X}-\bar{Y}\,\dot{\sim}\,N\bigl(0,\,\frac{0.3}{80}+\frac{0.3}{80}\bigr)=N(0,0.0075)$，标准差为 $\sqrt{0.0075}\approx 0.08660$。于是
+\[
+  P(-0.1<\bar{X}-\bar{Y}<0.1)
+  \approx 2\Phi\!\left(\frac{0.1}{0.08660}\right)-1
+  =2\Phi(1.155)-1\approx 2\times 0.8759-1=0.7518.
+\]
+\end{solution}
+\end{exercise}
+
+\begin{exercise}
+某药厂宣称其生产的药品对某疾病的治愈率为 $0.8$。医院随机抽查 $100$ 名患者，若其中治愈人数多于 $75$ 人就接受该宣称，否则拒绝。利用中心极限定理求：(1) 若实际治愈率确为 $0.8$，接受宣称的概率；(2) 若实际治愈率仅为 $0.7$，误接受宣称的概率（已知 $\Phi(1.25)\approx 0.8944,\,\Phi(1.091)\approx 0.8624$）。
+\begin{answer}
+(1) $0.8944$；(2) $0.1376$。
+\end{answer}
+\begin{solution}
+记 $100$ 名患者中治愈人数为 $X\sim b(100,p)$。
+
+(1) 当 $p=0.8$ 时，$np=80$，$\sqrt{np(1-p)}=\sqrt{100\times 0.8\times 0.2}=4$，故
+\[
+  P(X>75)\approx 1-\Phi\!\left(\frac{75-80}{4}\right)=\Phi(1.25)\approx 0.8944.
+\]
+
+(2) 当 $p=0.7$ 时，$np=70$，$\sqrt{np(1-p)}=\sqrt{21}\approx 4.583$，故
+\[
+  P(X>75)\approx 1-\Phi\!\left(\frac{75-70}{\sqrt{21}}\right)\approx 1-\Phi(1.091)\approx 1-0.8624=0.1376.
+\]
+\end{solution}
+\end{exercise}
+
+\begin{exercise}
+设随机变量 $Y_n\sim\pi(n)$（$n=1,2,\ldots$）。利用独立泊松分布的可加性与中心极限定理，证明对任意实数 $x\in\R$ 均有
+\[
+  \lim_{n\to\infty}P\!\left(\frac{Y_n-n}{\sqrt{n}}\le x\right)=\Phi(x).
+\]
+\begin{answer}
+证明见解答。
+\end{answer}
+\begin{solution}
+构造相互独立且同服从参数为 $1$ 的泊松分布 $\pi(1)$ 的随机变量列 $X_1,X_2,\ldots,X_n$。由独立泊松分布的可加性，和 $S_n=\sum_{k=1}^{n}X_k$ 服从 $\pi(n)$，即 $S_n$ 与 $Y_n$ 同分布。
+
+又每个 $X_k\sim\pi(1)$ 满足 $E(X_k)=1$，$D(X_k)=1>0$，由独立同分布的中心极限定理，对任意 $x\in\R$ 有
+\[
+  \lim_{n\to\infty}P\!\left(\frac{Y_n-n}{\sqrt{n}}\le x\right)
+  =\lim_{n\to\infty}P\!\left(\frac{\sum_{k=1}^{n}X_k-n\cdot 1}{\sqrt{n}\cdot 1}\le x\right)
+  =\Phi(x).
+\]
+\end{solution}
+\end{exercise}
