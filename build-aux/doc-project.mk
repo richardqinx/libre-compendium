@@ -61,28 +61,28 @@ pdf:
 	  fi
 
 html: svg
-	@set -eu; mkdir -p "$(HTML_BUILD)" "$(HTML_DIST)"; \
+	@set -eu; mkdir -p "$(HTML_BUILD)" "$(HTML_DIST)" "$(BUILD_ROOT)/texmf-var"; \
 	  if test -f "$(MAIN_TEX)"; then \
-	    mkdir -p "$(HTML_BUILD)/lecture" "$(HTML_BUILD)/lecture-build" "$(HTML_DIST)/lecture"; \
-    html_dir=$$(realpath --relative-to="$(PROJECT_SRC)" "$(HTML_BUILD)/lecture"); \
-    html_build_dir=$$(realpath --relative-to="$(PROJECT_SRC)" "$(HTML_BUILD)/lecture-build"); \
-    (cd "$(PROJECT_SRC)" && TEXINPUTS="$(HTML_TEX4HT_DIR):$(LC_ROOT)/common/tex//:$(LC_ROOT)/common/license/:$(PROJECT_SRC):" "$(MAKE4HT)" -x -d "$$html_dir" -B "$$html_build_dir" "main.tex" NoFonts); \
-    html_root=$$(find "$(HTML_BUILD)/lecture" -type f -name 'main.html' -print -quit | sed 's#/main\.html$$##'); \
-    test -n "$$html_root"; \
-    cp -a "$$html_root/." "$(HTML_DIST)/lecture/"; \
-    cp "$(HTML_TEX4HT_DIR)/lc.css" "$(HTML_DIST)/lecture/main.css"; \
-	    test -f "$(HTML_DIST)/lecture/main.html" && cp "$(HTML_DIST)/lecture/main.html" "$(HTML_DIST)/lecture/index.html" || true; \
+	    mkdir -p "$(HTML_BUILD)/lecture" "$(HTML_DIST)/lecture"; \
+	    sh "$(LC_ROOT)/common/build-aux/lc-version.sh" > "$(HTML_BUILD)/lecture/lc-version.tex"; \
+	    (cd "$(HTML_BUILD)/lecture" && \
+	      TEXMFVAR="$(BUILD_ROOT)/texmf-var" \
+	      TEXINPUTS="$(HTML_TEX4HT_DIR):$(LC_ROOT)/common/tex//:$(LC_ROOT)/common/license/:$(PROJECT_SRC):$(HTML_BUILD)/lecture:" \
+	      BIBINPUTS="$(PROJECT_SRC):" \
+	      "$(MAKE4HT)" -l -c lc-html.cfg -d "$(HTML_DIST)/lecture" "$(MAIN_TEX)" "" "" "" "-interaction=nonstopmode"); \
+	    cp "$(HTML_TEX4HT_DIR)/lc.css" "$(HTML_DIST)/lecture/lc.css"; \
+	    test -f "$(HTML_DIST)/lecture/main.html" && cp "$(HTML_DIST)/lecture/main.html" "$(HTML_DIST)/lecture/index.html"; \
 	  fi; \
 	  if test -f "$(PROBLEMSET_TEX)"; then \
-	    mkdir -p "$(HTML_BUILD)/problemset" "$(HTML_BUILD)/problemset-build" "$(HTML_DIST)/problemset"; \
-    html_dir=$$(realpath --relative-to="$(PROJECT_SRC)" "$(HTML_BUILD)/problemset"); \
-    html_build_dir=$$(realpath --relative-to="$(PROJECT_SRC)" "$(HTML_BUILD)/problemset-build"); \
-    (cd "$(PROJECT_SRC)" && TEXINPUTS="$(HTML_TEX4HT_DIR):$(LC_ROOT)/common/tex//:$(LC_ROOT)/common/license/:$(PROJECT_SRC):" "$(MAKE4HT)" -x -d "$$html_dir" -B "$$html_build_dir" "problemset.tex" NoFonts); \
-    html_root=$$(find "$(HTML_BUILD)/problemset" -type f -name 'problemset.html' -print -quit | sed 's#/problemset\.html$$##'); \
-    test -n "$$html_root"; \
-    cp -a "$$html_root/." "$(HTML_DIST)/problemset/"; \
-    cp "$(HTML_TEX4HT_DIR)/lc.css" "$(HTML_DIST)/problemset/main.css"; \
-	    test -f "$(HTML_DIST)/problemset/problemset.html" && cp "$(HTML_DIST)/problemset/problemset.html" "$(HTML_DIST)/problemset/index.html" || true; \
+	    mkdir -p "$(HTML_BUILD)/problemset" "$(HTML_DIST)/problemset"; \
+	    sh "$(LC_ROOT)/common/build-aux/lc-version.sh" > "$(HTML_BUILD)/problemset/lc-version.tex"; \
+	    (cd "$(HTML_BUILD)/problemset" && \
+	      TEXMFVAR="$(BUILD_ROOT)/texmf-var" \
+	      TEXINPUTS="$(HTML_TEX4HT_DIR):$(LC_ROOT)/common/tex//:$(LC_ROOT)/common/license/:$(PROJECT_SRC):$(HTML_BUILD)/problemset:" \
+	      BIBINPUTS="$(PROJECT_SRC):" \
+	      "$(MAKE4HT)" -l -c lc-html.cfg -d "$(HTML_DIST)/problemset" "$(PROBLEMSET_TEX)" "" "" "" "-interaction=nonstopmode"); \
+	    cp "$(HTML_TEX4HT_DIR)/lc.css" "$(HTML_DIST)/problemset/lc.css"; \
+	    test -f "$(HTML_DIST)/problemset/problemset.html" && cp "$(HTML_DIST)/problemset/problemset.html" "$(HTML_DIST)/problemset/index.html"; \
 	  fi
 
 svg: $(SVG_FILES)
