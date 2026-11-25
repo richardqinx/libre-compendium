@@ -72,23 +72,7 @@
 
 时空均匀性意味着变换不应依赖某一特殊时刻或位置，因此惯性系间的坐标变换具有仿射形式；两系共同原点的约定可消去常数项，使其化为线性变换。空间各向同性意味着不存在优先方向；相对性原理还要求正变换和反变换具有相同结构。本文采用标准构型：$S'$ 相对 $S$ 以速度 $v$ 沿 $x$ 轴正方向运动，两系原点在 $t=t'=0$ 时重合，如图\ref{fig:frames}所示。
 
-\begin{figure}[htbp]
-  \centering
-  \begin{tikzpicture}[>=Latex,scale=0.95]
-    \draw[->,thick] (-0.3,0) -- (6.6,0) node[right] {$x$};
-    \draw[->,thick] (0,-0.3) -- (0,2.3) node[above] {$y$};
-    \node[below left] at (0,0) {$O$};
-    \fill[relblue] (3.1,0) circle (2pt);
-    \draw[->,thick,relblue] (3.1,0) -- (5.75,0) node[above right] {$x'$};
-    \draw[->,thick,relblue] (3.1,0) -- (3.1,2.05) node[above] {$y'$};
-    \node[below,relblue] at (3.1,0) {$O'$};
-    \draw[->,very thick,relred] (0.65,1.45) -- (2.65,1.45) node[midway,above] {$\bm v=v\hat{\bm x}$};
-    \draw[dashed,relgray] (3.1,-0.25) -- (3.1,2.2);
-    \node[align=center] at (5.0,1.55) {$O'$在$S$中满足\\$x=vt$};
-  \end{tikzpicture}
-  \caption{标准构型下的两个惯性参考系。}
-  \label{fig:frames}
-\end{figure}
+\lcfigure[caption={标准构型下的两个惯性参考系。},label={fig:frames}]{frames}
 
 \section{洛伦兹变换的推导}
 
@@ -258,35 +242,16 @@
 
 图\ref{fig:lightcone}展示了一维空间中的光锥。原点 $O$ 表示选定的参考事件。未来光锥包含能够受到 $O$ 影响的事件，过去光锥包含能够影响 $O$ 的事件，光锥外部为类空区域。洛伦兹变换会改变坐标轴的方向，但保持光线 $x=\pm ct$ 以及三个区域的划分，因而保持因果结构。
 
-\begin{figure}[htbp]
-  \centering
-  \begin{tikzpicture}[>=Latex,scale=0.95]
-    \fill[relblue!10] (0,0) -- (-3,3) -- (3,3) -- cycle;
-    \fill[relred!8] (0,0) -- (-3,-3) -- (3,-3) -- cycle;
-    \draw[->,thick] (-4,0) -- (4,0) node[right] {$x$};
-    \draw[->,thick] (0,-3.6) -- (0,3.7) node[above] {$ct$};
-    \draw[very thick,relblue] (-3.4,-3.4) -- (3.4,3.4) node[above right] {$x=ct$};
-    \draw[very thick,relblue] (3.4,-3.4) -- (-3.4,3.4) node[above left] {$x=-ct$};
-    \node[relblue] at (0,2.25) {未来光锥};
-    \node[relred] at (0,-2.25) {过去光锥};
-    \node[relgray] at (3.0,0.45) {类空区域};
-    \node[relgray] at (-3.0,0.45) {类空区域};
-    \fill (0,0) circle (2pt) node[below right] {$O$};
-    \fill[relgreen] (1.35,1.75) circle (2.2pt) node[above right] {类时事件};
-    \fill[relred] (2.8,1.2) circle (2.2pt) node[right] {类空事件};
-  \end{tikzpicture}
-  \caption{闵可夫斯基时空中的光锥及事件分类。}
-  \label{fig:lightcone}
-\end{figure}
+\lcfigure[caption={闵可夫斯基时空中的光锥及事件分类。},label={fig:lightcone}]{lightcone}
 
 \clearpage
 \section{洛伦兹群、李代数与庞加莱对称性}
 
 \subsection{沿坐标轴的变换矩阵}
 
-将作用在四维坐标列向量上的变换矩阵记为 $\Lambda$，其矩阵元写作 $\Lambda^\mu{}_{\nu}$。沿 $x$ 轴的洛伦兹变换可写成
+将作用在四维坐标列向量上的变换矩阵记为 $\Lambda$，其矩阵元写作 ${\Lambda^\mu}_{\nu}$。沿 $x$ 轴的洛伦兹变换可写成
 \begin{equation}
-  x'^\mu=\Lambda^\mu{}_{\nu}x^\nu,
+  x'^\mu={\Lambda^\mu}_{\nu}x^\nu,
 \end{equation}
 其中
 \begin{equation}
@@ -338,19 +303,19 @@
 
 式\eqref{eq:metricinvariance}给出了洛伦兹矩阵 $\Lambda$ 的度规不变条件。在此基础上可以系统定义四维张量。若 $V^\mu$ 是逆变四矢量，$W_\mu$ 是协变四矢量，则洛伦兹变换下分别有
 \begin{equation}
-  V'^\mu=\Lambda^\mu{}_{\nu}V^\nu,
+  V'^\mu={\Lambda^\mu}_{\nu}V^\nu,
   \qquad
-  W'_\mu=(\Lambda^{-1})^\nu{}_{\mu}W_\nu.
+  W'_\mu={(\Lambda^{-1})^\nu}_{\mu}W_\nu.
   \label{eq:covariantcontravarianttransform}
 \end{equation}
 度规不变性保证升降指标与洛伦兹变换相容。更一般地，具有 $r$ 个上指标和 $s$ 个下指标的张量按照每个指标分别乘以相应变换矩阵，例如
 \begin{equation}
   T'^{\mu\nu}
-  =\Lambda^\mu{}_{\rho}\Lambda^\nu{}_{\sigma}
+  ={\Lambda^\mu}_{\rho}{\Lambda^\nu}_{\sigma}
   T^{\rho\sigma}.
   \label{eq:ranktwotensortransform}
 \end{equation}
-一个上指标和一个下指标的缩并在洛伦兹变换下保持不变。因此 $V_\mu V^\mu$ 是标量，$T^\mu{}_{\mu}$ 是二阶张量的迹。
+一个上指标和一个下指标的缩并在洛伦兹变换下保持不变。因此 $V_\mu V^\mu$ 是标量，${T^\mu}_{\mu}$ 是二阶张量的迹。
 
 对时空坐标求偏导可定义协变四维梯度
 \begin{equation}
@@ -481,7 +446,7 @@
   沿固定方向的推动满足 $B^{-1}(\varphi)=B(-\varphi)$，对应相对速度反向。
 \end{enumerate}
 
-对式\eqref{eq:lorentzgroupdefinition}取行列式可得 $(\det\Lambda)^2=1$，因此 $\det\Lambda=\pm1$。满足 $\det\Lambda=1$ 的变换称为正洛伦兹变换（proper Lorentz transformation）；进一步满足 $\Lambda^0{}_0\ge1$ 的变换保持时间方向，称为正时变换。与恒等变换连续相连的部分记为 $SO^+(1,3)$，其中包含通常的空间旋转和速度推动。形如 $\operatorname{diag}(1,R)$、$R\in SO(3)$ 的矩阵构成空间旋转子群。
+对式\eqref{eq:lorentzgroupdefinition}取行列式可得 $(\det\Lambda)^2=1$，因此 $\det\Lambda=\pm1$。满足 $\det\Lambda=1$ 的变换称为正洛伦兹变换（proper Lorentz transformation）；进一步满足 ${\Lambda^0}_{0}\ge1$ 的变换保持时间方向，称为正时变换。与恒等变换连续相连的部分记为 $SO^+(1,3)$，其中包含通常的空间旋转和速度推动。形如 $\operatorname{diag}(1,R)$、$R\in SO(3)$ 的矩阵构成空间旋转子群。
 
 洛伦兹群具有非交换性。对不同方向的两个推动，一般有 $\Lambda_2\Lambda_1\neq\Lambda_1\Lambda_2$。它们的复合通常包含一个额外的空间旋转，这一效应称为维格纳旋转。恒等分支 $SO^+(1,3)$ 中的任意变换都可由空间旋转与速度推动组合得到；完整的 $O(1,3)$ 还包含空间反演、时间反演及其组合等离散变换。群结构由此统一描述参考系变换的连续变化、复合与求逆。
 
@@ -496,7 +461,7 @@
 \begin{equation}
   \Omega^{\mathrm T}\eta+\eta\Omega=0.
 \end{equation}
-定义 $\Omega_{\mu\nu}=\eta_{\mu\rho}\Omega^\rho{}_{\nu}$，上式等价于
+定义 $\Omega_{\mu\nu}=\eta_{\mu\rho}{\Omega^\rho}_{\nu}$，上式等价于
 \begin{equation}
   \Omega_{\mu\nu}=-\Omega_{\nu\mu}.
   \label{eq:omegaantisymmetric}
@@ -553,7 +518,7 @@
 
 洛伦兹变换保持时空原点不动，但时空均匀性还允许改变坐标原点。把洛伦兹变换与常量四维平移 $a^\mu$ 结合，得到
 \begin{equation}
-  x'^\mu=\Lambda^\mu{}_{\nu}x^\nu+a^\mu.
+  x'^\mu={\Lambda^\mu}_{\nu}x^\nu+a^\mu.
   \label{eq:poincaretransformation}
 \end{equation}
 所有这类变换组成庞加莱群。若把群元素记为 $(\Lambda,a)$，连续施加 $(\Lambda_1,a_1)$ 和 $(\Lambda_2,a_2)$ 可得
@@ -619,17 +584,17 @@
 \end{equation}
 对常量时空平移 $x^\mu\mapsto x^\mu+\epsilon^\mu$，拉格朗日密度没有显含坐标时，可得到正则能量--动量张量
 \begin{equation}
-  T^\mu{}_{\nu}
+  {T^\mu}_{\nu}
   =\sum_a
   \frac{\partial\mathcal L}
        {\partial(\partial_\mu\phi_a)}
   \partial_\nu\phi_a
-  -\delta^\mu{}_{\nu}\mathcal L,
+  -{\delta^\mu}_{\nu}\mathcal L,
   \label{eq:canonicalenergymomentum}
 \end{equation}
 使用场的欧拉--拉格朗日方程后，该张量满足
 \begin{equation}
-  \partial_\mu T^\mu{}_{\nu}=0.
+  \partial_\mu {T^\mu}_{\nu}=0.
   \label{eq:noethertranslationcurrent}
 \end{equation}
 在边界通量消失时，守恒四动量为
@@ -666,29 +631,7 @@
 \end{equation}
 因此“异地同时”依赖参考系。图\ref{fig:spacetime}中，$S$ 的同时线为水平线，$S'$ 的同时线与 $x'$ 轴平行，两者方向不同。
 
-\begin{figure}[htbp]
-  \centering
-  \begin{tikzpicture}[>=Latex,scale=1.0]
-    \draw[->,thick] (-4.2,0) -- (4.4,0) node[right] {$x$};
-    \draw[->,thick] (0,-4.1) -- (0,5.0) node[above] {$ct$};
-    \draw[->,very thick,relblue] (0,0) -- (2.7,4.5) node[above left] {$ct'$};
-    \draw[->,very thick,relblue] (0,0) -- (4.5,2.7) node[below right] {$x'$};
-    \draw[dashed,relgray] (-3.7,2.7) -- (3.7,2.7);
-    \node[relgray,above right] at (3.15,2.7) {$t=\text{常量}$};
-    \draw[dashed,relblue] (-3.5,0.6) -- (3.5,4.8);
-    \node[relblue,below left] at (-2.75,1.05) {$t'=\text{常量}$};
-    \draw[relred,thick] (-3.7,-3.7) -- (3.7,3.7);
-    \draw[relred,thick] (3.7,-3.7) -- (-3.7,3.7);
-    \draw[relgreen,thick,domain=-3.5:3.5,samples=100]
-      plot (\x,{sqrt(4+\x*\x)});
-    \node[relgreen,fill=white,inner sep=1pt] at (-2.8,4.0) {$c^2t^2-x^2=4$};
-    \node[relred] at (4.00,3.90) {$x=ct$};
-    \fill (2.2,2.7) circle (2pt) node[below right=1pt] {$A$};
-    \fill (-2.2,2.7) circle (2pt) node[below left=1pt] {$B$};
-  \end{tikzpicture}
-  \caption{$\beta=0.6$ 时的闵可夫斯基图。$ct'$ 轴满足 $x=\beta ct$，$x'$ 轴及其平行线满足 $ct=\beta x+\text{常量}$；绿色双曲线表示不变间隔。}
-  \label{fig:spacetime}
-\end{figure}
+\lcfigure[caption={$\beta=0.6$ 时的闵可夫斯基图。$ct'$ 轴满足 $x=\beta ct$，$x'$ 轴及其平行线满足 $ct=\beta x+\text{常量}$；绿色双曲线表示不变间隔。},label={fig:spacetime}]{spacetime}
 
 \subsection{时间膨胀}
 
@@ -915,26 +858,7 @@ $\lvert\dd\bm r\rvert=v\dd t$，代入式\eqref{eq:propertimegeometry}得到
 \end{equation}
 它在闵可夫斯基图中是一条双曲线，而粒子的瞬时斜率始终对应低于 $c$ 的速度。
 
-\begin{figure}[htbp]
-  \centering
-  \begin{tikzpicture}[>=Latex,scale=0.95]
-    \draw[->,thick] (-2.4,0) -- (5.4,0) node[right] {$x$};
-    \draw[->,thick] (0,-0.35) -- (0,5.2) node[above] {$ct$};
-    \draw[dashed,relgray] (-1.0,0) -- (4.0,5.0)
-      node[above right] {$x=ct-c^2/\alpha$};
-    \draw[very thick,relblue,domain=0:2.15,samples=120]
-      plot ({(exp(\x)+exp(-\x))/2-1},
-            {(exp(\x)-exp(-\x))/2});
-    \fill[relred] (0,0) circle (2.2pt)
-      node[below right] {$t=0,\ x=0$};
-    \draw[->,relgreen,thick] (1.24,2.00) -- ++(0.90,1.01)
-      node[midway,right] {$U^\mu$};
-    \node[relblue,align=left] at (3.65,1.15)
-      {恒定固有加速度\\世界线};
-  \end{tikzpicture}
-  \caption{一维恒定固有加速度粒子的双曲线世界线。坐标以 $c^2/\alpha$ 为单位；虚线是世界线在未来方向渐近接近的类光直线。}
-  \label{fig:properacceleration}
-\end{figure}
+\lcfigure[caption={一维恒定固有加速度粒子的双曲线世界线。坐标以 $c^2/\alpha$ 为单位；虚线是世界线在未来方向渐近接近的类光直线。},label={fig:properacceleration}]{properacceleration}
 
 \subsection{Rindler 坐标与加速视界}
 
@@ -1099,7 +1023,7 @@ Ehrenfest 圆盘讨论旋转体系的几何。实验室系测量旋转圆盘的�
 庞加莱群对单粒子态的分类还可以通过\textbf{小群}说明。给定一个标准四动量 $k^\mu$，保持它不变的洛伦兹变换集合称为该四动量的小群：
 \begin{equation}
   G_k=\left\{\Lambda\in SO^+(1,3)
-  \mid \Lambda^\mu{}_{\nu}k^\nu=k^\mu\right\}.
+  \mid {\Lambda^\mu}_{\nu}k^\nu=k^\mu\right\}.
   \label{eq:littlegroupdefinition}
 \end{equation}
 任意满足同一质量壳条件的四动量都可以由某个洛伦兹变换从标准四动量得到，因此只需研究小群怎样作用于粒子的内部状态。
@@ -1321,7 +1245,7 @@ $s$ 描述总质心能量，$t$ 和 $u$ 描述不同粒子配对之间的四动�
 \begin{equation}
   \boxed{
   \frac{\dd p^\mu}{\dd\tau}
-  =qF^\mu{}_{\nu}U^\nu.}
+  =q{F^\mu}_{\nu}U^\nu.}
   \label{eq:covariantlorentzforce}
 \end{equation}
 其空间分量等价于
@@ -1333,7 +1257,7 @@ $s$ 描述总质心能量，$t$ 和 $u$ 描述不同粒子配对之间的四动�
 \begin{equation}
   \frac{\dd E}{\dd t}=q\bm E\mathbin{\cdot}\bm v.
 \end{equation}
-由于场强张量反对称，$U_\mu F^\mu{}_{\nu}U^\nu=0$，所以四维力与四维速度正交。这与式\eqref{eq:velocityaccelerationorthogonal}一致，并保证带电粒子的静质量在经典电磁作用下保持不变。
+由于场强张量反对称，$U_\mu {F^\mu}_{\nu}U^\nu=0$，所以四维力与四维速度正交。这与式\eqref{eq:velocityaccelerationorthogonal}一致，并保证带电粒子的静质量在经典电磁作用下保持不变。
 
 \subsection{带电粒子的协变作用量}
 
@@ -1353,7 +1277,7 @@ $s$ 描述总质心能量，$t$ 和 $u$ 描述不同粒子配对之间的四动�
 对粒子世界线作固定端点变分，可得
 \begin{equation}
   m\frac{\dd U^\mu}{\dd\tau}
-  =qF^\mu{}_{\nu}U^\nu,
+  =q{F^\mu}_{\nu}U^\nu,
 \end{equation}
 即式\eqref{eq:covariantlorentzforce}。规范变换使作用量只增加端点项
 \begin{equation}
@@ -1402,7 +1326,7 @@ $s$ 描述总质心能量，$t$ 和 $u$ 描述不同粒子配对之间的四动�
 场强张量在洛伦兹变换下满足
 \begin{equation}
   F'^{\mu\nu}
-  =\Lambda^\mu{}_{\rho}\Lambda^\nu{}_{\sigma}
+  ={\Lambda^\mu}_{\rho}{\Lambda^\nu}_{\sigma}
   F^{\rho\sigma}.
   \label{eq:fieldtransformationtensor}
 \end{equation}
@@ -1474,7 +1398,7 @@ $s$ 描述总质心能量，$t$ 和 $u$ 描述不同粒子配对之间的四动�
   T_{\mathrm{em}}^{\mu\nu}
   =\frac{1}{\mu_0}
   \left(
-    -F^{\mu\lambda}F^\nu{}_{\lambda}
+    -F^{\mu\lambda}{F^\nu}_{\lambda}
     +\frac{1}{4}\eta^{\mu\nu}
       F_{\rho\sigma}F^{\rho\sigma}
   \right).
@@ -1609,28 +1533,7 @@ $s$ 描述总质心能量，$t$ 和 $u$ 描述不同粒子配对之间的四动�
 \end{equation}
 图\ref{fig:gamma}显示，在低速区域 $\gamma$ 非常接近1，而当 $v$ 接近 $c$ 时迅速增大。
 
-\begin{figure}[htbp]
-  \centering
-  \begin{tikzpicture}
-    \begin{axis}[
-      width=11cm,height=7cm,
-      xlabel={$\beta=v/c$},ylabel={$\gamma$},
-      xmin=0,xmax=0.995,ymin=0.8,ymax=10,
-      grid=major,
-      legend style={at={(0.04,0.96)},anchor=north west},
-      samples=250,
-      domain=0:0.995
-    ]
-      \addplot[very thick,relblue] {1/sqrt(1-x^2)};
-      \addlegendentry{精确值 $(1-\beta^2)^{-1/2}$}
-      \addplot[thick,dashed,relred,domain=0:0.8] {1+0.5*x^2+0.375*x^4};
-      \addlegendentry{四阶低速近似}
-      \addplot[only marks,mark=*,relgreen] coordinates {(0.8,1.6667) (0.9,2.2942) (0.99,7.0888)};
-    \end{axis}
-  \end{tikzpicture}
-  \caption{洛伦兹因子随无量纲速度 $\beta$ 的变化。}
-  \label{fig:gamma}
-\end{figure}
+\lcfigure[caption={洛伦兹因子随无量纲速度 $\beta$ 的变化。},label={fig:gamma}]{gamma}
 
 \subsection{经典变换与经典动能的恢复}
 
@@ -1668,35 +1571,7 @@ $\mu$ 子静止系中的平均寿命为 $\tau_0\approx\SI{2.197}{\micro\second}$
 
 Frisch--Smith 实验在海拔约 $\SI{1917}{\metre}$ 的华盛顿山记录到约 $563$ 个/小时的选定 $\mu$ 子，在剑桥海平面记录到约 $412$ 个/小时；若不考虑相对论时间膨胀，同一传播过程只应留下约 $27$ 个/小时。图\ref{fig:frischsmithdata}把论文报告的计数率与经典模型预言并列展示。原实验还包含能量选择、路径长度修正与能量损失分析。该图仅呈现最直接的数量级差异，完整数据处理见原论文。
 
-\begin{figure}[htbp]
-  \centering
-  \begin{tikzpicture}
-    \begin{axis}[
-      ybar,
-      width=12cm,height=7.2cm,
-      ymin=0,ymax=650,
-      ylabel={$\mu$ 子计数率/($\mathrm{h}^{-1}$)},
-      symbolic x coords={mountain,sea,classic},
-      xtick={mountain,sea,classic},
-      xticklabels={华盛顿山实测,海平面实测,无时间膨胀预言},
-      x tick label style={align=center,font=\small},
-      bar width=23pt,
-      nodes near coords,
-      nodes near coords style={font=\small},
-      grid=major,
-      enlarge x limits=0.22
-    ]
-      \addplot[fill=relblue!75,draw=relblue] coordinates {
-        (mountain,563) (sea,412)
-      };
-      \addplot[fill=relred!75,draw=relred] coordinates {
-        (classic,27)
-      };
-    \end{axis}
-  \end{tikzpicture}
-  \caption{Frisch--Smith 实验报告的近似计数率与无时间膨胀模型预言。数据来源：文献\cite{frischsmith1963}。}
-  \label{fig:frischsmithdata}
-\end{figure}
+\lcfigure[caption={Frisch--Smith 实验报告的近似计数率与无时间膨胀模型预言。数据来源：文献\cite{frischsmith1963}。},label={fig:frischsmithdata}]{frischsmithdata}
 
 \begin{table}[htbp]
   \centering
@@ -1824,23 +1699,7 @@ Hafele 与 Keating 在1971年携带铯原子钟分别向东、向西绕地球飞
 \end{equation}
 两位观察者连接相同的出发事件和重逢事件，但经历不同的世界线。地球双生子的世界线是一条惯性直线，旅行双生子的世界线在转向处改变方向并切换惯性系，其同时面也随之改变。Jensen 不等式因此给出 $\tau_{\mathrm T}<\tau_{\mathrm E}$。有限时间的平滑转向会改变具体积分，但不会恢复两条世界线的对称性；年龄差由完整世界线的固有时决定。
 
-\begin{figure}[htbp]
-  \centering
-  \begin{tikzpicture}[>=Latex,scale=0.95]
-    \draw[->,thick] (-4.0,0) -- (4.2,0) node[right] {$x$};
-    \draw[->,thick] (0,-0.25) -- (0,5.5) node[above] {$ct$};
-    \draw[very thick,relblue] (0,0) -- (0,5.0);
-    \draw[very thick,relred] (0,0) -- (2.6,2.5) -- (0,5.0);
-    \fill (0,0) circle (2pt) node[below left] {$O$};
-    \fill (2.6,2.5) circle (2pt) node[right] {转向};
-    \fill (0,5.0) circle (2pt) node[above right] {重逢};
-    \node[relblue,left] at (0,3.5) {地球双生子};
-    \node[relred,rotate=43] at (1.45,1.05) {去程};
-    \node[relred,rotate=-43] at (1.45,3.95) {返程};
-  \end{tikzpicture}
-  \caption{双生子佯谬的理想化时空图。两条世界线具有共同的出发和重逢事件，旅行者的折线世界线积累较少的固有时。}
-  \label{fig:twinparadox}
-\end{figure}
+\lcfigure[caption={双生子佯谬的理想化时空图。两条世界线具有共同的出发和重逢事件，旅行者的折线世界线积累较少的固有时。},label={fig:twinparadox}]{twinparadox}
 
 \subsection{杆库悖论与超光速因果倒置}
 

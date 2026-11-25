@@ -1,0 +1,23 @@
+% libre-compendium
+%
+% Copyright (C) 2026 Richard Qin
+%
+% This document is dual-licensed under either:
+% - GNU Free Documentation License, Version 1.3 or any later version
+%   published by the Free Software Foundation; with no Invariant Sections,
+%   no Front-Cover Texts, and no Back-Cover Texts (see COPYING.DOC); or
+% - Creative Commons Attribution-ShareAlike 4.0 International License
+%   (see LICENSE-CC-BY-SA-4.0).
+
+\begin{tikzpicture}[>=Latex,scale=0.95]
+  \draw[->,thick] (-0.3,0) -- (6.6,0) node[right] {$x$};
+  \draw[->,thick] (0,-0.3) -- (0,2.3) node[above] {$y$};
+  \node[below left] at (0,0) {$O$};
+  \fill[lc-vector] (3.1,0) circle (2pt);
+  \draw[->,thick,lc-vector] (3.1,0) -- (5.75,0) node[above right] {$x'$};
+  \draw[->,thick,lc-vector] (3.1,0) -- (3.1,2.05) node[above] {$y'$};
+  \node[below,lc-vector] at (3.1,0) {$O'$};
+  \draw[->,very thick,lc-force] (0.65,1.45) -- (2.65,1.45) node[midway,above] {$\bm v=v\hat{\bm x}$};
+  \draw[dashed,lc-note] (3.1,-0.25) -- (3.1,2.2);
+  \node[align=center] at (5.0,1.55) {$O'$在$S$中满足\\$x=vt$};
+\end{tikzpicture}

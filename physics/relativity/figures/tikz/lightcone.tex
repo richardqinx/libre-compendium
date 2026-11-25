@@ -1,0 +1,26 @@
+% libre-compendium
+%
+% Copyright (C) 2026 Richard Qin
+%
+% This document is dual-licensed under either:
+% - GNU Free Documentation License, Version 1.3 or any later version
+%   published by the Free Software Foundation; with no Invariant Sections,
+%   no Front-Cover Texts, and no Back-Cover Texts (see COPYING.DOC); or
+% - Creative Commons Attribution-ShareAlike 4.0 International License
+%   (see LICENSE-CC-BY-SA-4.0).
+
+\begin{tikzpicture}[>=Latex,scale=0.95]
+  \fill[lc-vector!10] (0,0) -- (-3,3) -- (3,3) -- cycle;
+  \fill[lc-force!8] (0,0) -- (-3,-3) -- (3,-3) -- cycle;
+  \draw[->,thick] (-4,0) -- (4,0) node[right] {$x$};
+  \draw[->,thick] (0,-3.6) -- (0,3.7) node[above] {$ct$};
+  \draw[very thick,lc-vector] (-3.4,-3.4) -- (3.4,3.4) node[above right] {$x=ct$};
+  \draw[very thick,lc-vector] (3.4,-3.4) -- (-3.4,3.4) node[above left] {$x=-ct$};
+  \node[lc-vector] at (0,2.25) {未来光锥};
+  \node[lc-force] at (0,-2.25) {过去光锥};
+  \node[lc-note] at (3.0,0.45) {类空区域};
+  \node[lc-note] at (-3.0,0.45) {类空区域};
+  \fill (0,0) circle (2pt) node[below right] {$O$};
+  \fill[lc-velocity] (1.35,1.75) circle (2.2pt) node[above right] {类时事件};
+  \fill[lc-force] (2.8,1.2) circle (2.2pt) node[right] {类空事件};
+\end{tikzpicture}
