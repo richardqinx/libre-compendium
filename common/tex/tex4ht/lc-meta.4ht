@@ -28,6 +28,8 @@
 \AtBeginDocument{
   \cs_if_exist:NT\contentsname{\renewcommand{\contentsname}{目录}}
   \cs_if_exist:NT\abstractname{\renewcommand{\abstractname}{摘要}}
+  \cs_if_exist:NT\figurename{\renewcommand{\figurename}{图}}
+  \cs_if_exist:NT\tablename{\renewcommand{\tablename}{表}}
   \tl_if_empty:NF\g__lc_title_tl{\Configure{TITLE+}{\g__lc_title_tl}}
   \RenewDocumentCommand{\maketitle}{}{
     \ifvmode\IgnorePar\fi\EndP
