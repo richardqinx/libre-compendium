@@ -1,5 +1,19 @@
 libre-compendium NEWS -- 重要变更历史
 
+* 0.1.0 开发进展
+
+** 重构并修复 HTML 构建链路：切换至 make4ht -l 与纯静态原生 MathML，
+   实现零 JavaScript 离线阅读；清理旧适配层并补齐 ctexart、ctexbook、
+   nicematrix、cleveref、SVG 插图及标题版权页适配，参照 lc-colors.sty
+   重写 lc.css。
+
+** 接入 Gnulib gitlog-to-changelog，在 make dist 时由 Git 历史自动生成
+   发行包 ChangeLog；在 configure.ac 中启用 tar-pax 归档格式解除 99
+   字节路径长度限制。
+
+** 新增概率论导论课程项目 math/introduction-to-probability，包含讲义、
+   十张 TikZ 插图与习题集。
+
 * 建立项目基础
 
 ** 建立全项目共享基础设施 common/，包括文档类、基础与内容宏包、视觉风格、
@@ -7,8 +21,7 @@ libre-compendium NEWS -- 重要变更历史
 
 ** 搭建 GNU Autotools 与 latexmk 统一构建系统，支持源码树外构建、自动
    发现 math/ 与 physics/ 下文档项目、PDF 与 TikZ 转 SVG 输出、文档安装
-   与源码发行打包；同步加入 common/tex/tex4ht/ 试验性 HTML 适配，HTML
-   输出当前仍有已知问题待后续修复。
+   与源码发行打包。
 
 ** 确立根目录许可划分与贡献规范：文档内容采用 GFDL-1.3-or-later，即无
    不可变章节、无前后封面文字，与 CC BY-SA 4.0 双重许可，宏包与构建脚本

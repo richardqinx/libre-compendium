@@ -2,11 +2,8 @@ Libre Compendium 构建与安装说明
 =================================
 
 本项目使用基于 GNU Autotools 与 latexmk 的构建系统，支持源码树外构建、
-按格式与按项目选择性构建，以及文档安装与源码打包发行。
-
-注意：当前版本中 HTML 输出由 make4ht 生成，尚存在已知问题，计划在后续
-修复。若当前只需编译 PDF 或 SVG，建议在配置时传入 --disable-html，
-或只运行 make pdf 与 make svg。
+按格式与按项目选择性构建，以及文档安装与源码打包发行。HTML 输出采用
+纯静态 HTML5、原生 MathML 与 SVG 插图，零 JavaScript，可完全离线阅读。
 
 
 一、环境与依赖
@@ -30,8 +27,13 @@ Libre Compendium 构建与安装说明
      dvisvgm --pdf，失败或未安装时回退到 pdftocairo -svg
 
 4. HTML 构建依赖，默认开启，可通过 --disable-html 禁用
-   - make4ht：configure 启用 HTML 时会强制检查该工具；目前 HTML 构建
-     仍在完善中
+   - make4ht 与 lualatex：HTML 构建统一调用 make4ht -l 输出纯静态
+     HTML5 与原生 MathML，configure 启用 HTML 时会检查 make4ht
+
+5. 维护者源码打包可选依赖
+   - perl 与 git：在 Git 仓库中执行 make dist 时，由
+     build-aux/gitlog-to-changelog 自动生成发行包中的 ChangeLog；仅
+     下载源码包编译时不需要
 
 
 二、配置与树外构建
@@ -42,11 +44,11 @@ Libre Compendium 构建与安装说明
 
   autoreconf -fi
 
-随后新建构建目录并运行 configure，当前阶段建议附带 --disable-html：
+随后新建构建目录并运行 configure：
 
   mkdir build
   cd build
-  ../configure --disable-html
+  ../configure
 
 常见 configure 选项如下：
 
@@ -55,7 +57,7 @@ Libre Compendium 构建与安装说明
 
   --disable-html
       禁用 HTML 输出，同时跳过 make4ht 检查以及 make all 中的 HTML
-      构建步骤，当前阶段推荐使用。
+      构建步骤。
 
   --disable-svg
       禁用 TikZ 转 SVG 输出。
@@ -64,9 +66,9 @@ Libre Compendium 构建与安装说明
       设置安装根目录或文档安装目录；docdir 默认值为
       PREFIX/share/doc/libre-compendium。
 
-例如改用 LuaLaTeX 引擎并暂跳过 HTML 构建：
+例如改用 LuaLaTeX 编译 PDF：
 
-  ../configure --with-latex-engine=lualatex --disable-html
+  ../configure --with-latex-engine=lualatex
 
 
 三、构建命令与目标
@@ -85,7 +87,7 @@ Libre Compendium 构建与安装说明
      make            等价于 make all，构建所有已启用的格式
      make pdf        只构建全部项目的 PDF
      make svg        只构建全部项目的 SVG，仅处理含 figures/tikz/*.tex 的项目
-     make html       只构建全部项目的 HTML，当前存在已知问题
+     make html       只构建全部项目的 HTML，生成纯静态 HTML5 与原生 MathML
 
    若 configure 时传入了 --disable-html 或 --disable-svg，单独执行对应
    目标也会直接跳过并返回成功。
@@ -95,7 +97,7 @@ Libre Compendium 构建与安装说明
    通过 PROJECT 变量传入项目相对路径，多个项目之间用空格分隔：
 
      make pdf PROJECT=math/discrete-math
-     make pdf PROJECT=physics/relativity
+     make html PROJECT=physics/relativity
      make svg PROJECT=physics/general-physics
 
 4. 验证、日志与清理
@@ -115,6 +117,7 @@ Libre Compendium 构建与安装说明
 
      make pdf
      make svg
+     make html
      make clean
 
    或者直接运行 latexmk main.tex。此时构建日志与成品分别存放在该项目
@@ -139,8 +142,8 @@ Libre Compendium 构建与安装说明
       - pdf/lecture.pdf       由 main.tex 编译生成
       - pdf/problemset.pdf    当项目包含 problemset.tex 时一并生成
       - svg/*.svg             当项目包含 figures/tikz/*.tex 时生成
-      - html/lecture/         正文 HTML 输出目录
-      - html/problemset/      习题 HTML 输出目录
+      - html/lecture/         正文 HTML5、CSS 与 index.html
+      - html/problemset/      习题 HTML5、CSS 与 index.html
 
 
 六、安装、卸载与源码发行
@@ -162,9 +165,5 @@ Libre Compendium 构建与安装说明
 
 3. 生成源码发行包并校验
 
-     make dist       生成 .tar.xz 源码归档
+     make dist       生成 .tar.xz 源码归档并自动导出 ChangeLog
      make distcheck  在洁净环境中验证打包、配置与构建
-
-   在 HTML 构建问题修复前，若要执行完整发行校验，可跳过 HTML：
-
-     make distcheck DISTCHECK_CONFIGURE_FLAGS=--disable-html
