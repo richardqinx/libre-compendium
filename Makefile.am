@@ -34,6 +34,17 @@ DOC_SOURCE_FILES = $(shell find $(srcdir)/common $(srcdir)/math $(srcdir)/physic
 EXTRA_DIST = \
   AUTHORS CONTRIBUTING COPYING COPYING.DOC ChangeLog INSTALL LICENSE-CC-BY-SA-4.0 NEWS README \
   configure.ac build-aux/discover-projects.sh build-aux/doc-project.mk build-aux/doc-root.mk \
+  build-aux/gitlog-to-changelog \
   $(DOC_SOURCE_FILES)
+
+dist-hook: gen-ChangeLog
+.PHONY: gen-ChangeLog
+gen-ChangeLog:
+	$(AM_V_GEN)if test -e $(top_srcdir)/.git; then \
+	  $(top_srcdir)/build-aux/gitlog-to-changelog \
+	    --srcdir=$(top_srcdir) > $(distdir)/cl-t && \
+	  { rm -f $(distdir)/ChangeLog && \
+	    mv $(distdir)/cl-t $(distdir)/ChangeLog; } \
+	fi
 
 include $(srcdir)/build-aux/doc-root.mk
