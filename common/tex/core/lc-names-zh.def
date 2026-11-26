@@ -47,3 +47,7 @@
 \def\lc@name@equation{式}
 \def\lc@name@figure{图}
 \def\lc@name@table{表}
+\def\lc@name@listing{代码}
+\def\lc@name@algorithm{算法}
+\def\lc@name@alginput{输入：}
+\def\lc@name@algoutput{输出：}

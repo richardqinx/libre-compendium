@@ -1,0 +1,90 @@
+% libre-compendium
+%
+% Copyright (C) 2026 Richard Qin
+%
+% This file is part of libre-compendium.
+%
+% libre-compendium is free software: you can redistribute it and/or modify
+% it under the terms of the GNU General Public License as published by
+% the Free Software Foundation, either version 3 of the License, or
+% (at your option) any later version.
+%
+% libre-compendium is distributed in the hope that it will be useful,
+% but WITHOUT ANY WARRANTY; without even the implied warranty of
+% MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+% GNU General Public License for more details.
+%
+% You should have received a copy of the GNU General Public License
+% along with libre-compendium.  If not, see <https://www.gnu.org/licenses/>.
+
+\NeedsTeXFormat{LaTeX2e}[2022-11-01]
+\ProvidesPackage{lc-cs}[2026/11/26 v0.1.0 计算机与数据科学排版]
+\RequirePackage{listings}
+\RequirePackage{algpseudocode}
+
+\renewcommand{\lstlistingname}{\lc@name@listing}
+
+\ExplSyntaxOn
+\cs_if_exist:NTF\chapter
+  {
+    \newcounter{algorithm}[chapter]
+    \renewcommand{\thealgorithm}{\thechapter.\arabic{algorithm}}
+    \AtBeginDocument{\counterwithin{lstlisting}{chapter}}
+  }
+  {
+    \newcounter{algorithm}[section]
+    \renewcommand{\thealgorithm}{\thesection.\arabic{algorithm}}
+    \AtBeginDocument{\counterwithin{lstlisting}{section}}
+  }
+
+\str_if_eq:eeTF{\lc@style}{boxed}
+  {\def\lc@code@framerule{2.4pt}}
+  {\def\lc@code@framerule{1.2pt}}
+
+\lstdefinestyle{lc}{
+  basicstyle=\ttfamily\small,
+  columns=fullflexible,
+  keepspaces=true,
+  extendedchars=false,
+  breaklines=true,
+  breakatwhitespace=false,
+  showstringspaces=false,
+  tabsize=4,
+  numbers=left,
+  numberstyle=\tiny\color{lc-note},
+  numbersep=8pt,
+  keywordstyle=\bfseries\color{lc-def},
+  commentstyle=\color{lc-note},
+  stringstyle=\color{lc-hint},
+  backgroundcolor=\color{lc-subtle},
+  frame=leftline,
+  framerule=\lc@code@framerule,
+  rulecolor=\color{lc-note},
+  xleftmargin=2em,
+  framexleftmargin=1.6em,
+  aboveskip=0.65em,
+  belowskip=0.65em,
+  captionpos=t
+}
+\lstset{style=lc}
+
+\lstnewenvironment{codeblock}[1][]{\lstset{style=lc,#1}}{}
+\NewDocumentCommand{\lcinline}{m}{\texttt{#1}}
+
+\NewDocumentEnvironment{algorithm}{O{}}
+  {
+    \refstepcounter{algorithm}
+    \__lc_box_begin:nn{lc-note}{\lc@name@algorithm\c_space_tl \thealgorithm\tl_if_blank:nF{#1}{（#1）}}
+  }
+  {\__lc_box_end:}
+
+\NewDocumentEnvironment{algorithm*}{O{}}
+  {
+    \__lc_box_begin:nn{lc-note}{\lc@name@algorithm\tl_if_blank:nF{#1}{：#1}}
+  }
+  {\__lc_box_end:}
+
+\NewDocumentCommand{\alginput}{m}{\par\noindent\textbf{\lc@name@alginput}#1\par}
+\NewDocumentCommand{\algoutput}{m}{\par\noindent\textbf{\lc@name@algoutput}#1\par}
+\NewDocumentEnvironment{algsteps}{O{1}}{\begin{algorithmic}[#1]}{\end{algorithmic}}
+\ExplSyntaxOff

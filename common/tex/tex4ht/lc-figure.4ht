@@ -17,7 +17,11 @@
 % You should have received a copy of the GNU General Public License
 % along with libre-compendium.  If not, see <https://www.gnu.org/licenses/>.
 
-% TeX4ht adapter for lc-figure: embed prebuilt SVGs from dist/<project>/svg/.
+% TeX4ht adapter for lc-figure: embed prebuilt SVGs from dist/<project>/svg/
+% and raster/static images from dist/<project>/images/.
 \RenewDocumentCommand{\lcfig}{m}{%
   \HCode{<img class="lc-figure-svg" src="../../svg/#1.svg" alt="#1" />}%
+}
+\RenewDocumentCommand{\lcimg}{mm}{%
+  \HCode{<img class="lc-figure-img" src="../../images/#2" alt="#2" />}%
 }

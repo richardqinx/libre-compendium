@@ -71,5 +71,16 @@
  \tl_if_empty:NF\l__lc_fig_label_tl{\exp_args:NV\label\l__lc_fig_label_tl}
  \tl_if_empty:NF\l__lc_fig_source_tl{\__lc_source_register:eeee{\@currentHref}{\lc@name@figure\c_space_tl \thefigure}{\exp_not:V\l__lc_fig_source_tl}{\exp_not:V\l__lc_fig_license_tl}}
  \end{figure}\group_end:}
+\NewDocumentCommand{\lcimg}{mm}{\includegraphics[width=#1]{figures/images/#2}}
+\tl_new:N\l__lc_img_width_tl\tl_new:N\l__lc_img_caption_tl\tl_new:N\l__lc_img_label_tl\tl_new:N\l__lc_img_source_tl\tl_new:N\l__lc_img_license_tl\tl_new:N\l__lc_img_placement_tl
+\keys_define:nn{lc/image}{width .tl_set:N=\l__lc_img_width_tl,caption .tl_set:N=\l__lc_img_caption_tl,label .tl_set:N=\l__lc_img_label_tl,source .tl_set:N=\l__lc_img_source_tl,license .tl_set:N=\l__lc_img_license_tl,placement .tl_set:N=\l__lc_img_placement_tl}
+\NewDocumentCommand{\lcimage}{O{}m}{\group_begin:
+ \tl_set:Nn\l__lc_img_width_tl{0.85\linewidth}\tl_clear:N\l__lc_img_caption_tl\tl_clear:N\l__lc_img_label_tl\tl_clear:N\l__lc_img_source_tl\tl_clear:N\l__lc_img_license_tl\tl_set:Nn\l__lc_img_placement_tl{htbp}
+ \keys_set:nn{lc/image}{#1}
+ \exp_args:NV\__lc_figure_begin:n\l__lc_img_placement_tl
+ \centering\exp_args:NV\lcimg\l__lc_img_width_tl{#2}\caption{\l__lc_img_caption_tl}
+ \tl_if_empty:NF\l__lc_img_label_tl{\exp_args:NV\label\l__lc_img_label_tl}
+ \tl_if_empty:NF\l__lc_img_source_tl{\__lc_source_register:eeee{\@currentHref}{\lc@name@figure\c_space_tl \thefigure}{\exp_not:V\l__lc_img_source_tl}{\exp_not:V\l__lc_img_license_tl}}
+ \end{figure}\group_end:}
 \cs_new_protected:Npn\__lc_figure_begin:n#1{\begin{figure}[#1]}
 \ExplSyntaxOff

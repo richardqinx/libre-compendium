@@ -507,11 +507,32 @@ div.figure {
 }
 
 img,
-.lc-figure-svg {
+.lc-figure-svg,
+.lc-figure-img {
   display: inline-block;
   max-width: 100%;
   height: auto;
   vertical-align: middle;
+}
+
+/* Code listings & algorithm steps */
+.listings,
+.lstlisting {
+  margin: 1rem 0;
+  padding: 0.75rem 1rem;
+  background: var(--lc-subtle);
+  border: 1px solid var(--lc-rule);
+  border-left: 4px solid var(--lc-note);
+  border-radius: 0 4px 4px 0;
+  font-family: var(--lc-font-mono);
+  font-size: 0.9em;
+  line-height: 1.55;
+  overflow-x: auto;
+}
+
+.algorithmic {
+  margin: 0.5rem 0;
+  line-height: 1.65;
 }
 
 figcaption,

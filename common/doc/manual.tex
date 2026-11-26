@@ -89,7 +89,8 @@ common/
 |   `-- subjects/
 |       +-- lc-math.sty
 |       +-- lc-linear-algebra.sty
-|       `-- lc-physics.sty
+|       +-- lc-physics.sty
+|       `-- lc-cs.sty
 +-- license/
 |   +-- fdl-1.3.tex
 |   +-- fdl-1.3-body.tex
@@ -331,7 +332,7 @@ LC_ENGINE=lualatex latexmk main.tex
 
 \code{cleveref} 名称（\code{lc-xref} 中设置，单复数相同）：环境用第 5 节中文名；\code{equation} 用 \code{式}，输出 \code{式 (2.1)}；\code{figure} 用 \code{图}；\code{table} 用 \code{表}；\code{chapter} 输出 \code{第二章}；\code{section} 输出 \code{第 2.1 节}。\code{\textbackslash{}Cref} 与 \code{\textbackslash{}cref} 输出相同。
 
-标签前缀约定：\code{ch:} 章、\code{sec:} 节、\code{def:} 定义、\code{thm:} 定理、\code{lem:} 引理、\code{prop:} 命题、\code{cor:} 推论、\code{eg:} 例题、\code{ex:} 习题、\code{eq:} 公式、\code{fig:} 图、\code{tab:} 表。例如 \code{\textbackslash{}label\{thm:ivt\}}。
+标签前缀约定：\code{ch:} 章、\code{sec:} 节、\code{def:} 定义、\code{thm:} 定理、\code{lem:} 引理、\code{prop:} 命题、\code{cor:} 推论、\code{eg:} 例题、\code{ex:} 习题、\code{eq:} 公式、\code{fig:} 图、\code{tab:} 表、\code{lst:} 代码、\code{alg:} 算法。例如 \code{\textbackslash{}label\{thm:ivt\}}。
 
 \begin{definition}[定义示例]实数集合记为 $\R$。\end{definition}
 \begin{theorem}[定理示例]若 $x=0$，则 $x^2=0$。\end{theorem}
@@ -435,6 +436,24 @@ LC_ENGINE=lualatex latexmk main.tex
 \end{verbatim}
 \endgroup
 该命令使用 \code{figure} 浮动体，\code{placement} 默认为 \code{htbp}；依次执行居中、\code{\textbackslash{}lcfig\{<name>\}}、\code{\textbackslash{}caption} 和 \code{\textbackslash{}label}。有 \code{source} 时登记到第三方内容来源。
+
+对于位于 \code{figures/images/} 下的位图或静态统计图，可使用 \code{\textbackslash{}lcimage}：
+\begingroup\small
+\begin{verbatim}
+\lcimage[width=0.85\linewidth,caption=,label=,
+         source=,license=,placement=]{<filename>}
+\end{verbatim}
+\endgroup
+\code{width} 默认为 \code{0.85\textbackslash{}linewidth}，\code{placement} 默认为 \code{htbp}，其余行为（含第三方内容来源登记与 HTML 导出）同 \code{\textbackslash{}lcfigure}。
+
+\subsection{计算机与数据科学（\texttt{lc-cs.sty}）}
+
+需要排版代码清单或算法伪代码的文档可在 \code{settings.tex} 中加载 \code{\textbackslash{}usepackage\{lc-cs\}}：
+\begin{itemize}
+\item 行内代码：\code{\textbackslash{}lcinline\{<文本>\}}，在任意位置（含标题、表格与框标题）安全使用等宽字体输出；
+\item 代码块：\code{\textbackslash{}begin\{codeblock\}[language=Python,caption=...,label=lst:...]} … \code{\textbackslash{}end\{codeblock\}}，基于 \code{listings}（无需 \code{--shell-escape}），按最高级标题编号为 \code{代码 2.1}，兼容 \code{color=full|gray} 与 HTML 输出；
+\item 算法伪代码：\code{\textbackslash{}begin\{algorithm\}[名称]} … \code{\textbackslash{}end\{algorithm\}}（及不编号版本 \code{algorithm*}），按最高级标题编号为 \code{算法 2.1}，支持 \code{\textbackslash{}cref\{alg:...\}}，内部提供 \code{\textbackslash{}alginput\{...\}}、\code{\textbackslash{}algoutput\{...\}} 与基于 \code{algpseudocode} 的 \code{algsteps} 环境。
+\end{itemize}
 
 \subsection{语义样式}
 

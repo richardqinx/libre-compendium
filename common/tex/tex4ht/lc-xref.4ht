@@ -32,9 +32,11 @@
     { \regex_match:nnTF { \A eq: } {#1} { \lc@name@equation\c_space_tl (\ref{#1}) }
     { \regex_match:nnTF { \A fig: } {#1} { \lc@name@figure\c_space_tl \ref{#1} }
     { \regex_match:nnTF { \A tab: } {#1} { \lc@name@table\c_space_tl \ref{#1} }
+    { \regex_match:nnTF { \A lst: } {#1} { \lc@name@listing\c_space_tl \ref{#1} }
+    { \regex_match:nnTF { \A alg: } {#1} { \lc@name@algorithm\c_space_tl \ref{#1} }
     { \regex_match:nnTF { \A (?:ch|chap): } {#1} { 第~\ref{#1}~章 }
     { \regex_match:nnTF { \A sec: } {#1} { 第~\ref{#1}~节 }
-      { \ref{#1} } } } } } } } } } } } }
+      { \ref{#1} } } } } } } } } } } } } } }
   }
 \NewDocumentCommand{\__lc_html_cref}{m}
   {
