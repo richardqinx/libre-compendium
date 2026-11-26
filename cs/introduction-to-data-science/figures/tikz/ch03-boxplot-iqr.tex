@@ -1,0 +1,36 @@
+\begin{tikzpicture}[font=\small]
+  % Horizontal reference axis
+  \draw[lc axis] (0,0) -- (12.8,0) node[right, lc label] {$x$};
+
+  % Key x-coordinates:
+  % Lower fence = 1.6, Q1 = 4.2, Q2 = 5.6, Q3 = 6.8, Upper fence = 9.4
+  % Mild outlier = 10.6, Extreme outlier = 12.0
+
+  % Box [Q1, Q3]
+  \draw[draw=lc-def, fill=lc-def!12, line width=0.9pt] (4.2, 0.85) rectangle (6.8, 1.85);
+  % Median line
+  \draw[draw=lc-thm, line width=1.4pt] (5.6, 0.85) -- (5.6, 1.85);
+
+  % Whiskers
+  \draw[draw=lc-ink, line width=0.8pt] (1.6, 1.35) -- (4.2, 1.35);
+  \draw[draw=lc-ink, line width=0.8pt] (6.8, 1.35) -- (9.4, 1.35);
+  \draw[draw=lc-ink, line width=0.9pt] (1.6, 1.05) -- (1.6, 1.65);
+  \draw[draw=lc-ink, line width=0.9pt] (9.4, 1.05) -- (9.4, 1.65);
+
+  % Dashed vertical guides to axis
+  \foreach \x/\lbl in {1.6/{$Q_1 - 1.5\,\mathrm{IQR}$}, 4.2/{$Q_1$}, 5.6/{$Q_2$（中位数）}, 6.8/{$Q_3$}, 9.4/{$Q_3 + 1.5\,\mathrm{IQR}$}} {
+    \draw[lc aux] (\x, 0.85) -- (\x, 0);
+    \draw[draw=lc-ink] (\x, 0.08) -- (\x, -0.08);
+    \node[below=3pt, lc label] at (\x, 0) {\lbl};
+  }
+
+  % IQR bracket above box
+  \draw[draw=lc-method, line width=0.8pt, {Stealth}-{Stealth}] (4.2, 2.2) -- node[above, lc label, text=lc-method] {$\mathrm{IQR} = Q_3 - Q_1$} (6.8, 2.2);
+
+  % Outliers
+  \fill[lc-exam] (10.6, 1.35) circle (2.2pt);
+  \node[above=5pt, lc label, text=lc-exam, align=center] at (10.6, 1.35) {普通异常值\\{\footnotesize $(>1.5\,\mathrm{IQR})$}};
+
+  \fill[lc-pitfall] (12.1, 1.35) circle (2.4pt);
+  \node[above=5pt, lc label, text=lc-pitfall, align=center] at (12.1, 1.35) {极端异常值\\{\footnotesize $(>3\,\mathrm{IQR})$}};
+\end{tikzpicture}

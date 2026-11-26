@@ -1,0 +1,233 @@
+% libre-compendium
+%
+% Copyright (C) 2026 Richard Qin
+%
+% This document is dual-licensed under either:
+% - GNU Free Documentation License, Version 1.3 or any later version
+%   published by the Free Software Foundation; with no Invariant Sections,
+%   no Front-Cover Texts, and no Back-Cover Texts (see COPYING.DOC); or
+% - Creative Commons Attribution-ShareAlike 4.0 International License
+%   (see LICENSE-CC-BY-SA-4.0).
+\ProvidesFile{ch03-eda.tex}[2026/11/26 v0.2.2 第三章 探索性数据分析与数据准备]
+\chapter{探索性数据分析与数据准备}\label{ch:eda}
+
+在正式建立机器学习模型之前，数据科学项目往往有超过一半的时间消耗在数据获取、信息抽取、数据清洗与探索性分析（Exploratory Data Analysis, EDA）上。正如统计学家约翰·图基（John Tukey）所指出，EDA 是一种“大胆假设、小心求证”的灵活态度——既要检验我们预期存在的规律，更要敏锐地发现预期之外的异常与结构；而在用数据讲故事时，应始终恪守两条表达原则：\textbf{说人话}（结论直观易懂）与\textbf{不说废话}（提供真正的信息增量）。本章依次介绍多源数据获取与正则抽取、数据清洗与异常检测、离散化与归一化变换，以及基于 Matplotlib 与 Seaborn 的探索性数据可视化。
+
+\section{多源数据获取与结构化信息抽取}\label{sec:data-acquisition}
+
+真实数据极少以整洁单表的形式现成存在，而是散落在本地文件、Web 页面、开放接口与业务数据库中。\cref{tab:data-sources} 归纳了五类常见数据获取渠道及其核心技术栈。
+
+\begin{table}[htbp]
+  \centering\small
+  \caption{常见数据获取渠道与核心工具概览}\label{tab:data-sources}
+  \begin{tabular}{@{}l>{\raggedright\arraybackslash}p{0.34\linewidth}>{\raggedright\arraybackslash}p{0.38\linewidth}@{}}
+    \toprule
+    数据来源 & 数据形态与特点 & 典型获取与解析工具 \\
+    \midrule
+    CSV 文件 & 纯文本逗号分隔表格，通用轻量 & \lcinline{pd.read\_csv()} \\
+    JSON 文件 & 嵌套键值对与数组，Web 接口标准格式 & \lcinline{json}、\lcinline{pd.read\_json()} \\
+    网页爬虫 & 半结构化 HTML 页面，时效性强 & 请求发送 + 解析（正则、Beautiful Soup、XPath）；框架 Scrapy、Selenium \\
+    开放 API & 平台提供的受控结构化接口（多返回 JSON） & \lcinline{requests} / HTTP 客户端调用 \\
+    关系数据库 & 多表关联存储，强一致性约束 & 数据库驱动连接 $\to$ 执行 SQL $\to$ \lcinline{pd.read\_sql()} \\
+    \bottomrule
+  \end{tabular}
+\end{table}
+
+在网页抓取或社交媒体日志分析（例如微博求助信息解析、服务器访问日志分析）中，原始字段常以自由文本形式出现。相比繁琐脆弱的 \lcinline{split}/\lcinline{replace}/\lcinline{strip} 拼接，\textbf{正则表达式}（Regular Expression）能够用紧凑的元字符模式精确描述并抽取结构化字段。Python 标准库 \lcinline{re} 的四个核心函数如下：
+\begin{itemize}
+  \item \lcinline{re.match(pattern, string)}：从字符串\textbf{开头}尝试匹配，常用于格式合法性校验；
+  \item \lcinline{re.search(pattern, string)}：在字符串\textbf{任意位置}搜索首个匹配子串；
+  \item \lcinline{re.findall(pattern, string)}：返回所有不重叠匹配结果组成的列表；
+  \item \lcinline{re.sub(pattern, repl, string)}：将匹配子串替换为指定文本或回调函数结果。
+\end{itemize}
+成功匹配返回的 \lcinline{Match} 对象提供 \lcinline{span()}（起止位置元组）、\lcinline{group(k)}（第 $k$ 个捕获组）与 \lcinline{groups()}（全部捕获组元组）。\cref{lst:regex-extract} 演示了如何利用正则表达式校验电子邮箱并从 Web 访问日志中抽取结构化时间戳。
+
+\begin{codeblock}[language=Python,caption={使用正则表达式校验邮箱并抽取服务器日志时间字段},label=lst:regex-extract]
+import re
+
+# 1. 校验电子邮箱：仅含字母数字与 @/.，且 @ 与 . 前后必须为字母或数字
+email_pat = re.compile(r"^[A-Za-z0-9]+(\.[A-Za-z0-9]+)*@[A-Za-z0-9]+(\.[A-Za-z0-9]+)+$")
+print(bool(email_pat.match("liyiyan@ruc.edu.cn")))   # True
+print(bool(email_pat.match("hehehe@.gmail.com")))    # False
+
+# 2. 从 Apache 日志中抽取 日/月/年/时/分/秒
+log_line = '169.237.46.168 - - [26/Jan/2014:10:47:58 -0800] "GET / HTTP/1.1" 200'
+time_pat = re.compile(r"\[(\d{2})/([A-Za-z]{3})/(\d{4}):(\d{2}):(\d{2}):(\d{2})")
+m = time_pat.search(log_line)
+if m:
+    day, month, year, hour, minute, second = m.groups()
+    print(f"{year}-{month}-{day} {hour}:{minute}:{second}")
+\end{codeblock}
+
+\section{数据清洗与异常值检测}\label{sec:data-cleaning}
+
+数据科学界有一句名言：“\textbf{垃圾进，垃圾出}（Garbage In, Garbage Out）”。真实数据普遍存在四类质量顽疾：（1）\textbf{错误与格式不一致}（如日期混用 \lcinline{20190329}、\lcinline{03/29/2019}，或出现 \lcinline{Age = 222}、\lcinline{Salary = -10} 等违背常识的值）；（2）\textbf{数据缺失}（仪器故障、人工漏填或记录冲突被删）；（3）\textbf{重复与冲突}（同一实体在多条记录中出现不同属性值）；（4）\textbf{名称二义性与粒度不统一}（如“人大”可指代不同机构，地址粒度从区级到门牌号参差不齐）。
+
+在诸如 \lcinline{wuhan2020-sos} 患者求助画像等真实项目中，除了去重与纠错，往往还需要结合外部权威名录（如小区名录与地图地理编码 API）执行\textbf{实体链接}与\textbf{数据扩充}（Data Enrichment），才能将零散文本转化为可空间分析的高质量数据集。
+
+\subsection{缺失值处理}
+
+面对缺失值，常用策略包括：
+\begin{enumerate}
+  \item \textbf{删除策略}：忽略含缺失值的记录（\lcinline{dropna()}）或缺失率过高的属性列；
+  \item \textbf{固定值填充}：用全局标记值（如 \lcinline{-1} 或 \lcinline{"unknown"}）显式保留“缺失本身可能携带信息”这一事实；
+  \item \textbf{统计量填充}：用全局均值、中位数（对偏态或含异常值数据更稳健）或同类别样本的组内均值填充；
+  \item \textbf{模型推理填充}：利用最近邻（KNN）、贝叶斯估计或决策树等模型预测最可能的取值。
+\end{enumerate}
+须时刻牢记：\textbf{填充本质上是对未知信息的猜测——猜得越多，离真实分布可能越远}，因此任何填充策略都应结合缺失比例与业务机理审慎评估。
+
+\subsection{单变量异常值检测}
+
+识别单变量数值列中的\textbf{异常值}（Outlier）主要有两类经典统计判据：
+
+\begin{definition}[均值–标准差法与 IQR 异常值判据]\label{def:outlier-rules}
+设单变量样本为 $x_1, x_2, \dots, x_n$，其样本均值与标准差为 $\bar{x}, s$，下四分位数（$25\%$ 分位）与上四分位数（$75\%$ 分位）分别为 $Q_1, Q_3$，定义\textbf{四分位距}（Interquartile Range）为 $\mathrm{IQR} = Q_3 - Q_1$：
+\begin{enumerate}
+  \item \textbf{$k$ 倍标准差法}：将落于区间 $(\bar{x} - k s,\ \bar{x} + k s)$（通常取 $k=2$ 或 $3$）之外的观测点视为异常值；
+  \item \textbf{箱线图（IQR）法}：将落于 $(Q_1 - 1.5\,\mathrm{IQR},\ Q_3 + 1.5\,\mathrm{IQR})$ 之外的点记为\textbf{普通异常值}，将落于 $(Q_1 - 3\,\mathrm{IQR},\ Q_3 + 3\,\mathrm{IQR})$ 之外的点记为\textbf{极端（超级）异常值}。
+\end{enumerate}
+\end{definition}
+
+\begin{pitfall}[均值与标准差对极端异常值高度敏感]\label{pit:mean-std-outlier}
+$k$ 倍标准差法隐含数据近似服从正态分布的假设，且 $\bar{x}$ 与 $s$ 本身极易被极端异常值拉偏（称为\textbf{掩蔽效应}）。例如某组含录入错误（如年龄 $222$）的样本，其均值被拉高至 $56$、标准差膨胀至 $83$，导致 $2\sigma$ 正常区间宽达 $[-109, 221]$，反而漏检了明显异常的记录。相比之下，基于中位数与 $\mathrm{IQR}$ 的箱线图法则具有高崩溃点，在探索性清洗中更为鲁棒。
+\end{pitfall}
+
+\section{数据离散化与归一化}\label{sec:discretization-normalization}
+
+清洗完成后，常需对数值特征进行尺度变换或分箱，以适配下游统计分析与距离敏感型机器学习算法。
+
+\subsection{数据离散化（Binning）}
+
+\textbf{数据离散化}将连续数值变量划分为若干离散区间（桶，Bin），既可压缩数据、抑制局部测量噪声，也便于构建分类特征与直方图。两种基本无监督分箱方法如下：
+\begin{itemize}
+  \item \textbf{等宽划分（Equal-Width Binning, EW）}：将区间 $[x_{\min}, x_{\max}]$ 均分为 $k$ 个宽度均为 $w = (x_{\max} - x_{\min}) / k$ 的桶（如 Pandas 的 \lcinline{pd.cut}）。优点是规则简单直观，缺点是桶数 $k$ 需人为指定且极易受极端异常值干扰——单个极大离群点会把其余绝大多数样本全部挤压到第一个桶中；
+  \item \textbf{等深划分（Equal-Depth / Equal-Frequency Binning, ED）}：按排序位置将 $n$ 个样本划分为 $k$ 个桶，使每个桶内包含近似相等的样本数 $\approx n/k$（如 Pandas 的 \lcinline{pd.qcut}）。它对极端异常值不敏感，能够更均衡地利用各桶容量，但可能导致相同数值被拆分到相邻桶中，且各桶区间宽度不均匀。
+\end{itemize}
+
+\subsection{数据归一化（Normalization）}
+
+当不同特征量纲差异悬殊（例如“年龄”在 $20$–$70$ 之间，而“年收入”在 $10^4$–$10^6$ 之间）时，若直接计算欧氏距离或梯度，大尺度特征将完全主导优化过程。\textbf{归一化}将各特征映射到可比的数值尺度上。
+
+\begin{definition}[三种经典归一化方法]\label{def:normalization}
+设特征列取值为 $v_1, \dots, v_n$，最小值为 $v_{\min}$，最大值为 $v_{\max}$，样本均值与标准差分别为 $\bar{v}, s_v$：
+\begin{enumerate}
+  \item \textbf{Min–Max 归一化}：将原值线性映射到指定区间 $[\text{new\_min},\ \text{new\_max}]$（最常用 $[0, 1]$）：
+  \begin{equation}\label{eq:minmax-norm}
+    v' = \frac{v - v_{\min}}{v_{\max} - v_{\min}}(\text{new\_max} - \text{new\_min}) + \text{new\_min};
+  \end{equation}
+  \item \textbf{Z-score 标准化}：将特征变换为零均值、单位标准差的无量纲分布：
+  \begin{equation}\label{eq:zscore-norm}
+    v' = \frac{v - \bar{v}}{s_v};
+  \end{equation}
+  \item \textbf{小数定标（Decimal Scaling）归一化}：移动小数点位置，使所有绝对值均不超过 $1$：
+  \begin{equation}\label{eq:decimal-norm}
+    v' = \frac{v}{10^j},\qquad j = \min\set[\big]{k\in\N \mid \max_i \abs{v_i}/10^k \le 1}.
+  \end{equation}
+\end{enumerate}
+\end{definition}
+
+\begin{example}[title={年龄特征的三种归一化手算对比}]\label{eg:norm-hand}
+设一组 $20$ 名受访者的年龄满足 $v_{\min}=28$，$v_{\max}=66$，样本均值 $\bar{v}=39.50$，样本标准差 $s_v=10.01$。求 $v=44$ 与 $v=66$ 经 Min–Max（映射至 $[0,1]$）、Z-score 及小数定标归一化后的结果。
+\begin{solution}
+\begin{itemize}
+  \item \textbf{Min–Max 归一化}：因 $v_{\max}-v_{\min}=38$，故
+  \[
+    v'_{44} = \frac{44 - 28}{38} \approx 0.421,\qquad
+    v'_{66} = \frac{66 - 28}{38} = 1.000.
+  \]
+  \item \textbf{Z-score 标准化}：
+  \[
+    v'_{44} = \frac{44 - 39.50}{10.01} \approx 0.450,\qquad
+    v'_{66} = \frac{66 - 39.50}{10.01} \approx 2.648.
+  \]
+  \item \textbf{小数定标归一化}：因最大绝对值为 $66$，取 $j = 2$（$10^2 = 100 \ge 66$），得
+  \[
+    v'_{44} = \frac{44}{100} = 0.44,\qquad
+    v'_{66} = \frac{66}{100} = 0.66.
+  \]
+\end{itemize}
+可见 Min–Max 严格保界于 $[0,1]$，但若后续测试集出现超出 $[28,66]$ 的新值会产生越界；Z-score 无严格上下界，但在异常值存在时比 Min–Max 更不易将主体样本压缩到狭窄区间内。
+\end{solution}
+\end{example}
+
+\section{探索性数据可视化}\label{sec:eda-viz}
+
+人类视觉系统对图形模式极为敏感，优秀的可视化能够在一瞥之间揭示数字表格中难以察觉的分布偏斜、聚簇结构与异常点。
+
+\subsection{核心统计图表与适用场景}
+
+根据所刻画变量的个数与数据类型，常用统计图表归纳如 \cref{tab:viz-charts} 所示。
+
+\begin{table}[htbp]
+  \centering\small
+  \caption{探索性数据分析常用统计图表与适用场景}\label{tab:viz-charts}
+  \begin{tabular}{@{}ll>{\raggedright\arraybackslash}p{0.31\linewidth}>{\raggedright\arraybackslash}p{0.30\linewidth}@{}}
+    \toprule
+    维度 & 图表类型 & 适用变量与核心用途 & Seaborn 常用接口 \\
+    \midrule
+    单变量 & 直方图（Histogram） & 数值型分布频数/频率概览 & \lcinline{sns.histplot} \\
+    单变量 & 核密度图（KDE） & 数值型平滑概率密度估计（总面积为 $1$） & \lcinline{sns.kdeplot} \\
+    单变量 & 累积分布图（ECDF） & 无分桶偏差地展示分位数与累积占比 & \lcinline{sns.ecdfplot} \\
+    单变量 & 箱线图（Box plot） & 五数概括与组间分布、异常值比较 & \lcinline{sns.boxplot} \\
+    多变量 & 柱状图（Bar chart） & 离散类别 $\times$ 数值汇总对比 & \lcinline{sns.barplot} \\
+    多变量 & 散点图（Scatter plot） & 两数值变量的相关性、聚簇与分类边界 & \lcinline{sns.scatterplot} \\
+    多变量 & 折线图（Line plot） & 有序自变量（如时间）的演变趋势 & \lcinline{sns.lineplot} \\
+    多变量 & 热力图（Heatmap） & 交叉表或相关系数矩阵的强度编码 & \lcinline{sns.heatmap} \\
+    \bottomrule
+  \end{tabular}
+\end{table}
+
+其中，\textbf{经验累积分布函数}（ECDF）定义为
+\begin{equation}\label{eq:ecdf}
+  F_n(x) = \frac{1}{n}\sum_{i=1}^{n}\mathbf{1}(x_i \le x),
+\end{equation}
+它不需要人为选择分桶边界，能无损呈现全部观测值的分位数分布（如第一章《红楼梦》中各人物在不同章节的累积出场曲线）。而\textbf{箱线图}则将五数概括（最小值、下四分位数 $Q_1$、中位数 $Q_2$、上四分位数 $Q_3$、最大值）与 \cref{def:outlier-rules} 中的 IQR 异常值判据融为一体，其结构如 \cref{fig:boxplot-iqr} 所示。
+
+\lcfigure[caption={箱线图五数概括与 IQR 异常值判据结构示意图。箱体跨越 $[Q_1, Q_3]$，内部竖线为中位数 $Q_2$，两侧须线止于 $1.5\,\mathrm{IQR}$ 边界内的最远正常样本。},label=fig:boxplot-iqr]{ch03-boxplot-iqr}
+
+\begin{pitfall}[直方图分桶引发的视觉误导]\label{pit:hist-binning}
+直方图的形态高度依赖分桶宽度与起始边界：桶太宽会掩盖双峰等局部结构，桶太窄则会放大随机采样噪声。因此在探索分布时，应尝试不同桶数，或叠加核密度曲线（KDE）与经验累积分布图（ECDF）交叉验证；同时切记\textbf{直方图纵轴常为频数，而密度图纵轴为概率密度（可大于 $1$，仅要求曲线下总面积为 $1$）}。
+\end{pitfall}
+
+\subsection{Matplotlib 与 Seaborn 协作实践}
+
+Python 绘图生态中，\lcinline{Matplotlib} 是底层基石：整张画布是一个 \lcinline{Figure} 对象，其内部可容纳一个或多个拥有独立坐标系的子图 \lcinline{Axes} 对象，每个 \lcinline{Axes} 下包含标题（Title）、坐标轴（Axis）、标签（Label）与刻度（Tick）。\lcinline{Seaborn} 则构建在 Matplotlib 之上，原生理解 Pandas \lcinline{DataFrame} 列名与分组语义（\lcinline{hue}、\lcinline{col} 等），一行代码即可完成复杂的分组统计绘图。
+
+\begin{method}[表格数据可视化“两步法”]\label{met:viz-workflow}
+\begin{enumerate}
+  \item \textbf{第一步（Seaborn 快速出图）}：调用 \lcinline{sns.histplot}、\lcinline{sns.scatterplot}、\lcinline{sns.boxplot} 或 \lcinline{sns.lmplot} 等高层接口，借助 \lcinline{hue} 与分面参数快速探索多维变量关系；
+  \item \textbf{第二步（Matplotlib 精细调优）}：通过 \lcinline{ax.set\_title}、\lcinline{ax.set\_xlabel}、图例位置调整、关键点注释与 \lcinline{plt.savefig} 完成出版级美化与导出。
+\end{enumerate}
+\end{method}
+
+\cref{lst:eda-viz} 以经典鸢尾花数据集（\lcinline{iris.csv}）为例，展示了从缺失值巡检、Z-score 标准化到“Seaborn 出图 + Matplotlib 调优”的典型 EDA 代码片段。
+
+\begin{codeblock}[language=Python,caption={结合 Pandas 清洗变换与 Seaborn/Matplotlib 的 EDA 示例},label=lst:eda-viz]
+import pandas as pd
+import seaborn as sns
+import matplotlib.pyplot as plt
+
+iris = pd.read_csv("iris.csv")
+print(iris.isna().sum())  # 1. 检查各列缺失值数量
+
+# 2. 对花瓣长度执行 Z-score 标准化与等深 3 分箱
+pl = iris["petal length"]
+iris["pl_zscore"] = (pl - pl.mean()) / pl.std()
+iris["pl_bin"] = pd.qcut(pl, q=3, labels=["短", "中", "长"])
+
+# 3. 两步法绘图：Seaborn 按类别着色散点图 + Matplotlib 修饰导出
+fig, ax = plt.subplots(figsize=(6, 4))
+sns.scatterplot(data=iris, x="petal length", y="petal width", hue="species", ax=ax)
+ax.set_title("Iris 花瓣尺寸分布与类别可分性")
+fig.tight_layout()
+fig.savefig("iris_petal_scatter.png", dpi=150)
+\end{codeblock}
+
+\begin{summary}[本章要点]
+\begin{itemize}
+  \item 数据获取覆盖 CSV/JSON、网页爬虫、开放 API 与关系数据库；从非结构化文本中抽取结构化字段应善用正则表达式（\lcinline{re.match}/\lcinline{search}/\lcinline{findall}/\lcinline{sub}）。
+  \item 现实数据普遍存在缺失、错误、重复与二义性；缺失值填充须权衡偏差风险，单变量异常检测在含极端值时应优先选用鲁棒的 IQR 箱线图判据而非 $k\sigma$ 准则。
+  \item 等宽划分简单但怕离群点，等深划分抗离群点但桶宽不均；Min–Max、Z-score 与小数定标分别适用于不同尺度约束场景。
+  \item 探索性可视化应根据变量类型匹配合适图表（并警惕直方图分桶误导），实践中推荐“Seaborn 快速出图 + Matplotlib 精细调优”的两步工作流。
+\end{itemize}
+\end{summary}

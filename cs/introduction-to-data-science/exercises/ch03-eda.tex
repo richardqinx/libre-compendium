@@ -1,0 +1,197 @@
+% libre-compendium
+%
+% Copyright (C) 2026 Richard Qin
+%
+% This document is dual-licensed under either:
+% - GNU Free Documentation License, Version 1.3 or any later version
+%   published by the Free Software Foundation; with no Invariant Sections,
+%   no Front-Cover Texts, and no Back-Cover Texts (see COPYING.DOC); or
+% - Creative Commons Attribution-ShareAlike 4.0 International License
+%   (see LICENSE-CC-BY-SA-4.0).
+\ProvidesFile{ch03-eda.tex}[2026/11/26 v0.2.2 第三章习题]
+\section{探索性数据分析与数据准备}
+
+\begin{exercise}[title={直方图、核密度图与缺失值填充辨析},level=basic,points=10,tags={直方图,KDE,缺失值}]
+回答以下三个概念问题：
+\begin{enumerate}
+  \item 绘制 $40$ 家企业营收的直方图时，所有样本落入 $4$ 个桶中。已知前三桶的频数分别为 $5, 8, 15$，求第四桶的频数与频率；
+  \item 核密度估计图（KDE）的纵坐标与频数直方图的纵坐标有何本质区别？KDE 曲线的纵坐标能否大于 $1$？
+  \item 对一个明显右偏（含少数极大高薪样本）的“年薪”列，若存在 $5\%$ 的缺失值，在“均值填充”与“中位数填充”之间应优先选择哪一种？为什么？
+\end{enumerate}
+\begin{answer}
+（1）第四桶频数为 $12$，频率为 $0.30$（$30\%$）；（2）频数直方图纵坐标为落入各桶的样本计数，KDE 纵坐标为概率密度函数值（要求曲线下总面积为 $1$），当分布集中在宽度小于 $1$ 的区间内时，概率密度值完全可以大于 $1$；（3）应优先选用中位数填充，因为右偏分布中的极大值会显著拉高均值，而中位数对极端值不敏感。
+\end{answer}
+\begin{solution}
+\begin{enumerate}
+  \item 各桶互不相交且覆盖全部 $40$ 个样本，故第四桶频数为 $40 - (5 + 8 + 15) = 12$，频率为 $12 / 40 = 0.30$。
+  \item 频数直方图每根柱子的高度表示样本个数；KDE 估计的是连续随机变量的概率密度函数 $\hat{f}(x)$，满足 $\int_{-\infty}^{+\infty}\hat{f}(x)\dd x = 1$。概率密度并非概率本身，只要分布集中在较窄区间（例如取值区间长度远小于 $1$），局部密度值即可大于 $1$。
+  \item 右偏分布中少数极大高薪值会把样本均值显著拉高，用均值填充会系统性高估缺失样本的收入水平；中位数仅依赖排序位置，对极端值具有鲁棒性，更能代表典型个体水平。
+\end{enumerate}
+\end{solution}
+\end{exercise}
+
+\begin{exercise}[title={五数概括、IQR 异常值检测与 $k\sigma$ 掩蔽效应},level=standard,points=15,tags={箱线图,IQR,异常值}]
+某次问卷采集到 $12$ 名用户的年龄记录（已升序排列）：
+\[
+  18,\ 20,\ 21,\ 22,\ 23,\ 24,\ 25,\ 26,\ 27,\ 28,\ 30,\ 222.
+\]
+\begin{enumerate}
+  \item 按“将排序数据均分为下半部分与上半部分，分别取各自中位数作为 $Q_1, Q_3$”的方法，手算该组数据的 $Q_1$、中位数 $Q_2$、$Q_3$ 与四分位距 $\mathrm{IQR}$；
+  \item 分别计算普通异常值判定区间 $(Q_1 - 1.5\,\mathrm{IQR},\ Q_3 + 1.5\,\mathrm{IQR})$ 与极端异常值判定区间 $(Q_1 - 3\,\mathrm{IQR},\ Q_3 + 3\,\mathrm{IQR})$，判断 $222$ 属于哪类异常值；
+  \item 已知该组数据的样本均值 $\bar{x} = 40.5$，样本标准差 $s \approx 57.28$。计算 $3\sigma$ 区间 $(\bar{x}-3s, \bar{x}+3s)$ 并解释为何 $3\sigma$ 准则在此失效。
+\end{enumerate}
+\begin{answer}
+（1）$Q_1 = 21.5$，$Q_2 = 24.5$，$Q_3 = 27.5$，$\mathrm{IQR} = 6.0$；（2）普通区间 $(12.5, 36.5)$，极端区间 $(3.5, 45.5)$，$222 > 45.5$，属极端（超级）异常值；（3）$3\sigma$ 区间约为 $(-131.3, 212.3)$（若按总体标准差 $s_n\approx 54.84$ 为 $(-124.0, 205.0)$；若使用 $3.5\sigma$ 则完全覆盖 $222$），且下界低至负数毫无物理意义，可见单个极端值将均值拉高了 $16$ 岁、将标准差放大逾 $15$ 倍，严重扭曲了均值–标准差判据。
+\end{answer}
+\begin{solution}
+\begin{enumerate}
+  \item 数据共 $12$ 个，下半部分为 $\{18, 20, 21, 22, 23, 24\}$，上半部分为 $\{25, 26, 27, 28, 30, 222\}$：
+  \[\begin{aligned}
+    Q_1 &= \frac{21 + 22}{2} = 21.5, &
+    Q_2 &= \frac{24 + 25}{2} = 24.5, \\
+    Q_3 &= \frac{27 + 28}{2} = 27.5, &
+    \mathrm{IQR} &= Q_3 - Q_1 = 6.0.
+  \end{aligned}\]
+  \item 代入 IQR 边界公式：
+  \[\begin{aligned}
+    \text{普通异常值边界} &: (21.5 - 1.5\times 6,\ 27.5 + 1.5\times 6) = (12.5,\ 36.5), \\
+    \text{极端异常值边界} &: (21.5 - 3\times 6,\ 27.5 + 3\times 6) = (3.5,\ 45.5).
+  \end{aligned}\]
+  由于 $222 > 45.5$，IQR 判据清晰地将 $222$ 识别为\textbf{极端异常值}，且其余 $11$ 个正常值均落在 $(12.5, 36.5)$ 内。
+  \item 由 $\bar{x} = 40.5$、$s \approx 57.28$ 得 $3\sigma$ 区间为 $(40.5 - 171.84,\ 40.5 + 171.84) = (-131.34,\ 212.34)$。虽然 $222$ 勉强略大于 $212.34$，但若正常样本再少几条或异常值为 $200$，就会彻底被漏检；且 $2\sigma$ 区间 $(-74.06,\ 155.06)$ 与 $3\sigma$ 区间的下界均远小于 $0$，上界高达 $155$–$212$ 岁。根本原因在于均值和标准差对极端值极度敏感，去掉 $222$ 后其余 $11$ 个数的均值仅为 $24.0$、标准差仅为 $3.61$，可见单个异常点把标准差放大了近 $16$ 倍。
+\end{enumerate}
+\end{solution}
+\end{exercise}
+
+\begin{exercise}[title={等宽划分（EW）与等深划分（ED）手算对比},level=standard,points=15,tags={离散化,等宽划分,等深划分}]
+给定如下 $16$ 个已排序的数值样本：
+\[
+  13,\ 15,\ 16,\ 16,\ 19,\ 20,\ 21,\ 22,\ 22,\ 25,\ 30,\ 33,\ 35,\ 35,\ 36,\ 45.
+\]
+\begin{enumerate}
+  \item 使用\textbf{等宽划分（EW）}将其离散化为 $k=4$ 个桶，写出每个桶的区间范围及落入其中的样本；
+  \item 使用\textbf{等深划分（ED）}将其离散化为 $k=4$ 个桶（每桶 $4$ 个样本），写出每个桶包含的样本；
+  \item 若最后一个样本因录入错误变为 $450$，重新写出 $k=4$ 等宽划分下各桶的样本个数，并据此总结 EW 与 ED 各自的优缺点。
+\end{enumerate}
+\begin{answer}
+（1）等宽桶宽 $w=(45-13)/4=8$，四桶区间依次为 $[13,21)$（$6$ 个）、$[21,29)$（$4$ 个）、$[29,37)$（$5$ 个）、$[37,45]$（$1$ 个）；（2）等深四桶依次为 $\{13,15,16,16\}$、$\{19,20,21,22\}$、$\{22,25,30,33\}$、$\{35,35,36,45\}$；（3）改为 $450$ 后等宽桶宽暴增至 $109.25$，前 $15$ 个正常样本全部挤入第 $1$ 桶 $[13, 122.25)$，第 $2,3$ 桶为空，第 $4$ 桶仅含 $450$。
+\end{answer}
+\begin{solution}
+\begin{enumerate}
+  \item \textbf{等宽划分}：$v_{\min}=13$，$v_{\max}=45$，桶宽 $w = (45 - 13)/4 = 8$。各桶划分如下：
+  \begin{itemize}
+    \item 桶 1 $[13, 21)$：$13, 15, 16, 16, 19, 20$（$6$ 个）；
+    \item 桶 2 $[21, 29)$：$21, 22, 22, 25$（$4$ 个）；
+    \item 桶 3 $[29, 37)$：$30, 33, 35, 35, 36$（$5$ 个）；
+    \item 桶 4 $[37, 45]$：$45$（$1$ 个）。
+  \end{itemize}
+  \item \textbf{等深划分}：共 $16$ 个样本，每桶 $16/4 = 4$ 个样本：
+  \begin{itemize}
+    \item 桶 1：$\{13, 15, 16, 16\}$；
+    \item 桶 2：$\{19, 20, 21, 22\}$；
+    \item 桶 3：$\{22, 25, 30, 33\}$；
+    \item 桶 4：$\{35, 35, 36, 45\}$。
+  \end{itemize}
+  注意两个相等的值 $22$ 被拆入了相邻的两个桶，这是等深划分的典型局限。
+  \item 当 $45$ 变为 $450$ 时，等宽桶宽变为 $w = (450 - 13)/4 = 109.25$，四个区间为 $[13, 122.25)$、$[122.25, 231.5)$、$[231.5, 340.75)$、$[340.75, 450]$，各桶计数依次为 $15, 0, 0, 1$，几乎完全丧失区分度；而等深划分仅最后一个桶末值变为 $450$，其余分界完全不受影响。综上，EW 区间直观但极怕异常值，ED 抗异常值且负载均匀但可能割裂相同取值。
+\end{enumerate}
+\end{solution}
+\end{exercise}
+
+\begin{exercise}[title={三种数据归一化手算与边界分析},level=standard,points=15,tags={归一化,Min-Max,Z-score,小数定标}]
+给定 $5$ 个样本的年龄数据：$V = \{28, 34, 38, 42, 66\}$。
+\begin{enumerate}
+  \item 计算样本均值 $\bar{v}$ 与样本标准差 $s_v = \sqrt{\frac{1}{n-1}\sum_{i=1}^{n}(v_i-\bar{v})^2}$（保留两位小数）；
+  \item 分别计算 $v=28$、$v=38$ 与 $v=66$ 经 Min–Max（映射至 $[0,1]$）、Z-score 与小数定标（Decimal Scaling）归一化后的数值（保留三位小数）；
+  \item 若后续在线推理阶段出现一名新用户年龄 $v_{\text{new}} = 105$，沿用训练集参数进行 Min–Max 与小数定标归一化会出现什么问题？应如何应对？
+\end{enumerate}
+\begin{answer}
+（1）$\bar{v} = 41.60$，$s_v \approx 14.59$；（2）Min–Max：$0.000,\ 0.263,\ 1.000$；Z-score：$-0.932,\ -0.247,\ 1.672$；小数定标（$j=2$）：$0.280,\ 0.380,\ 0.660$；（3）$v_{\text{new}}=105$ 会导致 Min–Max 输出 $2.026 > 1$、小数定标输出 $1.05 > 1$，均超出预设范围；应对方式包括在特征管线中对越界值做截断（clipping）、改用 Z-score 或鲁棒缩放，或随分布演进更新缩放器。
+\end{answer}
+\begin{solution}
+\begin{enumerate}
+  \item 计算均值与样本标准差：
+  \[
+    \bar{v} = \frac{28 + 34 + 38 + 42 + 66}{5} = \frac{208}{5} = 41.60.
+  \]
+  各离差平方和为
+  \[
+    (-13.6)^2 + (-7.6)^2 + (-3.6)^2 + (0.4)^2 + (24.4)^2
+    = 184.96 + 57.76 + 12.96 + 0.16 + 595.36 = 851.20.
+  \]
+  故 $s_v = \sqrt{851.20 / 4} = \sqrt{212.80} \approx 14.59$。
+  \item 逐项代入三种归一化定义公式（其中 $v_{\min}=28, v_{\max}=66$，小数定标取 $j=2$）：
+  \begin{itemize}
+    \item \textbf{Min–Max}：$v'_{28} = 0.000$，$v'_{38} = (38-28)/38 \approx 0.263$，$v'_{66} = 1.000$；
+    \item \textbf{Z-score}：$v'_{28} = (28-41.6)/14.59 \approx -0.932$，$v'_{38} = (38-41.6)/14.59 \approx -0.247$，$v'_{66} = (66-41.6)/14.59 \approx 1.672$；
+    \item \textbf{小数定标}：$v'_{28} = 0.280$，$v'_{38} = 0.380$，$v'_{66} = 0.660$。
+  \end{itemize}
+  \item 沿用训练集参数时，新值 $v_{\text{new}}=105$ 经 Min–Max 映射得 $(105-28)/38 \approx 2.026 > 1$，经 $j=2$ 小数定标得 $1.05 > 1$，均破坏了 $[0,1]$ 或 $[-1,1]$ 的有界假设。工程上可在预处理阶段结合业务合理上下界做截断（\lcinline{clip}），或选用无硬边界限制的 Z-score / 分位数缩放器，并监测线上特征漂移。
+\end{enumerate}
+\end{solution}
+\end{exercise}
+
+\begin{exercise}[title={正则表达式设计与日志信息抽取},level=standard,points=12,tags={正则表达式,文本抽取}]
+针对以下两个数据准备任务，分别设计精确的正则表达式并写出关键元字符的含义：
+\begin{enumerate}
+  \item 拆分教师信息字符串 \lcinline{"Ju Fan: Associate Prof., Computer Science | 35"}，要求以冒号 \lcinline{:}、逗号 \lcinline{,} 或竖线 \lcinline{|}（及其前后可选空白）为分隔符，拆分为 \lcinline{["Ju Fan", "Associate Prof.", "Computer Science", "35"]}；
+  \item 从如下微博求助文本中抽取所有以方括号 \lcinline{【...】} 标出的属性名及其紧随其后的取值（直至换行或下一个 \lcinline{【} 之前）：
+  \begin{quote}\small
+    \texttt{【姓名】张某【年龄】68岁【所在小区】汉阳区麒麟社区}
+  \end{quote}
+\end{enumerate}
+\begin{answer}
+（1）使用 \lcinline{re.split(r"\textbackslash s*[:,|]\textbackslash s*", text)}；（2）使用 \lcinline{re.findall(r"【([\^{}】]+)】([\^{}【\textbackslash n]+)", text)}。
+\end{answer}
+\begin{solution}
+\begin{enumerate}
+  \item 字符类 \lcinline{[:,|]} 匹配冒号、逗号或竖线三者之一，前后加 \lcinline{\textbackslash s*} 吞掉两侧多余空白：
+  \begin{quote}\ttfamily\small
+    re.split(r"\textbackslash s*[:,|]\textbackslash s*", "Ju Fan: Associate Prof., Computer Science | 35")
+  \end{quote}
+  返回 \lcinline{['Ju Fan', 'Associate Prof.', 'Computer Science', '35']}。注意缩写 \lcinline{Prof.} 中的句点不被当作分隔符，得以完整保留。
+  \item 利用否定字符类避免贪婪匹配跨越多个字段：
+  \begin{quote}\ttfamily\small
+    re.findall(r"【([\^{}】]+)】([\^{}【\textbackslash n]+)", text)
+  \end{quote}
+  其中 \lcinline{([\^{}】]+)} 捕获属性名，\lcinline{([\^{}【\textbackslash n]+)} 捕获紧随其后直到下一个 \lcinline{【} 或换行符之前的属性值，输出 \lcinline{[('姓名', '张某'), ('年龄', '68岁'), ('所在小区', '汉阳区麒麟社区')]}。
+\end{enumerate}
+\end{solution}
+\end{exercise}
+
+\begin{exercise}[title={校园二手书市场 EDA 综合分析流水线},level=advanced,points=20,tags={EDA,Pandas,NumPy,综合分析}]
+给定校园二手书交易数据集 \lcinline{campus\_books.csv}，包含列 \lcinline{listing\_id}、\lcinline{title}、\lcinline{category}、\lcinline{condition}、\lcinline{price}、\lcinline{original\_price}、\lcinline{views}、\lcinline{sold}（$1$ 已售/$0$ 未售）与 \lcinline{rating}。请写出简洁的 Pandas + NumPy 代码依次完成以下三个分析任务：
+\begin{enumerate}
+  \item \textbf{条件原地调价}：将所有满足 \lcinline{views >= 100} 且 \lcinline{sold == 0} 的图书价格原地降低 $10\%$；
+  \item \textbf{性价比 Top-5 检索}：定义 \lcinline{value\_score = views / price}，新增该列后利用 \lcinline{np.argsort} 找出性价比最高的 $5$ 本书，并按 \lcinline{value\_score} 降序展示 \lcinline{title}、\lcinline{price}、\lcinline{views}、\lcinline{value\_score}；
+  \item \textbf{高口碑高折扣品类定位}：仅保留已售图书（\lcinline{sold == 1}），计算每本书的折扣率 \lcinline{discount = 1 - price / original\_price}，按 \lcinline{category} 分组计算 \lcinline{price}、\lcinline{discount} 与 \lcinline{rating} 的均值；在平均评分 $\ge 4.5$ 的品类中，找出平均折扣率最高的品类并输出其三项均值。
+\end{enumerate}
+\begin{answer}
+（1）用 \lcinline{df.loc[(df["views"] >= 100) \& (df["sold"] == 0), "price"] *= 0.9} 原地更新；（2）用 \lcinline{np.argsort(df["value\_score"].to\_numpy())[-5:][::-1]} 取前 5 位置再用 \lcinline{.iloc} 切片；（3）链式执行过滤、\lcinline{assign}、\lcinline{groupby("category").agg(...)}、条件筛选与 \lcinline{sort\_values("discount\_mean", ascending=False).iloc[0]}。
+\end{answer}
+\begin{solution}
+\begin{enumerate}
+  \item 使用 \lcinline{.loc} 避免链式赋值警告（\lcinline{SettingWithCopyWarning}），直接原地修改：
+  \begin{quote}\ttfamily\small
+    mask = (df["views"] >= 100) \& (df["sold"] == 0)\\
+    df.loc[mask, "price"] *= 0.9
+  \end{quote}
+  \item \lcinline{np.argsort} 默认返回升序索引，取末尾 $5$ 个并逆序即可得到降序 Top-5 位置：
+  \begin{quote}\ttfamily\small
+    df["value\_score"] = df["views"] / df["price"]\\
+    top5\_idx = np.argsort(df["value\_score"].to\_numpy())[-5:][::-1]\\
+    top5 = df.iloc[top5\_idx][["title", "price", "views", "value\_score"]]
+  \end{quote}
+  \item 使用清晰的分步链式算子完成多指标分组与筛选：
+  \begin{quote}\ttfamily\small
+    sold\_df = df[df["sold"] == 1].assign(discount=lambda d: 1 - d["price"] / d["original\_price"])\\
+    summary = sold\_df.groupby("category").agg(\\
+    \hspace*{2em}price\_mean=("price", "mean"),\\
+    \hspace*{2em}discount\_mean=("discount", "mean"),\\
+    \hspace*{2em}rating\_mean=("rating", "mean")\\
+    )\\
+    best\_cat = summary[summary["rating\_mean"] >= 4.5].sort\_values("discount\_mean", ascending=False).iloc[0]
+  \end{quote}
+\end{enumerate}
+\end{solution}
+\end{exercise}
