@@ -1,0 +1,41 @@
+\begin{tikzpicture}[font=\small]
+  % Axes
+  \draw[lc axis] (-0.3,0) -- (6.2,0) node[right, lc label] {$x_1$};
+  \draw[lc axis] (0,-0.3) -- (0,4.6) node[above, lc label] {$x_2$};
+
+  % Decision boundary: x1 - x2 = 1  => x2 = x1 - 1
+  % Margin lines: x1 - x2 = 0 (negative) and x1 - x2 = 2 (positive)
+  \draw[draw=lc-ink, line width=1.1pt] (0.5,-0.5) -- (5.1,4.1) node[right, lc label] {$\bm{w}^\top\bm{x}+b=0$};
+  \draw[lc aux] (-0.2,-0.2) -- (4.3,4.3) node[above left, lc label, text=lc-def] {$\bm{w}^\top\bm{x}+b=-1$};
+  \draw[lc aux] (1.6,-0.4) -- (5.8,3.8) node[right, lc label, text=lc-force] {$\bm{w}^\top\bm{x}+b=+1$};
+
+  % Normal vector w pointing toward +1 side
+  \draw[lc vector, draw=lc-thm, line width=1.0pt] (2.2,1.2) -- (2.9,0.5) node[midway, above right, lc label, text=lc-thm] {$\bm{w}$};
+
+  % Margin distance arrow between x1-x2=0 and x1-x2=1 at (1.5,1.5) to (2.0,1.0)
+  \draw[draw=lc-method, line width=0.9pt, {Stealth}-{Stealth}] (1.0,1.0) -- (2.0,0.0) node[midway, below left, lc label, text=lc-method] {边距 $\frac{2}{\norm{\bm{w}}_2}$};
+
+  % Negative class points (y = -1)
+  \foreach \x/\y in {0.6/1.8, 1.2/2.8, 1.8/3.5, 2.4/3.6, 0.9/2.3} {
+    \fill[lc-def] (\x,\y) circle (2.2pt);
+  }
+  % Support vectors on negative margin (x1 = x2)
+  \foreach \x/\y in {1.6/1.6, 2.8/2.8} {
+    \fill[lc-def] (\x,\y) circle (2.4pt);
+    \draw[draw=lc-def, line width=0.8pt] (\x,\y) circle (4.5pt);
+  }
+
+  % Positive class points (y = +1)
+  \foreach \x/\y in {3.8/0.7, 4.6/1.4, 5.2/2.2, 4.4/0.5, 5.3/1.1} {
+    \fill[lc-force] (\x,\y) circle (2.2pt);
+  }
+  % Support vector on positive margin (x1 - x2 = 2)
+  \foreach \x/\y in {3.2/1.2} {
+    \fill[lc-force] (\x,\y) circle (2.4pt);
+    \draw[draw=lc-force, line width=0.8pt] (\x,\y) circle (4.5pt);
+  }
+
+  % Legend notes
+  \node[lc label, text=lc-def] at (1.1,4.2) {负类（$y=-1$）};
+  \node[lc label, text=lc-force] at (4.8,0.25) {正类（$y=+1$）};
+\end{tikzpicture}

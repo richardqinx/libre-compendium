@@ -1,0 +1,271 @@
+% libre-compendium
+%
+% Copyright (C) 2026 Richard Qin
+%
+% This document is dual-licensed under either:
+% - GNU Free Documentation License, Version 1.3 or any later version
+%   published by the Free Software Foundation; with no Invariant Sections,
+%   no Front-Cover Texts, and no Back-Cover Texts (see COPYING.DOC); or
+% - Creative Commons Attribution-ShareAlike 4.0 International License
+%   (see LICENSE-CC-BY-SA-4.0).
+\ProvidesFile{ch05-classification.tex}[2026/11/26 v0.2.4 第五章 分类模型与决策树]
+\chapter{分类模型与决策树}\label{ch:classification}
+
+上一章讨论的回归问题预测连续实数值（“有多少”），而数据科学中另一类同样核心的监督学习任务是\textbf{分类}（Classification）——根据输入特征 $\bm{x}\in\mathcal{X}$ 预测离散类别标签 $y\in\mathcal{Y}$（“属于哪一类”），如手写数字识别、社交媒体虚假信息检测以及朋友圈广告互动预测。本章首先建立监督分类的泛化评估框架与关键评测指标，随后依次剖析四类经典分类思想：基于邻域投票的 K 近邻（KNN）、基于概率与极大似然的逻辑回归、基于几何超平面与最大边距的感知机与支持向量机（SVM），以及基于信息论与贪心分裂的决策树模型。
+
+\section{监督分类框架、泛化与评价指标}\label{sec:clf-framework}
+
+监督分类的标准流程可概括为六个环节：界定问题（Question）$\to$ 准备数据（Data）$\to$ 特征工程（Features）$\to$ 数据标注（Labels）$\to$ 选择算法（Algorithm）$\to$ 效果评测（Evaluation）。其中，一个最直观的非参数基线算法是\textbf{K 近邻分类器}（$K$-Nearest Neighbors, KNN）：给定测试样本 $\bm{x}$，在训练集中找出距离 $\bm{x}$ 最近的 $K$ 个样本，以这 $K$ 个近邻中占多数的类别作为预测标签。
+
+\subsection{泛化误差、数据集划分与过拟合}
+
+监督学习的根本目标是在\textbf{未见过的测试样本}上取得良好表现，而非仅仅背诵训练集。仅在训练集上评估模型会产生严重乐观偏差，容易掩盖\textbf{过拟合}（Overfitting）——即模型过度复杂，把训练数据中的随机噪声当作规律记忆下来，导致训练准确率极高而测试准确率大幅下滑；反之，若模型过于简单无法刻画主体规律，则称为\textbf{欠拟合}（Underfitting）。
+
+例如在 KNN 中，当 $K=1$ 时分类边界极度曲折、训练误差为 $0$，但对噪声极其敏感；随着 $K$ 增大，决策边界逐渐平滑，训练误差上升而测试误差呈现先降后升的 U 形变化。为了科学地选择超参数（如 KNN 的 $K$ 值或决策树的最大深度）并客观评估泛化能力，应将数据划分为互不相交的三部分：
+\begin{itemize}
+  \item \textbf{训练集（Training Set）}：用于拟合模型参数；
+  \item \textbf{验证集（Validation Set）}：不参与参数拟合，专门用于模型选择与超参数调优；在样本量有限时，常采用\textbf{$K$-折交叉验证}（$K$-fold Cross Validation），将训练数据均分为 $K$ 份，轮流以 $1$ 份作验证、其余 $K-1$ 份作训练并取平均指标；
+  \item \textbf{测试集（Test Set）}：仅在全部建模与调参锁定后用于一次性最终泛化评测。
+\end{itemize}
+
+\subsection{混淆矩阵与分类评测指标}
+
+对二分类问题（正例 $1$ / 负例 $0$），模型预测结果与真实标签的对照可整理为 $2\times 2$ \textbf{混淆矩阵}（Confusion Matrix），如 \cref{tab:confusion-matrix} 所示。
+
+\begin{table}[htbp]
+  \centering\small
+  \caption{二分类问题的混淆矩阵（Confusion Matrix）}\label{tab:confusion-matrix}
+  \begin{tabular}{@{}lcc@{}}
+    \toprule
+    真实标签 $\backslash$ 预测结果 & 预测正例 & 预测负例 \\
+    \midrule
+    真实正例 & 真正例 $\mathrm{TP}$（正确识别） & 假负例 $\mathrm{FN}$（漏报/错误拒绝） \\
+    真实负例 & 假正例 $\mathrm{FP}$（误报/错误识别） & 真负例 $\mathrm{TN}$（正确拒绝） \\
+    \bottomrule
+  \end{tabular}
+\end{table}
+
+\begin{definition}[分类常用评测指标]\label{def:classification-metrics}
+基于混淆矩阵的四个计数，定义准确率（Accuracy）、精确率（Precision）、召回率（Recall）与 $F_1$ 值如下：
+\begin{equation}\label{eq:clf-metrics}
+\begin{aligned}
+  \mathrm{Accuracy} &= \frac{\mathrm{TP} + \mathrm{TN}}{\mathrm{TP} + \mathrm{FP} + \mathrm{TN} + \mathrm{FN}}, &
+  \mathrm{Precision} &= \frac{\mathrm{TP}}{\mathrm{TP} + \mathrm{FP}}, \\
+  \mathrm{Recall} &= \frac{\mathrm{TP}}{\mathrm{TP} + \mathrm{FN}}, &
+  F_1 &= \frac{2}{\frac{1}{\mathrm{Precision}} + \frac{1}{\mathrm{Recall}}} = \frac{2\,\mathrm{Precision}\cdot\mathrm{Recall}}{\mathrm{Precision} + \mathrm{Recall}}.
+\end{aligned}
+\end{equation}
+\end{definition}
+
+\begin{pitfall}[类别不平衡时的准确率陷阱]\label{pit:accuracy-imbalance}
+设某 $100$ 条测试样本中仅有 $20$ 条正例、$80$ 条负例，分类器测得 $\mathrm{TP}=8,\ \mathrm{FN}=12,\ \mathrm{FP}=8,\ \mathrm{TN}=72$。此时 $\mathrm{Accuracy} = (8+72)/100 = 80\%$，表面看似尚可，但实际上 $\mathrm{Precision} = 8/16 = 50\%$、$\mathrm{Recall} = 8/20 = 40\%$、$F_1 \approx 44.4\%$——它漏掉了六成正例且半数报警为误报！在类别不平衡场景（如欺诈检测、罕见病筛查）中，切不可单凭 Accuracy 评价分类器。
+\end{pitfall}
+
+\section{逻辑回归与交叉熵损失}\label{sec:logistic-regression}
+
+能否把上一章的线性回归模型改造为分类器？对于二分类标签 $Y\in\{0,1\}$，样本的条件期望恰等于正类概率 $\E[Y\mid \bm{x}] = P(Y=1\mid \bm{x}) \in [0, 1]$，而线性输出 $\bm{x}^\top\bm{\theta}\in\R$ 无界。为此，\textbf{逻辑回归}（Logistic Regression）假设\textbf{对数几率}（Log-odds）是特征的线性函数：
+\[
+  \log\frac{P(Y=1\mid \bm{x})}{P(Y=0\mid \bm{x})} = \log\frac{p}{1-p} = \bm{x}^\top\bm{\theta}.
+\]
+两边取指数并反解 $p$，即得到逻辑回归模型：
+\begin{equation}\label{eq:logistic-model}
+  \hat{y} = \hat{P}(Y=1\mid \bm{x}) = \sigma(\bm{x}^\top\bm{\theta}) = \frac{1}{1 + \e^{-\bm{x}^\top\bm{\theta}}},
+\end{equation}
+其中 $\sigma(t) = \frac{1}{1+\e^{-t}}$ 称为 \textbf{Sigmoid（Logistic）函数}，将任意实数光滑压缩到 $(0, 1)$ 区间。预测阶段可设定阈值（默认 $0.5$，等价于 $\bm{x}^\top\bm{\theta}\ge 0$）输出类别 $1$ 或 $0$；参数 $\theta_j > 0$ 表示第 $j$ 维特征越大、正类概率越高，$\theta_j < 0$ 则相反。
+
+\subsection{极大似然估计与交叉熵损失}
+
+若强行将 $\hat{y}_i = \sigma(\bm{x}_i^\top\bm{\theta})$ 代入均方误差 MSE，复合后的目标函数关于 $\bm{\theta}$ 是\textbf{非凸}的，梯度下降易陷入局部极小。从概率统计视角出发，每个样本 $Y_i\mid \bm{x}_i \sim \mathrm{Bernoulli}(\hat{y}_i)$，其概率质量函数可紧凑写为 $P(Y_i = y_i \mid \bm{x}_i) = \hat{y}_i^{y_i}(1-\hat{y}_i)^{1-y_i}$。假设样本相互独立，即可由\textbf{极大似然估计}（Maximum Likelihood Estimation, MLE）自然导出交叉熵损失。
+
+\begin{theorem}[伯努利极大似然估计与交叉熵等价性]\label{thm:mle-cross-entropy}
+对独立观测的二分类训练集 $\{(\bm{x}_i, y_i)\}_{i=1}^{n}$（$y_i\in\{0,1\}$），记模型预测概率为 $\hat{y}_i = \sigma(\bm{x}_i^\top\bm{\theta})$。最大化训练数据的似然函数
+\[
+  \mathcal{L}(\bm{\theta}) = \prod_{i=1}^{n} \hat{y}_i^{y_i}(1-\hat{y}_i)^{1-y_i}
+\]
+等价于最小化\textbf{二元交叉熵损失}（Cross-Entropy Loss，又称对数损失 Log Loss）：
+\begin{equation}\label{eq:cross-entropy}
+  R_{\mathrm{CE}}(\bm{\theta}) = -\frac{1}{n}\sum_{i=1}^{n}\Bigl[y_i\log\hat{y}_i + (1-y_i)\log(1-\hat{y}_i)\Bigr].
+\end{equation}
+该目标函数关于 $\bm{\theta}$ 是凸函数，其梯度为
+\begin{equation}\label{eq:logreg-grad}
+  \nabla_{\bm{\theta}}R_{\mathrm{CE}}(\bm{\theta}) = \frac{1}{n}\bm{X}^\top(\hat{\bm{y}} - \bm{y}).
+\end{equation}
+\end{theorem}
+
+\begin{proof}
+因对数函数 $\log(\cdot)$ 严格单调递增，最大化 $\mathcal{L}(\bm{\theta})$ 等价于最大化对数似然 $\ell(\bm{\theta}) = \sum_{i=1}^{n}\bigl[y_i\log\hat{y}_i + (1-y_i)\log(1-\hat{y}_i)\bigr]$，乘以 $-\frac{1}{n}$ 即转为最小化 $R_{\mathrm{CE}}(\bm{\theta})$。利用 Sigmoid 导数性质 $\sigma'(t) = \sigma(t)(1-\sigma(t))$，对单样本损失 $l_i(\bm{\theta}) = -y_i\log\hat{y}_i - (1-y_i)\log(1-\hat{y}_i)$ 由链式法则求梯度：
+\[
+  \nabla_{\bm{\theta}} l_i(\bm{\theta})
+  = \left(-\frac{y_i}{\hat{y}_i} + \frac{1-y_i}{1-\hat{y}_i}\right)\hat{y}_i(1-\hat{y}_i)\bm{x}_i
+  = (\hat{y}_i - y_i)\bm{x}_i.
+\]
+对 $i=1,\dots,n$ 求平均即得 \cref{eq:logreg-grad}。进一步求海森矩阵得 $\bm{H} = \frac{1}{n}\bm{X}^\top \mathrm{diag}\bigl(\hat{y}_i(1-\hat{y}_i)\bigr)\bm{X} \succeq \bm{0}$，故 $R_{\mathrm{CE}}(\bm{\theta})$ 是凸函数。
+\end{proof}
+
+至此，回归与分类在“模型 $\to$ 损失 $\to$ 优化 $\to$ 评估”四步范式下高度统一，如 \cref{tab:reg-vs-clf} 所示。
+
+\begin{table}[htbp]
+  \centering\small
+  \caption{线性回归与逻辑回归的四步建模范式对照}\label{tab:reg-vs-clf}
+  \begin{tabular}{@{}l>{\raggedright\arraybackslash}p{0.34\linewidth}>{\raggedright\arraybackslash}p{0.40\linewidth}@{}}
+    \toprule
+    建模步骤 & 线性回归（$y\in\R$） & 逻辑回归（$y\in\{0, 1\}$） \\
+    \midrule
+    1. 模型族 & $\hat{y} = \bm{x}^\top\bm{\theta}$ & $\hat{P}(Y=1\mid\bm{x}) = \sigma(\bm{x}^\top\bm{\theta})$ \\
+    2. 目标函数 & MSE：$\frac{1}{2n}\sum_{i}(y_i - \hat{y}_i)^2$ & 交叉熵：$-\frac{1}{n}\sum_{i}[y_i\log\hat{y}_i+(1-y_i)\log(1-\hat{y}_i)]$ \\
+    3. 参数拟合 & 正规方程 / GD / SGD & GD / SGD / 拟牛顿法（无闭式解） \\
+    4. 效果评估 & $\mathrm{RMSE}$、$R^2$ & Accuracy、Precision、Recall、$F_1$ \\
+    \bottomrule
+  \end{tabular}
+\end{table}
+
+\section{感知机与支持向量机}\label{sec:perceptron-svm}
+
+与逻辑回归输出概率不同，另一类经典线性分类器直接寻找划分特征空间的\textbf{分离超平面} $\bm{w}^\top\bm{x} + b = 0$，记类别标签 $y_i\in\{-1, +1\}$，决策函数为
+\[
+  f(\bm{x}; \bm{w}, b) = \mathrm{sgn}(\bm{w}^\top\bm{x} + b).
+\]
+
+\subsection{感知机算法与收敛性}
+
+对任意样本 $(\bm{x}_i, y_i)$，分类错误等价于 $y_i(\bm{w}^\top\bm{x}_i + b) \le 0$。记当前误分类样本集合为 $M$，定义\textbf{感知机损失函数}为所有误分类样本到超平面的（未归一化）函数距离之和：
+\begin{equation}\label{eq:perceptron-loss}
+  L(\bm{w}, b) = -\sum_{i\in M} y_i(\bm{w}^\top\bm{x}_i + b).
+\end{equation}
+对其求梯度得 $\nabla_{\bm{w}}L = -\sum_{i\in M} y_i\bm{x}_i$，$\nabla_b L = -\sum_{i\in M} y_i$。采用单样本随机梯度下降即得到经典的\textbf{感知机（Perceptron）学习算法}，如 \cref{alg:perceptron} 所示。
+
+\begin{algorithm}[感知机学习算法（原始形式）]\label{alg:perceptron}
+\alginput{训练数据 $D = \{(\bm{x}_i, y_i)\}_{i=1}^{n}$（$y_i\in\{-1,+1\}$），学习率 $\eta > 0$}
+\algoutput{分离超平面参数 $(\bm{w}, b)$}
+\begin{algsteps}
+  \State 初始化 $\bm{w}\gets\bm{0},\ b\gets 0$（或随机小值）
+  \Repeat
+    \For{每个训练样本 $(\bm{x}_i, y_i)\in D$}
+      \If{$y_i(\bm{w}^\top\bm{x}_i + b) \le 0$}
+        \State $\bm{w} \gets \bm{w} + \eta y_i\bm{x}_i$
+        \State $b \gets b + \eta y_i$
+      \EndIf
+    \EndFor
+  \Until{遍历全集无误分类样本}
+  \State \Return $(\bm{w}, b)$
+\end{algsteps}
+\end{algorithm}
+
+每次对误分类样本 $(\bm{x}_i, y_i)$ 更新后，有
+\[
+  y_i(\bm{w}_{\text{new}}^\top\bm{x}_i + b_{\text{new}})
+  = y_i(\bm{w}^\top\bm{x}_i + b) + \eta\bigl(\norm{\bm{x}_i}_2^2 + 1\bigr)
+  > y_i(\bm{w}^\top\bm{x}_i + b),
+\]
+即单步更新必定严格减小当前误分类样本的损失。Novikoff 定理保证：只要训练集\textbf{线性可分}，感知机算法必在有限步内收敛。此外，若从 $\bm{w}=\bm{0}$ 出发且样本 $\bm{x}_i$ 累计被误分 $n_i$ 次，则 $\bm{w} = \sum_{i=1}^{n} \alpha_i y_i\bm{x}_i$（$\alpha_i = n_i\eta$），这便是感知机的\textbf{对偶形式}。
+
+\subsection{分类边距与支持向量机（SVM）}
+
+当数据线性可分时，满足零训练误差的超平面往往有无穷多个，感知机的最终解依赖于初值与样本输入顺序。哪一个超平面泛化能力最好？直觉上，离两类最近样本都尽可能远的“最胖”分界面对扰动最不敏感。\textbf{支持向量机}（Support Vector Machine, SVM）正是基于这一\textbf{最大边距}（Maximum Margin）原则构建的。
+
+任取超平面上一点 $\bm{x}'$（满足 $\bm{w}^\top\bm{x}' + b = 0$），则样本 $\bm{x}_i$ 到超平面的欧氏几何距离为向量 $\bm{x}_i - \bm{x}'$ 在单位法向量 $\bm{w}/\norm{\bm{w}}_2$ 上的投影长度：
+\[
+  \mathrm{dist}(\bm{x}_i; \bm{w}, b)
+  = \frac{\abs{\bm{w}^\top(\bm{x}_i - \bm{x}')}}{\norm{\bm{w}}_2}
+  = \frac{\abs{\bm{w}^\top\bm{x}_i + b}}{\norm{\bm{w}}_2}.
+\]
+对所有正确分类的样本（$y_i(\bm{w}^\top\bm{x}_i + b) > 0$），超平面的\textbf{分类边距}定义为最近样本的几何距离，如 \cref{fig:svm-margin} 所示。因此硬间隔 SVM 的优化目标写为：
+\begin{equation}\label{eq:svm-margin}
+  \max_{\bm{w}, b}\ \min_{1\le i\le n} \frac{y_i(\bm{w}^\top\bm{x}_i + b)}{\norm{\bm{w}}_2}
+  \qquad \text{s.t.}\quad y_i(\bm{w}^\top\bm{x}_i + b) > 0,\ \forall i.
+\end{equation}
+恰好落在最近边距边界上的训练样本称为\textbf{支持向量}（Support Vectors），最终分类超平面完全由这少量关键样本决定。
+
+\lcfigure[caption={线性可分二分类中的支持向量机（SVM）最大边距示意图。加圈样本为支持向量，落在 $\bm{w}^\top\bm{x}+b=\pm 1$ 两条平行边距边界上，总间隔宽度为 $2/\norm{\bm{w}}_2$。},label=fig:svm-margin]{ch05-svm-margin}
+
+\section{信息论基础与决策树}\label{sec:decision-tree}
+
+线性模型难以直接刻画高度非线性的分段边界，也无法原生处理离散类别特征。\textbf{决策树}（Decision Tree）将分类函数表示为一棵树：每个内部节点对某一特征执行条件测试，每条分支对应特征取值（或数值阈值区间），每个叶节点输出最终类别标签。由于寻找全局最优决策树是 NP-hard 问题，经典算法均采用\textbf{自顶向下的贪心分治策略}：每次选择最能降低子节点类别\textbf{混杂度}（Impurity）的特征进行分裂。
+
+\subsection{信息熵、信息增益与基尼指数}
+
+\begin{definition}[信息熵、条件熵、信息增益与基尼指数]\label{def:entropy-ig-gini}
+设离散随机变量 $Y$ 取值于类别集合 $C$，概率分布为 $p_k = P(Y = c_k)$（$k=1,\dots,\abs{C}$，约定 $0\log_2 0 = 0$）：
+\begin{enumerate}
+  \item \textbf{信息熵（Entropy）}度量不确定性（亦对应最短平均编码长度）：
+  \begin{equation}\label{eq:entropy}
+    H(Y) = -\sum_{k=1}^{\abs{C}} p_k \log_2 p_k \in \bigl[0,\ \log_2\abs{C}\bigr].
+  \end{equation}
+  当所有样本同属一类时 $H(Y)=0$；当各类等概率分布时熵达最大值 $\log_2\abs{C}$。
+  \item \textbf{条件熵}度量已知特征 $A$ 后类别 $Y$ 剩余的不确定性：
+  \[
+    H(Y\mid A) = \sum_{a} P(A=a)\,H(Y\mid A=a),
+  \]
+  满足链式法则 $H(Y, A) = H(A) + H(Y\mid A)$。
+  \item \textbf{信息增益（Information Gain）}度量以特征 $A$ 划分后不确定性的减少量（ID3 算法准则）：
+  \begin{equation}\label{eq:info-gain}
+    \mathrm{IG}(Y\mid A) = H(Y) - H(Y\mid A) = H(Y) - \sum_{a}\frac{\abs{D_a}}{\abs{D}} H(D_a),
+  \end{equation}
+  且具有对称性 $\mathrm{IG}(Y\mid A) = \mathrm{IG}(A\mid Y) = H(Y) + H(A) - H(Y, A)$。
+  \item \textbf{基尼指数（Gini Index）}刻画从集合中随机抽取两样本类别不一致的概率（CART 算法准则）：
+  \begin{equation}\label{eq:gini}
+    \mathrm{Gini}(D) = 1 - \sum_{k=1}^{\abs{C}} p_k^2,\qquad
+    \mathrm{Gini}(D, A) = \sum_{a}\frac{\abs{D_a}}{\abs{D}}\mathrm{Gini}(D_a).
+  \end{equation}
+\end{enumerate}
+\end{definition}
+
+对二分类分布 $(p, 1-p)$，\cref{fig:entropy-gini} 对比了信息熵 $H(p)$ 与基尼指数 $\mathrm{Gini}(p) = 2p(1-p)$ 的曲线形态：两者均关于 $p=0.5$ 对称、在纯节点（$p=0$ 或 $1$）处归零，且 $2\,\mathrm{Gini}(p)$ 在整个区间上非常贴近 $H(p)$，而基尼指数无需计算对数，工程上计算更高效。
+
+\lcfigure[caption={二分类概率 $p\in[0,1]$ 下信息熵 $H(p)$ 与基尼指数 $\mathrm{Gini}(p)$ 的曲线对比。},label=fig:entropy-gini]{ch05-entropy-gini}
+
+\subsection{决策树构建算法、连续特征与过拟合控制}
+
+将贪心分裂与递归终止条件结合，即得到 \cref{alg:decision-tree}。对于\textbf{连续数值型特征}，先将当前节点中出现过的不同特征值升序排列为 $v_1 < v_2 < \dots < v_m$，考察所有相邻中点候选阈值 $t_j = \frac{v_j + v_{j+1}}{2}$，按阈值将数据二分并选择使混杂度降低量最大的阈值。
+
+\begin{algorithm}[决策树贪心递归构建算法]\label{alg:decision-tree}
+\alginput{训练集 $D$，候选特征集 $\mathcal{A}$，混杂度度量 $I(\cdot)$（熵或基尼指数），停止阈值 $\epsilon \ge 0$}
+\algoutput{决策树子树 $T$}
+\begin{algsteps}
+  \If{$D$ 中所有样本同属同一类别 $c$ \textbf{或} $\mathcal{A}=\varnothing$ \textbf{或} 达到预剪枝上限}
+    \State \Return 叶节点，类别标记为 $D$ 中占比最高的多数类
+  \EndIf
+  \State 对每个特征 $A\in\mathcal{A}$（连续特征遍历候选阈值），计算分裂后的混杂度降低量 $\Delta I(D, A) = I(D) - I(D, A)$
+  \State 选取最优划分 $A^* \gets \argmax_{A\in\mathcal{A}} \Delta I(D, A)$
+  \If{$\Delta I(D, A^*) < \epsilon$}
+    \State \Return 叶节点，标记为 $D$ 的多数类
+  \EndIf
+  \State 创建以 $A^*$ 为分裂条件的内部节点，将 $D$ 划分为子集 $\{D_1, \dots, D_m\}$
+  \For{每个非空子集 $D_j$}
+    \State 递归构建子树 $T_j \gets \text{BuildTree}(D_j, \mathcal{A}', I, \epsilon)$ 并挂载为第 $j$ 条分支
+  \EndFor
+  \State \Return 以当前节点为根的子树 $T$
+\end{algsteps}
+\end{algorithm}
+
+如果不对树生长加以限制，决策树会不断细碎切分特征空间直至每个叶节点近乎纯净，极易引发严重\textbf{过拟合}。例如在 Iris 鸢尾花数据集上，仅用区分度较弱的花萼特征（\lcinline{SepalLengthCm}、\lcinline{SepalWidthCm}）训练无约束决策树时，树深可达 $10$ 层、叶节点多达 $42$ 个，训练准确率达 $94.55\%$ 而测试准确率骤降至 $67.50\%$；通过预剪枝限制 \lcinline{max\_depth} 或增大 \lcinline{min\_samples\_leaf} 后，边界大幅平滑，测试准确率可提升至 $82.50\%$。当然，限制过强又会导致欠拟合，因此须借助验证集或交叉验证精细权衡模型复杂度。\cref{lst:dt-iris} 展示了混杂度计算与 \lcinline{scikit-learn} 决策树训练及预剪枝对比代码。
+
+\begin{codeblock}[language=Python,caption={信息熵/基尼指数计算与 scikit-learn 决策树预剪枝示例},label=lst:dt-iris]
+import numpy as np
+from sklearn.tree import DecisionTreeClassifier
+from sklearn.metrics import accuracy_score
+
+def entropy(counts: list[int]) -> float:
+    arr = np.asarray(counts, dtype=float)
+    p = arr[arr > 0] / arr.sum()
+    return float(-np.sum(p * np.log2(p)))
+
+def gini(counts: list[int]) -> float:
+    arr = np.asarray(counts, dtype=float)
+    p = arr / arr.sum()
+    return float(1.0 - np.sum(p ** 2))
+
+# 使用预剪枝超参数控制决策树复杂度，缓解过拟合
+clf = DecisionTreeClassifier(criterion="gini", max_depth=3, min_samples_leaf=5, random_state=23)
+# clf.fit(X_train, y_train)
+# test_acc = accuracy_score(y_test, clf.predict(X_test))
+\end{codeblock}
+
+\begin{summary}[本章要点]
+\begin{itemize}
+  \item 分类模型的泛化评估须依赖独立测试集或交叉验证；面对类别不平衡数据时，必须综合考察混淆矩阵中的 Precision、Recall 与 $F_1$ 而非仅看 Accuracy。
+  \item 逻辑回归利用 Sigmoid 函数建模对数几率线性关系，伯努利极大似然估计等价于最小化凸的交叉熵损失，梯度为 $\frac{1}{n}\bm{X}^\top(\hat{\bm{y}}-\bm{y})$。
+  \item 感知机通过随机梯度下降修正误分类样本，在线性可分数据上保证收敛；SVM 进一步最大化几何分类边距 $\min_i \frac{y_i(\bm{w}^\top\bm{x}_i+b)}{\norm{\bm{w}}_2}$ 以提升泛化能力。
+  \item 决策树以信息增益（ID3）或基尼指数（CART）贪心递归分裂节点，实际应用中应结合 \lcinline{max\_depth}、\lcinline{min\_samples\_leaf} 等剪枝策略防范过拟合。
+\end{itemize}
+\end{summary}

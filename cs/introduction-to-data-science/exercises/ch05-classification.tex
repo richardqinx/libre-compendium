@@ -1,0 +1,212 @@
+% libre-compendium
+%
+% Copyright (C) 2026 Richard Qin
+%
+% This document is dual-licensed under either:
+% - GNU Free Documentation License, Version 1.3 or any later version
+%   published by the Free Software Foundation; with no Invariant Sections,
+%   no Front-Cover Texts, and no Back-Cover Texts (see COPYING.DOC); or
+% - Creative Commons Attribution-ShareAlike 4.0 International License
+%   (see LICENSE-CC-BY-SA-4.0).
+\ProvidesFile{ch05-classification.tex}[2026/11/26 v0.2.4 第五章习题]
+\section{分类模型与决策树}
+
+\begin{exercise}[title={混淆矩阵手算与业务指标权衡},level=basic,points=10,tags={混淆矩阵,Precision,Recall,F1}]
+某二分类模型在 $100$ 条测试样本上的混淆矩阵统计如下：$\mathrm{TP}=18$，$\mathrm{FN}=6$，$\mathrm{FP}=12$，$\mathrm{TN}=64$。
+\begin{enumerate}
+  \item 手算该模型的准确率（Accuracy）、精确率（Precision）、召回率（Recall）与 $F_1$ 值（保留三位小数）；
+  \item 分别指出“垃圾邮件过滤”与“恶性肿瘤初筛”两个场景各自更看重 Precision 还是 Recall，并说明理由。
+\end{enumerate}
+\begin{answer}
+（1）$\mathrm{Accuracy}=0.820$，$\mathrm{Precision}=0.600$，$\mathrm{Recall}=0.750$，$F_1 = 2/3 \approx 0.667$；（2）垃圾邮件过滤更看重 Precision（避免把重要正常邮件误判为垃圾邮件）；恶性肿瘤初筛更看重 Recall（尽可能避免漏诊真实患者）。
+\end{answer}
+\begin{solution}
+\begin{enumerate}
+  \item 代入分类评测指标公式：
+  \[\begin{aligned}
+    \mathrm{Accuracy} &= \frac{18 + 64}{100} = 0.820, &
+    \mathrm{Precision} &= \frac{18}{18 + 12} = 0.600, \\
+    \mathrm{Recall} &= \frac{18}{18 + 6} = 0.750, &
+    F_1 &= \frac{2 \times 0.600 \times 0.750}{0.600 + 0.750} = \frac{0.900}{1.350} = \frac{2}{3} \approx 0.667.
+  \end{aligned}\]
+  \item 业务代价决定指标侧重：
+  \begin{itemize}
+    \item \textbf{垃圾邮件过滤}：假正例（FP，正常重要邮件被拦截进垃圾箱）的用户损失远大于偶发漏掉一封广告邮件，故应优先保证高 \textbf{Precision}；
+    \item \textbf{恶性肿瘤初筛}：假负例（FN，漏诊真实患者）可能延误最佳治疗时机、代价极高，而假正例可通过复查排除，故应优先保证高 \textbf{Recall}。
+  \end{itemize}
+\end{enumerate}
+\end{solution}
+\end{exercise}
+
+\begin{exercise}[title={逻辑回归预测与伯努利极大似然估计推导},level=standard,points=15,tags={逻辑回归,Sigmoid,MLE,交叉熵}]
+完成以下两小题：
+\begin{enumerate}
+  \item 已知逻辑回归模型参数 $\hat{\bm{\theta}} = (0.1, -0.5)^\top$，对输入特征 $\bm{x} = (15, 1)^\top$，手算线性得分 $t = \bm{x}^\top\hat{\bm{\theta}}$、预测概率 $\hat{P}(Y=1\mid\bm{x}) = \sigma(t)$（取 $\e^{-1}\approx 0.368$）以及阈值 $0.5$ 下的预测类别；
+  \item 某独立同分布抛硬币试验观测到 $10$ 次结果：$[0,0,1,1,1,1,0,0,0,0]$（正面记 $1$、背面记 $0$）。写出正面概率 $p\in(0,1)$ 的似然函数 $\mathcal{L}(p)$，通过对对数似然求导证明极大似然估计为 $\hat{p} = 0.4$，并说明为何该优化等价于最小化二元交叉熵。
+\end{enumerate}
+\begin{answer}
+（1）$t = 1.0$，$\sigma(1.0) \approx 0.731 \ge 0.5$，预测类别为 $1$；（2）$\mathcal{L}(p) = p^4(1-p)^6$，令 $\frac{\dd}{\dd p}\log\mathcal{L}(p) = \frac{4}{p} - \frac{6}{1-p} = 0$ 得 $\hat{p}=0.4$，最大化 $\log\mathcal{L}(p)$ 与最小化 $-\frac{1}{10}\log\mathcal{L}(p)$（即二元交叉熵）完全等价。
+\end{answer}
+\begin{solution}
+\begin{enumerate}
+  \item 计算点积与 Sigmoid 值：
+  \[
+    t = \bm{x}^\top\hat{\bm{\theta}} = 15\times 0.1 + 1\times(-0.5) = 1.5 - 0.5 = 1.0,
+  \]
+  \[
+    \hat{P}(Y=1\mid\bm{x}) = \sigma(1.0) = \frac{1}{1 + \e^{-1}} \approx \frac{1}{1 + 0.368} \approx 0.731.
+  \]
+  由于 $0.731 \ge 0.5$（亦即 $t = 1.0 \ge 0$），模型预测类别为 $1$。
+  \item 观测序列共有 $4$ 次正面、$6$ 次背面，似然函数与对数似然分别为
+  \[
+    \mathcal{L}(p) = p^4(1-p)^6,\qquad
+    \ell(p) = \log\mathcal{L}(p) = 4\log p + 6\log(1-p).
+  \]
+  求一阶与二阶导数：
+  \[
+    \ell'(p) = \frac{4}{p} - \frac{6}{1-p} = 0 \implies 4(1-p) = 6p \implies \hat{p} = 0.4,
+  \]
+  且 $\ell''(p) = -\frac{4}{p^2} - \frac{6}{(1-p)^2} < 0$，故 $\hat{p}=0.4$ 为唯一全局极大值点。又因二元交叉熵 $R_{\mathrm{CE}}(p) = -\frac{1}{10}\bigl(4\log p + 6\log(1-p)\bigr) = -\frac{1}{10}\ell(p)$，最小化交叉熵与最大化似然具有完全相同的最优解。
+\end{enumerate}
+\end{solution}
+\end{exercise}
+
+\begin{exercise}[title={感知机迭代更新与 SVM 几何边距手算},level=standard,points=15,tags={感知机,SVM,分类边距,支持向量}]
+给定二维线性可分训练集：
+\[
+  \bm{x}_1=(0,0),\ y_1=-1;\quad
+  \bm{x}_2=(2,2),\ y_2=-1;\quad
+  \bm{x}_3=(2,0),\ y_3=+1;\quad
+  \bm{x}_4=(3,0),\ y_4=+1.
+\]
+\begin{enumerate}
+  \item 取初值 $\bm{w}^{(0)}=(0,0)^\top,\ b^{(0)}=0$，学习率 $\eta=1$，按 $\bm{x}_1, \bm{x}_2, \bm{x}_3, \bm{x}_4$ 的顺序执行感知机算法，写出前 $3$ 次参数更新后的 $(\bm{w}, b)$；
+  \item 给定线性分类超平面 $2x_1 - 2x_2 - 1 = 0$（即 $\bm{w}=(2,-2)^\top,\ b=-1$），验证上述四个样本是否全部分类正确，手算该超平面的分类边距（Margin），并指出哪些样本是支持向量。
+\end{enumerate}
+\begin{answer}
+（1）第 1 次（遇 $\bm{x}_1$）：$\bm{w}=(0,0)^\top, b=-1$；第 2 次（遇 $\bm{x}_3$）：$\bm{w}=(2,0)^\top, b=0$；第 3 次（下一轮遇 $\bm{x}_1$）：$\bm{w}=(2,0)^\top, b=-1$。（2）四点均分类正确，各点几何距离依次为 $\frac{1}{2\sqrt{2}},\ \frac{1}{2\sqrt{2}},\ \frac{3}{2\sqrt{2}},\ \frac{5}{2\sqrt{2}}$，分类边距为 $\frac{1}{2\sqrt{2}} = \frac{\sqrt{2}}{4}$，支持向量为 $\bm{x}_1=(0,0)$ 与 $\bm{x}_2=(2,2)$。
+\end{answer}
+\begin{solution}
+\begin{enumerate}
+  \item 逐样本检验 $y_i(\bm{w}^\top\bm{x}_i + b) \le 0$ 并执行 $\bm{w}\gets\bm{w}+y_i\bm{x}_i,\ b\gets b+y_i$：
+  \begin{itemize}
+    \item 检验 $\bm{x}_1=(0,0), y_1=-1$：$(-1)(0) = 0 \le 0$（误分），第 1 次更新得 $\bm{w}^{(1)}=(0,0)^\top,\ b^{(1)}=-1$；
+    \item 检验 $\bm{x}_2=(2,2), y_2=-1$：$(-1)(-1) = 1 > 0$（正确，跳过）；
+    \item 检验 $\bm{x}_3=(2,0), y_3=+1$：$(+1)(-1) = -1 \le 0$（误分），第 2 次更新得 $\bm{w}^{(2)}=(2,0)^\top,\ b^{(2)}=0$；
+    \item 检验 $\bm{x}_4=(3,0), y_4=+1$：$(+1)(6) = 6 > 0$（正确，跳过）；
+    \item 下一轮检验 $\bm{x}_1=(0,0), y_1=-1$：$(-1)(0) = 0 \le 0$（误分），第 3 次更新得 $\bm{w}^{(3)}=(2,0)^\top,\ b^{(3)}=-1$。
+  \end{itemize}
+  \item 对超平面 $2x_1 - 2x_2 - 1 = 0$，法向量范数 $\norm{\bm{w}}_2 = \sqrt{2^2 + (-2)^2} = 2\sqrt{2}$。逐点计算 $y_i(\bm{w}^\top\bm{x}_i + b)$ 与几何距离：
+  \[\begin{aligned}
+    \bm{x}_1=(0,0):&\ y_1(-1) = +1 > 0,\quad d_1 = \frac{1}{2\sqrt{2}} = \frac{\sqrt{2}}{4},\\
+    \bm{x}_2=(2,2):&\ y_2(4-4-1) = +1 > 0,\quad d_2 = \frac{1}{2\sqrt{2}} = \frac{\sqrt{2}}{4},\\
+    \bm{x}_3=(2,0):&\ y_3(4-0-1) = +3 > 0,\quad d_3 = \frac{3}{2\sqrt{2}},\\
+    \bm{x}_4=(3,0):&\ y_4(6-0-1) = +5 > 0,\quad d_4 = \frac{5}{2\sqrt{2}}.
+  \end{aligned}\]
+  四点均满足 $y_i(\bm{w}^\top\bm{x}_i+b)>0$，全部分类正确；最小几何距离（分类边距）为 $\min_i d_i = \frac{\sqrt{2}}{4} \approx 0.354$，达到该最小距离的样本 $\bm{x}_1=(0,0)$ 与 $\bm{x}_2=(2,2)$ 为支持向量。
+\end{enumerate}
+\end{solution}
+\end{exercise}
+
+\begin{exercise}[title={信息熵、条件熵与信息增益对称性手算},level=standard,points=15,tags={信息熵,条件熵,信息增益}]
+\begin{enumerate}
+  \item 设三个离散随机变量的概率分布分别为：$X$ 取 $4$ 个值且均匀分布；$Y$ 取 $4$ 个值，其中一个概率为 $0.5$、其余三个等概率；$Z$ 取 $8$ 个值且均匀分布。不查对数表直接比较 $H(X), H(Y), H(Z)$ 的大小并说明理由；
+  \item 考察 $8$ 名学生的专业 $X$ 与是否喜欢玩游戏 $Y$ 的统计结果：数学专业 $4$ 人（$2$ 人喜欢、$2$ 人不喜欢），计算机专业 $2$ 人（均喜欢），历史专业 $2$ 人（均不喜欢）。手算 $H(X)$、$H(Y)$、条件熵 $H(Y\mid X)$ 与信息增益 $\mathrm{IG}(Y\mid X)$，并计算 $\mathrm{IG}(X\mid Y)$ 验证信息增益的对称性。
+\end{enumerate}
+\begin{answer}
+（1）$H(Z) = 3 > H(X) = 2 > H(Y) \approx 1.792$；（2）$H(X) = 1.5$，$H(Y) = 1.0$，$H(Y\mid X) = 0.5$，$\mathrm{IG}(Y\mid X) = 0.5$；$H(X\mid Y) = 1.0$，$\mathrm{IG}(X\mid Y) = 1.5 - 1.0 = 0.5 = \mathrm{IG}(Y\mid X)$。
+\end{answer}
+\begin{solution}
+\begin{enumerate}
+  \item 均匀分布熵为 $\log_2\abs{C}$，故 $H(Z) = \log_2 8 = 3$，$H(X) = \log_2 4 = 2$。由于相同取值个数（$4$ 个）下均匀分布使熵达到唯一最大值，非均匀分布的 $Y$ 必严格满足 $H(Y) < H(X) = 2$（精确值 $H(Y) = \frac{1}{2}\cdot 1 + 3\cdot\frac{1}{6}\log_2 6 \approx 1.792$）。因此 $H(Z) > H(X) > H(Y)$。
+  \item 边缘分布为 $P(X) = (\frac{1}{2}, \frac{1}{4}, \frac{1}{4})$，$P(Y) = (\frac{1}{2}, \frac{1}{2})$：
+  \[
+    H(X) = -\frac{1}{2}\log_2\frac{1}{2} - 2\cdot\frac{1}{4}\log_2\frac{1}{4} = 0.5 + 1.0 = 1.5,\qquad
+    H(Y) = 1.0.
+  \]
+  计算 $H(Y\mid X)$：$H(Y\mid \text{Math}) = 1$，$H(Y\mid \text{CS}) = 0$，$H(Y\mid \text{History}) = 0$，故
+  \[
+    H(Y\mid X) = 0.5\times 1 + 0.25\times 0 + 0.25\times 0 = 0.5,\qquad
+    \mathrm{IG}(Y\mid X) = 1.0 - 0.5 = 0.5.
+  \]
+  再计算 $H(X\mid Y)$：在 $Y=\text{Yes}$ 的 $4$ 人中，数学与计算机各 $2$ 人，故 $H(X\mid Y=\text{Yes}) = 1.0$；在 $Y=\text{No}$ 的 $4$ 人中，数学与历史各 $2$ 人，故 $H(X\mid Y=\text{No}) = 1.0$。从而
+  \[
+    H(X\mid Y) = 0.5\times 1.0 + 0.5\times 1.0 = 1.0,\qquad
+    \mathrm{IG}(X\mid Y) = H(X) - H(X\mid Y) = 1.5 - 1.0 = 0.5 = \mathrm{IG}(Y\mid X).
+  \]
+\end{enumerate}
+\end{solution}
+\end{exercise}
+
+\begin{exercise}[title={决策树节点分裂的熵增益与基尼增益手算},level=standard,points=15,tags={决策树,信息增益,基尼指数}]
+在 Iris 分类决策树中，某父节点包含两类样本各 $50$ 条（类别计数向量为 $[50, 50]$），经某特征阈值分裂后，左子节点类别计数为 $[49, 5]$，右子节点类别计数为 $[1, 45]$。
+\begin{enumerate}
+  \item 分别计算分裂前父节点、分裂后加权子节点的信息熵以及信息增益 $\Delta H$（保留四位小数）；
+  \item 分别计算分裂前父节点、分裂后加权子节点的基尼指数以及基尼降低量 $\Delta\mathrm{Gini}$（保留四位小数）；
+  \item 若原问题为三分类且第三类在该节点计数为 $0$（父节点 $[0, 50, 50]$，左右子节点 $[0, 49, 5]$ 与 $[0, 1, 45]$），上述信息增益与基尼降低量是否发生变化？为什么？
+\end{enumerate}
+\begin{answer}
+（1）父节点 $H=1.0000$，左子节点 $H_L \approx 0.4451$，右子节点 $H_R \approx 0.1511$，加权熵 $H_{\text{after}} \approx 0.3098$，信息增益 $\Delta H \approx 0.6902$；（2）父节点 $\mathrm{Gini}=0.5000$，左子节点 $\mathrm{Gini}_L \approx 0.1680$，右子节点 $\mathrm{Gini}_R \approx 0.0425$，加权基尼 $\mathrm{Gini}_{\text{after}} \approx 0.1103$，基尼降低量 $\Delta\mathrm{Gini} \approx 0.3897$；（3）完全不变，因概率为 $0$ 的类别对信息熵（$0\log_2 0 = 0$）与基尼指数（$0^2=0$）均无贡献。
+\end{answer}
+\begin{solution}
+\begin{enumerate}
+  \item 总样本数 $N=100$，左子节点 $N_L=54$，右子节点 $N_R=46$。父节点为均匀二分类，故 $H_{\text{parent}} = 1.0000$。左右子节点信息熵分别为：
+  \[\begin{aligned}
+    H_L &= -\frac{49}{54}\log_2\frac{49}{54} - \frac{5}{54}\log_2\frac{5}{54} \approx 0.4451,\\
+    H_R &= -\frac{1}{46}\log_2\frac{1}{46} - \frac{45}{46}\log_2\frac{45}{46} \approx 0.1511.
+  \end{aligned}\]
+  加权信息熵与信息增益为：
+  \[
+    H_{\text{after}} = 0.54\times 0.4451 + 0.46\times 0.1511 \approx 0.3098,\qquad
+    \Delta H = 1.0000 - 0.3098 = 0.6902.
+  \]
+  \item 父节点 $\mathrm{Gini}_{\text{parent}} = 1 - (0.5^2 + 0.5^2) = 0.5000$。左右子节点基尼指数为：
+  \[\begin{aligned}
+    \mathrm{Gini}_L &= 1 - \left(\frac{49}{54}\right)^2 - \left(\frac{5}{54}\right)^2 = \frac{2\times 49\times 5}{54^2} \approx 0.1680,\\
+    \mathrm{Gini}_R &= 1 - \left(\frac{1}{46}\right)^2 - \left(\frac{45}{46}\right)^2 = \frac{2\times 1\times 45}{46^2} \approx 0.0425.
+  \end{aligned}\]
+  加权基尼指数与降低量为：
+  \[
+    \mathrm{Gini}_{\text{after}} = 0.54\times 0.1680 + 0.46\times 0.0425 \approx 0.1103,\qquad
+    \Delta\mathrm{Gini} = 0.5000 - 0.1103 = 0.3897.
+  \]
+  \item 两者结果完全不变。因为新加入类别的样本数为 $0$，总样本数与原有各类概率 $p_k$ 均未改变，且按约定 $0\log_2 0 = 0$ 与 $0^2 = 0$，零计数项对熵与基尼指数的贡献严格为 $0$。
+\end{enumerate}
+\end{solution}
+\end{exercise}
+
+\begin{exercise}[title={Iris 决策树过拟合分析与模型选择规范},level=advanced,points=18,tags={决策树,过拟合,预剪枝,交叉验证}]
+在 Iris 数据集（$110$ 条训练、$40$ 条测试）上，仅使用两个花萼特征训练决策树时观测到如下实验记录：
+\begin{itemize}
+  \item 默认无约束基线树：深度 $10$、叶节点 $42$，训练准确率 $94.55\%$，测试准确率 $67.50\%$；
+  \item 设置 \lcinline{min\_samples\_leaf=5}：深度 $6$、叶节点 $13$，训练准确率 $78.18\%$，测试准确率 $82.50\%$；
+  \item 设置 \lcinline{min\_samples\_leaf=10}：深度 $4$、叶节点 $8$，训练准确率 $74.55\%$，测试准确率 $75.00\%$。
+\end{itemize}
+\begin{enumerate}
+  \item 结合三组实验的复杂度与准确率变化，分析模型如何经历了“过拟合 $\to$ 较优泛化 $\to$ 欠拟合倾向”的转变；
+  \item 写出使用 \lcinline{scikit-learn} 对候选参数 \lcinline{max\_depth in [2, 3, 4, None]} 执行 $5$-折交叉验证选参的核心代码，并解释为何不能反复依据上述 $40$ 条固定测试集来挑选超参数。
+\end{enumerate}
+\begin{answer}
+（1）无约束树叶节点过多（$42$ 个），记忆了花萼特征交叠区的局部噪声，导致训练高、测试低（过拟合）；\lcinline{min\_samples\_leaf=5} 剪除了细碎叶节点，训练/测试差距消失且测试准确率升至 $82.50\%$；增至 $10$ 时训练与测试双双下降，出现欠拟合倾向。（2）调用 \lcinline{cross\_val\_score} 在训练集内做 $5$-折交叉验证选参；反复按固定测试集调参会造成测试集信息泄露，使其不再是无偏的最终泛化评估。
+\end{answer}
+\begin{solution}
+\begin{enumerate}
+  \item 花萼特征在三个鸢尾花类别间存在明显重叠：
+  \begin{itemize}
+    \item 无约束基线树长至深度 $10$、$42$ 个叶节点（平均每叶仅约 $2.6$ 个样本），在特征空间切出大量狭窄条带强行记住训练噪声，表现为训练 $94.55\%$ 远高于测试 $67.50\%$，属于典型过拟合；
+    \item 设定 \lcinline{min\_samples\_leaf=5} 后，叶节点锐减至 $13$ 个，边界显著简化，虽然训练准确率降至 $78.18\%$，但测试准确率大幅升至 $82.50\%$，泛化性能明显改善；
+    \item 进一步放宽至 \lcinline{min\_samples\_leaf=10} 后，叶节点仅余 $8$ 个，训练与测试准确率同时下滑至 $74.55\%$ 与 $75.00\%$，说明约束过强导致欠拟合倾向。
+  \end{itemize}
+  \item 使用 $5$-折交叉验证在训练集内部选参的代码如下：
+  \begin{quote}\ttfamily\small
+    from sklearn.model\_selection import cross\_val\_score\\
+    from sklearn.tree import DecisionTreeClassifier\\
+    for d in [2, 3, 4, None]:\\
+    \hspace*{2em}clf = DecisionTreeClassifier(max\_depth=d, random\_state=23)\\
+    \hspace*{2em}scores = cross\_val\_score(clf, X\_train, y\_train, cv=5)\\
+    \hspace*{2em}print(d, scores.mean())
+  \end{quote}
+  \textbf{方法论原因}：若反复观察同一份 $40$ 条测试集的准确率并据此挑选最优超参数，相当于通过人工反馈将测试集信息“泄露”进了模型选择过程，选出的超参数可能只是偶然迎合了这 $40$ 条样本的抽样波动（单条样本变动即影响 $2.5\%$），此时该测试集已失去独立评估泛化误差的资格。正确做法是在训练集内用验证集或交叉验证选参，锁定模型后再在测试集上做一次性最终报告。
+\end{enumerate}
+\end{solution}
+\end{exercise}

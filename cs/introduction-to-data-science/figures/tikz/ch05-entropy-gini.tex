@@ -1,0 +1,28 @@
+\begin{tikzpicture}[font=\small]
+  \begin{axis}[
+    width=9.2cm, height=5.0cm,
+    axis lines=left,
+    axis line style={lc axis},
+    xmin=0, xmax=1.05, ymin=0, ymax=1.15,
+    xtick={0, 0.25, 0.5, 0.75, 1.0},
+    ytick={0, 0.5, 1.0},
+    xlabel={正类概率 $p$},
+    ylabel={混杂度指标},
+    legend pos=north east,
+    legend style={draw=none, fill=none, font=\footnotesize}
+  ]
+    % Entropy H(p) = -p log2(p) - (1-p) log2(1-p)
+    \addplot[lc curve 1, domain=0.002:0.998, samples=120] {-x*ln(x)/ln(2) - (1-x)*ln(1-x)/ln(2)};
+    \addlegendentry{信息熵 $H(p)$}
+
+    % Gini(p) = 2p(1-p)
+    \addplot[lc curve 2, domain=0:1, samples=80] {2*x*(1-x)};
+    \addlegendentry{基尼指数 $\mathrm{Gini}(p) = 2p(1-p)$}
+
+    % Scaled Gini 2*Gini(p) = 4p(1-p) for shape comparison
+    \addplot[lc curve 3, dashed, domain=0:1, samples=80] {4*x*(1-x)};
+    \addlegendentry{缩放基尼 $2\,\mathrm{Gini}(p)$}
+
+    \draw[lc aux] (axis cs:0.5,0) -- (axis cs:0.5,1.0);
+  \end{axis}
+\end{tikzpicture}
