@@ -1,0 +1,209 @@
+% libre-compendium
+%
+% Copyright (C) 2026 Richard Qin
+%
+% This document is dual-licensed under either:
+% - GNU Free Documentation License, Version 1.3 or any later version
+%   published by the Free Software Foundation; with no Invariant Sections,
+%   no Front-Cover Texts, and no Back-Cover Texts (see COPYING.DOC); or
+% - Creative Commons Attribution-ShareAlike 4.0 International License
+%   (see LICENSE-CC-BY-SA-4.0).
+\ProvidesFile{ch02-tabular-data.tex}[2026/11/26 v0.2.1 第二章习题]
+\section{数据模型与表格数据处理}
+
+\begin{exercise}[title={数据模型三要素与属性尺度判别},level=basic,points=10,tags={数据模型,属性尺度,完整性约束}]
+某高校教务系统包含一张学生选课成绩表，字段包括：\lcinline{student\_id}（学号）、\lcinline{major}（专业）、\lcinline{grade\_level}（成绩等级 A/B/C/D/F）、\lcinline{exam\_year}（考试年份）与 \lcinline{score}（百分制分数）。
+\begin{enumerate}
+  \item 依次指出上述五个字段分别属于哪种属性度量尺度（标记型、类别型、排序型、区间型、比例型）；
+  \item 从数据模型“完整性约束”的角度，为该表设计两条合理的约束规则。
+\end{enumerate}
+\begin{answer}
+（1）\lcinline{student\_id}：标记型（Nominal）；\lcinline{major}：类别型（Categorical）；\lcinline{grade\_level}：排序型（Ordinal）；\lcinline{exam\_year}：区间型（Interval）；\lcinline{score}：比例型（Ratio）。（2）例如：\lcinline{student\_id} 不能为空且在同一门课程中唯一；\lcinline{score} 须位于 $[0,100]$ 区间内并与 \lcinline{grade\_level} 保持一致。
+\end{answer}
+\begin{solution}
+\begin{enumerate}
+  \item 逐列判别如下：
+  \begin{itemize}
+    \item \lcinline{student\_id} 仅用于唯一标识学生个体，数值大小无意义，属\textbf{标记型（Nominal）}；
+    \item \lcinline{major} 取值为有限专业名称，可判等与计数但无自然大小次序，属\textbf{类别型（Categorical）}；
+    \item \lcinline{grade\_level} 存在明确高低次序（$\text{A}>\text{B}>\text{C}>\text{D}>\text{F}$），但相邻等级差值不具定量可比性，属\textbf{排序型（Ordinal）}；
+    \item \lcinline{exam\_year}（公历年份）的差值表示间隔年数，但公元 $0$ 年并非绝对零点，比值无意义，属\textbf{区间型（Interval）}；
+    \item \lcinline{score} 以 $0$ 分为绝对零点，差值与比例均有意义，属\textbf{比例型（Ratio）}。
+  \end{itemize}
+  \item 合理的完整性约束示例：
+  \begin{itemize}
+    \item \textbf{实体完整性}：\lcinline{student\_id} 非空，且（学号，课程号，学期）联合唯一；
+    \item \textbf{域与一致性约束}：\lcinline{score} 取值须满足 $0\le \text{score}\le 100$，且 \lcinline{grade\_level} 必须与 \lcinline{score} 的分段标准一致。
+  \end{itemize}
+\end{enumerate}
+\end{solution}
+\end{exercise}
+
+\begin{exercise}[title={NumPy 视图语义与 Pandas 索引易错点辨析},level=basic,points=12,tags={NumPy,视图,loc,iloc,drop}]
+判断以下三段代码的运行行为或输出结果，并说明理由：
+\begin{enumerate}
+  \item 设 \lcinline{a = np.array([10, 20, 30, 40])}，执行 \lcinline{b = a[1:3]} 后再执行 \lcinline{b[0] = 99}，此时 \lcinline{a} 的值是什么？
+  \item 设 \lcinline{df} 的行索引为字符串 \lcinline{["r0", "r1", "r2", "r3", "r4"]}，执行 \lcinline{df.loc[[0, 4], :]} 与 \lcinline{df.iloc[[0, 4], :]} 哪一条会报错？为什么？
+  \item 执行 \lcinline{df.drop("temp\_col", axis="columns")} 后直接打印 \lcinline{df.columns}，\lcinline{"temp\_col"} 是否已从 \lcinline{df} 中移除？
+\end{enumerate}
+\begin{answer}
+（1）\lcinline{array([10, 99, 30, 40])}；（2）\lcinline{df.loc[[0, 4], :]} 会抛出 \lcinline{KeyError}，\lcinline{iloc} 正常执行；（3）未移除，因为 \lcinline{drop} 默认不原地修改。
+\end{answer}
+\begin{solution}
+\begin{enumerate}
+  \item NumPy 基本切片返回的是原数组的视图（View），\lcinline{b[0]} 与 \lcinline{a[1]} 指向同一内存单元，因此修改 \lcinline{b[0] = 99} 会使 \lcinline{a} 变为 \lcinline{array([10, 99, 30, 40])}。
+  \item \lcinline{.loc} 按行标签查找，而该表的行索引是字符串 \lcinline{"r0"}–\lcinline{"r4"}，不存在整数标签 \lcinline{0} 和 \lcinline{4}，故 \lcinline{df.loc[[0, 4], :]} 报 \lcinline{KeyError}；\lcinline{.iloc} 按 $0$ 起始整数位置定位，合法选取第 $0$ 行与第 $4$ 行。
+  \item 未移除。Pandas 的 \lcinline{drop} 默认参数 \lcinline{inplace=False}，仅返回一个删除了该列的新 \lcinline{DataFrame}，原对象 \lcinline{df} 保持不变；应写为 \lcinline{df = df.drop("temp\_col", axis="columns")}。
+\end{enumerate}
+\end{solution}
+\end{exercise}
+
+\begin{exercise}[title={移动端 APP 转化率与辛普森悖论推导},level=standard,points=15,tags={辛普森悖论,加权平均,下钻分析}]
+某移动应用统计了 Android 与 iOS 两大平台用户的付费转化情况，细分至手机与平板两类设备后数据如下：
+\begin{itemize}
+  \item Android 手机：转化 $50$ 人，未转化 $1950$ 人；
+  \item iOS 手机：转化 $100$ 人，未转化 $3400$ 人；
+  \item Android 平板：转化 $500$ 人，未转化 $7500$ 人；
+  \item iOS 平板：转化 $100$ 人，未转化 $1400$ 人。
+\end{itemize}
+\begin{enumerate}
+  \item 分别手算四类细分设备的付费转化率，以及不区分设备时 Android 与 iOS 平台的总体转化率，验证其中出现的辛普森悖论；
+  \item 记手机与平板的转化率分别为 $p_1, p_2$（设 $p_2 > p_1$），平台在平板端的用户占比为 $w \in [0,1]$。写出总体转化率关于 $w$ 的线性表达式，并据此从数学上解释为何“老板仅看总体转化率得出放弃 iOS 平台”的结论是错误的。
+\end{enumerate}
+\begin{answer}
+（1）手机端：Android $2.50\%$ $<$ iOS $2.86\%$；平板端：Android $6.25\%$ $<$ iOS $6.67\%$；总体：Android $550/10000 = 5.50\%$ $>$ iOS $200/5000 = 4.00\%$。（2）$\bar{p}(w) = p_1 + w(p_2 - p_1)$；由于平板端转化率远高于手机端，而 Android 的平板占比 $w_A = 0.80$ 远大于 iOS 的平板占比 $w_I = 0.30$，权重差异压过了组内转化率劣势。
+\end{answer}
+\begin{solution}
+\begin{enumerate}
+  \item 逐项计算细分转化率：
+  \[\begin{aligned}
+    p_{\text{A,手机}} &= \frac{50}{50+1950} = \frac{50}{2000} = 2.50\%, &
+    p_{\text{I,手机}} &= \frac{100}{100+3400} = \frac{100}{3500} \approx 2.86\%, \\
+    p_{\text{A,平板}} &= \frac{500}{500+7500} = \frac{500}{8000} = 6.25\%, &
+    p_{\text{I,平板}} &= \frac{100}{100+1400} = \frac{100}{1500} \approx 6.67\%.
+  \end{aligned}\]
+  合并计算总体转化率：
+  \[
+    \bar{p}_{\text{A}} = \frac{50+500}{2000+8000} = \frac{550}{10000} = 5.50\%,\qquad
+    \bar{p}_{\text{I}} = \frac{100+100}{3500+1500} = \frac{200}{5000} = 4.00\%.
+  \]
+  iOS 在手机与平板两个细分市场均优于 Android，但在总体上反而低 $1.5$ 个百分点，构成典型的辛普森悖论。
+  \item 总体转化率为加权平均：
+  \[
+    \bar{p}(w) = (1-w)p_1 + w p_2 = p_1 + w(p_2 - p_1).
+  \]
+  因 $p_2 - p_1 \approx 3.8\%$ 显著大于同设备下两平台的微小差距（约 $0.4\%$），总体转化率主要由平板占比 $w$ 主导。本题中 $w_{\text{A}} = 8000/10000 = 0.80$，而 $w_{\text{I}} = 1500/5000 = 0.30$，导致 Android 凭借更高的高转化设备占比在总评中反超。因此，直接放弃 iOS 不仅没有抓住真正瓶颈（手机端转化率偏低），反而会丢掉两类设备上转化效率更高的优质渠道。
+\end{enumerate}
+\end{solution}
+\end{exercise}
+
+\begin{exercise}[title={NumPy 广播规则手算判别},level=standard,points=12,tags={NumPy,广播机制}]
+设数组 $A, B$ 的形状（\lcinline{shape}）分别如下，请根据 NumPy 广播规则逐一判断 $A + B$ 能否合法执行：若可广播，写出结果形状；若不可广播，说明冲突维度并给出一种使用 \lcinline{reshape} 或 \lcinline{np.newaxis} 使其合法的改写方案。
+\begin{enumerate}
+  \item $A:(4, 3)$，$B:(3,)$；
+  \item $A:(4, 3)$，$B:(4,)$；
+  \item $A:(4, 3)$，$B:(4, 1)$；
+  \item $A:(2, 1, 5)$，$B:(3, 5)$。
+\end{enumerate}
+\begin{answer}
+（1）可广播，结果 $(4, 3)$；（2）不可广播，尾部维度 $3\ne 4$ 且均不为 $1$，可将 $B$ 改写为 \lcinline{B[:, np.newaxis]}（形状 $(4,1)$）；（3）可广播，结果 $(4, 3)$；（4）可广播，结果 $(2, 3, 5)$。
+\end{answer}
+\begin{solution}
+按从右向左对齐、缺失左侧补 $1$ 的规则逐一检验：
+\begin{enumerate}
+  \item $(4, 3)$ 与 $(1, 3)$：右起第 1 维 $3=3$，第 2 维 $4$ 与 $1$ 兼容，可广播，输出形状 $(4, 3)$。
+  \item $(4, 3)$ 与 $(1, 4)$：右起第 1 维分别为 $3$ 与 $4$，既不相等又均不为 $1$，抛出 \lcinline{ValueError}。若意图是给 $A$ 的每一列加上长度为 $4$ 的列向量 $B$，应将 $B$ 变形为 $(4, 1)$，即 \lcinline{A + B[:, np.newaxis]} 或 \lcinline{A + B.reshape(4, 1)}。
+  \item $(4, 3)$ 与 $(4, 1)$：右起第 1 维 $3$ 与 $1$ 兼容，第 2 维 $4=4$，可广播，输出形状 $(4, 3)$。
+  \item $(2, 1, 5)$ 与 $(1, 3, 5)$：三组对齐维度分别为 $(5,5)$、$(1,3)$、$(2,1)$，全部兼容，输出形状 $(2, 3, 5)$。
+\end{enumerate}
+\end{solution}
+\end{exercise}
+
+\begin{exercise}[title={Split–Apply–Combine 与数据透视表手算追踪},level=standard,points=15,tags={groupby,pivot\_table,手算}]
+给定如下 8 行 \lcinline{DataFrame} 对象 \lcinline{df}：
+\begin{center}
+  \small
+  \begin{tabular}{@{}ccc|ccc@{}}
+    \toprule
+    \lcinline{K1} & \lcinline{K2} & \lcinline{Val} & \lcinline{K1} & \lcinline{K2} & \lcinline{Val} \\
+    \midrule
+    A & U & 3 & B & U & 5 \\
+    B & V & 1 & C & V & 9 \\
+    C & U & 4 & A & U & 2 \\
+    A & V & 1 & D & U & 5 \\
+    \bottomrule
+  \end{tabular}
+\end{center}
+请手算并写出以下两个 Pandas 操作的输出结果表（若存在缺失格请标明 \lcinline{NaN}）：
+\begin{enumerate}
+  \item \lcinline{df.groupby("K1")["Val"].agg(["sum", "mean"])}；
+  \item \lcinline{df.pivot\_table(index="K1", columns="K2", values="Val", aggfunc="sum")}。
+\end{enumerate}
+\begin{answer}
+（1）A：sum=6, mean=2.0；B：sum=6, mean=3.0；C：sum=13, mean=6.5；D：sum=5, mean=5.0。（2）透视表（行 A/B/C/D，列 U/V）：A 为 $(5, 1)$，B 为 $(5, 1)$，C 为 $(4, 9)$，D 为 $(5, \texttt{NaN})$。
+\end{answer}
+\begin{solution}
+\begin{enumerate}
+  \item 按 \lcinline{K1} 拆分为四组：A 组 $\{3, 1, 2\}$，B 组 $\{1, 5\}$，C 组 $\{4, 9\}$，D 组 $\{5\}$。分别计算组内求和与均值并合并：
+  \begin{center}
+    \small
+    \begin{tabular}{@{}lcc@{}}
+      \toprule
+      \lcinline{K1} & \lcinline{sum} & \lcinline{mean} \\
+      \midrule
+      A & 6  & 2.0 \\
+      B & 6  & 3.0 \\
+      C & 13 & 6.5 \\
+      D & 5  & 5.0 \\
+      \bottomrule
+    \end{tabular}
+  \end{center}
+  \item 按 $(\text{K1}, \text{K2})$ 联合分组求和并展为二维透视表：其中 $(\text{A},\text{U})\mapsto 3+2=5$，$(\text{A},\text{V})\mapsto 1$，$(\text{B},\text{U})\mapsto 5$，$(\text{B},\text{V})\mapsto 1$，$(\text{C},\text{U})\mapsto 4$，$(\text{C},\text{V})\mapsto 9$，$(\text{D},\text{U})\mapsto 5$，而 $(\text{D},\text{V})$ 无对应记录，填 \lcinline{NaN}：
+  \begin{center}
+    \small
+    \begin{tabular}{@{}lcc@{}}
+      \toprule
+      \lcinline{K1} $\backslash$ \lcinline{K2} & U & V \\
+      \midrule
+      A & 5 & 1 \\
+      B & 5 & 1 \\
+      C & 4 & 9 \\
+      D & 5 & \lcinline{NaN} \\
+      \bottomrule
+    \end{tabular}
+  \end{center}
+\end{enumerate}
+\end{solution}
+\end{exercise}
+
+\begin{exercise}[title={Pandas 综合查询与多维下钻编程},level=advanced,points=18,tags={Pandas,布尔索引,groupby,pivot\_table}]
+设有一个新生儿姓名表 \lcinline{babynames}（包含列 \lcinline{Name}、\lcinline{Sex}、\lcinline{Year}、\lcinline{Count}）以及一个高校申请表 \lcinline{admit}（包含列 \lcinline{Dept}、\lcinline{Gender}、\lcinline{Admitted}、\lcinline{Applicants}）。请分别写出简洁的 Pandas 表达式完成以下任务：
+\begin{enumerate}
+  \item 从 \lcinline{babynames} 中筛选出“姓名以 \lcinline{"Kev"} 开头，或当年人数 \lcinline{Count} 严格大于 $600$”且年份在 $2000$ 年及以后的所有记录；
+  \item 将 \lcinline{babynames} 按姓名中包含子串 \lcinline{"ea"} 的次数从高到低排序（不新增永久列）；
+  \item 针对 \lcinline{admit}，分别用 \lcinline{groupby} 计算男女总体录取率，并用 \lcinline{pivot\_table} 输出各院系 $\times$ 性别的录取率交叉表，以检验是否存在辛普森悖论。
+\end{enumerate}
+\begin{answer}
+（1）结合 \lcinline{.str.startswith("Kev")}、\lcinline{|} 与 \lcinline{\&} 并注意括号优先级；（2）使用 \lcinline{sort\_values(by="Name", key=lambda s: s.str.count("ea"), ascending=False)}；（3）先对 \lcinline{Admitted} 与 \lcinline{Applicants} 按 \lcinline{Gender} 求和再相除得总体录取率，再计算行级 \lcinline{Rate} 后调用 \lcinline{pivot\_table(index="Dept", columns="Gender", values="Rate")}。
+\end{answer}
+\begin{solution}
+\begin{enumerate}
+  \item 注意逻辑“或”必须加括号包裹，再与年份条件做“与”运算：
+  \begin{quote}\ttfamily\small
+    cond = (babynames["Name"].str.startswith("Kev") | (babynames["Count"] > 600)) \& (babynames["Year"] >= 2000)\\
+    res1 = babynames.loc[cond, :]
+  \end{quote}
+  \item 利用 \lcinline{sort\_values} 的 \lcinline{key} 参数传入向量化字符串计数函数：
+  \begin{quote}\ttfamily\small
+    res2 = babynames.sort\_values(by="Name", key=lambda s: s.str.count("ea"), ascending=False)
+  \end{quote}
+  \item 先求总体录取率（注意不可直接对各院系录取率取算术平均，而须先求和再相除），再做分院系透视下钻：
+  \begin{quote}\ttfamily\small
+    overall = admit.groupby("Gender")[["Admitted", "Applicants"]].sum()\\
+    overall["Rate"] = overall["Admitted"] / overall["Applicants"]\\
+    by\_dept = admit.assign(Rate=admit["Admitted"] / admit["Applicants"]).pivot\_table(index="Dept", columns="Gender", values="Rate", aggfunc="mean")
+  \end{quote}
+  对比 \lcinline{overall["Rate"]} 与 \lcinline{by\_dept} 各行即可直观判断是否发生了汇总方向与分组方向相反的辛普森悖论。
+\end{enumerate}
+\end{solution}
+\end{exercise}

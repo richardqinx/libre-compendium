@@ -1,0 +1,285 @@
+% libre-compendium
+%
+% Copyright (C) 2026 Richard Qin
+%
+% This document is dual-licensed under either:
+% - GNU Free Documentation License, Version 1.3 or any later version
+%   published by the Free Software Foundation; with no Invariant Sections,
+%   no Front-Cover Texts, and no Back-Cover Texts (see COPYING.DOC); or
+% - Creative Commons Attribution-ShareAlike 4.0 International License
+%   (see LICENSE-CC-BY-SA-4.0).
+\ProvidesFile{ch02-tabular-data.tex}[2026/11/26 v0.2.1 第二章 数据模型与表格数据处理]
+\chapter{数据模型与表格数据处理}\label{ch:tabular-data}
+
+在真实的数据科学项目中，原始数据往往以表格、矩阵或关联表的形式存在，而表层的汇总数字极具迷惑性。本章首先通过著名的辛普森悖论建立“多维下钻”的统计思维，随后抽象出数据模型的三要素与属性尺度，进而系统介绍 Python 科学计算的两大基石——多维数组库 \lcinline{NumPy} 与表格处理库 \lcinline{Pandas}，重点掌握面向数组编程思想以及 DataFrame 上的三类核心算子（基本操作、数据查询、分组聚合与数据透视）。
+
+\section{统计思维与辛普森悖论}\label{sec:simpson-paradox}
+
+在动手编写代码之前，数据科学家首先需要具备警惕汇总指标陷阱的统计思维。一个看似直观的总体均值或总体比例，往往会因为掩盖了关键混淆维度而得出与事实相反的结论。
+
+\begin{definition}[辛普森悖论]\label{def:simpson-paradox}
+\textbf{辛普森悖论}（Simpson's Paradox）指在分组比较中均占优势的一方，在将各组合并为总体统计时反而变为劣势的现象。从数学上看，设对象 $A$ 与 $B$ 在 $m$ 个子群体中的指标值分别为 $p_{A,k}$ 与 $p_{B,k}$，各自样本权重为 $w_{A,k}\ge 0$ 与 $w_{B,k}\ge 0$（满足 $\sum_{k=1}^{m} w_{A,k} = \sum_{k=1}^{m} w_{B,k} = 1$）。即使对所有 $k=1,\dots,m$ 均有 $p_{A,k} > p_{B,k}$，只要两组在子群体上的权重分布差异足够大，总体加权均值仍可能满足
+\begin{equation}\label{eq:simpson-ineq}
+  \bar{p}_A = \sum_{k=1}^{m} w_{A,k}\,p_{A,k} < \sum_{k=1}^{m} w_{B,k}\,p_{B,k} = \bar{p}_B.
+\end{equation}
+\end{definition}
+
+\begin{table}[htbp]
+  \centering\small
+  \caption{UC Berkeley 研究生申请分院系录取统计}\label{tab:berkeley-simpson}
+  \begin{tabular}{@{}ccccc@{}}
+    \toprule
+    院系 & 男生申请人数 & 男生录取率 & 女生申请人数 & 女生录取率 \\
+    \midrule
+    A & 825 & $62\%$ & 108 & $82\%$ \\
+    B & 560 & $63\%$ & 25  & $68\%$ \\
+    C & 325 & $37\%$ & 593 & $34\%$ \\
+    D & 417 & $33\%$ & 375 & $35\%$ \\
+    E & 191 & $28\%$ & 393 & $24\%$ \\
+    F & 373 & $6\%$  & 341 & $7\%$  \\
+    \midrule
+    合计 & 2691 & $45\%$ & 1835 & $30\%$ \\
+    \bottomrule
+  \end{tabular}
+\end{table}
+
+\begin{example}[title={UC Berkeley 研究生录取中的辛普森悖论}]\label{eg:berkeley-simpson}
+1973 年加州大学伯克利分校（UC Berkeley）研究生招生数据显示，全校男生总申请 $2691$ 人、录取率 $45\%$，女生总申请 $1835$ 人、录取率 $30\%$，仅看总量似乎存在显著的性别歧视。但按主要院系 A–F 拆分后，统计结果如 \cref{tab:berkeley-simpson} 所示。请分析总体与分院系结论相反的原因。
+
+\begin{solution}
+在 A、B、D、F 四个院系中女生录取率均高于男生，其余两系也基本持平。总体录取率之所以出现“男高女低”的反转，是因为被汇总数据隐藏了一个关键维度——\textbf{不同院系的竞争激烈程度}：大量男生集中申请录取率超过 $60\%$ 的 A、B 两系，而大部分女生申请了录取率偏低的 C–F 系。将“录取率（值）”与“各系人数分布（量）”混为一谈，导致总体比例产生误导。
+\end{solution}
+\end{example}
+
+\begin{pitfall}[仅凭汇总指标下结论]\label{pit:drill-down}
+商业分析中同样频发辛普森悖论。例如某移动应用的总体付费转化率为 Android $5.5\%$ 高于 iOS $4.0\%$，但按终端类型（手机 vs 平板）下钻后，iOS 在手机端（$2.9\%$ vs $2.5\%$）与平板端（$6.7\%$ vs $6.3\%$）均高于 Android——原因仅仅是 Android 用户中平板占比远高于 iOS。因此，面对汇总指标异常时，务必使用分组与透视工具对潜在混淆维度执行\textbf{下钻分析}（Drill-down）。
+\end{pitfall}
+
+\section{数据与数据模型}\label{sec:data-model}
+
+现实世界的数据远不止单纯的数字，而是呈现出多种结构形态：同质下标访问的\textbf{数组与矩阵}（如推荐系统的用户–物品评分矩阵）、按行列组织的\textbf{表格数据}（Tabular Data）、通过实体–关系（ER）与主外键彼此关联的\textbf{关系数据}、以顶点和边刻画实体联系的\textbf{图数据}（如社交网络与知识图谱），以及缺乏显式结构的\textbf{文本与多媒体数据}。为了规范地表达并处理这些数据，我们需要引入数据模型的抽象。
+
+\begin{definition}[数据模型三要素]\label{def:data-model}
+\textbf{数据模型}（Data Model）是对现实世界数据特征的抽象，规定了数据的组织、操作与约束方式，由以下三要素构成：
+\begin{enumerate}
+  \item \textbf{数据结构}：描述数据对象的组成类型及对象之间的联系（如表格中的行、列与属性类型）；
+  \item \textbf{数据操作}：针对数据对象实例允许执行的操作集合及其规则（如查询、过滤、排序、聚合与连接）；
+  \item \textbf{数据完整性约束}：数据及其联系必须遵守的通用规则（如主码唯一、成绩非空且位于 $[0,100]$ 区间），用于保证数据的正确性与一致性。
+\end{enumerate}
+\end{definition}
+
+在\textbf{表格数据}中，每一行（Row）代表一条观测记录，每一列（Column）代表一个属性（Attribute）或特征（Feature）；同一列内的元素必须具有相同的数据类型，而不同列可以拥有不同类型。按信息量由低到高（从定性到定量），表格属性通常划分为如 \cref{tab:attribute-scales} 所示的度量尺度。
+
+\begin{table}[htbp]
+  \centering\small
+  \caption{表格数据属性的度量尺度（由定性到定量，信息量递增）}\label{tab:attribute-scales}
+  \begin{tabular}{@{}ll>{\raggedright\arraybackslash}p{0.34\linewidth}>{\raggedright\arraybackslash}p{0.26\linewidth}@{}}
+    \toprule
+    尺度类型 & 性质 & 核心特征与合法运算 & 典型示例 \\
+    \midrule
+    标记型（Nominal） & 定性 & 仅用于唯一标识对象，无大小次序 & 学号、姓名、电话号码 \\
+    类别型（Categorical） & 定性 & 有限离散取值，仅支持相等判别与频次统计 & 性别、邮编、商品型号 \\
+    排序型（Ordinal） & 定性 & 取值有明确全序关系，但差值无定量意义 & 成绩等级 A/B/C、满意度星级 \\
+    区间型（Interval） & 定量 & 差值有意义，无绝对零点，比值无意义 & 摄氏温度、公历年份 \\
+    比例型（Ratio） & 定量 & 存在绝对零点，差值与比值均有意义 & 身高、薪水、销售额、年龄 \\
+    \bottomrule
+  \end{tabular}
+\end{table}
+
+在建模前，常需根据属性尺度实施规范的\textbf{数值转换与离散化}：例如将排序型成绩等级映射为数值绩点（$\text{A}\mapsto 4.0,\ \text{A-}\mapsto 3.7,\ \text{B}\mapsto 3.3$）；对有限多值类别属性建立字典编码或分组归并（如将省份归并为若干大区）；对连续数值型属性按区间分箱（离散化）以降低噪声；而对标记型 ID 属性通常不直接作为数值特征输入模型，若需压缩编码则须保证跨数据集的映射一致性。
+
+\section{多维数组与 NumPy 面向数组编程}\label{sec:numpy}
+
+多维数组是表达向量、矩阵、图像（高 $\times$ 宽 $\times$ 通道）及神经网络张量的底层基础模型。\lcinline{NumPy}（Numerical Python）提供的核心对象 \lcinline{ndarray} 具有三项关键特征：
+\begin{enumerate}
+  \item \textbf{任意维度}：维度数（\lcinline{ndim}）可从 $0$（标量）扩展到任意高维，各轴长度由元组 \lcinline{shape} 描述；
+  \item \textbf{同质类型}：所有元素共享统一的底层数据类型 \lcinline{dtype}（如 \lcinline{uint8}、\lcinline{int64}、\lcinline{float32}、\lcinline{float64}）；
+  \item \textbf{连续稠密存储}：元素在内存中连续排布，配合 C 语言底层循环实现高效批量计算。
+\end{enumerate}
+
+与传统 Python 嵌套列表相比，NumPy 倡导\textbf{面向数组编程}（Array-Oriented Programming）：通过\textbf{向量化}（Vectorization）与通用函数（\lcinline{ufunc}）把标量运算与条件分支直接作用在整个数组上，消除低效的 Python \lcinline{for} 循环。例如在大规模向量或矩阵运算中，向量化实现往往比纯 Python 循环快一个数量级以上。
+
+\subsection{广播机制}
+
+在实际数据处理中（如将特征矩阵的每一行减去均值向量，或每一列除以标准差），参与运算的两个数组形状往往并不完全相同。NumPy 通过\textbf{广播}（Broadcasting）机制在无需显式复制数据的前提下自动对齐维度。
+
+\begin{definition}[NumPy 广播规则]\label{def:broadcasting}
+给定两个 \lcinline{ndarray}，将其形状元组从\textbf{最右侧（尾部维度）}向左逐一对齐；若某一数组维度较少，则在其左侧补 $1$。两个数组可广播，当且仅当每一对对齐的维度长度满足以下条件之一：
+\begin{enumerate}
+  \item 两者长度相等；
+  \item 其中至少一个维度的长度为 $1$（运算时沿该轴虚拟扩展至另一方的长度）。
+\end{enumerate}
+若存在任意一维不满足上述条件，则抛出 \lcinline{ValueError}。
+\end{definition}
+
+例如，形状为 $(m, n)$ 的矩阵 $\bm{X}$ 与形状为 $(n,)$ 的行向量 $\bm{v}$ 相加时，后者左侧补 $1$ 变为 $(1, n)$，与 $(m, n)$ 逐维兼容，结果形状为 $(m, n)$，等价于给 $\bm{X}$ 的每一行加上 $\bm{v}$；但 $(m, n)$ 与 $(m,)$ 无法直接广播，须先将后者重塑为 $(m, 1)$（如 \lcinline{u[:, np.newaxis]}）。
+
+\begin{pitfall}[ndarray 切片是视图而非拷贝]\label{pit:numpy-view}
+与 Python 列表切片会创建新列表不同，NumPy 的基本索引切片返回的是原数组的\textbf{视图}（View），二者共享同一块底层内存：对切片元素的任何原地修改都会直接反映到原数组上。若希望获得独立副本，必须显式调用 \lcinline{.copy()}。
+\end{pitfall}
+
+\cref{lst:numpy-basics} 演示了 NumPy 的数组创建、广播中心化、布尔索引以及 \lcinline{np.where} 条件选择。
+
+\begin{codeblock}[language=Python,caption={NumPy 向量化运算、广播与布尔索引示例},label=lst:numpy-basics]
+import numpy as np
+
+# 1. 创建二维数组并利用广播按列中心化：shape (3, 2) - (2,) -> (3, 2)
+X = np.array([[80.0, 90.0], [70.0, 85.0], [90.0, 95.0]])
+X_centered = X - X.mean(axis=0)
+
+# 2. 布尔索引：筛选姓氏为 Smith 的同学成绩并计算均值与标准差
+names = np.array(["Smith", "Lee", "Smith", "Wang"])
+scores = np.array([88.0, 76.0, 94.0, 81.0])
+smith_scores = scores[names == "Smith"]
+print(smith_scores.mean(), smith_scores.std())
+
+# 3. 向量化条件分支 np.where 与显式拷贝
+grades = np.where(scores >= 85.0, "A", "B")
+sub_copy = X[:2, :].copy()  # 显式拷贝，避免修改原数组 X
+\end{codeblock}
+
+\section{Pandas 核心数据结构：Series 与 DataFrame}\label{sec:pandas-structures}
+
+\lcinline{Pandas} 构建于 \lcinline{NumPy} 之上，专为表格数据与时间序列分析设计，围绕一维的 \lcinline{Series} 与二维的 \lcinline{DataFrame} 两个核心对象展开。
+
+\subsection{Series：带标签的一维数组}
+
+\lcinline{Series} 由一组同构数据值（\lcinline{s.values}）与一组与之对应的索引标签（\lcinline{s.index}）组成。索引默认是从 $0$ 开始的 \lcinline{RangeIndex}，但也可以自定义为字符串、年份或时间戳。可以通过列表、字典或标量创建 \lcinline{Series}，并支持单标签、标签列表、切片与布尔条件访问。\cref{tab:list-vs-series} 对比了 \lcinline{Series} 与 Python 原生 \lcinline{list} 的核心差异。
+
+\begin{table}[htbp]
+  \centering\small
+  \caption{Python 列表（\texttt{list}）与 Pandas \texttt{Series} 的对比}\label{tab:list-vs-series}
+  \begin{tabular}{@{}l>{\raggedright\arraybackslash}p{0.35\linewidth}>{\raggedright\arraybackslash}p{0.42\linewidth}@{}}
+    \toprule
+    比较维度 & Python \lcinline{list} & Pandas \lcinline{Series} \\
+    \midrule
+    索引机制 & 仅支持从 $0$ 开始的整数位置索引 & 支持自定义标签索引（字符串、日期等）及对齐 \\
+    数据操作 & 需手写循环或列表推导式 & 内置矢量化算术与逻辑运算，无需显式循环 \\
+    统计扩展 & 无内置数据分析方法 & 集成 \lcinline{mean}、\lcinline{sum}、\lcinline{unique}、\lcinline{value\_counts} 等 \\
+    底层性能 & 存放 Python 对象指针，开销较大 & 底层基于 NumPy 连续数组，批量计算高效 \\
+    数据语义 & 通用有序元素集合 & 带索引标签的一维列向量或表格中的一列 \\
+    \bottomrule
+  \end{tabular}
+\end{table}
+
+\subsection{DataFrame：二维表格数据结构}
+
+\lcinline{DataFrame} 是二维表格型数据结构，既可以理解为电子表格或关系数据库中的一张表，也可以从实现上理解为\textbf{一组共享同一行索引（Index）的 \lcinline{Series} 构成的有序字典}——每一列就是一个 \lcinline{Series}。常见构造方式包括从外部文件读取（\lcinline{pd.read\_csv}、\lcinline{pd.read\_excel}，支持 \lcinline{index\_col}、\lcinline{header}、\lcinline{names} 等参数）、从字典或二维列表构造，处理完毕后可通过 \lcinline{to\_csv} 或 \lcinline{to\_excel} 持久化输出。
+
+\begin{remark}[索引的不可变性与重新索引]\label{rem:index-immutable}
+\lcinline{DataFrame} 与 \lcinline{Series} 的行索引不要求是连续整数（例如可用年份或样本编号作索引）。底层 \lcinline{Index} 对象本身是不可变的，以保证多对象间安全共享索引；若需按自定义顺序重排行或列，应调用 \lcinline{reindex(index=..., columns=...)}，原表中不存在的新标签位置将自动填充缺失值 \lcinline{NaN}。
+\end{remark}
+
+\section{DataFrame 的三类核心算子}\label{sec:pandas-operators}
+
+在现代数据科学实践中，掌握 Pandas 不应停留在死记 API，而应建立\textbf{算子抽象思维}：把复杂的数据处理任务分解为如 \cref{tab:pandas-operators} 所示的三类基本算子的组合。
+
+\begin{table}[htbp]
+  \centering\small
+  \caption{Pandas DataFrame 三大类核心算子概览}\label{tab:pandas-operators}
+  \begin{tabular}{@{}l>{\raggedright\arraybackslash}p{0.29\linewidth}>{\raggedright\arraybackslash}p{0.40\linewidth}@{}}
+    \toprule
+    算子类别 & 核心作用 & 典型函数与方法 \\
+    \midrule
+    基本操作（Manipulation） & 修改表结构与值（增、删、改、重排、排序） & \lcinline{assign}、\lcinline{rename}、\lcinline{drop}、\lcinline{replace}、\lcinline{reindex}、\lcinline{sort\_values}、\lcinline{sort\_index} \\
+    数据查询（Querying） & 按标签、位置或逻辑条件选择行与列 & \lcinline{.loc}、\lcinline{.iloc}、\lcinline{[]}、布尔索引、\lcinline{isin}、\lcinline{between}、\lcinline{.str} 方法 \\
+    数据分析（Analysis） & 统计汇总、分组聚合、交叉透视与表连接 & \lcinline{describe}、\lcinline{value\_counts}、\lcinline{groupby().agg()}、\lcinline{pivot\_table}、\lcinline{merge}、\lcinline{concat} \\
+    \bottomrule
+  \end{tabular}
+\end{table}
+
+\subsection{基本操作与排序}
+
+拿到数据表后，通常先用 \lcinline{head()}、\lcinline{tail()}、\lcinline{shape}、\lcinline{columns} 与 \lcinline{describe()} 快速巡检结构与分位数概况。结构调整类算子遵循以下要点：
+\begin{itemize}
+  \item \textbf{新增与修改列}：直接用 \lcinline{df["new\_col"] = ...} 或链式写法 \lcinline{df.assign(...)} 计算派生特征；
+  \item \textbf{重命名与删除}：用 \lcinline{rename(columns=...)} 修改列名，用 \lcinline{drop(labels, axis="columns")} 删除指定列；
+  \item \textbf{排序}：\lcinline{sort\_index()} 按索引排序，\lcinline{sort\_values(by=..., ascending=False)} 按列值排序，并可通过 \lcinline{key} 参数传入向量化变换函数（如按字符串长度排序而无需创建临时列）。
+\end{itemize}
+
+\begin{pitfall}[\texttt{drop} 的默认轴向与非原地修改]\label{pit:drop-default}
+\lcinline{df.drop("col")} 默认按行删除（\lcinline{axis=0}），删除列必须显式指定 \lcinline{axis=1} 或 \lcinline{axis="columns"}。此外，\lcinline{drop}、\lcinline{rename}、\lcinline{sort\_values} 等方法默认\textbf{返回新 DataFrame 而不修改原对象}，忘记重新赋值（如直接写 \lcinline{df.drop(...)} 而未写 \lcinline{df = df.drop(...)}）是初学者最常见的逻辑错误。
+\end{pitfall}
+
+\subsection{数据查询：\texttt{.loc}、\texttt{.iloc} 与布尔筛选}
+
+Pandas 提供三种主要索引入口，区分其语义是避免下标越界与切片偏差的关键：
+\begin{enumerate}
+  \item \textbf{基于标签的 \lcinline{.loc[row\_labels, col\_labels]}}：接受单标签、标签列表、标签切片或布尔数组。特别注意：\textbf{\lcinline{.loc} 的切片包含右端点}（如 \lcinline{df.loc[0:2, :]} 包含标签 \lcinline{2}）；
+  \item \textbf{基于整数位置的 \lcinline{.iloc[row\_pos, col\_pos]}}：完全按从 $0$ 开始的整数位置定位，\textbf{切片遵循 Python 左闭右开规则（不包含右端点）}（如 \lcinline{df.iloc[0:2, :]} 仅取第 $0,1$ 行）；
+  \item \textbf{快捷方括号 \lcinline{[]}}：\lcinline{df["col"]} 返回单列 \lcinline{Series}，\lcinline{df[["col"]]} 返回单列 \lcinline{DataFrame}，\lcinline{df[1:3]} 按行位置切片，\lcinline{df[cond]} 按布尔条件过滤行。
+\end{enumerate}
+
+组合多个布尔条件时，由于 Python 关键字 \lcinline{and}/\lcinline{or}/\lcinline{not} 无法对整个布尔 \lcinline{Series} 逐元素求值，必须使用按位逻辑运算符：\lcinline{\&}（与）、\lcinline{|}（或）、\lcinline{\textasciitilde}（非）、\lcinline{\^{}}（异或），且由于按位运算符优先级高于比较运算符，\textbf{每个子条件必须加圆括号}。集合成员判断宜用 \lcinline{.isin([...])}，文本前缀或子串筛选宜用 \lcinline{.str.startswith()}、\lcinline{.str.contains()}。\cref{lst:pandas-query} 演示了这些查询算子的典型用法。
+
+\begin{codeblock}[language=Python,caption={DataFrame 查询、布尔过滤与自定义键排序示例},label=lst:pandas-query]
+import pandas as pd
+
+# 读取数据并指定列名（以 MovieLens / 姓名统计表为例）
+df = pd.DataFrame({
+    "Name": ["Angela", "Jacob", "Maya", "Kevin", "Alex"],
+    "Sex":  ["F", "M", "F", "M", "F"],
+    "Year": [2005, 2002, 2010, 1998, 2000],
+    "Count": [520, 710, 480, 640, 310],
+})
+
+# 1. 多条件布尔筛选（注意圆括号与 & / |）
+cond = (df["Sex"] == "F") & (df["Year"] >= 2000)
+sub = df.loc[cond, ["Name", "Count"]]
+
+# 2. 集合成员与字符串前缀筛选
+selected = df[df["Name"].isin(["Angela", "Maya"]) | df["Name"].str.startswith("Kev")]
+
+# 3. 使用 key 参数按姓名长度降序排序（无需临时列）
+sorted_df = df.sort_values(by="Name", key=lambda s: s.str.len(), ascending=False)
+\end{codeblock}
+
+\subsection{分组聚合与数据透视：Split–Apply–Combine}
+
+当需要回答“每个院系的男女录取率各是多少”“每年新生儿总数如何变化”这类按属性分组统计的问题时，核心工具是 \lcinline{groupby} 与 \lcinline{pivot\_table}。Pandas 的 \lcinline{groupby} 严格遵循哈德利·威克姆（Hadley Wickham）总结的 \textbf{Split–Apply–Combine}（拆分–应用–合并）范式，如 \cref{fig:groupby-sac} 与 \cref{alg:split-apply-combine} 所示。
+
+\lcfigure[caption={\texttt{groupby().agg(sum)} 的 Split–Apply–Combine 三步执行过程示意图。},label=fig:groupby-sac]{ch02-groupby-sac}
+
+\begin{algorithm}[Split–Apply–Combine 分组聚合流程]\label{alg:split-apply-combine}
+\alginput{数据表 $D$，分组键集合 $K$，待聚合目标列 $V$ 与聚合函数 $g$（如 \lcinline{sum}、\lcinline{mean}、\lcinline{max}）}
+\algoutput{以分组键去重取值为索引的汇总表 $R$}
+\begin{algsteps}
+  \State \textbf{Split（拆分）}：按分组键 $K$ 的取值将 $D$ 划分为互不相交的子表集合 $\{D_1, D_2, \dots, D_m\}$
+  \For{每个子表 $D_j$（$j = 1, \dots, m$）}
+    \State \textbf{Apply（应用）}：在子表 $D_j$ 的列 $V$ 上独立计算聚合值 $r_j \gets g(D_j[V])$
+  \EndFor
+  \State \textbf{Combine（合并）}：将所有 $(k_j, r_j)$ 按分组键重新组装为新的 \lcinline{Series} 或 \lcinline{DataFrame} $R$
+  \State \Return 汇总结果 $R$
+\end{algsteps}
+\end{algorithm}
+
+当分组键有两个（例如“院系”与“性别”，或“平台”与“设备类型”）并希望以二维矩形交叉表呈现汇总结果时，\textbf{数据透视表} \lcinline{pivot\_table} 更加直观：它将一组键放在行索引（\lcinline{index}），另一组键放在列索引（\lcinline{columns}），在每个交叉单元格内应用聚合函数（\lcinline{aggfunc}）；若某行列组合在原表中无记录，则对应单元格填 \lcinline{NaN}。\cref{lst:pandas-agg} 演示了用 \lcinline{groupby} 与 \lcinline{pivot\_table} 快速对多维数据进行分组汇总与下钻分析。
+
+\begin{codeblock}[language=Python,caption={使用 \texttt{groupby} 与 \texttt{pivot\_table} 进行分组聚合与下钻分析},label=lst:pandas-agg]
+import pandas as pd
+
+app = pd.DataFrame({
+    "Platform": ["Android", "iOS", "Android", "iOS"],
+    "Device":   ["Phone", "Phone", "Tablet", "Tablet"],
+    "Converted": [50, 100, 500, 100],
+    "Total":     [2000, 3500, 8000, 1500],
+})
+
+# 1. 仅按平台汇总（触发辛普森悖论：Android 5.5% > iOS 4.0%）
+overall = app.groupby("Platform")[["Converted", "Total"]].sum()
+overall["Rate"] = overall["Converted"] / overall["Total"]
+
+# 2. 按平台 x 设备类型透视下钻（iOS 在手机与平板两端均占优）
+app["Rate"] = app["Converted"] / app["Total"]
+pivot = app.pivot_table(index="Device", columns="Platform", values="Rate", aggfunc="mean")
+print(overall, "\n\n", pivot)
+\end{codeblock}
+
+\begin{summary}[本章要点]
+\begin{itemize}
+  \item 辛普森悖论表明汇总统计量可能因权重分布差异掩盖关键混淆维度，数据分析必须养成按潜在分组变量下钻校验的习惯。
+  \item 数据模型由数据结构、数据操作与完整性约束三要素组成；表格属性按信息量递增分为标记型、类别型、排序型、区间型与比例型。
+  \item \lcinline{NumPy} 的 \lcinline{ndarray} 通过连续同质存储、向量化与广播机制实现高效数组计算，但需牢记基本切片返回视图而非拷贝。
+  \item \lcinline{Pandas} 以 \lcinline{Series} 与 \lcinline{DataFrame} 为核心，将表格处理抽象为基本操作、数据查询（\lcinline{.loc}/\lcinline{.iloc}/布尔筛选）与分组透视分析（Split–Apply–Combine 与 \lcinline{pivot\_table}）三类算子。
+\end{itemize}
+\end{summary}

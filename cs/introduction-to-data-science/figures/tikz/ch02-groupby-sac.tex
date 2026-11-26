@@ -1,0 +1,97 @@
+\begin{tikzpicture}[
+  font=\small,
+  box/.style={
+    rectangle,
+    rounded corners=2pt,
+    draw=lc-note,
+    fill=lc-subtle,
+    line width=0.6pt,
+    inner sep=4pt,
+    align=left,
+    text=lc-ink
+  },
+  grp/.style={
+    rectangle,
+    rounded corners=2pt,
+    draw=lc-def,
+    fill=lc-def!7,
+    line width=0.7pt,
+    inner sep=3.5pt,
+    align=center,
+    minimum width=1.65cm,
+    text=lc-ink
+  },
+  agg/.style={
+    rectangle,
+    rounded corners=2pt,
+    draw=lc-method,
+    fill=lc-method!8,
+    line width=0.7pt,
+    inner sep=3.5pt,
+    align=center,
+    minimum width=1.65cm,
+    text=lc-ink
+  },
+  res/.style={
+    rectangle,
+    rounded corners=2pt,
+    draw=lc-thm,
+    fill=lc-thm!7,
+    line width=0.8pt,
+    inner sep=4pt,
+    align=center,
+    text=lc-ink
+  },
+  hdr/.style={lc label, font=\footnotesize\bfseries, text=lc-ink}
+]
+  % Input table
+  \node[box] (raw) {
+    \begin{tabular}{@{}cc@{}}
+      \textbf{Key} & \textbf{Val} \\\hline
+      A & 3 \\
+      B & 1 \\
+      C & 4 \\
+      A & 1 \\
+      B & 5 \\
+      C & 9 \\
+      A & 2
+    \end{tabular}
+  };
+  \node[hdr, above=4pt of raw] {原始 DataFrame};
+
+  % Split groups
+  \node[grp, right=1.35cm of raw, yshift=1.35cm] (gA) {\textbf{A}: 3, 1, 2};
+  \node[grp, right=1.35cm of raw] (gB) {\textbf{B}: 1, 5};
+  \node[grp, right=1.35cm of raw, yshift=-1.35cm] (gC) {\textbf{C}: 4, 9};
+  \node[hdr, above=6pt of gA] {1. Split（分组）};
+
+  % Apply sum
+  \node[agg, right=1.35cm of gA] (aA) {\textbf{A} $\to$ 6};
+  \node[agg, right=1.35cm of gB] (aB) {\textbf{B} $\to$ 6};
+  \node[agg, right=1.35cm of gC] (aC) {\textbf{C} $\to$ 13};
+  \node[hdr, above=6pt of aA] {2. Apply（\texttt{sum}）};
+
+  % Combine
+  \node[res, right=1.35cm of aB] (out) {
+    \begin{tabular}{@{}cc@{}}
+      \textbf{Key} & \textbf{Sum} \\\hline
+      A & 6 \\
+      B & 6 \\
+      C & 13
+    \end{tabular}
+  };
+  \node[hdr, above=1.05cm of out] {3. Combine（合并）};
+
+  % Arrows
+  \draw[lc vector] (raw.east) -- (gA.west);
+  \draw[lc vector] (raw.east) -- (gB.west);
+  \draw[lc vector] (raw.east) -- (gC.west);
+
+  \draw[lc vector] (gA.east) -- (aA.west);
+  \draw[lc vector] (gB.east) -- (aB.west);
+  \draw[lc vector] (gC.east) -- (aC.west);
+
+  \draw[lc vector] (aA.east) -- (out.west);
+  \draw[lc vector] (aB.east) -- (out.west);
+  \draw[lc vector] (aC.east) -- (out.west);
+\end{tikzpicture}
