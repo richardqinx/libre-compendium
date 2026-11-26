@@ -92,6 +92,7 @@ $(HTML_DIST)/$(2)/index.html: $(PROJECT_SRC)/$(1).tex $$(PROJECT_DEPS) $$(COMMON
 	    BIBINPUTS="$$(PROJECT_SRC):" \
 	    "$$(MAKE4HT)" -l -c lc-html.cfg -d "$$(HTML_DIST)/$(2)" "$$<" "" "" "" "-interaction=nonstopmode"); \
 	  cp "$$(HTML_TEX4HT_DIR)/lc.css" "$$(HTML_DIST)/$(2)/lc.css"; \
+	  if test -d "$$(PROJECT_SRC)/figures/images"; then mkdir -p "$$(DIST_ROOT)/images" && cp -a "$$(PROJECT_SRC)/figures/images/." "$$(DIST_ROOT)/images/"; fi; \
 	  cp "$$(HTML_DIST)/$(2)/$(1).html" "$$@"
 endef
 

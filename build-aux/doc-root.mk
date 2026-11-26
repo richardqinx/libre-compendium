@@ -19,7 +19,7 @@
 
 # libre-compendium root document orchestration
 -include $(abs_builddir)/build-aux/doc-projects.mk
-DOC_PROJECTS ?= $(shell find $(abs_top_srcdir)/math $(abs_top_srcdir)/physics -mindepth 2 -maxdepth 2 -type f -name main.tex -printf '%h\n' | sed 's#^$(abs_top_srcdir)/##' | sort)
+DOC_PROJECTS ?= $(shell find $(abs_top_srcdir)/math $(abs_top_srcdir)/physics $(abs_top_srcdir)/cs -mindepth 2 -maxdepth 2 -type f -name main.tex -printf '%h\n' | sed 's#^$(abs_top_srcdir)/##' | sort)
 DOC_ENABLE_HTML ?= yes
 DOC_ENABLE_SVG ?= yes
 DOC_ENGINE ?= xelatex

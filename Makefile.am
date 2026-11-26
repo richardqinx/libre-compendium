@@ -27,7 +27,7 @@ DOC_ENABLE_SVG = @DOC_ENABLE_SVG@
 
 # Keep source documents in the source archive, excluding generated build trees
 # and local agent metadata.
-DOC_SOURCE_FILES = $(shell find $(srcdir)/common $(srcdir)/math $(srcdir)/physics -type f \
+DOC_SOURCE_FILES = $(shell find $(srcdir)/common $(srcdir)/math $(srcdir)/physics $(srcdir)/cs -type f \
   ! -path '*/build/*' ! -path '*/dist/*' ! -path '*/.agents/*' \
   -print)
 
