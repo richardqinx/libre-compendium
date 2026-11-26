@@ -1,0 +1,502 @@
+% libre-compendium
+%
+% Copyright (C) 2026 Richard Qin
+%
+% This document is dual-licensed under either:
+% - GNU Free Documentation License, Version 1.3 or any later version
+%   published by the Free Software Foundation; with no Invariant Sections,
+%   no Front-Cover Texts, and no Back-Cover Texts (see COPYING.DOC); or
+% - Creative Commons Attribution-ShareAlike 4.0 International License
+%   (see LICENSE-CC-BY-SA-4.0).
+\ProvidesFile{ch07-text-analysis.tex}[2026/11/26 v0.2.6 文本数据分析与文本表示]
+
+\chapter{文本数据分析与文本表示}\label{ch:text-analysis}
+
+前几章处理的回归、分类与聚类问题均以结构化的数值特征矩阵 $\mathbf{X}\in\mathbb{R}^{n\times p}$ 为起点。然而在互联网与信息系统中，新闻报道、法律文书、学术论文、商品评论与社交媒体帖子等绝大多数信息以\textbf{非结构化文本（unstructured text）}的形式存在。与表格数据不同，原始文本只是由字符构成的变长序列，计算机无法直接对其执行距离度量、内积或统计建模。
+
+因此，文本数据分析面临两项承上启下的核心任务：首先通过词法预处理（尤其是中文分词）将连续字符流切分为有语义边界的词项序列；其次通过合适的\textbf{文本表示（text representation）}方法将词项与文档映射为可运算的数学对象（概率分布、稀疏向量或低维稠密向量），进而支撑文本分类、信息检索与主题发现等下游任务。本章从中文分词与朴素贝叶斯文本分类出发，逐步过渡到向量空间模型（TF-IDF）与基于奇异值分解的潜在语义索引（LSI），整体处理流水线见\cref{fig:text-pipeline}。
+
+\lcfigure[
+  caption={文本数据分析与表示的两条主要技术路径：高维稀疏符号表示与低维稠密分布式表示},
+  label={fig:text-pipeline},
+  placement=htbp
+]{ch07-text-pipeline}
+
+% ====================================================================
+\section{文本数据分析概览与中文分词}\label{sec:text-overview-seg}
+% ====================================================================
+
+\subsection{词法分析与中文分词的特点}
+
+在自然语言处理流水线中，\textbf{词法分析（lexical analysis）}负责将原始字符序列转换为词（token）序列，并为其附加语法或语义标记，主要包括以下四个子任务：
+\begin{enumerate}
+  \item \textbf{分词（tokenization / word segmentation）}：识别句子中的词语边界，将其切分为词项序列；
+  \item \textbf{词性标注（part-of-speech tagging, POS）}：为每个词赋予语法类别标记（如名词、动词、形容词）；
+  \item \textbf{命名实体识别（named entity recognition, NER）}：识别文本中的人名、地名、机构名、时间与专有实体；
+  \item \textbf{词义消歧（word sense disambiguation）}：依据上下文确定多义词在当前语境下的确切含义。
+\end{enumerate}
+
+英文等拼音文字在词与词之间天然存在空格作为显式分隔符（尽管仍需处理缩写、连字符与词形还原），而中文书面文本以汉字为书写单元，字与字、词与词紧密相连，没有显式的词界标志。由于“词”才是能够独立活动并承载语义的基本语言单位，分词的准确性直接决定了检索、分类与语音合成等下游任务的质量。例如，“和服 / 务 / 于三日后裁制完毕”与“设施 / 和 / 服务 / 是一流的”中，对“和服务”切分方式的不同会彻底改变检索匹配结果；而在语音合成中，“查 / 金泰”（读音 chá）与人名“查金泰”（读音 zhā）的切分差异直接影响读音判定。
+
+\subsection{中文分词的两大核心难题}
+
+面向开放领域的大规模中文语料，自动分词主要面临\textbf{未登录词识别}与\textbf{切分歧义消解}两大挑战。
+
+\begin{definition}[未登录词（Out-of-Vocabulary, OOV）]\label{def:oov}
+未被预先收录在系统词典中、但在实际待切分文本中出现的合法词语称为\textbf{未登录词}。常见类型包括专有名词（人名、地名、机构名、译名）、重叠词（如“研究研究”）、派生词（如“一次性用品”）以及新兴网络用语或领域术语（如“中区食堂”“大语言模型”）。
+\end{definition}
+
+\begin{definition}[交集型与组合型切分歧义]\label{def:seg-ambiguity}
+设 $A, J, B$ 为非空汉字串：
+\begin{enumerate}
+  \item \textbf{交集型切分歧义}：若汉字串 $AJB$ 满足 $AJ$ 与 $JB$ 同时为词典中的合法词语，则称 $AJB$ 构成交集型切分歧义，$J$ 称为\textbf{交集串}。例如“结合成分子”可切分为“结合 / 成分 / 子”“结合 / 成 / 分子”或“结 / 合成 / 分子”；“乒乓球拍卖完了”可切分为“乒乓球 / 拍卖 / 完了”或“乒乓球拍 / 卖 / 完了”。
+  \item \textbf{组合型切分歧义}：若汉字串 $AB$ 满足 $A$、$B$ 与 $AB$ 同时为合法词语，则称 $AB$ 构成组合型切分歧义。例如“起身”在“他站 / 起 / 身 / 来”中应分开，而在“他明天 / 起身 / 去北京”中应合为一词。
+\end{enumerate}
+\end{definition}
+
+实际文本预处理中，完成分词后通常还需执行\textbf{停用词（stopwords）过滤}，即剔除“的”“了”“在”“和”等高频但缺乏区分度的功能词与标点符号，以降低后续词表规模和噪声干扰。
+
+\subsection{倒排索引与中文分词工具实践}
+
+在信息检索场景下，为了避免每次查询都线性扫描全部文档，搜索引擎普遍基于分词结果构建\textbf{倒排索引（inverted index）}：以词项 $t$ 为键，记录包含该词项的所有文档编号列表（倒排表，posting list）。执行多关键词“与（AND）”查询时，只需取出各关键词对应的倒排表求交集即可快速定位目标文档。
+
+在 Python 生态中，\lcinline{jieba}（结巴分词）是最常用的轻量级中文分词库。它结合基于前缀词典的有向无环图（DAG）动态规划（寻找最大概率路径）与隐马尔可夫模型（HMM，用于识别未登录词），提供三种分词模式：
+\begin{itemize}
+  \item \textbf{精确模式}（\lcinline{cut\_all=False}，默认）：试图将句子最精确地切开，适合文本分类与统计分析；
+  \item \textbf{全模式}（\lcinline{cut\_all=True}）：扫描出句子中所有可能成词的片段，速度快但存在冗余，不能消除歧义；
+  \item \textbf{搜索引擎模式}（\lcinline{jieba.lcut\_for\_search}）：在精确模式基础上对长词再次切分，提高检索召回率，适合构建倒排索引。
+\end{itemize}
+
+针对特定领域的未登录词，可通过 \lcinline{jieba.load\_userdict} 批量导入 UTF-8 编码的用户词典，或调用 \lcinline{jieba.add\_word} 在线动态补充词条。\cref{lst:jieba-inverted} 展示了使用 \lcinline{jieba} 进行自定义词典分词、停用词过滤并构建倒排索引的完整过程。
+
+\begin{codeblock}[language=Python, caption={使用 jieba 进行中文分词、自定义词典与倒排索引构建}, label={lst:jieba-inverted}]
+from collections import defaultdict
+import jieba
+
+# 动态加入领域未登录词
+jieba.add_word("中区食堂")
+jieba.add_word("甩大牌")
+
+docs = {
+    1: "小明今天去中区食堂吃饭，顺便看了一则演员甩大牌的假新闻。",
+    2: "某演员在片场甩大牌引发热议，随后被证实为虚假消息。",
+    3: "中区食堂新推出了川菜窗口，深受同学欢迎。",
+}
+stopwords = {"的", "了", "在", "去", "一则", "，", "。"}
+
+inverted_index = defaultdict(set)
+for doc_id, text in docs.items():
+    # 搜索引擎模式适合倒排索引构建
+    tokens = [w for w in jieba.lcut_for_search(text) if w not in stopwords]
+    for tok in tokens:
+        inverted_index[tok].add(doc_id)
+
+# 多词 AND 查询：找出同时包含 "演员" 和 "甩大牌" 的文档
+query = ["演员", "甩大牌"]
+hits = set.intersection(*(inverted_index[q] for q in query))
+print("匹配文档编号:", sorted(hits))  # 输出: [1, 2]
+\end{codeblock}
+
+% ====================================================================
+\section{文本分类与朴素贝叶斯模型}\label{sec:naive-bayes}
+% ====================================================================
+
+\subsection{文本分类的形式化定义}
+
+垃圾邮件过滤、新闻话题归类与商品评论情感分析（判断评论为正面、负面或中性极性）均属于\textbf{文本分类（text classification）}任务。形式化地，设 $\mathcal{X}$ 为文档表示空间，$\mathcal{C}=\{c_1,c_2,\dots,c_J\}$ 为预定义的离散类别集合。给定带标签训练集 $\mathcal{D}=\{(d_i, c_i)\}_{i=1}^{N}\subset \mathcal{X}\times\mathcal{C}$，监督学习算法的目标是学习一个分类映射 $\gamma:\mathcal{X}\to\mathcal{C}$，使得对任意未见文档 $d\in\mathcal{X}$ 能够准确预测其类别 $\gamma(d)\in\mathcal{C}$。
+
+相比依赖专家逐篇标注的\textbf{人工分类}（成本高、难以规模化）与手工编写布尔逻辑的\textbf{基于规则的分类}（维护繁重、易产生规则冲突），基于统计学习的文本分类器能够直接从标注数据中自动归纳特征权重，具有良好的可扩展性。
+
+\subsection{贝叶斯决策与词袋独立性假设}
+
+\textbf{朴素贝叶斯（Na\"{i}ve Bayes）}是一类经典的生成式概率分类器。给定文档 $d$，我们希望选择使后验概率 $P(c\mid d)$ 最大的类别，即\textbf{最大后验（Maximum A Posteriori, MAP）}决策规则：
+\begin{equation}\label{eq:nb-map}
+c_{\mathrm{MAP}} = \argmax_{c\in\mathcal{C}} P(c\mid d)
+= \argmax_{c\in\mathcal{C}} \frac{P(d\mid c)\,P(c)}{P(d)}
+= \argmax_{c\in\mathcal{C}} P(d\mid c)\,P(c),
+\end{equation}
+其中分母 $P(d)$ 与候选类别 $c$ 无关，最大化时可省去。
+
+将文档 $d$ 视作长度为 $n_d$ 的词项序列 $\langle t_1, t_2, \dots, t_{n_d}\rangle$（每个 $t_k$ 取自词表 $V$）。若直接估计联合似然 $P(\langle t_1,\dots,t_{n_d}\rangle \mid c)$，参数空间规模高达 $|V|^{n_d}$，在有限训练语料下必然遭遇严重的数据稀疏。为此，多项式朴素贝叶斯（Multinomial Na\"{i}ve Bayes）引入\textbf{词袋（Bag of Words, BoW）}两项核心简化假设：
+
+\begin{definition}[多项式朴素贝叶斯的独立性假设]\label{def:nb-assumptions}
+设随机变量 $X_k$ 表示文档第 $k$ 个位置上生成的词项（$1\le k\le n_d$）。多项式朴素贝叶斯假设：
+\begin{enumerate}
+  \item \textbf{条件独立假设}：给定类别 $c$，文档中各个位置上出现的词项相互条件独立，即
+  \[
+    P(\langle t_1, \dots, t_{n_d}\rangle \mid c) = \prod_{k=1}^{n_d} P(X_k = t_k \mid c).
+  \]
+  \item \textbf{位置无关假设}：词项在类别 $c$ 下出现的概率与其在文档中的位置无关，即对任意 $1\le k_1, k_2\le n_d$ 与 $t\in V$，有
+  \[
+    P(X_{k_1} = t \mid c) = P(X_{k_2} = t \mid c) \triangleq P(t \mid c).
+  \]
+\end{enumerate}
+\end{definition}
+
+在这两项假设下，文档 $d$ 的生成过程可视为：先按先验分布 $P(c)$ 抽取类别 $c$，再独立同分布地按多项分布 $\{P(t\mid c)\}_{t\in V}$ 抽取 $n_d$ 个词项。由此，\cref{eq:nb-map} 化简为
+\begin{equation}\label{eq:nb-prod}
+c_{\mathrm{MAP}} = \argmax_{c\in\mathcal{C}} \hat{P}(c)\prod_{k=1}^{n_d}\hat{P}(t_k\mid c).
+\end{equation}
+
+在数值实现中，当文档较长时，大量介于 $(0,1)$ 之间的概率连乘会迅速触发\textbf{浮点数下溢（floating-point underflow）}而变成 $0$。由于对数函数 $\log(\cdot)$ 严格单调递增，不改变极大值点位置，工程上均在对数空间将连乘转化为求和：
+\begin{equation}\label{eq:nb-log}
+c_{\mathrm{MAP}} = \argmax_{c\in\mathcal{C}} \left[ \log \hat{P}(c) + \sum_{k=1}^{n_d} \log \hat{P}(t_k\mid c) \right].
+\end{equation}
+上式具有清晰的直观解释：$\log\hat{P}(c)$ 反映类别先验偏置，而 $\log\hat{P}(t_k\mid c)$ 则刻画词项 $t_k$ 指向类别 $c$ 的对数证据权重。
+
+\subsection{参数估计、零概率问题与拉普拉斯平滑}
+
+给定训练集 $\mathcal{D}$，设总文档数为 $N$，属于类别 $c$ 的文档数为 $N_c$；记 $T_{ct}$ 为类别 $c$ 的所有训练文档中词项 $t$ 出现的总次数（含同一文档内的重复出现）。采用\textbf{最大似然估计（MLE）}可得：
+\[
+\hat{P}(c) = \frac{N_c}{N}, \qquad
+\hat{P}_{\mathrm{MLE}}(t\mid c) = \frac{T_{ct}}{\sum_{t'\in V} T_{ct'}}.
+\]
+
+\begin{pitfall}[最大似然估计中的零概率陷阱]\label{pit:nb-zero}
+若某个词表中的词 $t^*$（例如“WTO”）在训练集中从未出现在类别 $c$（例如“China”）的文档里，则 $T_{c,t^*}=0$，导致 $\hat{P}_{\mathrm{MLE}}(t^*\mid c)=0$。在测试阶段，只要待测文档包含 $t^*$，连乘式 \cref{eq:nb-prod} 中该类的后验概率便会被直接归零（对数空间中出现 $-\infty$），彻底抹杀文档中其他所有词项提供的强证据。
+\end{pitfall}
+
+为消除零概率问题，通常采用\textbf{拉普拉斯平滑（Laplace smoothing，又称加一平滑）}，即假想词表 $V$ 中的每个词项在每个类别中都预先出现过一次（更一般地，可设平滑超参数 $\alpha>0$，称为 Lidstone 平滑）：
+\begin{equation}\label{eq:nb-laplace}
+\hat{P}(t\mid c) = \frac{T_{ct} + 1}{\sum_{t'\in V} (T_{ct'} + 1)}
+= \frac{T_{ct} + 1}{\left(\sum_{t'\in V} T_{ct'}\right) + |V|}.
+\end{equation}
+易验证 $\sum_{t\in V}\hat{P}(t\mid c)=1$ 且对所有 $t\in V$ 均有 $\hat{P}(t\mid c)>0$。测试时若遇到训练集词表 $V$ 之外的新词，通常直接忽略。
+
+\begin{algorithm}[多项式朴素贝叶斯训练与预测]\label{alg:mnb}
+  \alginput{带标签训练集 $\mathcal{D}=\{(d_i, c_i)\}_{i=1}^N$，类别集合 $\mathcal{C}$，待预测文档 $d$，平滑参数 $\alpha>0$（默认 $\alpha=1$）}
+  \algoutput{预测类别 $c_{\mathrm{MAP}}\in\mathcal{C}$}
+  \begin{algsteps}
+    \State \Comment{\textbf{训练阶段}}
+    \State 提取训练集全部词项构成词表 $V$，令 $N \gets |\mathcal{D}|$
+    \For{每个类别 $c \in \mathcal{C}$}
+      \State 统计属于类别 $c$ 的文档数 $N_c$，计算先验 $\hat{P}(c) \gets N_c / N$
+      \State 合并类别 $c$ 的全部文档，统计词表各词出现次数 $T_{ct}$ 及总词次 $T_c \gets \sum_{t'\in V} T_{ct'}$
+      \For{每个词项 $t \in V$}
+        \State $\hat{P}(t\mid c) \gets (T_{ct} + \alpha) / (T_c + \alpha |V|)$
+      \EndFor
+    \EndFor
+    \State \Comment{\textbf{预测阶段}}
+    \State 提取文档 $d$ 中属于词表 $V$ 的词项序列 $\langle t_1,\dots,t_{n_d}\rangle$
+    \For{每个类别 $c \in \mathcal{C}$}
+      \State $\mathrm{score}[c] \gets \log \hat{P}(c) + \sum_{k=1}^{n_d} \log \hat{P}(t_k\mid c)$
+    \EndFor
+    \State \Return $\argmax_{c\in\mathcal{C}} \mathrm{score}[c]$
+  \end{algsteps}
+\end{algorithm}
+
+设训练集平均文档长度为 $L_{\mathrm{ave}}$，测试文档长度为 $L_a$。在训练阶段，扫描全部文档统计词频需 $\Theta(|\mathcal{D}|L_{\mathrm{ave}})$ 时间，计算条件概率表需 $\Theta(|\mathcal{C}||V|)$ 时间；由于通常 $|\mathcal{C}||V| < |\mathcal{D}|L_{\mathrm{ave}}$，总训练时间复杂度为 $\Theta(|\mathcal{D}|L_{\mathrm{ave}} + |\mathcal{C}||V|)$。测试阶段只需累加测试文档中各词的对数条件概率，时间复杂度为 $\Theta(|\mathcal{C}|L_a)$，关于文档长度均为最优的线性复杂度。
+
+\begin{example}[title={多项式朴素贝叶斯手算示例}]\label{eg:nb-china}
+考虑如下 $N=4$ 篇英文训练文档，类别为 $c=\text{China}$ 与 $\bar{c}=\text{Not China}$：
+\begin{center}
+\small
+\begin{tabular}{clc}
+\toprule
+文档 & 词项序列 & 类别 \\
+\midrule
+$d_1$ & \lcinline{Chinese Beijing Chinese} & $c$ \\
+$d_2$ & \lcinline{Chinese Chinese Shanghai} & $c$ \\
+$d_3$ & \lcinline{Chinese Macao} & $c$ \\
+$d_4$ & \lcinline{Tokyo Japan Chinese} & $\bar{c}$ \\
+\bottomrule
+\end{tabular}
+\end{center}
+词表 $V=\{\text{Chinese}, \text{Beijing}, \text{Shanghai}, \text{Macao}, \text{Tokyo}, \text{Japan}\}$，$|V|=6$。
+\begin{enumerate}
+  \item \textbf{先验概率}：$\hat{P}(c)=3/4$，$\hat{P}(\bar{c})=1/4$。
+  \item \textbf{拉普拉斯平滑条件概率}：
+    \begin{itemize}
+      \item 类别 $c$ 共有 $T_c = 8$ 个词次，分母 $T_c+|V|=14$：
+      \begin{align*}
+        \hat{P}(\text{Chinese}\mid c) &= \frac{5+1}{14}=\frac{3}{7},\\
+        \hat{P}(\text{Beijing}\mid c) &= \hat{P}(\text{Shanghai}\mid c)=\hat{P}(\text{Macao}\mid c)=\frac{1+1}{14}=\frac{1}{7},\\
+        \hat{P}(\text{Tokyo}\mid c) &= \hat{P}(\text{Japan}\mid c)=\frac{0+1}{14}=\frac{1}{14}.
+      \end{align*}
+      \item 类别 $\bar{c}$ 共有 $T_{\bar{c}} = 3$ 个词次，分母 $T_{\bar{c}}+|V|=9$：
+      \[
+        \hat{P}(\text{Chinese}\mid \bar{c})=\hat{P}(\text{Tokyo}\mid \bar{c})=\hat{P}(\text{Japan}\mid \bar{c})=\frac{1+1}{9}=\frac{2}{9},
+      \]
+      \[
+        \hat{P}(\text{Beijing}\mid \bar{c})=\hat{P}(\text{Shanghai}\mid \bar{c})=\hat{P}(\text{Macao}\mid \bar{c})=\frac{0+1}{9}=\frac{1}{9}.
+      \]
+    \end{itemize}
+  \item \textbf{测试预测}：对测试文档 $d_5=\text{``Chinese Chinese Chinese Tokyo Japan''}$，计算未归一化后验：
+  \[
+    \hat{P}(c\mid d_5) \propto \frac{3}{4}\cdot\left(\frac{3}{7}\right)^3\cdot\left(\frac{1}{14}\right)^2 = \frac{81}{268912} \approx 3.01\times 10^{-4},
+  \]
+  \[
+    \hat{P}(\bar{c}\mid d_5) \propto \frac{1}{4}\cdot\left(\frac{2}{9}\right)^3\cdot\left(\frac{2}{9}\right)^2 = \frac{8}{59049} \approx 1.35\times 10^{-4}.
+  \]
+  因为 $3.01\times 10^{-4} > 1.35\times 10^{-4}$，故分类器将 $d_5$ 判为 $c$（China）。
+\end{enumerate}
+\end{example}
+
+\subsection{朴素贝叶斯的几何本质与有效性讨论}
+
+在真实自然语言中，词袋的两项独立性假设往往被严重违背：例如“北京”与“首都”高度共现（违背条件独立），“狗咬人”与“人咬狗”语义相反（违背位置无关）。然而在大量文本分类任务中，朴素贝叶斯依然表现出色，常被用作高效基线模型。这主要有两方面原因：
+\begin{enumerate}
+  \item \textbf{排序稳健性}：违背条件独立假设会重复累加相关词的证据，使估计的后验概率趋向极端（接近 $0$ 或 $1$），即\textbf{概率校准（calibration）}较差；但分类任务只需比较不同类别的得分高低，只要这种偏差不至于颠覆正确类别的排名，分类准确率便不受影响。
+  \item \textbf{线性决策边界}：多项式朴素贝叶斯在词频空间中本质上等价于一个线性分类器，参数少、方差低，不易在小样本高维词空间中过拟合。
+\end{enumerate}
+
+\begin{proposition}[多项式朴素贝叶斯的线性判别形式]\label{prop:mnb-linear}
+设二分类问题中类别集合为 $\mathcal{C}=\{c_+, c_-\}$，文档 $d$ 的词频向量为 $\mathbf{x}=(x_1,\dots,x_{|V|})^\top\in\mathbb{N}^{|V|}$，其中 $x_j$ 为词表第 $j$ 个词 $v_j$ 在 $d$ 中的出现次数。则多项式朴素贝叶斯的判别准则等价于线性分类器 $\mathbf{w}^\top\mathbf{x} + b > 0$，其中
+\[
+w_j = \log\frac{\hat{P}(v_j\mid c_+)}{\hat{P}(v_j\mid c_-)}, \qquad
+b = \log\frac{\hat{P}(c_+)}{\hat{P}(c_-)}.
+\]
+\end{proposition}
+\begin{proof}
+由 \cref{eq:nb-log}，将同一词项的重复出现合并计数，文档 $d$ 在类别 $c$ 下的对数得分可写为 $\log\hat{P}(c) + \sum_{j=1}^{|V|} x_j \log\hat{P}(v_j\mid c)$。于是分类器预测 $c_+$ 当且仅当两类对数得分之差大于 $0$：
+\[
+\left[\log\hat{P}(c_+) + \sum_{j=1}^{|V|} x_j \log\hat{P}(v_j\mid c_+)\right]
+- \left[\log\hat{P}(c_-) + \sum_{j=1}^{|V|} x_j \log\hat{P}(v_j\mid c_-)\right]
+= b + \sum_{j=1}^{|V|} w_j x_j > 0. \qedhere
+\]
+\end{proof}
+
+\cref{lst:sklearn-mnb} 演示了如何结合 \lcinline{jieba} 与 \lcinline{scikit-learn} 构建中文评论情感分类流水线。
+
+\begin{codeblock}[language=Python, caption={基于 jieba 与 scikit-learn 的中文情感分类流程}, label={lst:sklearn-mnb}]
+import jieba
+from sklearn.feature_extraction.text import CountVectorizer
+from sklearn.naive_bayes import MultinomialNB
+from sklearn.pipeline import make_pipeline
+
+reviews = [
+    "菜品丰富质量好，服务也不错，很喜欢！",
+    "菜量实惠，上菜快，味道很赞。",
+    "上菜巨慢，服务态度超级差，后悔死了。",
+    "口味很一般，香精味太重，不会再来了。",
+]
+labels = [1, 1, 0, 0]  # 1: 正面, 0: 负面
+
+# 将分词后的词项以空格拼接，供 CountVectorizer 提取词袋特征
+corpus = [" ".join(jieba.lcut(text)) for text in reviews]
+
+clf = make_pipeline(
+    CountVectorizer(token_pattern=r"(?u)\b\w+\b"),
+    MultinomialNB(alpha=1.0),  # 拉普拉斯平滑
+)
+clf.fit(corpus, labels)
+
+test_doc = [" ".join(jieba.lcut("味道不错，服务热情，上菜也很快"))]
+print("预测极性:", clf.predict(test_doc)[0])  # 输出: 1
+\end{codeblock}
+
+% ====================================================================
+\section{文本的独热与向量空间表示}\label{sec:vsm-tfidf}
+% ====================================================================
+
+\subsection{集合表示与 Jaccard 相似度}
+
+除概率生成视角外，信息检索与文本挖掘更常采用几何视角将文档表示为集合或向量，从而定义文档间的相似度。最朴素的方法是\textbf{基于集合的表示}：将文档 $d$ 表示为其所含不同词项的集合 $A_d \subseteq V$，并用 \textbf{Jaccard 相似度}度量两篇文档的重合程度：
+\begin{equation}\label{eq:jaccard}
+\mathrm{Jaccard}(A, B) = \frac{|A \cap B|}{|A \cup B|} \in [0, 1].
+\end{equation}
+例如，对文档 $D_1=\text{``ides of March''}$ 与 $D_2=\text{``Caesar died in March''}$，有 $A=\{\text{ides},\text{of},\text{March}\}$、$B=\{\text{Caesar},\text{died},\text{in},\text{March}\}$，交集为 $\{\text{March}\}$、并集含 $6$ 个词，故 $\mathrm{Jaccard}(A,B)=1/6$。
+
+集合表示简单直观，实际上等价于将文档映射为 $0\text{--}1$ 指示向量，但它存在三项明显不足：（1）丢弃了词频信息，无法区分一个词在文中出现一次与反复强调十次；（2）忽略了词序与语法结构（如“hot dog”与“dog hot”）；（3）对所有词一视同仁，未能体现罕见实词（如“希格斯玻色子”）与常见通用词（如“好”）在信息量上的巨大差异。
+
+\subsection{向量空间模型与 TF-IDF 权重}
+
+\textbf{向量空间模型（Vector Space Model, VSM）}将词表 $V$ 中的每个词项视作一个正交坐标轴，把每篇文档 $d$ 表示为 $|V|$ 维实数向量 $\mathbf{d}\in\mathbb{R}^{|V|}$。为了同时刻画词项在单篇文档内的局部显著性与在整个语料库中的全局区分度，信息检索中最经典的加权方案是 \textbf{TF-IDF}。
+
+\begin{definition}[TF-IDF 权重]\label{def:tfidf}
+设文档集合 $\mathcal{D}$ 共包含 $N$ 篇文档，词项 $t$ 在文档 $d$ 中的词频为 $\mathrm{tf}(t,d)$（可取原始出现次数 $c(t,d)$ 或文档长度归一化频率 $c(t,d)/|d|$），在语料库中包含词项 $t$ 的文档篇数称为\textbf{文档频率（Document Frequency）}，记作 $\mathrm{df}(t)$。定义词项 $t$ 的\textbf{逆文档频率（Inverse Document Frequency, IDF）}与 \textbf{TF-IDF} 权重分别为
+\begin{equation}\label{eq:tfidf}
+\mathrm{idf}(t) = \log \frac{N}{\mathrm{df}(t)}, \qquad
+\mathrm{tf\text{-}idf}(t, d) = \mathrm{tf}(t, d) \cdot \mathrm{idf}(t).
+\end{equation}
+\end{definition}
+
+由 \cref{eq:tfidf} 可见：若某词在几乎所有文档中都出现（$\mathrm{df}(t)\approx N$，如“the”），则 $\mathrm{idf}(t)\approx 0$，其权重被自动压低；反之，若某词仅集中在少数文档中且在当前文档内高频出现，则其 TF-IDF 值显著增大。在工程库（如 \lcinline{scikit-learn} 的 \lcinline{TfidfVectorizer}）中，常采用平滑形式 $\mathrm{idf}(t)=\ln\frac{1+N}{1+\mathrm{df}(t)}+1$ 以防分母为零，并对每篇文档向量执行 $L_2$ 归一化。
+
+将查询 $q$ 与文档 $d$ 均表示为 TF-IDF 向量 $\mathbf{q}, \mathbf{d}\in\mathbb{R}^{|V|}$ 后，最常用的相关性度量是\textbf{余弦相似度（cosine similarity）}：
+\begin{equation}\label{eq:cosine}
+\mathrm{sim}(\mathbf{q}, \mathbf{d}) = \cos(\mathbf{q}, \mathbf{d})
+= \frac{\mathbf{q}^\top \mathbf{d}}{\|\mathbf{q}\|_2\,\|\mathbf{d}\|_2}.
+\end{equation}
+相比欧氏距离或原始点积，余弦相似度通过模长归一化消除了文档长短带来的偏置，使长文档不会仅因包含更多词而在检索排序中占据不公平优势。
+
+\begin{example}[title={TF-IDF 检索排序与词汇鸿沟现象}]\label{eg:romeo-tfidf}
+考虑如下 $N=5$ 篇英文短文档（预处理后长度分别为 $3, 4, 4, 11, 9$），以及关键词查询 $q=\text{``die dagger''}$：
+\begin{itemize}
+  \item $d_1$: \emph{Romeo and Juliet.}（词序列：\lcinline{romeo, and, juliet}）
+  \item $d_2$: \emph{Juliet: O happy dagger!}（词序列：\lcinline{juliet, o, happy, dagger}）
+  \item $d_3$: \emph{Romeo died by dagger.}（词序列：\lcinline{romeo, die, by, dagger}）
+  \item $d_4$: \emph{``Live free or die'', that's the New-Hampshire's motto.}（含 $11$ 词，含 \lcinline{die, new, hampshire}）
+  \item $d_5$: \emph{Did you know, New-Hampshire is in New-England.}（含 $9$ 词，含两次 \lcinline{new} 及 \lcinline{hampshire, england}）
+\end{itemize}
+仅关注 $7$ 个有效实词 \lcinline{romeo, juliet, dagger, die, new, hampshire, england}。采用归一化词频 $\mathrm{tf}(t,d)=c(t,d)/|d|$ 与以 $10$ 为底的对数 $\mathrm{idf}(t)=\log_{10}(5/\mathrm{df}(t))$。由于前 $6$ 个词均在 $2$ 篇文档中出现，$\mathrm{idf}=\log_{10}(5/2)\approx 0.398$；而 \lcinline{england} 仅在 $d_5$ 中出现，$\mathrm{idf}=\log_{10}(5/1)\approx 0.699$。
+
+据此可得文档与查询（$\mathrm{tf}(\text{die},q)=\mathrm{tf}(\text{dagger},q)=0.5$，均对应权重 $0.199$）的 TF-IDF 向量（如 $d_3$ 在 \lcinline{romeo, dagger, die} 上均为 $\frac{1}{4}\times 0.398\approx 0.0995$），计算余弦相似度排序为：
+\begin{align*}
+\cos(\mathbf{q},\mathbf{d}_3) &= \sqrt{\tfrac{2}{3}} \approx 0.816
+> \cos(\mathbf{q},\mathbf{d}_2) = 0.500 \\
+&> \cos(\mathbf{q},\mathbf{d}_4) = \tfrac{1}{\sqrt{6}} \approx 0.408
+> \cos(\mathbf{q},\mathbf{d}_1) = \cos(\mathbf{q},\mathbf{d}_5) = 0.
+\end{align*}
+注意一个值得深思的现象：从人类语义直觉来看，$d_1$（《罗密欧与朱丽叶》）与悲剧死亡和匕首（\lcinline{die, dagger}）高度相关，理应排在谈论新罕布什尔州格言的 $d_4$ 之前；但 TF-IDF 却给出了 $\cos(\mathbf{q},\mathbf{d}_1)=0$。
+\end{example}
+
+\subsection{独热与稀疏符号表示的根本局限}
+
+\cref{eg:romeo-tfidf} 揭示了独热（one-hot）及基于词袋的向量空间模型的两大根本缺陷：
+\begin{enumerate}
+  \item \textbf{高维稀疏性}：词表大小 $|V|$ 动辄数十万甚至上百万，每篇文档仅包含其中极小一部分词，向量中绝大多数元素为零，带来高昂的存储与计算开销；
+  \item \textbf{语义正交性与词汇鸿沟（vocabulary mismatch）}：在独热空间中，任意两个不同词项对应相互垂直的坐标轴（内积恒为 $0$）。模型无法自动识别同义词（如医学检索中的“emergency room”与“emergency service, hospital”）或强语义关联词（如 \lcinline{romeo, juliet} 与 \lcinline{dagger, die}），只要查询词与文档词在字面上不重合，相似度便骤降为零。
+\end{enumerate}
+
+% ====================================================================
+\section{分布式表示与潜在语义索引（LSI）}\label{sec:distributed-lsi}
+% ====================================================================
+
+\subsection{分布式语义假设与两类共现建模}
+
+为了跨越词汇鸿沟，现代文本表示将单词和文档映射到低维、稠密的\textbf{潜在语义空间（latent space）}中，称为\textbf{分布式表示（distributed representation）}：每个维度不再对应单个显式词项，而是综合编码了隐含的语义特征，语义相近的词或文档在该空间中距离更近。
+
+学习分布式表示的理论基石是语言学中的\textbf{分布式假设（distributional hypothesis）}——词的语义由其出现的上下文所决定（\emph{``The meaning of a word lies in its use''}）。例如，即便从未见过生造词“bardiwac”，只要反复观察到它与“杯子”“牛肉菜肴”“喝醉”“葡萄”“深红色”共同出现，便能推断它指代某种红葡萄酒。
+
+根据统计“上下文”粒度的不同，分布式假设衍生出两类经典的共现建模范式，见\cref{tab:cooccurrence-paradigms}。
+
+\begin{table}[htbp]
+  \centering
+  \small
+  \caption{分布式假设的两种共现建模范式对比}\label{tab:cooccurrence-paradigms}
+  \begin{tabular}{>{\raggedright\arraybackslash}p{2.4cm}>{\raggedright\arraybackslash}p{3.4cm}>{\raggedright\arraybackslash}p{3.6cm}>{\raggedright\arraybackslash}p{3.8cm}}
+    \toprule
+    建模范式 & 共现矩阵形态 & 代表模型 & 捕获的语义关系与适用场景 \\
+    \midrule
+    文档内共现 & 词--文档矩阵 $\mathbf{D}\in\mathbb{R}^{M\times N}$ & 主题模型（LSI、NMF、PLSI、LDA） & 主题相关性（如“费曼”与“量子”“电动力学”）；适合长文本与文档检索 \\
+    上下文窗口共现 & 词--词共现矩阵 $\mathbf{C}\in\mathbb{R}^{M\times M}$ & 词嵌入模型（Word2Vec、GloVe） & 聚合/句法替代关系（如“费曼”与“爱因斯坦”“玻尔”）；适合细粒度词义与短文本 \\
+    \bottomrule
+  \end{tabular}
+\end{table}
+
+\subsection{奇异值分解与最佳低秩近似}
+
+\textbf{潜在语义索引（Latent Semantic Indexing, LSI）}（亦称潜在语义分析，LSA，由 Deerwester 等人于 1990 年提出）是最早的基于矩阵分解的主题模型。其核心思想是：观测到的词--文档矩阵 $\mathbf{D}\in\mathbb{R}^{M\times N}$（元素可为词频或 TF-IDF，其中 $M=|V|$ 为词表大小，$N$ 为文档数）可以视作“真实低秩概念--文档矩阵”叠加“词项选择随机噪声”的结果。通过求解 $\mathbf{D}$ 的低秩近似，即可滤除字面选择噪声、提取出 $K$ 个潜在语义方向（话题）。
+
+回顾线性代数中的\textbf{奇异值分解（Singular Value Decomposition, SVD）}：设 $\mathrm{rank}(\mathbf{D})=r \le \min(M,N)$，则存在列正交矩阵 $\mathbf{U}=[\mathbf{u}_1,\dots,\mathbf{u}_r]\in\mathbb{R}^{M\times r}$（满足 $\mathbf{U}^\top\mathbf{U}=\mathbf{I}_r$）、列正交矩阵 $\mathbf{V}=[\mathbf{v}_1,\dots,\mathbf{v}_r]\in\mathbb{R}^{N\times r}$（满足 $\mathbf{V}^\top\mathbf{V}=\mathbf{I}_r$）以及对角阵 $\boldsymbol{\Sigma}=\mathrm{diag}(\sigma_1,\dots,\sigma_r)$（其中奇异值按降序排列 $\sigma_1\ge\sigma_2\ge\cdots\ge\sigma_r>0$），使得
+\begin{equation}\label{eq:svd}
+\mathbf{D} = \mathbf{U}\boldsymbol{\Sigma}\mathbf{V}^\top = \sum_{i=1}^{r} \sigma_i \mathbf{u}_i \mathbf{v}_i^\top.
+\end{equation}
+仅保留前 $K$ 个最大奇异值（$K \ll r$，工程中常取 $K\in[50,500]$）并将后 $r-K$ 个奇异值置零，即得到\textbf{截断奇异值分解（Truncated SVD）}：
+\begin{equation}\label{eq:truncated-svd}
+\mathbf{D}_K = \mathbf{U}_K \boldsymbol{\Sigma}_K \mathbf{V}_K^\top = \sum_{i=1}^{K} \sigma_i \mathbf{u}_i \mathbf{v}_i^\top,
+\end{equation}
+其中 $\mathbf{U}_K\in\mathbb{R}^{M\times K}$、$\boldsymbol{\Sigma}_K=\mathrm{diag}(\sigma_1,\dots,\sigma_K)$、$\mathbf{V}_K\in\mathbb{R}^{N\times K}$。截断 SVD 的矩阵分块结构如\cref{fig:lsi-svd}所示。
+
+\lcfigure[
+  caption={截断奇异值分解（LSI）的低秩近似结构：保留前 $K$ 个主奇异值对应的语义子空间，舍弃尾部噪声分量},
+  label={fig:lsi-svd},
+  placement=htbp
+]{ch07-lsi-svd}
+
+为什么截断尾部小奇异值恰好是最优的降维去噪策略？这由经典的 Eckart--Young--Mirsky 定理所保证。
+
+\begin{theorem}[Eckart--Young--Mirsky 低秩逼近定理]\label{thm:eym}
+设矩阵 $\mathbf{D}\in\mathbb{R}^{M\times N}$ 的奇异值分解为 $\mathbf{D}=\mathbf{U}\boldsymbol{\Sigma}\mathbf{V}^\top$，其中 $\sigma_1\ge\sigma_2\ge\cdots\ge\sigma_r>0$。对任意 $1\le K\le r$，截断奇异值分解 $\mathbf{D}_K = \mathbf{U}_K\boldsymbol{\Sigma}_K\mathbf{V}_K^\top$ 是如下优化问题的全局最优解：
+\[
+\mathbf{D}_K \in \argmin_{\mathrm{rank}(\mathbf{Z})\le K} \|\mathbf{D} - \mathbf{Z}\|_F,
+\]
+且最小 Frobenius 范数重构误差满足
+\[
+\|\mathbf{D} - \mathbf{D}_K\|_F^2 = \sum_{i=K+1}^{r} \sigma_i^2.
+\]
+\end{theorem}
+\begin{proof}[重构误差公式的验证]
+由于 Frobenius 范数满足正交不变性，即对任意列正交矩阵 $\mathbf{U}, \mathbf{V}$ 有 $\|\mathbf{U}\mathbf{A}\mathbf{V}^\top\|_F = \|\mathbf{A}\|_F$，故
+\[
+\|\mathbf{D} - \mathbf{D}_K\|_F^2
+= \|\mathbf{U}(\boldsymbol{\Sigma} - \tilde{\boldsymbol{\Sigma}}_K)\mathbf{V}^\top\|_F^2
+= \|\boldsymbol{\Sigma} - \tilde{\boldsymbol{\Sigma}}_K\|_F^2
+= \sum_{i=K+1}^{r} \sigma_i^2,
+\]
+其中 $\tilde{\boldsymbol{\Sigma}}_K=\mathrm{diag}(\sigma_1,\dots,\sigma_K,0,\dots,0)$。另一方面，由奇异值的极小极大性质（Weyl 不等式），任意秩不超过 $K$ 的矩阵 $\mathbf{Z}$ 与 $\mathbf{D}$ 之差的第 $j$ 个奇异值至少为 $\sigma_{K+j}(\mathbf{D})$，因此 $\|\mathbf{D}-\mathbf{Z}\|_F^2 = \sum_{j=1}^{r-K}\sigma_j^2(\mathbf{D}-\mathbf{Z}) \ge \sum_{i=K+1}^r \sigma_i^2$，从而 $\mathbf{D}_K$ 达到全局最优。
+\end{proof}
+
+从统计与物理视角看，奇异值 $\sigma_i$ 的平方对应数据在第 $i$ 个主方向上的“方差”或“能量”：大奇异值对应的方向承载语料库的主干语义结构，而小奇异值对应的微弱波动往往源自具体用词差异与随机噪声。因此，截断小奇异值同时实现了\textbf{降维压缩}与\textbf{语义去噪}。
+
+\subsection{LSI 算法、查询投影与语义泛化效果}
+
+在截断 SVD $\mathbf{D}_K = \mathbf{U}_K \boldsymbol{\Sigma}_K \mathbf{V}_K^\top$ 中，左右奇异向量具有对称的语义解释：
+\begin{itemize}
+  \item $\mathbf{U}_K\in\mathbb{R}^{M\times K}$ 的第 $k$ 列 $\mathbf{u}_k$ 表示第 $k$ 个潜在主题在词表上的加权分布；而 $\mathbf{U}_K$ 的第 $m$ 行（或缩放后的 $\mathbf{U}_K\boldsymbol{\Sigma}_K$ 的第 $m$ 行）给出第 $m$ 个词项在 $K$ 维潜在语义空间中的稠密向量；
+  \item $\mathbf{V}_K^\top\in\mathbb{R}^{K\times N}$ 的第 $n$ 列（或缩放后的 $\boldsymbol{\Sigma}_K\mathbf{V}_K^\top$ 的第 $n$ 列）给出第 $n$ 篇文档在 $K$ 维潜在语义空间中的稠密坐标。
+\end{itemize}
+
+当一个新查询向量 $\mathbf{q}\in\mathbb{R}^M$（采用与 $\mathbf{D}$ 相同的词表与加权方式）到达时，无需重新对整个语料矩阵做 SVD，可直接将其\textbf{折叠投影（fold-in）}到已学得的 $K$ 维语义空间：因为 $\mathbf{d}\approx \mathbf{U}_K\boldsymbol{\Sigma}_K\mathbf{v}_d$，两侧左乘 $\boldsymbol{\Sigma}_K^{-1}\mathbf{U}_K^\top$（利用 $\mathbf{U}_K^\top\mathbf{U}_K=\mathbf{I}_K$），可得查询 $\mathbf{q}$ 在 $\mathbf{V}_K$ 坐标系下的表示
+\begin{equation}\label{eq:lsi-foldin}
+\hat{\mathbf{q}} = \boldsymbol{\Sigma}_K^{-1}\mathbf{U}_K^\top \mathbf{q} \in \mathbb{R}^{K}.
+\end{equation}
+若文档坐标采用 $\tilde{\mathbf{d}}_n = (\boldsymbol{\Sigma}_K\mathbf{V}_K^\top)_{:,n} = \mathbf{U}_K^\top \mathbf{d}_n$，则相应查询坐标为 $\tilde{\mathbf{q}} = \mathbf{U}_K^\top \mathbf{q}$。两种约定在语义空间中均可通过余弦相似度对文档进行排序。
+
+\begin{algorithm}[潜在语义索引（LSI）建模与检索]\label{alg:lsi}
+  \alginput{文档集合 $\mathcal{D}=\{d_1,\dots,d_N\}$，词表 $V$（$|V|=M$），潜在语义维度 $K$，查询文本 $q$}
+  \algoutput{文档按潜在语义相关度降序排列的检索结果}
+  \begin{algsteps}
+    \State 构建词--文档共现矩阵 $\mathbf{D}\in\mathbb{R}^{M\times N}$（词频或 TF-IDF 权重）
+    \State 对 $\mathbf{D}$ 执行奇异值分解 $\mathbf{D}=\mathbf{U}\boldsymbol{\Sigma}\mathbf{V}^\top$，并按 $\sigma_1\ge\sigma_2\ge\cdots\ge\sigma_r>0$ 降序排列
+    \State 截断保留前 $K$ 个奇异值，得到 $\mathbf{U}_K\in\mathbb{R}^{M\times K}$、$\boldsymbol{\Sigma}_K\in\mathbb{R}^{K\times K}$ 与 $\mathbf{V}_K\in\mathbb{R}^{N\times K}$
+    \State 将查询 $q$ 转换为原词空间向量 $\mathbf{q}\in\mathbb{R}^M$，按 \cref{eq:lsi-foldin} 投影至隐空间 $\hat{\mathbf{q}} \gets \boldsymbol{\Sigma}_K^{-1}\mathbf{U}_K^\top \mathbf{q}$
+    \For{$n = 1, \dots, N$}
+      \State 令 $\hat{\mathbf{d}}_n$ 为 $\mathbf{V}_K$ 的第 $n$ 行转置，计算余弦相似度 $s_n \gets \cos(\hat{\mathbf{q}}, \hat{\mathbf{d}}_n)$
+    \EndFor
+    \State 按 $s_n$ 从高到低对文档排序并输出
+  \end{algsteps}
+\end{algorithm}
+
+回到\cref{eg:romeo-tfidf}中的 Romeo 与 Juliet 检索场景：在 $K=2$ 维 LSI 隐空间中，由于 \lcinline{romeo}、\lcinline{juliet}、\lcinline{dagger} 与 \lcinline{die} 通过 $d_1,d_2,d_3$ 形成了间接共现链条（$d_1$ 连接 \lcinline{romeo} 与 \lcinline{juliet}，$d_2$ 连接 \lcinline{juliet} 与 \lcinline{dagger}，$d_3$ 连接 \lcinline{romeo}、\lcinline{die} 与 \lcinline{dagger}），截断 SVD 将这三篇悲剧文档聚集在同一语义象限，而将讨论地名的 $d_4,d_5$ 推向另一方向。此时针对查询 \lcinline{die dagger}，检索排序由原来的 $d_3>d_2>d_4>d_1>d_5$ 修正为 $d_3>d_1>d_2>d_4>d_5$，成功让不含任何查询字面的 $d_1$ 跃升至 $d_4$ 之前。类似地，在 Deerwester 等人的经典技术备忘录实验中（5 篇人机交互标题 $c_1\text{--}c_5$ 与 4 篇图论数学标题 $m_1\text{--}m_4$），原始词频空间下 $c_1$ 与 $c_3$、$c_4$ 的相似度接近 $0$，而在 $K=2$ 维 LSI 空间中，同类文档内部余弦相似度跃升至 $0.81\text{--}1.00$，跨类文档相似度变为负值，语义聚类边界一目了然。
+
+\begin{method}[LSI 的优势与局限评析]\label{met:lsi-pros-cons}
+\begin{itemize}
+  \item \textbf{优势}：数学理论严谨（最优 Frobenius 低秩近似）；能有效缓解同义词引起的词汇鸿沟；低维稠密表示显著降低下游检索与聚类开销。
+  \item \textbf{局限}：（1）分解结果 $\mathbf{U}_K, \mathbf{V}_K$ 及重构矩阵 $\mathbf{D}_K$ 中普遍存在\textbf{负值}，无法直接解释为“文档属于某主题的概率比例”；（2）对 $M\times N$ 矩阵（设 $N<M$）执行完整 SVD 的时间复杂度高达 $O(MN^2)$，在大规模动态语料上更新代价昂贵；（3）潜在维度 $K$ 需要人工凭经验或验证集选取。
+\end{itemize}
+正是为了克服负值不可解释的缺陷，后续发展出了非负矩阵分解（NMF）以及基于概率生成模型的潜在狄利克雷分配（LDA）等现代主题模型。
+\end{method}
+
+\cref{lst:sklearn-lsi} 展示了使用 \lcinline{scikit-learn} 中的 \lcinline{TruncatedSVD}（采用随机化 SVD 算法，适用于大规模稀疏矩阵）实现 LSI 语义检索的简洁代码。
+
+\begin{codeblock}[language=Python, caption={基于 scikit-learn 的 LSI 潜在语义检索实现}, label={lst:sklearn-lsi}]
+import numpy as np
+from sklearn.decomposition import TruncatedSVD
+from sklearn.feature_extraction.text import TfidfVectorizer
+from sklearn.metrics.pairwise import cosine_similarity
+
+docs = [
+    "Romeo and Juliet.",
+    "Juliet: O happy dagger!",
+    "Romeo died by dagger.",
+    "Live free or die, that is New-Hampshire motto.",
+    "Did you know, New-Hampshire is in New-England.",
+]
+
+# 1. 构建 TF-IDF 文档-词矩阵 (N x M)
+vectorizer = TfidfVectorizer(stop_words="english")
+X_tfidf = vectorizer.fit_transform(docs)
+
+# 2. 截断 SVD 提取 K=2 维潜在语义表示 (对应 V_K * Sigma_K)
+lsi = TruncatedSVD(n_components=2, random_state=42)
+X_lsi = lsi.fit_transform(X_tfidf)
+
+# 3. 将新查询投影到同一语义空间并计算余弦相似度
+q_vec = vectorizer.transform(["die dagger"])
+q_lsi = lsi.transform(q_vec)
+scores = cosine_similarity(q_lsi, X_lsi)[0]
+
+for idx in np.argsort(scores)[::-1]:
+    print(f"d{idx+1}: score={scores[idx]:.3f} | {docs[idx]}")
+\end{codeblock}
+
+\begin{summary}[本章核心要点回顾]\label{sum:ch07}
+\begin{enumerate}
+  \item \textbf{中文预处理}：中文无显式词界，分词需重点克服未登录词与交集型/组合型切分歧义；结合停用词过滤与倒排索引构成文本分析基础设施。
+  \item \textbf{朴素贝叶斯}：基于条件独立与位置无关（词袋）假设，通过拉普拉斯平滑消除零概率、对数求和避免浮点下溢，以线性时间复杂度实现稳健的线性文本分类器。
+  \item \textbf{向量空间与 TF-IDF}：以词频刻画局部重要性、以逆文档频率刻画全局区分度，配合余弦相似度消除文档长度偏置；但高维稀疏与坐标轴正交性导致词汇鸿沟。
+  \item \textbf{分布式表示与 LSI}：基于分布式假设，利用截断 SVD 求解词--文档矩阵的最佳低秩近似（Eckart--Young--Mirsky 定理），在低维稠密语义空间中实现去噪与跨词面语义匹配。
+\end{enumerate}
+\end{summary}

@@ -1,0 +1,51 @@
+\begin{tikzpicture}[
+  font=\small,
+  kept/.style={draw=lc-def, fill=lc-def!16, line width=0.8pt},
+  dropped/.style={draw=lc-note, fill=lc-note!10, dashed, line width=0.6pt},
+  mat/.style={draw=lc-ink, fill=lc-subtle, line width=0.8pt},
+  dim/.style={font=\scriptsize, text=lc-note}
+]
+  % Matrix D (M x N)
+  \draw[mat] (0,0) rectangle (2.1,3.0);
+  \node[text=lc-ink] at (1.05,1.5) {$\mathbf{D}$};
+  \node[dim, left=2mm] at (0,1.5) {$M$ 词};
+  \node[dim, above=1mm] at (1.05,3.0) {$N$ 文档};
+
+  % Approx symbol
+  \node[text=lc-ink] at (2.6,1.5) {$\approx$};
+
+  % Matrix U (M x r), kept K
+  \draw[kept] (3.1,0) rectangle (4.0,3.0);
+  \draw[dropped] (4.0,0) rectangle (4.7,3.0);
+  \node[text=lc-def] at (3.55,1.5) {$\mathbf{U}_K$};
+  \node[dim, above=1mm] at (3.55,3.0) {$K$};
+  \node[dim, above=1mm] at (4.35,3.0) {$r{-}K$};
+  \draw[lc-force, line width=1.1pt] (3.1,2.2) -- (4.0,2.2);
+  \node[dim, text=lc-force, below=3mm, align=center] at (3.55,0) {每行：词的\\$K$ 维向量};
+
+  % Matrix Sigma (r x r), kept K x K
+  \draw[kept] (5.0,2.1) rectangle (5.9,3.0);
+  \draw[dropped] (5.9,1.4) rectangle (6.6,2.1);
+  \draw[dropped] (5.9,2.1) rectangle (6.6,3.0);
+  \draw[dropped] (5.0,1.4) rectangle (5.9,2.1);
+  \draw[lc-def, line width=1.0pt] (5.08,2.92) -- (5.82,2.18);
+  \draw[lc-note, dashed, line width=0.7pt] (5.98,2.02) -- (6.52,1.48);
+  \node[text=lc-def] at (5.45,2.55) {$\boldsymbol{\Sigma}_K$};
+  \node[dim, above=1mm] at (5.45,3.0) {$K$};
+  \node[dim, below=2mm, align=center] at (5.8,1.4) {保留最大 $K$ 个\\奇异值，其余置零};
+
+  % Matrix V^T (r x N), kept K x N
+  \draw[kept] (6.9,2.1) rectangle (9.0,3.0);
+  \draw[dropped] (6.9,1.4) rectangle (9.0,2.1);
+  \node[text=lc-def] at (7.95,2.55) {$\mathbf{V}_K^\top$};
+  \node[dim, above=1mm] at (7.95,3.0) {$N$ 文档};
+  \node[dim, right=1.5mm] at (9.0,2.55) {$K$};
+  \draw[lc-method, line width=1.1pt] (7.55,2.1) -- (7.55,3.0);
+  \node[dim, text=lc-method, below=3mm, align=center] at (7.95,1.4) {每列：文档的\\$K$ 维语义坐标};
+
+  % Legend
+  \draw[kept] (0.0,-1.1) rectangle (0.45,-0.8);
+  \node[dim, right=1.5mm] at (0.45,-0.95) {保留的低秩语义子空间（秩 $K$）};
+  \draw[dropped] (4.8,-1.1) rectangle (5.25,-0.8);
+  \node[dim, right=1.5mm] at (5.25,-0.95) {截断舍弃的噪声分量};
+\end{tikzpicture}

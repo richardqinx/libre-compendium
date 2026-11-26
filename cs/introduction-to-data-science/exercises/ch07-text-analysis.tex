@@ -1,0 +1,257 @@
+% libre-compendium
+%
+% Copyright (C) 2026 Richard Qin
+%
+% This document is dual-licensed under either:
+% - GNU Free Documentation License, Version 1.3 or any later version
+%   published by the Free Software Foundation; with no Invariant Sections,
+%   no Front-Cover Texts, and no Back-Cover Texts (see COPYING.DOC); or
+% - Creative Commons Attribution-ShareAlike 4.0 International License
+%   (see LICENSE-CC-BY-SA-4.0).
+\ProvidesFile{ch07-text-analysis.tex}[2026/11/26 v0.2.6 文本数据分析与文本表示习题]
+
+\section{文本数据分析与文本表示}
+
+\begin{exercise}[title={中文分词歧义辨析与倒排索引原理},level=basic,points=10,tags={中文分词,切分歧义,倒排索引}]\label{ex:ch07-seg-index}
+结合中文文本预处理的基本概念，回答下列问题：
+\begin{enumerate}
+  \item 判断“乒乓球拍卖完了”与“他明天起身去北京”中分别存在哪种切分歧义（交集型或组合型），并指出其中的交集串或组合词。
+  \item 简述 \lcinline{jieba} 分词的精确模式、全模式与搜索引擎模式各自的特点与适用场景；添加自定义词典主要解决哪类分词难题？
+  \item 简述为什么搜索引擎使用倒排索引执行多关键词 AND 查询比逐篇扫描原始文档高效得多。
+\end{enumerate}
+\begin{answer}
+(1) 前者为交集型切分歧义（交集串为“拍”）；后者为组合型切分歧义（组合词为“起身”）。
+(2) 精确模式适合文本分析，全模式扫描所有可能成词但不能消歧，搜索引擎模式对长词再切分以提高召回率；自定义词典主要解决领域未登录词（OOV）识别难题。
+(3) 倒排索引将文档扫描转化为少数词项倒排表的求交运算，时间复杂度只与命中文档数相关而无需遍历全部语料。
+\end{answer}
+\begin{solution}
+\begin{enumerate}
+  \item 在“乒乓球拍卖完了”中，汉字串“乒乓球拍卖”满足 $A=\text{“乒乓球”}$、$J=\text{“拍”}$、$B=\text{“卖”}$，且 $AJ=\text{“乒乓球拍”}$ 与 $JB=\text{“拍卖”}$ 同为合法词，因此属于\textbf{交集型切分歧义}，交集串为“拍”。在“他明天起身去北京”中，“起”“身”与“起身”同时为合法词（对比“他站起身来”中的“站 / 起 / 身 / 来”），因此“起身”构成\textbf{组合型切分歧义}。
+  \item \lcinline{jieba} 的\textbf{精确模式}寻找最合理的单一词序列，适合分类、情感分析与词频统计；\textbf{全模式}穷举所有可成词片段，速度快但存在大量重叠冗余，不能消歧；\textbf{搜索引擎模式}在精确模式基础上对长词进一步细粒度切分，兼顾召回率，适合构建倒排索引。通用词典无法穷尽专有名词与领域新词，使用 \lcinline{load\_userdict} 或 \lcinline{add\_word} 添加自定义词典主要解决\textbf{未登录词（OOV）}切分错误的问题。
+  \item 逐篇线性扫描需要遍历语料库中的所有文档及全部词项，复杂度与总语料字数成正比；而倒排索引预先建立了“词项 $\to$ 文档编号集合”的哈希或有序映射，多关键词 AND 查询只需取出对应词项的倒排表并求交集（通常从最短的倒排表出发），大幅跳过不含查询词的海量无关文档。
+\end{enumerate}
+\end{solution}
+\end{exercise}
+
+\begin{exercise}[title={朴素贝叶斯独立性假设、平滑与对数技巧},level=basic,points=10,tags={朴素贝叶斯,拉普拉斯平滑,词袋假设}]\label{ex:ch07-nb-concepts}
+关于多项式朴素贝叶斯文本分类器，回答下列问题：
+\begin{enumerate}
+  \item 分别举一个中文短句实例，说明“条件独立假设”与“位置无关假设”在自然语言中并不成立。
+  \item 解释为什么在参数估计中需要引入拉普拉斯平滑，以及在预测阶段为什么要将条件概率连乘改写为对数求和。
+  \item 既然条件独立假设在文本中常被严重违背，为何朴素贝叶斯在文本分类中依然经常取得较高的分类准确率？
+\end{enumerate}
+\begin{answer}
+(1) 例：“北京”与“首都”高度共现（违背条件独立）；“猫抓老鼠”与“老鼠抓猫”语义相反（违背位置无关）。
+(2) 拉普拉斯平滑避免未出现词导致零概率吞噬其余证据；对数求和避免长文档多概率连乘引起的浮点下溢。
+(3) 分类任务只需正确排序各类得分，条件独立违背虽会导致概率估计极端化（校准差），但通常不颠覆最优类别的排序。
+\end{answer}
+\begin{solution}
+\begin{enumerate}
+  \item \textbf{违背条件独立}：在新闻类别下，“人工”与“智能”或“北京”与“首都”并非条件独立，前者出现会显著提高后者出现的概率。\textbf{违背位置无关}：中文语序决定语义角色，例如“狗咬人”与“人咬狗”或“不很好”与“很不好”包含完全相同的词袋，但语义与情感极性截然不同。
+  \item \textbf{拉普拉斯平滑}：若词 $t$ 在训练集某类 $c$ 中出现次数 $T_{ct}=0$，最大似然估计会给出 $\hat{P}(t\mid c)=0$；一旦测试文档含 $t$，连乘后该类后验概率直接归零（对数空间为 $-\infty$），使其他强证据全部失效。加一平滑保证所有词表词项的条件概率严格为正。\textbf{对数求和}：多个介于 $(0,1)$ 之间的条件概率连乘会随文档长度呈指数衰减，迅速低于 IEEE-754 浮点数下限而下溢为 $0$；取对数将乘法化为加法，既防止下溢，又因对数严格单调递增而保持 $\argmax$ 不变。
+  \item 违背条件独立假设会使相关词的分类证据被重复计算，导致估计的后验概率偏向 $0$ 或 $1$（概率校准不佳）。然而分类决策仅依赖各类后验概率的相对大小（排序），只要重复计分不至于把错误类别推到正确类别之上，分类结果依然正确；此外朴素贝叶斯在词频空间等价于低方差线性分类器，不易在高维稀疏词空间中过拟合。
+\end{enumerate}
+\end{solution}
+\end{exercise}
+
+\begin{exercise}[title={多项式朴素贝叶斯参数估计与分类手算},level=standard,points=15,tags={朴素贝叶斯,最大后验,手算}]\label{ex:ch07-nb-calc}
+设有如下 $N=4$ 篇训练文档，类别为 $c=\text{China}$ 与 $\bar{c}=\text{Not China}$：
+\begin{center}
+\small
+\begin{tabular}{clc}
+\toprule
+文档 & 词项序列 & 类别 \\
+\midrule
+$d_1$ & \lcinline{Chinese Beijing Chinese} & $c$ \\
+$d_2$ & \lcinline{Chinese Chinese Shanghai} & $c$ \\
+$d_3$ & \lcinline{Chinese Macao} & $c$ \\
+$d_4$ & \lcinline{Tokyo Japan Chinese} & $\bar{c}$ \\
+\bottomrule
+\end{tabular}
+\end{center}
+\begin{enumerate}
+  \item 写出词表 $V$、两类先验概率 $\hat{P}(c)$ 与 $\hat{P}(\bar{c})$，以及拉普拉斯平滑（$\alpha=1$）下各词的条件概率。
+  \item 对测试文档 $d_{\mathrm{test}} = \text{``Beijing Tokyo Japan''}$，计算两类的未归一化后验概率并给出分类结果。
+  \item 若不采用拉普拉斯平滑而直接使用最大似然估计，对 $d_{\mathrm{test}}$ 预测会出现什么异常？
+\end{enumerate}
+\begin{answer}
+(1) $|V|=6$，$\hat{P}(c)=3/4$，$\hat{P}(\bar{c})=1/4$；$c$ 类中 \lcinline{Beijing} 为 $1/7$，\lcinline{Tokyo, Japan} 为 $1/14$；$\bar{c}$ 类中 \lcinline{Beijing} 为 $1/9$，\lcinline{Tokyo, Japan} 为 $2/9$。
+(2) $\hat{P}(c\mid d_{\mathrm{test}})\propto 3/5488\approx 5.47\times 10^{-4}$，$\hat{P}(\bar{c}\mid d_{\mathrm{test}})\propto 1/729\approx 1.37\times 10^{-3}$，判为 $\bar{c}$（Not China）。
+(3) 两类未归一化后验概率均为 $0$，无法作出有效分类决策。
+\end{answer}
+\begin{solution}
+\begin{enumerate}
+  \item 词表 $V=\{\text{Chinese},\text{Beijing},\text{Shanghai},\text{Macao},\text{Tokyo},\text{Japan}\}$，大小 $|V|=6$。
+  先验概率为 $\hat{P}(c)=3/4$，$\hat{P}(\bar{c})=1/4$。
+  类别 $c$ 总词次 $T_c=8$，分母 $T_c+|V|=14$：
+  \[
+    \hat{P}(\text{Chinese}\mid c)=\frac{5+1}{14}=\frac{3}{7},\quad
+    \hat{P}(\text{Beijing}\mid c)=\hat{P}(\text{Shanghai}\mid c)=\hat{P}(\text{Macao}\mid c)=\frac{1+1}{14}=\frac{1}{7},
+  \]
+  \[
+    \hat{P}(\text{Tokyo}\mid c)=\hat{P}(\text{Japan}\mid c)=\frac{0+1}{14}=\frac{1}{14}.
+  \]
+  类别 $\bar{c}$ 总词次 $T_{\bar{c}}=3$，分母 $T_{\bar{c}}+|V|=9$：
+  \[
+    \hat{P}(\text{Chinese}\mid \bar{c})=\hat{P}(\text{Tokyo}\mid \bar{c})=\hat{P}(\text{Japan}\mid \bar{c})=\frac{1+1}{9}=\frac{2}{9},
+  \]
+  \[
+    \hat{P}(\text{Beijing}\mid \bar{c})=\hat{P}(\text{Shanghai}\mid \bar{c})=\hat{P}(\text{Macao}\mid \bar{c})=\frac{0+1}{9}=\frac{1}{9}.
+  \]
+  \item 对 $d_{\mathrm{test}}=\text{``Beijing Tokyo Japan''}$：
+  \[
+    \hat{P}(c\mid d_{\mathrm{test}}) \propto \frac{3}{4}\cdot\frac{1}{7}\cdot\frac{1}{14}\cdot\frac{1}{14}
+    = \frac{3}{5488} \approx 5.466\times 10^{-4},
+  \]
+  \[
+    \hat{P}(\bar{c}\mid d_{\mathrm{test}}) \propto \frac{1}{4}\cdot\frac{1}{9}\cdot\frac{2}{9}\cdot\frac{2}{9}
+    = \frac{4}{2916} = \frac{1}{729} \approx 1.372\times 10^{-3}.
+  \]
+  由于 $1.372\times 10^{-3} > 5.466\times 10^{-4}$，分类器将 $d_{\mathrm{test}}$ 预测为 $\bar{c}$（Not China）。
+  \item 若不做平滑，则 $\hat{P}_{\mathrm{MLE}}(\text{Tokyo}\mid c)=\hat{P}_{\mathrm{MLE}}(\text{Japan}\mid c)=0$ 且 $\hat{P}_{\mathrm{MLE}}(\text{Beijing}\mid \bar{c})=0$。于是两类的未归一化后验概率同时坍缩为 $0$，分类器无法区分两类。
+\end{enumerate}
+\end{solution}
+\end{exercise}
+
+\begin{exercise}[title={Jaccard 相似度与 TF-IDF 余弦检索手算},level=standard,points=15,tags={Jaccard,TF-IDF,余弦相似度}]\label{ex:ch07-tfidf-calc}
+考虑包含 $N=4$ 篇英文短文档的语料库：
+\begin{itemize}
+  \item $d_1$: \lcinline{data science math}
+  \item $d_2$: \lcinline{data mining data}
+  \item $d_3$: \lcinline{math algebra}
+  \item $d_4$: \lcinline{physics chemistry}
+\end{itemize}
+给定关键词查询 $q=\text{``data math''}$。
+\begin{enumerate}
+  \item 计算文档 $d_1$ 与 $d_2$ 之间的 Jaccard 相似度。
+  \item 采用原始词频 $\mathrm{tf}(t,d)=c(t,d)$ 与 $\mathrm{idf}(t)=\log_2\!\left(N/\mathrm{df}(t)\right)$，按词表顺序 $(\text{data},\text{science},\text{math},\text{mining},\text{algebra},\text{physics},\text{chemistry})$ 计算各词的 $\mathrm{idf}$ 值，并写出 $\mathbf{d}_1, \mathbf{d}_2, \mathbf{q}$ 的 TF-IDF 向量。
+  \item 分别计算余弦相似度 $\cos(\mathbf{q},\mathbf{d}_1)$ 与 $\cos(\mathbf{q},\mathbf{d}_2)$，比较两篇文档与查询的相关性排序。
+\end{enumerate}
+\begin{answer}
+(1) $\mathrm{Jaccard}(d_1,d_2)=1/4=0.25$。
+(2) $\mathrm{idf}(\text{data})=\mathrm{idf}(\text{math})=1$，其余各词 $\mathrm{idf}=2$；$\mathbf{d}_1=(1,2,1,0,0,0,0)^\top$，$\mathbf{d}_2=(2,0,0,2,0,0,0)^\top$，$\mathbf{q}=(1,0,1,0,0,0,0)^\top$。
+(3) $\cos(\mathbf{q},\mathbf{d}_1)=1/\sqrt{3}\approx 0.577 > \cos(\mathbf{q},\mathbf{d}_2)=1/2=0.500$，故 $d_1$ 排在 $d_2$ 之前。
+\end{answer}
+\begin{solution}
+\begin{enumerate}
+  \item 文档 $d_1$ 与 $d_2$ 的词项集合分别为 $A_1=\{\text{data},\text{science},\text{math}\}$ 和 $A_2=\{\text{data},\text{mining}\}$。交集 $A_1\cap A_2=\{\text{data}\}$（大小 $1$），并集 $A_1\cup A_2=\{\text{data},\text{science},\text{math},\text{mining}\}$（大小 $4$），故
+  \[
+    \mathrm{Jaccard}(d_1,d_2) = \frac{1}{4} = 0.25.
+  \]
+  \item 统计文档频率：$\mathrm{df}(\text{data})=2$、$\mathrm{df}(\text{math})=2$，其余 $5$ 个词的文档频率均为 $1$。因此
+  \[
+    \mathrm{idf}(\text{data})=\mathrm{idf}(\text{math})=\log_2\frac{4}{2}=1,\qquad
+    \mathrm{idf}(t)=\log_2\frac{4}{1}=2\quad (t\notin\{\text{data},\text{math}\}).
+  \]
+  乘以各自词频可得 TF-IDF 向量：
+  \[
+    \mathbf{d}_1 = (1, 2, 1, 0, 0, 0, 0)^\top,\quad
+    \mathbf{d}_2 = (2, 0, 0, 2, 0, 0, 0)^\top,\quad
+    \mathbf{q} = (1, 0, 1, 0, 0, 0, 0)^\top.
+  \]
+  \item 计算模长与内积：$\|\mathbf{q}\|_2=\sqrt{2}$，$\|\mathbf{d}_1\|_2=\sqrt{1+4+1}=\sqrt{6}$，$\|\mathbf{d}_2\|_2=\sqrt{4+4}=2\sqrt{2}$；且 $\mathbf{q}^\top\mathbf{d}_1 = 1\cdot 1 + 1\cdot 1 = 2$，$\mathbf{q}^\top\mathbf{d}_2 = 1\cdot 2 + 1\cdot 0 = 2$。因此
+  \[
+    \cos(\mathbf{q},\mathbf{d}_1) = \frac{2}{\sqrt{2}\cdot\sqrt{6}} = \frac{1}{\sqrt{3}} \approx 0.577, \qquad
+    \cos(\mathbf{q},\mathbf{d}_2) = \frac{2}{\sqrt{2}\cdot 2\sqrt{2}} = \frac{1}{2} = 0.500.
+  \]
+  尽管 $\mathbf{q}^\top\mathbf{d}_1 = \mathbf{q}^\top\mathbf{d}_2 = 2$，但 $d_1$ 同时命中了两个查询词且向量模长更短，故余弦相似度排序为 $d_1 > d_2$。
+\end{enumerate}
+\end{solution}
+\end{exercise}
+
+\begin{exercise}[title={LSI 截断 SVD 重构误差计算与折叠投影证明},level=advanced,points=20,tags={LSI,奇异值分解,低秩近似}]\label{ex:ch07-lsi-math}
+设词--文档矩阵 $\mathbf{D}\in\mathbb{R}^{100\times 50}$ 的非零奇异值为 $\sigma_1=6, \sigma_2=3, \sigma_3=2, \sigma_4=1$（其余奇异值为 $0$），其紧致 SVD 为 $\mathbf{D}=\mathbf{U}\boldsymbol{\Sigma}\mathbf{V}^\top$。
+\begin{enumerate}
+  \item 若使用 LSI 保留前 $K=2$ 个潜在语义维度得到低秩近似 $\mathbf{D}_2=\mathbf{U}_2\boldsymbol{\Sigma}_2\mathbf{V}_2^\top$，求最小重构误差 $\|\mathbf{D}-\mathbf{D}_2\|_F$ 以及前 $2$ 维保留的总能量占比 $\frac{\sigma_1^2+\sigma_2^2}{\|\mathbf{D}\|_F^2}$。
+  \item 证明：若采用 $\mathbf{V}_K$ 的行向量作为文档在隐空间中的坐标，将原语料中第 $n$ 篇文档的向量 $\mathbf{d}_n$ 代入折叠投影公式 $\hat{\mathbf{q}}=\boldsymbol{\Sigma}_K^{-1}\mathbf{U}_K^\top\mathbf{q}$，所得向量恰好等于 $\mathbf{V}_K$ 第 $n$ 行的转置。
+  \item 简述 LSI 模型的两项主要局限，并说明非负矩阵分解（NMF）或潜在狄利克雷分配（LDA）如何针对其中一项进行改进。
+\end{enumerate}
+\begin{answer}
+(1) $\|\mathbf{D}-\mathbf{D}_2\|_F = \sqrt{5} \approx 2.236$，保留能量占比为 $45/50 = 90\%$。
+(2) 利用 $\mathbf{d}_n=\mathbf{U}\boldsymbol{\Sigma}\mathbf{V}^\top\mathbf{e}_n$ 与 $\mathbf{U}_K^\top\mathbf{U}=[\mathbf{I}_K\;\mathbf{0}]$ 直接化简得 $\mathbf{V}_K^\top\mathbf{e}_n$。
+(3) 主要局限为分解因子含负值（缺乏概率/比例可解释性）以及大矩阵 SVD 计算与增量更新代价高；NMF 通过非负约束、LDA 通过概率生成分布赋予主题与文档清晰的非负比例解释。
+\end{answer}
+\begin{solution}
+\begin{enumerate}
+  \item 矩阵 $\mathbf{D}$ 的总 Frobenius 范数平方（总能量）为
+  \[
+    \|\mathbf{D}\|_F^2 = \sum_{i=1}^{4} \sigma_i^2 = 6^2 + 3^2 + 2^2 + 1^2 = 36 + 9 + 4 + 1 = 50.
+  \]
+  由 Eckart--Young--Mirsky 定理，截断保留 $K=2$ 维的最小重构误差为
+  \[
+    \|\mathbf{D}-\mathbf{D}_2\|_F = \sqrt{\sigma_3^2 + \sigma_4^2} = \sqrt{2^2 + 1^2} = \sqrt{5} \approx 2.236,
+  \]
+  前 $2$ 维保留的能量占比为 $\frac{36+9}{50}=\frac{45}{50}=90\%$。
+  \item 设 $\mathbf{e}_n\in\mathbb{R}^N$ 为第 $n$ 个标准基向量，则原矩阵第 $n$ 列可写为 $\mathbf{d}_n = \mathbf{D}\mathbf{e}_n = \mathbf{U}\boldsymbol{\Sigma}\mathbf{V}^\top\mathbf{e}_n$。由于 $\mathbf{U}=[\mathbf{U}_K\;\mathbf{U}_{\perp}]$ 列正交，有 $\mathbf{U}_K^\top\mathbf{U}_K=\mathbf{I}_K$ 且 $\mathbf{U}_K^\top\mathbf{U}_{\perp}=\mathbf{0}$，故
+  \[
+    \mathbf{U}_K^\top \mathbf{d}_n
+    = [\mathbf{I}_K \;\; \mathbf{0}]\,
+      \begin{bmatrix}\boldsymbol{\Sigma}_K & \mathbf{0}\\ \mathbf{0} & \boldsymbol{\Sigma}_{\perp}\end{bmatrix}
+      \begin{bmatrix}\mathbf{V}_K^\top \\ \mathbf{V}_{\perp}^\top\end{bmatrix}\mathbf{e}_n
+    = \boldsymbol{\Sigma}_K \mathbf{V}_K^\top \mathbf{e}_n.
+  \]
+  两边左乘 $\boldsymbol{\Sigma}_K^{-1}$ 即得
+  \[
+    \hat{\mathbf{d}}_n = \boldsymbol{\Sigma}_K^{-1}\mathbf{U}_K^\top \mathbf{d}_n = \mathbf{V}_K^\top \mathbf{e}_n,
+  \]
+  其正好是 $\mathbf{V}_K^\top$ 的第 $n$ 列，亦即 $\mathbf{V}_K$ 第 $n$ 行的转置。这说明折叠投影与已有文档的隐空间坐标完全自洽。
+  \item LSI 的两项主要局限：（a）奇异向量 $\mathbf{U}_K, \mathbf{V}_K$ 与低秩重构矩阵 $\mathbf{D}_K$ 中存在正负号，难以把某维坐标直接解释为“文档在某主题上的占比”或“某主题生成某词的概率”；（b）对大语料执行 SVD 计算开销高（复杂度 $O(MN\min(M,N))$），且新增大量文档时难以在线更新。针对可解释性问题，NMF 强制分解矩阵非负，使文档表示为若干主题的加性组合；LDA 则引入狄利克雷先验与多项分布，将每篇文档显式建模为各主题的概率混合分布。
+\end{enumerate}
+\end{solution}
+\end{exercise}
+
+\begin{exercise}[title={中文评论情感分类与 LSI 语义检索综合实践},level=advanced,points=20,tags={jieba,情感分析,TruncatedSVD}]\label{ex:ch07-pipeline-code}
+给定餐厅评论数据集 \lcinline{dianping.csv}，包含评论文本列 \lcinline{review} 与星级列 \lcinline{star}（约定 $4\text{--}5$ 星为正面标签 $1$，$1\text{--}3$ 星为负面标签 $0$）。请完成如下工程设计与编码任务：
+\begin{enumerate}
+  \item 说明为何必须先划分训练集与测试集，再将 \lcinline{CountVectorizer}（或 \lcinline{TfidfVectorizer}）放入 \lcinline{Pipeline} 中仅在训练集上调用 \lcinline{fit}。
+  \item 写出一段完整的 Python 代码，实现中文分词（\lcinline{jieba}）、停用词过滤、训练集/测试集划分，以及基于 \lcinline{MultinomialNB} 的情感分类与宏平均 $F_1$ 评估。
+  \item 在上述分词后的语料上，补充基于 \lcinline{TfidfVectorizer} 与 \lcinline{TruncatedSVD}（设 $K=20$）的 LSI 检索函数，使其输入任意中文查询字符串即可返回余弦相似度最高的 Top-3 评论。
+\end{enumerate}
+\begin{answer}
+(1) 若在全量数据上先拟合并构建词表与 IDF 权重，会将测试集词频分布与词表信息提前泄露给训练过程，导致评估指标虚高（数据泄漏）。
+(2)--(3) 见完整解答中的 \lcinline{Pipeline} 分类与 \lcinline{TruncatedSVD} 语义检索参考实现。
+\end{answer}
+\begin{solution}
+\begin{enumerate}
+  \item 文本向量化器会从语料中学习词表映射及全局文档频率 $\mathrm{df}(t)$。若在划分之前对全量数据执行 \lcinline{fit\_transform}，测试集的词项统计信息会渗入训练阶段，造成\textbf{数据泄漏（data leakage）}，破坏泛化评估的客观性。使用 \lcinline{Pipeline} 可保证向量化器严格仅在训练折上拟合。
+  \item 情感分类与评估参考实现如下：
+  \begin{quote}\ttfamily\small
+  import jieba, pandas as pd\\
+  from sklearn.model\_selection import train\_test\_split\\
+  from sklearn.feature\_extraction.text import CountVectorizer\\
+  from sklearn.naive\_bayes import MultinomialNB\\
+  from sklearn.pipeline import make\_pipeline\\
+  from sklearn.metrics import accuracy\_score, f1\_score\\[4pt]
+  df = pd.read\_csv("dianping.csv").dropna(subset=["review", "star"])\\
+  stopwords = \{"的", "了", "是", "在", "，", "。", "！", "？"\}\\
+  def seg(text):\\
+  \quad return " ".join(w for w in jieba.lcut(str(text)) if w.strip() and w not in stopwords)\\[4pt]
+  X = df["review"].map(seg)\\
+  y = (df["star"] > 3).astype(int)\\
+  X\_tr, X\_te, y\_tr, y\_te = train\_test\_split(X, y, test\_size=0.2, stratify=y, random\_state=42)\\[4pt]
+  clf = make\_pipeline(\\
+  \quad CountVectorizer(token\_pattern=r"(?u)\textbackslash b\textbackslash w+\textbackslash b"),\\
+  \quad MultinomialNB(alpha=1.0)\\
+  )\\
+  clf.fit(X\_tr, y\_tr)\\
+  y\_pred = clf.predict(X\_te)\\
+  print("Acc:", accuracy\_score(y\_te, y\_pred), "Macro-F1:", f1\_score(y\_te, y\_pred, average="macro"))
+  \end{quote}
+  \item 基于 \lcinline{TruncatedSVD} 的 LSI Top-3 检索参考实现如下：
+  \begin{quote}\ttfamily\small
+  import numpy as np\\
+  from sklearn.feature\_extraction.text import TfidfVectorizer\\
+  from sklearn.decomposition import TruncatedSVD\\
+  from sklearn.metrics.pairwise import cosine\_similarity\\[4pt]
+  tfidf = TfidfVectorizer(token\_pattern=r"(?u)\textbackslash b\textbackslash w+\textbackslash b")\\
+  svd = TruncatedSVD(n\_components=20, random\_state=42)\\
+  X\_lsi = svd.fit\_transform(tfidf.fit\_transform(X))\\[4pt]
+  def search\_top3(query):\\
+  \quad q\_lsi = svd.transform(tfidf.transform([seg(query)]))\\
+  \quad sims = cosine\_similarity(q\_lsi, X\_lsi)[0]\\
+  \quad top\_idx = np.argsort(sims)[::-1][:3]\\
+  \quad return [(float(sims[i]), df["review"].iloc[i]) for i in top\_idx]
+  \end{quote}
+\end{enumerate}
+\end{solution}
+\end{exercise}

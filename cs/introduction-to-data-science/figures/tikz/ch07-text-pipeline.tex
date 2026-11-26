@@ -1,0 +1,41 @@
+\begin{tikzpicture}[
+  node distance=6mm and 8mm,
+  box/.style={
+    rectangle, rounded corners=3pt,
+    draw=lc-def, fill=lc-def!8, line width=0.8pt,
+    minimum height=11mm, text width=24mm, align=center,
+    font=\small, text=lc-ink
+  },
+  branchA/.style={
+    rectangle, rounded corners=3pt,
+    draw=lc-method, fill=lc-method!8, line width=0.8pt,
+    minimum height=11mm, text width=28mm, align=center,
+    font=\small, text=lc-ink
+  },
+  branchB/.style={
+    rectangle, rounded corners=3pt,
+    draw=lc-thm, fill=lc-thm!8, line width=0.8pt,
+    minimum height=11mm, text width=28mm, align=center,
+    font=\small, text=lc-ink
+  },
+  arr/.style={-{Stealth[length=2.2mm]}, draw=lc-ink, line width=0.8pt},
+  lbl/.style={font=\scriptsize, text=lc-note, align=center}
+]
+  \node[box] (raw) {\textbf{原始文本语料}\\{\scriptsize 非结构化字符序列}};
+  \node[box, right=of raw] (prep) {\textbf{词法预处理}\\{\scriptsize 中文分词 / 去停用词}};
+
+  \node[branchA, above right=5mm and 10mm of prep] (sparse) {\textbf{高维稀疏表示}\\{\scriptsize 词袋模型 / TF-IDF}};
+  \node[branchA, right=9mm of sparse] (taskA) {\textbf{符号匹配与分类}\\{\scriptsize 朴素贝叶斯 / 精确检索}};
+
+  \node[branchB, below right=5mm and 10mm of prep] (dense) {\textbf{低维稠密表示}\\{\scriptsize 截断 SVD / LSI 隐空间}};
+  \node[branchB, right=9mm of dense] (taskB) {\textbf{潜在语义分析}\\{\scriptsize 语义检索 / 主题发现}};
+
+  \draw[arr] (raw) -- (prep);
+  \draw[arr] (prep.east) -- ++(4mm,0) |- (sparse.west);
+  \draw[arr] (prep.east) -- ++(4mm,0) |- (dense.west);
+  \draw[arr] (sparse) -- (taskA);
+  \draw[arr] (dense) -- (taskB);
+
+  \node[lbl, above=1.5mm of sparse] {维度 $|V|$，词项正交};
+  \node[lbl, below=1.5mm of dense] {维度 $K \ll |V|$，捕获共现语义};
+\end{tikzpicture}
