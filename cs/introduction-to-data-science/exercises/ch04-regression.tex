@@ -1,0 +1,201 @@
+% libre-compendium
+%
+% Copyright (C) 2026 Richard Qin
+%
+% This document is dual-licensed under either:
+% - GNU Free Documentation License, Version 1.3 or any later version
+%   published by the Free Software Foundation; with no Invariant Sections,
+%   no Front-Cover Texts, and no Back-Cover Texts (see COPYING.DOC); or
+% - Creative Commons Attribution-ShareAlike 4.0 International License
+%   (see LICENSE-CC-BY-SA-4.0).
+\ProvidesFile{ch04-regression.tex}[2026/11/26 v0.2.3 第四章习题]
+\section{数据建模与回归分析}
+
+\begin{exercise}[title={常数模型在 MSE 与 MAE 下的异常值对比},level=basic,points=12,tags={常数模型,MSE,MAE,鲁棒性}]
+考察两组观测数据：$D_1 = \{20, 21, 22, 29, 33\}$ 与含异常值的数据集 $D_2 = \{20, 21, 22, 29, 200\}$。
+\begin{enumerate}
+  \item 分别计算常数模型 $\hat{y} = \theta$ 在 $D_1$ 与 $D_2$ 上最小化 MSE 与 MAE 时的最优参数估计 $\hat{\theta}$ 及其最小损失值；
+  \item 若观测数据增加一个样本变为 $D_3 = \{20, 21, 22, 29, 33, 35\}$，证明常数模型在 MAE 下的最优估计 $\hat{\theta}$ 不唯一，且闭区间 $[22, 29]$ 内任意取值均取得相同的最小 MAE。
+\end{enumerate}
+\begin{answer}
+（1）$D_1$：$\hat{\theta}_{\mathrm{MSE}}=25$（$\mathrm{MSE}=26.0$），$\hat{\theta}_{\mathrm{MAE}}=22$（$\mathrm{MAE}=4.2$）；$D_2$：$\hat{\theta}_{\mathrm{MSE}}=58.4$（$\mathrm{MSE}=5023.44$），$\hat{\theta}_{\mathrm{MAE}}=22$（$\mathrm{MAE}=37.6$）。（2）对任意 $\theta\in[22,29]$，左侧 $3$ 点贡献 $\theta-y_i$、右侧 $3$ 点贡献 $y_i-\theta$，变量 $\theta$ 恰好全部抵消，故 $\mathrm{MAE}(\theta)$ 恒为常数 $17/3\approx 5.67$。
+\end{answer}
+\begin{solution}
+\begin{enumerate}
+  \item 对 $D_1 = \{20, 21, 22, 29, 33\}$：
+  \[\begin{aligned}
+    \hat{\theta}_{\mathrm{MSE}} &= \frac{20+21+22+29+33}{5} = 25, &
+    \mathrm{MSE}(25) &= \frac{25+16+9+16+64}{5} = 26.0,\\
+    \hat{\theta}_{\mathrm{MAE}} &= \mathrm{median}(D_1) = 22, &
+    \mathrm{MAE}(22) &= \frac{2+1+0+7+11}{5} = 4.2.
+  \end{aligned}\]
+  对含离群点的 $D_2 = \{20, 21, 22, 29, 200\}$：
+  \[\begin{aligned}
+    \hat{\theta}_{\mathrm{MSE}} &= \frac{292}{5} = 58.4, &
+    \mathrm{MSE}(58.4) &= \frac{38.4^2+37.4^2+36.4^2+29.4^2+141.6^2}{5} = 5023.44,\\
+    \hat{\theta}_{\mathrm{MAE}} &= \mathrm{median}(D_2) = 22, &
+    \mathrm{MAE}(22) &= \frac{2+1+0+7+178}{5} = 37.6.
+  \end{aligned}\]
+  可见单个极端值将 MSE 估计从 $25$ 剧烈拉偏至 $58.4$，而 MAE 估计纹丝不动，充分体现了 $L_1$ 损失的抗噪性。
+  \item 对 $D_3 = \{20, 21, 22, 29, 33, 35\}$，任取 $\theta \in [22, 29]$，则 $20,21,22 \le \theta \le 29,33,35$，故
+  \[
+    \mathrm{MAE}(\theta) = \frac{1}{6}\bigl[(\theta-20)+(\theta-21)+(\theta-22)+(29-\theta)+(33-\theta)+(35-\theta)\bigr] = \frac{34}{6} = \frac{17}{3}.
+  \]
+  当 $\theta < 22$ 时左侧少于 $3$ 项、右侧多于 $3$ 项，斜率严格为负；当 $\theta > 29$ 时斜率严格为正。因此 $[22, 29]$ 上所有点均达到全局最小 MAE $\frac{17}{3}\approx 5.67$。
+\end{enumerate}
+\end{solution}
+\end{exercise}
+
+\begin{exercise}[title={简单线性回归、相关系数与 $R^2$ 手算},level=standard,points=15,tags={SLR,皮尔森相关系数,RMSE,R2}]
+给定 $4$ 个二维观测样本：$(1, 2),\ (2, 3),\ (3, 5),\ (4, 6)$。
+\begin{enumerate}
+  \item 手算样本均值 $\bar{x}, \bar{y}$、皮尔森相关系数 $r$ 以及简单线性回归模型 $\hat{y} = \hat{a} + \hat{b}x$ 的最优参数；
+  \item 计算各样本的预测值 $\hat{y}_i$、均方根误差 $\mathrm{RMSE}$ 与拟合优度 $R^2$，并验证 $R^2 = r^2$。
+\end{enumerate}
+\begin{answer}
+（1）$\bar{x}=2.5,\ \bar{y}=4.0$，$\hat{b}=1.4,\ \hat{a}=0.5$，$r = 7/\sqrt{50} \approx 0.9899$；（2）预测值依次为 $1.9, 3.3, 4.7, 6.1$，$\mathrm{RMSE} = \sqrt{0.05} \approx 0.2236$，$R^2 = 0.98 = r^2$。
+\end{answer}
+\begin{solution}
+\begin{enumerate}
+  \item 计算均值：$\bar{x} = \frac{1+2+3+4}{4} = 2.5$，$\bar{y} = \frac{2+3+5+6}{4} = 4.0$。中心化离差为 $x_i - \bar{x} = (-1.5, -0.5, 0.5, 1.5)$，$y_i - \bar{y} = (-2, -1, 1, 2)$。于是
+  \[\begin{aligned}
+    \sum(x_i-\bar{x})^2 &= 2.25 + 0.25 + 0.25 + 2.25 = 5.0,\\
+    \sum(y_i-\bar{y})^2 &= 4 + 1 + 1 + 4 = 10.0,\\
+    \sum(x_i-\bar{x})(y_i-\bar{y}) &= 3 + 0.5 + 0.5 + 3 = 7.0.
+  \end{aligned}\]
+  从而
+  \[
+    \hat{b} = \frac{7.0}{5.0} = 1.4,\qquad
+    \hat{a} = 4.0 - 1.4\times 2.5 = 0.5,\qquad
+    r = \frac{7.0}{\sqrt{5.0\times 10.0}} = \frac{7}{\sqrt{50}} \approx 0.9899.
+  \]
+  \item 由 $\hat{y} = 0.5 + 1.4x$ 得四点预测值为 $1.9, 3.3, 4.7, 6.1$，残差依次为 $0.1, -0.3, 0.3, -0.1$，残差平方和 $\mathrm{SSE} = 0.01 + 0.09 + 0.09 + 0.01 = 0.20$。因此
+  \[
+    \mathrm{RMSE} = \sqrt{\frac{0.20}{4}} = \sqrt{0.05} \approx 0.2236,\qquad
+    R^2 = 1 - \frac{0.20}{10.0} = 0.98.
+  \]
+  又 $r^2 = 49/50 = 0.98$，验证了简单线性回归中 $R^2 = r^2$。
+\end{enumerate}
+\end{solution}
+\end{exercise}
+
+\begin{exercise}[title={梯度向量手算与一步梯度下降更新},level=standard,points=15,tags={梯度下降,梯度推导,手算}]
+完成以下两组梯度与迭代更新手算：
+\begin{enumerate}
+  \item 设二元函数 $R(\theta_0, \theta_1) = 8\theta_0^2 + 3\theta_0\theta_1$，求梯度向量 $\nabla_{\bm{\theta}}R(\bm{\theta})$ 的解析式，并计算其在 $\bm{\theta} = (1, 1)^\top$ 处的取值；
+  \item 针对训练集 $\{(2, 4),\ (5, 1),\ (8, 9)\}$ 与含截距设计矩阵 $\bm{X} = \begin{pmatrix} 1 & 2 \\ 1 & 5 \\ 1 & 8 \end{pmatrix}$、目标向量 $\bm{y} = (4, 1, 9)^\top$，对目标函数 $R(\bm{\theta}) = \frac{1}{2n}\norm{\bm{X}\bm{\theta}-\bm{y}}_2^2$，手算在 $\bm{\theta}^{(0)} = (\frac{1}{2}, \frac{1}{2})^\top$ 处的梯度向量 $\nabla_{\bm{\theta}}R(\bm{\theta}^{(0)})$，并给出学习率 $\alpha = 0.1$ 时一步梯度下降后的新参数 $\bm{\theta}^{(1)}$。
+\end{enumerate}
+\begin{answer}
+（1）$\nabla_{\bm{\theta}}R(\bm{\theta}) = (16\theta_0 + 3\theta_1,\ 3\theta_0)^\top$，在 $(1,1)^\top$ 处为 $(19, 3)^\top$；（2）$\nabla_{\bm{\theta}}R(\bm{\theta}^{(0)}) = (-\frac{5}{3},\ -\frac{31}{3})^\top$，一步更新后 $\bm{\theta}^{(1)} = (\frac{2}{3},\ \frac{46}{30})^\top = (\frac{2}{3},\ \frac{23}{15})^\top \approx (0.667, 1.533)^\top$。
+\end{answer}
+\begin{solution}
+\begin{enumerate}
+  \item 分别对 $\theta_0, \theta_1$ 求偏导：
+  \[
+    \frac{\partial R}{\partial \theta_0} = 16\theta_0 + 3\theta_1,\qquad
+    \frac{\partial R}{\partial \theta_1} = 3\theta_0,
+  \]
+  代入 $\bm{\theta} = (1, 1)^\top$ 得 $\nabla_{\bm{\theta}}R(1, 1) = (19, 3)^\top$。
+  \item 先计算当前预测值与残差 $\bm{r} = \bm{X}\bm{\theta}^{(0)} - \bm{y}$：
+  \[
+    \bm{X}\bm{\theta}^{(0)} = \begin{pmatrix} 1 & 2 \\ 1 & 5 \\ 1 & 8 \end{pmatrix}\begin{pmatrix} 0.5 \\ 0.5 \end{pmatrix} = \begin{pmatrix} 1.5 \\ 3.0 \\ 4.5 \end{pmatrix},\qquad
+    \bm{r} = \bm{X}\bm{\theta}^{(0)} - \bm{y} = \begin{pmatrix} -2.5 \\ 2.0 \\ -4.5 \end{pmatrix}.
+  \]
+  代入多元线性回归梯度公式 $\nabla_{\bm{\theta}}R(\bm{\theta}) = \frac{1}{n}\bm{X}^\top\bm{r}$（$n=3$）：
+  \[
+    \nabla_{\bm{\theta}}R(\bm{\theta}^{(0)})
+    = \frac{1}{3}\begin{pmatrix} 1 & 1 & 1 \\ 2 & 5 & 8 \end{pmatrix}\begin{pmatrix} -2.5 \\ 2.0 \\ -4.5 \end{pmatrix}
+    = \frac{1}{3}\begin{pmatrix} -5.0 \\ -5.0 + 10.0 - 36.0 \end{pmatrix}
+    = \begin{pmatrix} -5/3 \\ -31/3 \end{pmatrix}.
+  \]
+  按 $\bm{\theta}^{(1)} = \bm{\theta}^{(0)} - 0.1\,\nabla_{\bm{\theta}}R(\bm{\theta}^{(0)})$ 更新：
+  \[
+    \bm{\theta}^{(1)} = \begin{pmatrix} 1/2 \\ 1/2 \end{pmatrix} - \frac{1}{10}\begin{pmatrix} -5/3 \\ -31/3 \end{pmatrix} = \begin{pmatrix} 2/3 \\ 23/15 \end{pmatrix} \approx \begin{pmatrix} 0.667 \\ 1.533 \end{pmatrix}.
+  \]
+\end{enumerate}
+\end{solution}
+\end{exercise}
+
+\begin{exercise}[title={凸性判别与梯度下降学习率收敛范围推导},level=standard,points=15,tags={凸函数,学习率,收敛性分析}]
+\begin{enumerate}
+  \item 考察一元二次目标函数 $f(\theta) = \frac{1}{2}c(\theta - \theta^*)^2$（其中常数 $c > 0$）。写出从初值 $\theta^{(0)}$ 出发、学习率为 $\alpha > 0$ 的梯度下降递推式，推导 $\theta^{(t)} - \theta^*$ 的闭式表达式，并求出保证对任意初值 $\theta^{(0)}\ne\theta^*$ 均收敛到 $\theta^*$ 的学习率 $\alpha$ 的充要条件；
+  \item 考察四次函数 $g(x) = \frac{1}{10}(x^4 - 15x^3 + 80x^2 - 180x + 144) = \frac{1}{10}(x-2)(x-3)(x-4)(x-6)$。取 $x_1 = 2.5,\ x_2 = 5.5,\ t = \frac{1}{2}$，验证其不满足凸函数不等式，从而证明 $g(x)$ 非凸。
+\end{enumerate}
+\begin{answer}
+（1）$\theta^{(t)} - \theta^* = (1 - \alpha c)^t(\theta^{(0)} - \theta^*)$，收敛的充要条件为 $\abs{1 - \alpha c} < 1$，即 $0 < \alpha < \frac{2}{c}$；（2）$g(2.5) = -0.13125,\ g(5.5) = -0.65625$，而中点处 $g(4) = 0 > \frac{1}{2}(g(2.5)+g(5.5)) = -0.39375$，违反凸性不等式。
+\end{answer}
+\begin{solution}
+\begin{enumerate}
+  \item 因 $f'(\theta) = c(\theta - \theta^*)$，梯度下降更新为
+  \[
+    \theta^{(t+1)} = \theta^{(t)} - \alpha c(\theta^{(t)} - \theta^*)
+    \implies \theta^{(t+1)} - \theta^* = (1 - \alpha c)(\theta^{(t)} - \theta^*).
+  \]
+  递推 $t$ 步得 $\theta^{(t)} - \theta^* = (1 - \alpha c)^t(\theta^{(0)} - \theta^*)$。令 $t\to\infty$ 趋于 $0$ 的充要条件是 $\abs{1 - \alpha c} < 1$，解得 $0 < \alpha < \frac{2}{c}$。特别地：当 $0 < \alpha < \frac{1}{c}$ 时单调收敛；当 $\alpha = \frac{1}{c}$ 时一步精确到达 $\theta^*$；当 $\frac{1}{c} < \alpha < \frac{2}{c}$ 时震荡收敛；当 $\alpha > \frac{2}{c}$ 时震荡发散。
+  \item 利用因式分解 $g(x) = \frac{1}{10}(x-2)(x-3)(x-4)(x-6)$，取 $x_1 = 2.5,\ x_2 = 5.5,\ t = \frac{1}{2}$：
+  \[\begin{aligned}
+    g(2.5) &= \frac{1}{10}(0.5)(-0.5)(-1.5)(-3.5) = -0.13125 < 0,\\
+    g(5.5) &= \frac{1}{10}(3.5)(2.5)(1.5)(-0.5) = -0.65625 < 0,\\
+    g(4) &= 0 > \frac{1}{2}\bigl(g(2.5) + g(5.5)\bigr) = -0.39375.
+  \end{aligned}\]
+  从而违背凸函数不等式 $g\bigl(t x_1 + (1-t)x_2\bigr) \le t g(x_1) + (1-t)g(x_2)$，证毕。
+\end{enumerate}
+\end{solution}
+\end{exercise}
+
+\begin{exercise}[title={设计矩阵线性相关性与正规方程唯一性},level=standard,points=12,tags={正规方程,矩阵秩,多重共线性}]
+某同学在波士顿房价数据上建立多元线性回归模型时，除了截距列 $\bm{1}$ 与平均房间数 \lcinline{RM} 外，还不小心把单位换算后的特征 $\text{RM}_2 = 2\times \text{RM} + 1$ 也加入了设计矩阵 $\bm{X}$。
+\begin{enumerate}
+  \item 分析此时 $\mathrm{rank}(\bm{X})$ 的上界，说明 $\bm{X}^\top\bm{X}$ 是否可逆，以及最小二乘参数 $\hat{\bm{\theta}}$ 是否唯一；
+  \item 证明：即使 $\hat{\bm{\theta}}$ 不唯一，任意两个满足正规方程 $\bm{X}^\top\bm{X}\hat{\bm{\theta}} = \bm{X}^\top\bm{y}$ 的解所给出的预测向量 $\hat{\bm{y}} = \bm{X}\hat{\bm{\theta}}$ 却是完全相同的。
+\end{enumerate}
+\begin{answer}
+（1）$\bm{X}$ 共 $3$ 列但第 $3$ 列是前两列的线性组合，故 $\mathrm{rank}(\bm{X}) \le 2 < 3$，$\bm{X}^\top\bm{X}$ 不可逆，$\hat{\bm{\theta}}$ 有无穷多解；（2）设 $\hat{\bm{\theta}}_1, \hat{\bm{\theta}}_2$ 均满足正规方程，则 $\bm{X}^\top\bm{X}(\hat{\bm{\theta}}_1 - \hat{\bm{\theta}}_2) = \bm{0}$，左乘 $(\hat{\bm{\theta}}_1 - \hat{\bm{\theta}}_2)^\top$ 得 $\norm{\bm{X}(\hat{\bm{\theta}}_1 - \hat{\bm{\theta}}_2)}_2^2 = 0$，故 $\bm{X}\hat{\bm{\theta}}_1 = \bm{X}\hat{\bm{\theta}}_2$。
+\end{answer}
+\begin{solution}
+\begin{enumerate}
+  \item 设计矩阵的三个列向量满足 $\bm{X}_{:,2} = 1\cdot\bm{X}_{:,0} + 2\cdot\bm{X}_{:,1}$，线性相关，故 $\mathrm{rank}(\bm{X}^\top\bm{X}) = \mathrm{rank}(\bm{X}) \le 2 < 3$。因此 $3\times 3$ 方阵 $\bm{X}^\top\bm{X}$ 奇异不可逆，正规方程的解 $\hat{\bm{\theta}}$ 不唯一（在任意特解上叠加零空间向量 $(1, 2, -1)^\top$ 的倍数仍是解）。
+  \item 设 $\hat{\bm{\theta}}_1, \hat{\bm{\theta}}_2$ 均满足 $\bm{X}^\top\bm{X}\hat{\bm{\theta}} = \bm{X}^\top\bm{y}$，两式相减得
+  \[
+    \bm{X}^\top\bm{X}(\hat{\bm{\theta}}_1 - \hat{\bm{\theta}}_2) = \bm{0}.
+  \]
+  等式两边同时左乘 $(\hat{\bm{\theta}}_1 - \hat{\bm{\theta}}_2)^\top$：
+  \[
+    (\hat{\bm{\theta}}_1 - \hat{\bm{\theta}}_2)^\top \bm{X}^\top\bm{X}(\hat{\bm{\theta}}_1 - \hat{\bm{\theta}}_2)
+    = \norm[\big]{\bm{X}(\hat{\bm{\theta}}_1 - \hat{\bm{\theta}}_2)}_2^2 = 0.
+  \]
+  由此必有 $\bm{X}\hat{\bm{\theta}}_1 = \bm{X}\hat{\bm{\theta}}_2$。从几何上看，这是因为观测向量 $\bm{y}$ 在列空间 $\mathrm{span}(\bm{X})$ 上的正交投影点总是唯一的，不唯一仅源于该投影点在线性相关列上的坐标表示不唯一。
+\end{enumerate}
+\end{solution}
+\end{exercise}
+
+\begin{exercise}[title={波士顿房价回归评估与特征标准化对 SGD 的影响},level=advanced,points=18,tags={多元线性回归,SGD,特征标准化,RMSE}]
+设波士顿房价数据集包含列 \lcinline{RM}（平均房间数）、\lcinline{LSTAT}（低收入人群占比）与 \lcinline{PRICE}（房价）。
+\begin{enumerate}
+  \item 编写两个纯 NumPy 评估函数 \lcinline{rmse(y\_true, y\_pred)} 与 \lcinline{r2\_score(y\_true, y\_pred)}，分别计算均方根误差与拟合优度 $R^2$；
+  \item 若直接将量纲悬殊的原始特征（例如 \lcinline{RM} 在 $3$–$9$ 之间，而另一特征 \lcinline{TAX} 在 $180$–$711$ 之间）输入固定学习率的梯度下降（GD / SGD），优化轨迹会出现什么现象？为什么先对特征做 Z-score 标准化能显著加速收敛？
+\end{enumerate}
+\begin{answer}
+（1）$\mathrm{RMSE}$ 为 \lcinline{np.sqrt(np.mean((y\_true - y\_pred)**2))}，$R^2$ 为 \lcinline{1 - np.sum((y\_true - y\_pred)**2) / np.sum((y\_true - np.mean(y\_true))**2)}；（2）量纲悬殊会使 MSE 损失等高线呈狭长椭圆（Hessian 条件数极大），固定学习率下梯度方向几乎垂直于最优路径，导致剧烈“之字形”震荡或被迫取极小学习率；Z-score 标准化使各特征尺度一致、等高线趋近圆形，大幅降低条件数从而加快收敛。
+\end{answer}
+\begin{solution}
+\begin{enumerate}
+  \item 纯 NumPy 向量化实现如下：
+  \begin{quote}\ttfamily\small
+    import numpy as np\\
+    def rmse(y\_true, y\_pred):\\
+    \hspace*{2em}return float(np.sqrt(np.mean((y\_true - y\_pred) ** 2)))\\
+    def r2\_score(y\_true, y\_pred):\\
+    \hspace*{2em}ss\_res = np.sum((y\_true - y\_pred) ** 2)\\
+    \hspace*{2em}ss\_tot = np.sum((y\_true - np.mean(y\_true)) ** 2)\\
+    \hspace*{2em}return float(1.0 - ss\_res / ss\_tot)
+  \end{quote}
+  \item 多元线性回归目标函数的海森矩阵为 $\bm{H} = \frac{1}{n}\bm{X}^\top\bm{X}$。当不同特征量纲相差两个数量级时，$\bm{H}$ 的最大特征值 $\lambda_{\max}$ 与最小特征值 $\lambda_{\min}$ 差距悬殊（条件数 $\kappa = \lambda_{\max}/\lambda_{\min} \gg 1$），损失函数的等高线呈极度拉长的狭长椭圆：
+  \begin{itemize}
+    \item 为防止沿陡峭方向发散，学习率受限于 $\alpha < 2/\lambda_{\max}$，被迫取得极小；
+    \item 在平坦方向上每次更新步长极短，梯度下降呈剧烈“之字形（Zig-zag）”震荡，收敛极慢。
+  \end{itemize}
+  对各特征执行 Z-score 标准化后，各列均值为 $0$、方差为 $1$，损失等高线趋于近似圆形，海森矩阵条件数大幅下降，从而允许使用更大且稳定的学习率，显著加速 GD 与 SGD 的收敛。
+\end{enumerate}
+\end{solution}
+\end{exercise}

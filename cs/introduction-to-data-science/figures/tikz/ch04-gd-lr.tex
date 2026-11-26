@@ -1,0 +1,46 @@
+\begin{tikzpicture}[font=\small]
+  % Left panel: Appropriate learning rate (smooth convergence)
+  \begin{axis}[
+    name=leftplot,
+    width=6.0cm, height=4.4cm,
+    axis lines=middle,
+    axis line style={lc axis},
+    xmin=-2.6, xmax=2.6, ymin=-0.2, ymax=5.5,
+    xtick=\empty, ytick=\empty,
+    xlabel={$\theta$}, ylabel={$R(\theta)$},
+    xlabel style={at={(ticklabel* cs:1)}, anchor=west, font=\small},
+    ylabel style={at={(ticklabel* cs:1)}, anchor=south, font=\small},
+    title={合适学习率（平滑收敛）},
+    title style={font=\small\bfseries, text=lc-ink}
+  ]
+    \addplot[lc curve 1, domain=-2.2:2.2, samples=60] {x^2 + 0.4};
+    % Trajectory from x=2.0 with alpha=0.25 (step factor 0.5)
+    \addplot[draw=lc-velocity, mark=*, mark size=1.6pt, line width=0.8pt] coordinates {
+      (2.0, 4.4) (1.0, 1.4) (0.5, 0.65) (0.25, 0.4625) (0.125, 0.4156) (0.0, 0.4)
+    };
+    \node[lc label, text=lc-velocity, right] at (axis cs:2.0,4.4) {$\theta^{(0)}$};
+    \node[lc label, text=lc-def, below] at (axis cs:0.0,0.4) {$\theta^*$};
+  \end{axis}
+
+  % Right panel: Too large learning rate (oscillation / divergence)
+  \begin{axis}[
+    at={($(leftplot.east)+(1.2cm,0)$)}, anchor=west,
+    width=6.0cm, height=4.4cm,
+    axis lines=middle,
+    axis line style={lc axis},
+    xmin=-2.6, xmax=2.6, ymin=-0.2, ymax=5.5,
+    xtick=\empty, ytick=\empty,
+    xlabel={$\theta$}, ylabel={$R(\theta)$},
+    xlabel style={at={(ticklabel* cs:1)}, anchor=west, font=\small},
+    ylabel style={at={(ticklabel* cs:1)}, anchor=south, font=\small},
+    title={过大学习率（震荡发散）},
+    title style={font=\small\bfseries, text=lc-ink}
+  ]
+    \addplot[lc curve 1, domain=-2.2:2.2, samples=60] {x^2 + 0.4};
+    % Diverging trajectory from x=0.9 with factor -1.25
+    \addplot[draw=lc-force, mark=*, mark size=1.6pt, line width=0.8pt] coordinates {
+      (0.9, 1.21) (-1.125, 1.6656) (1.406, 2.377) (-1.758, 3.49) (2.197, 5.227)
+    };
+    \node[lc label, text=lc-force, right] at (axis cs:0.9,1.21) {$\theta^{(0)}$};
+  \end{axis}
+\end{tikzpicture}

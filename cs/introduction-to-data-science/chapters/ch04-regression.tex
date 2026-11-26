@@ -1,0 +1,297 @@
+% libre-compendium
+%
+% Copyright (C) 2026 Richard Qin
+%
+% This document is dual-licensed under either:
+% - GNU Free Documentation License, Version 1.3 or any later version
+%   published by the Free Software Foundation; with no Invariant Sections,
+%   no Front-Cover Texts, and no Back-Cover Texts (see COPYING.DOC); or
+% - Creative Commons Attribution-ShareAlike 4.0 International License
+%   (see LICENSE-CC-BY-SA-4.0).
+\ProvidesFile{ch04-regression.tex}[2026/11/26 v0.2.3 第四章 数据建模与回归分析]
+\chapter{数据建模与回归分析}\label{ch:regression}
+
+经过数据清洗与探索性分析后，数据科学的核心任务从“描述过去”迈向“预测未来”。统计学家乔治·博克斯（George Box）曾留下一句名言：“所有模型在严格意义上都是错的，但其中一些是有用的（All models are wrong, but some are useful）。”模型是对复杂现实的有益简化。本章建立数据建模的统一三步范式——选择模型族、定义损失函数与经验风险、优化求解参数，并由简入繁推导常数模型、简单线性回归（SLR）与多元线性回归（MLR）的解析解，最后引入支撑现代大规模机器学习与深度学习的核心迭代优化算法：梯度下降（GD）与随机梯度下降（SGD）。
+
+\section{数据建模、损失函数与经验风险}\label{sec:modeling-erm}
+
+构建一个监督学习预测模型通常遵循三个标准步骤：
+\begin{enumerate}
+  \item \textbf{选择模型族}：用带参数 $\bm{\theta}$ 的函数刻画输入特征 $\bm{x}$ 与目标变量 $y$ 之间的映射（如常数模型、线性回归或更复杂的非线性模型）；
+  \item \textbf{定义目标函数（经验风险）}：选择损失函数度量单个样本预测值 $\hat{y}_i$ 与真实观测值 $y_i$ 之间的误差，并对全体训练样本求平均；
+  \item \textbf{拟合模型（参数优化）}：通过解析求导、几何投影或数值迭代算法最小化目标函数，得到拟合参数 $\hat{\bm{\theta}}$。
+\end{enumerate}
+
+在统计建模中，需要清晰区分两个密切相关的概念：\textbf{估计}（Estimation）是利用观测样本拟合模型参数 $\hat{\bm{\theta}} = f_{\text{est}}(\bm{X}, \bm{y})$；\textbf{预测}（Prediction）则是将拟合好的参数应用于新输入 $\bm{x}_{\text{new}}$ 以推断未知输出 $\hat{y}_{\text{new}} = f_{\text{pred}}(\hat{\bm{\theta}}, \bm{x}_{\text{new}})$。
+
+\begin{definition}[损失函数与经验风险]\label{def:loss-empirical-risk}
+设训练集包含 $n$ 条观测样本 $\{(x_i, y_i)\}_{i=1}^{n}$，模型预测值为 $\hat{y}_i$。\textbf{损失函数} $L(y_i, \hat{y}_i)$ 度量单条样本的预测误差，最常见的两类回归损失为：
+\begin{itemize}
+  \item \textbf{平方损失（$L_2$ 损失）}：$L_2(y_i, \hat{y}_i) = (y_i - \hat{y}_i)^2$；
+  \item \textbf{绝对损失（$L_1$ 损失）}：$L_1(y_i, \hat{y}_i) = \abs{y_i - \hat{y}_i}$。
+\end{itemize}
+损失函数在全体训练样本上的平均值称为\textbf{经验风险}（Empirical Risk），也称目标函数：
+\begin{equation}\label{eq:empirical-risk}
+  R(\bm{\theta}) = \frac{1}{n}\sum_{i=1}^{n} L(y_i, \hat{y}_i).
+\end{equation}
+对应 $L_2$ 损失与 $L_1$ 损失的经验风险分别称为\textbf{均方误差}（Mean Squared Error, MSE）与\textbf{平均绝对误差}（Mean Absolute Error, MAE）：
+\[
+  \mathrm{MSE}(\bm{y}, \hat{\bm{y}}) = \frac{1}{n}\sum_{i=1}^{n}(y_i - \hat{y}_i)^2,\qquad
+  \mathrm{MAE}(\bm{y}, \hat{\bm{y}}) = \frac{1}{n}\sum_{i=1}^{n}\abs{y_i - \hat{y}_i}.
+\]
+\end{definition}
+
+先考察最简单的\textbf{常数模型} $\hat{y}_i = \theta$（忽略一切输入特征，仅用单一常数预测所有样本）。在这一极简模型下，不同损失函数直接决定了最优估计的统计含义。
+
+\begin{theorem}[常数模型在 MSE 与 MAE 下的最优估计]\label{thm:constant-mse-mae}
+对观测数据集 $\{y_1, \dots, y_n\}$ 建立常数模型 $\hat{y}_i = \theta$：
+\begin{enumerate}
+  \item 在 MSE 目标函数下，存在唯一全局最优解 $\hat{\theta}_{\mathrm{MSE}} = \bar{y} = \frac{1}{n}\sum_{i=1}^{n}y_i$，且最小经验风险等于样本总体方差 $\sigma_y^2 = \frac{1}{n}\sum_{i=1}^{n}(y_i-\bar{y})^2$；
+  \item 在 MAE 目标函数下，最优估计为样本中位数 $\hat{\theta}_{\mathrm{MAE}} = \mathrm{median}(y)$，且最小经验风险为平均绝对离差（MAD）；当 $n$ 为偶数时，排序后中间两数构成的闭区间 $[y_{(n/2)}, y_{(n/2+1)}]$ 内任意取值均为最优解。
+\end{enumerate}
+\end{theorem}
+
+\begin{proof}
+（1）对 MSE 目标函数 $R_{\mathrm{MSE}}(\theta) = \frac{1}{n}\sum_{i=1}^{n}(y_i - \theta)^2$ 关于 $\theta$ 求一阶与二阶导数：
+\[
+  \frac{\dd R_{\mathrm{MSE}}}{\dd \theta} = -\frac{2}{n}\sum_{i=1}^{n}(y_i - \theta),\qquad
+  \frac{\dd^2 R_{\mathrm{MSE}}}{\dd \theta^2} = 2 > 0.
+\]
+令一阶导数为 $0$ 得 $\hat{\theta}_{\mathrm{MSE}} = \frac{1}{n}\sum_{i=1}^{n}y_i = \bar{y}$；因二阶导数恒正，该驻点为唯一全局极小点，代入即得 $R_{\mathrm{MSE}}(\bar{y}) = \sigma_y^2$。
+
+（2）对 MAE 目标函数 $R_{\mathrm{MAE}}(\theta) = \frac{1}{n}\sum_{i=1}^{n}\abs{y_i - \theta}$，在非样本点处分段求导：
+\[
+  \frac{\dd}{\dd \theta}\abs{y_i - \theta} =
+  \begin{cases}
+    -1, & \theta < y_i,\\
+    +1, & \theta > y_i.
+  \end{cases}
+\]
+因此当 $\theta \notin \{y_1, \dots, y_n\}$ 时，
+\[
+  \frac{\dd R_{\mathrm{MAE}}}{\dd \theta} = \frac{1}{n}\left(\sum_{y_i < \theta} 1 - \sum_{y_i > \theta} 1\right).
+\]
+可见导数符号仅取决于 $\theta$ 左侧与右侧样本个数的差值：当左侧样本数少于右侧时导数为负（应增大 $\theta$），多于右侧时导数为正（应减小 $\theta$），在左右样本数相等处达到全局最小。当 $n$ 为奇数时，唯一极小点是中位数 $y_{((n+1)/2)}$；当 $n$ 为偶数时，闭区间 $[y_{(n/2)}, y_{(n/2+1)}]$ 内任意一点左右样本数相等，导数为 $0$，均为全局最优解。
+\end{proof}
+
+\begin{remark}[MSE、MAE 与鲁棒 Huber 损失]\label{rem:huber-loss}
+MSE 曲线处处光滑可导且有唯一解，但平方项会急剧放大异常值的权重；MAE 对离群点鲁棒，却在样本点处不可导且最优解可能不唯一。为了兼顾二者优点，鲁棒学习中常采用 \textbf{Huber 损失}（超参数 $\alpha > 0$）：
+\begin{equation}\label{eq:huber-loss}
+  L_\alpha(y, \hat{y}) =
+  \begin{cases}
+    \frac{1}{2}(y - \hat{y})^2, & \abs{y - \hat{y}} \le \alpha,\\
+    \alpha\bigl(\abs{y - \hat{y}} - \frac{1}{2}\alpha\bigr), & \abs{y - \hat{y}} > \alpha.
+  \end{cases}
+\end{equation}
+当残差较小时它呈二次光滑，当残差超过阈值 $\alpha$ 时转为线性增长，从而有效抑制极端异常值对参数估计的破坏。
+\end{remark}
+
+\section{简单线性回归与模型评估}\label{sec:slr}
+
+引入单个输入特征 $x$，将预测模型升级为\textbf{简单线性回归}（Simple Linear Regression, SLR）：
+\[
+  \hat{y}_i = a + b x_i.
+\]
+该思想源于 19 世纪弗朗西斯·高尔顿（Francis Galton）对父代与子代身高相关性的经典研究。在 MSE 准则下，优化问题写为
+\[
+  (\hat{a}, \hat{b}) = \argmin_{a, b} R(a, b) = \argmin_{a, b} \frac{1}{n}\sum_{i=1}^{n}(y_i - a - b x_i)^2.
+\]
+
+\begin{theorem}[简单线性回归的闭式解]\label{thm:slr-closed-form}
+设样本 $\{(x_i, y_i)\}_{i=1}^{n}$ 的均值与总体标准差分别为 $\bar{x}, \bar{y}$ 与 $\sigma_x > 0, \sigma_y > 0$，定义\textbf{皮尔森相关系数}（Pearson Correlation Coefficient）为
+\begin{equation}\label{eq:pearson-r}
+  r = \frac{\frac{1}{n}\sum_{i=1}^{n}(x_i - \bar{x})(y_i - \bar{y})}{\sigma_x \sigma_y}.
+\end{equation}
+则最小化 MSE 的简单线性回归参数估计为
+\begin{equation}\label{eq:slr-solution}
+  \hat{b} = \frac{\sum_{i=1}^{n}(x_i - \bar{x})(y_i - \bar{y})}{\sum_{i=1}^{n}(x_i - \bar{x})^2} = r\,\frac{\sigma_y}{\sigma_x},\qquad
+  \hat{a} = \bar{y} - \hat{b}\bar{x}.
+\end{equation}
+\end{theorem}
+
+\begin{proof}
+首先对 $a$ 求偏导并令其为 $0$：
+\[
+  \frac{\partial R}{\partial a} = -\frac{2}{n}\sum_{i=1}^{n}(y_i - a - b x_i) = 0
+  \implies \hat{a} = \bar{y} - b\bar{x}.
+\]
+将 $a = \bar{y} - b\bar{x}$ 回代目标函数，得 $R(\hat{a}, b) = \frac{1}{n}\sum_{i=1}^{n}\bigl[(y_i - \bar{y}) - b(x_i - \bar{x})\bigr]^2$。再对 $b$ 求偏导并令其为 $0$：
+\[
+  \frac{\partial R}{\partial b} = -\frac{2}{n}\sum_{i=1}^{n}(x_i - \bar{x})\bigl[(y_i - \bar{y}) - b(x_i - \bar{x})\bigr] = 0,
+\]
+整理即得 $\hat{b} = \frac{\sum_{i=1}^{n}(x_i-\bar{x})(y_i-\bar{y})}{\sum_{i=1}^{n}(x_i-\bar{x})^2} = r\frac{\sigma_y}{\sigma_x}$，从而 $\hat{a} = \bar{y} - \hat{b}\bar{x}$。特别地，回归直线必然经过样本中心点 $(\bar{x}, \bar{y})$。
+\end{proof}
+
+\begin{pitfall}[皮尔森相关系数仅刻画线性相关性]\label{pit:pearson-nonlinear}
+相关系数 $r\in[-1, 1]$ 衡量的是两变量的\textbf{线性}关联强度。当 $y$ 与 $x$ 存在强烈的非线性函数关系（如对称抛物线 $y=x^2$）时，$r$ 依然可能接近 $0$；因此建模前务必绘制散点图，不能仅凭 $r\approx 0$ 断定变量无关。
+\end{pitfall}
+
+拟合出回归模型后，常用以下两项指标度量拟合优劣：
+\begin{itemize}
+  \item \textbf{均方根误差（RMSE）}：$\mathrm{RMSE}(\bm{y}, \hat{\bm{y}}) = \sqrt{\frac{1}{n}\sum_{i=1}^{n}(y_i - \hat{y}_i)^2}$，即 MSE 的平方根，优点是与目标变量 $y$ 保持\textbf{相同量纲}，值越小说明预测越精准；
+  \item \textbf{拟合优度（Multiple $R^2$）}：定义为真实值与预测值皮尔森相关系数的平方 $R^2 = r(\bm{y}, \hat{\bm{y}})^2 \in [0, 1]$。对包含截距项的最小二乘线性回归，有等价关系
+  \begin{equation}\label{eq:r-squared}
+    R^2 = \frac{\sigma_{\hat{y}}^2}{\sigma_y^2} = 1 - \frac{\sum_{i=1}^{n}(y_i - \hat{y}_i)^2}{\sum_{i=1}^{n}(y_i - \bar{y})^2},
+  \end{equation}
+  直观表示模型解释了观测值总方差的多大比例，$R^2$ 越接近 $1$ 拟合程度越高。
+\end{itemize}
+
+\begin{example}[title={三点数据集的简单线性回归手算}]\label{eg:slr-three-points}
+给定训练数据 $\{(2, 4),\ (5, 1),\ (8, 9)\}$，求简单线性回归 $\hat{y} = a + bx$ 的最优参数 $(\hat{a}, \hat{b})$ 及对应的 $\mathrm{RMSE}$。
+\begin{solution}
+先计算均值：$\bar{x} = (2+5+8)/3 = 5$，$\bar{y} = (4+1+9)/3 = 14/3$。中心化离差分别为 $x_i - \bar{x} = (-3, 0, 3)$，$y_i - \bar{y} = (-\frac{2}{3}, -\frac{11}{3}, \frac{13}{3})$。代入 \cref{eq:slr-solution}：
+\[
+  \hat{b} = \frac{(-3)(-\frac{2}{3}) + 0\cdot(-\frac{11}{3}) + 3\cdot\frac{13}{3}}{(-3)^2 + 0^2 + 3^2}
+  = \frac{2 + 13}{18} = \frac{15}{18} = \frac{5}{6},
+\]
+\[
+  \hat{a} = \bar{y} - \hat{b}\bar{x} = \frac{14}{3} - \frac{5}{6}\times 5 = \frac{28 - 25}{6} = \frac{1}{2}.
+\]
+故回归方程为 $\hat{y} = \frac{1}{2} + \frac{5}{6}x$。三点预测值依次为 $\frac{13}{6},\ \frac{28}{6},\ \frac{43}{6}$，残差为 $\frac{11}{6},\ -\frac{22}{6},\ \frac{11}{6}$，于是
+\[
+  \mathrm{MSE} = \frac{1}{3}\cdot\frac{121 + 484 + 121}{36} = \frac{726}{108} = \frac{121}{18} \approx 6.722,\qquad
+  \mathrm{RMSE} = \sqrt{\frac{121}{18}} \approx 2.593.
+\]
+\end{solution}
+\end{example}
+
+\section{多元线性回归与正交投影几何解释}\label{sec:mlr}
+
+在波士顿房价预测等真实场景中，目标变量往往由多个特征（如房间数 \lcinline{RM}、低收入人群比例 \lcinline{LSTAT} 等）共同决定。设每个样本有 $d$ 个特征 $x_1, \dots, x_d$，引入常数偏置特征 $x_0 = 1$，则\textbf{多元线性回归}（Multiple Linear Regression, MLR）模型可紧凑写作向量点积：
+\[
+  \hat{y} = \theta_0 + \sum_{j=1}^{d}\theta_j x_j = \bm{x}^\top\bm{\theta},
+\]
+其中 $\bm{x} = (1, x_1, \dots, x_d)^\top \in \R^{d+1}$，参数向量 $\bm{\theta} = (\theta_0, \theta_1, \dots, \theta_d)^\top \in \R^{d+1}$。将全部 $n$ 个样本按行堆叠，得到 $n\times (d+1)$ 维\textbf{设计矩阵}（Design Matrix）$\bm{X}$ 与 $n$ 维观测向量 $\bm{y}$：
+\[
+  \bm{X} = \begin{pNiceMatrix}
+    1 & x_{11} & \cdots & x_{1d} \\
+    1 & x_{21} & \cdots & x_{2d} \\
+    \vdots & \vdots & \ddots & \vdots \\
+    1 & x_{n1} & \cdots & x_{nd}
+  \end{pNiceMatrix},\qquad
+  \hat{\bm{y}} = \bm{X}\bm{\theta}.
+\]
+此时 MSE 目标函数（为便于求导常乘以系数 $\frac{1}{2}$，不改变最优解）表示为 $L_2$ 范数平方形式：
+\begin{equation}\label{eq:mlr-mse}
+  R(\bm{\theta}) = \frac{1}{2n}\norm{\bm{y} - \bm{X}\bm{\theta}}_2^2.
+\end{equation}
+
+从线性代数视角看，$\bm{X}\bm{\theta} = \sum_{j=0}^{d}\theta_j \bm{X}_{:,j}$ 是设计矩阵各列的线性组合，落在列空间 $\mathrm{span}(\bm{X})\subseteq \R^n$ 中。最小化 \cref{eq:mlr-mse} 的几何本质，就是在子空间 $\mathrm{span}(\bm{X})$ 中寻找距离观测向量 $\bm{y}$ 欧氏距离最近的向量 $\hat{\bm{y}} = \bm{X}\hat{\bm{\theta}}$——由欧几里得空间的正交投影性质，当且仅当残差向量 $\bm{e} = \bm{y} - \bm{X}\hat{\bm{\theta}}$ 与子空间 $\mathrm{span}(\bm{X})$ 正交时距离最小，如 \cref{fig:ols-projection} 所示。
+
+\lcfigure[caption={多元线性回归最小二乘法的几何解释：观测向量 $\bm{y}$ 向设计矩阵列空间 $\mathrm{span}(\bm{X})$ 作正交投影，残差 $\bm{e}=\bm{y}-\bm{X}\hat{\bm{\theta}}$ 与子空间内所有列向量正交。},label=fig:ols-projection]{ch04-ols-projection}
+
+\begin{theorem}[正规方程与唯一解条件]\label{thm:normal-equation}
+多元线性回归参数 $\hat{\bm{\theta}}$ 最小化 $R(\bm{\theta}) = \frac{1}{2n}\norm{\bm{y}-\bm{X}\bm{\theta}}_2^2$ 的充要条件是满足\textbf{正规方程}（Normal Equation）：
+\begin{equation}\label{eq:normal-equation}
+  \bm{X}^\top\bm{X}\hat{\bm{\theta}} = \bm{X}^\top\bm{y}.
+\end{equation}
+当且仅当设计矩阵 $\bm{X}$ 列满秩（即 $\mathrm{rank}(\bm{X}) = d + 1$，各特征列与常数列彼此线性无关）时，方阵 $\bm{X}^\top\bm{X}$ 可逆，此时存在唯一闭式解：
+\begin{equation}\label{eq:ols-closed-form}
+  \hat{\bm{\theta}} = (\bm{X}^\top\bm{X})^{-1}\bm{X}^\top\bm{y}.
+\end{equation}
+\end{theorem}
+
+\begin{proof}
+残差 $\bm{y} - \bm{X}\hat{\bm{\theta}}$ 与 $\mathrm{span}(\bm{X})$ 中每一列正交，等价于 $\bm{X}^\top(\bm{y}-\bm{X}\hat{\bm{\theta}}) = \bm{0}$，即 $\bm{X}^\top\bm{X}\hat{\bm{\theta}} = \bm{X}^\top\bm{y}$。对任意 $\bm{\theta}\in\R^{d+1}$，将 $\bm{y}-\bm{X}\bm{\theta}$ 改写为 $(\bm{y}-\bm{X}\hat{\bm{\theta}}) + \bm{X}(\hat{\bm{\theta}}-\bm{\theta})$。因为交叉项满足
+\[
+  (\bm{y}-\bm{X}\hat{\bm{\theta}})^\top \bm{X}(\hat{\bm{\theta}}-\bm{\theta})
+  = \bigl(\bm{X}^\top(\bm{y}-\bm{X}\hat{\bm{\theta}})\bigr)^\top (\hat{\bm{\theta}}-\bm{\theta}) = 0,
+\]
+由勾股定理得
+\[
+  \norm{\bm{y}-\bm{X}\bm{\theta}}_2^2
+  = \norm{\bm{y}-\bm{X}\hat{\bm{\theta}}}_2^2 + \norm{\bm{X}(\hat{\bm{\theta}}-\bm{\theta})}_2^2
+  \ge \norm{\bm{y}-\bm{X}\hat{\bm{\theta}}}_2^2.
+\]
+故 $\hat{\bm{\theta}}$ 必为全局最优解。又因为 $\mathrm{rank}(\bm{X}^\top\bm{X}) = \mathrm{rank}(\bm{X})$，方阵 $\bm{X}^\top\bm{X}\in\R^{(d+1)\times(d+1)}$ 可逆当且仅当 $\mathrm{rank}(\bm{X}) = d+1$，此时闭式解 \cref{eq:ols-closed-form} 唯一存在。
+\end{proof}
+
+\begin{pitfall}[多重共线性与解析解的计算瓶颈]\label{pit:ols-bottleneck}
+解析解 \cref{eq:ols-closed-form} 在实际工程中有两大限制：（1）若特征之间存在精确线性相关（多重共线性，如同时加入华氏温度与摄氏温度列），则 $\bm{X}$ 秩亏、$\bm{X}^\top\bm{X}$ 不可逆，参数解不唯一；（2）计算 $(d+1)\times(d+1)$ 矩阵逆的时间复杂度高达 $O(d^3)$，当特征维度 $d$ 达到数万甚至更高时，直接求逆在时间与内存上均不可行，必须改用迭代优化算法。
+\end{pitfall}
+
+\section{梯度下降与随机梯度下降}\label{sec:gd-sgd}
+
+面对高维特征或无解析解的一般可微损失函数，机器学习采用\textbf{梯度下降}（Gradient Descent, GD）：从初始参数 $\bm{\theta}^{(0)}$ 出发，在每一步沿当前点损失函数下降最快的方向——即负梯度方向 $-\nabla_{\bm{\theta}}R(\bm{\theta})$——更新参数：
+\begin{equation}\label{eq:gd-update}
+  \bm{\theta}^{(t+1)} = \bm{\theta}^{(t)} - \alpha\,\nabla_{\bm{\theta}}R(\bm{\theta}^{(t)}),
+\end{equation}
+其中标量 $\alpha > 0$ 称为\textbf{学习率}（Learning Rate），控制每一步移动的步长。
+
+\subsection{凸性与学习率的影响}
+
+梯度下降能否稳定收敛到全局最小值，取决于两个关键因素：目标函数的\textbf{凸性}与\textbf{学习率 $\alpha$ 的选择}。
+
+\begin{definition}[凸函数]\label{def:convex-function}
+设函数 $f:\R^p \to \R$ 定义在凸集上。若对定义域内任意两点 $\bm{u}, \bm{v}$ 及任意 $t \in [0, 1]$，均有
+\begin{equation}\label{eq:convexity}
+  f\bigl(t\bm{u} + (1-t)\bm{v}\bigr) \le t f(\bm{u}) + (1-t)f(\bm{v}),
+\end{equation}
+则称 $f$ 为\textbf{凸函数}（Convex Function）。
+\end{definition}
+
+多元线性回归的 MSE 目标函数 $R(\bm{\theta}) = \frac{1}{2n}\norm{\bm{y}-\bm{X}\bm{\theta}}_2^2$ 是关于 $\bm{\theta}$ 的二次凸函数，因此不存在“陷阱式”局部极小值，只要学习率合适，梯度下降总能收敛至全局最优。相反，若目标函数非凸（例如四次多项式 $f(x)=(x^4-15x^3+80x^2-180x+144)/10$），梯度下降可能停留在局部极小点。学习率的选择同样至关重要（如 \cref{fig:gd-lr} 所示）：$\alpha$ 过小会导致收敛极慢；$\alpha$ 过大会在谷底两侧剧烈震荡甚至发散（“螺旋上升”）。
+
+\lcfigure[caption={学习率对梯度下降优化轨迹的影响：左图学习率适中，参数平滑收敛至极小点 $\theta^*$；右图学习率过大，步长跨越极小点并导致损失震荡发散。},label=fig:gd-lr]{ch04-gd-lr}
+
+\subsection{线性回归的梯度与小批量随机梯度下降（SGD）}
+
+对多元线性回归目标函数 \cref{eq:mlr-mse} 求梯度，可得向量化的梯度公式：
+\begin{equation}\label{eq:mlr-gradient}
+  \nabla_{\bm{\theta}}R(\bm{\theta})
+  = \frac{1}{n}\bm{X}^\top(\bm{X}\bm{\theta} - \bm{y})
+  = \frac{1}{n}\sum_{i=1}^{n}(\bm{x}_i^\top\bm{\theta} - y_i)\bm{x}_i.
+\end{equation}
+注意到批量梯度下降（Batch GD）每更新一次参数，都必须将全部 $n$ 条样本载入并求和，当 $n$ 达到百万或十亿级时单步代价极高。为此，现代机器学习普遍采用\textbf{小批量随机梯度下降}（Mini-batch Stochastic Gradient Descent, SGD）：在每一轮（Epoch）先将训练集随机打乱（Shuffle），再划分为若干大小为 $B$ 的小批量（Mini-batch），仅凭当前小批量估计梯度并立刻更新参数，如 \cref{alg:minibatch-sgd} 所示。
+
+\begin{algorithm}[小批量随机梯度下降（Mini-batch SGD）]\label{alg:minibatch-sgd}
+\alginput{设计矩阵 $\bm{X}\in\R^{n\times(d+1)}$，目标向量 $\bm{y}\in\R^n$，学习率 $\alpha > 0$，批量大小 $B$，最大轮数 $E$}
+\algoutput{拟合参数向量 $\hat{\bm{\theta}}$}
+\begin{algsteps}
+  \State 初始化参数向量 $\bm{\theta}^{(0)}$（零向量或随机小值），设步数 $t \gets 0$
+  \For{epoch $= 1, 2, \dots, E$}
+    \State 将训练集 $(\bm{X}, \bm{y})$ 按行随机打乱（Shuffle）
+    \For{每个大小为 $B$ 的小批量 $(\bm{X}_b, \bm{y}_b)$}
+      \State 计算小批量梯度 $\bm{g}^{(t)} \gets \frac{1}{\abs{b}}\bm{X}_b^\top(\bm{X}_b\bm{\theta}^{(t)} - \bm{y}_b)$
+      \State 更新参数 $\bm{\theta}^{(t+1)} \gets \bm{\theta}^{(t)} - \alpha \bm{g}^{(t)}$，$t \gets t + 1$
+    \EndFor
+  \EndFor
+  \State \Return $\hat{\bm{\theta}} = \bm{\theta}^{(t)}$
+\end{algsteps}
+\end{algorithm}
+
+与全量 GD 相比，Mini-batch SGD 单步更新仅需 $O(Bd)$ 运算，能够快速跨越初期平坦区域并适应流式/超大规模数据；虽然小批量梯度带有随机噪声，使参数在最优点附近轻微抖动，但这种噪声在非凸深度神经网络中反而有助于逃离尖锐局部极小与鞍点。\cref{lst:lr-sgd} 给出了多元线性回归正规方程与 Mini-batch SGD 的精炼 NumPy 实现。
+
+\begin{codeblock}[language=Python,caption={多元线性回归的解析解与小批量随机梯度下降实现},label=lst:lr-sgd]
+import numpy as np
+
+def mse_loss(X: np.ndarray, y: np.ndarray, theta: np.ndarray) -> float:
+    return 0.5 * float(np.mean((X @ theta - y) ** 2))
+
+def fit_normal_eq(X: np.ndarray, y: np.ndarray) -> np.ndarray:
+    """用线性方程组求解器解正规方程（数值上比显式求逆更稳定）。"""
+    return np.linalg.solve(X.T @ X, X.T @ y)
+
+def fit_sgd(X: np.ndarray, y: np.ndarray, lr: float = 0.01,
+            batch_size: int = 32, epochs: int = 100, seed: int = 42) -> np.ndarray:
+    rng = np.random.default_rng(seed)
+    n, p = X.shape
+    theta = np.zeros(p)
+    for _ in range(epochs):
+        perm = rng.permutation(n)
+        for start in range(0, n, batch_size):
+            idx = perm[start:start + batch_size]
+            Xb, yb = X[idx], y[idx]
+            grad = (Xb.T @ (Xb @ theta - yb)) / len(idx)
+            theta -= lr * grad
+    return theta
+\end{codeblock}
+
+\begin{summary}[本章要点]
+\begin{itemize}
+  \item 数据建模遵循“选择模型族 $\to$ 定义经验风险 $\to$ 优化拟合参数”三步；常数模型在 MSE 与 MAE 下的最优估计分别是样本均值与样本中位数，Huber 损失兼顾了光滑性与抗噪性。
+  \item 简单线性回归的闭式解由皮尔森相关系数与标准差之比确定（$\hat{b}=r\sigma_y/\sigma_x,\ \hat{a}=\bar{y}-\hat{b}\bar{x}$），常用 $\mathrm{RMSE}$ 与拟合优度 $R^2$ 评价回归精度。
+  \item 多元线性回归的最小二乘本质是将 $\bm{y}$ 正交投影到设计矩阵列空间 $\mathrm{span}(\bm{X})$，正规方程 $\bm{X}^\top\bm{X}\hat{\bm{\theta}}=\bm{X}^\top\bm{y}$ 在 $\bm{X}$ 列满秩时有唯一解。
+  \item 当特征维度或样本规模极大时，应采用梯度下降（GD）与小批量随机梯度下降（SGD）迭代求解，并合理控制学习率与特征尺度。
+\end{itemize}
+\end{summary}
