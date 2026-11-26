@@ -8,15 +8,148 @@
 %   no Front-Cover Texts, and no Back-Cover Texts (see COPYING.DOC); or
 % - Creative Commons Attribution-ShareAlike 4.0 International License
 %   (see LICENSE-CC-BY-SA-4.0).
-\ProvidesFile{ch01-overview.tex}[2026/11/26 v0.1.0 第一章习题]
+\ProvidesFile{ch01-overview.tex}[2026/11/26 v0.2.0 第一章习题]
 \section{数据科学概论}
 
-\begin{exercise}[title={数据驱动求解流程},level=basic]
-简述探索性数据分析（EDA）在数据科学问题求解流程中的作用。
+\begin{exercise}[title={封闭世界假设与开放世界假设},level=basic,points=10,tags={CWA,OWA,数据模型}]
+简述封闭世界假设（CWA）与开放世界假设（OWA）的核心区别，并举出一个数据科学分析场景，说明为什么在该场景下采用 OWA 比 CWA 更合理。
 \begin{answer}
-帮助理解数据分布、发现缺失与异常值、识别变量关系并为特征工程与建模假设提供依据。
+CWA 认为数据库中未记录的事实均为假；OWA 认为未记录仅表示当前未知，其真假尚不能断定。例如在电商用户画像中，用户未购买某商品不代表其一定不喜欢，可能只是尚未曝光。
 \end{answer}
 \begin{solution}
-在正式建模前，通过描述性统计与可视化检查数据质量（缺失值、重复值、异常值）及特征分布形态，能够避免盲目套用模型，并为数据清洗、特征变换与模型选择提供直接依据。
+\begin{enumerate}
+  \item \textbf{核心区别}：在封闭世界假设（CWA）下，系统假定已掌握全部相关事实，因此知识库中不存在的记录一律判定为“假”（典型如关系数据库中的精确 SQL 查询）；在开放世界假设（OWA）下，系统承认观测是不完整的，未出现的记录仅表示“未知”而非“为假”。
+  \item \textbf{典型场景}：在电影或电商推荐系统中，用户–物品交互矩阵高度稀疏，绝大多数条目缺失。若采用 CWA，会把所有未交互物品都当成“用户明确讨厌的负样本”，这与事实严重不符；采用 OWA 则将未交互视为“尚未观测到的潜在偏好”，进而可以通过协同过滤或补充多源行为数据（浏览时长、收藏、搜索词）来推断用户真实兴趣。
+\end{enumerate}
+\end{solution}
+\end{exercise}
+
+\begin{exercise}[title={大数据傲慢与 GFT 反思},level=basic,points=10,tags={大数据傲慢,GFT,因果推断}]
+结合谷歌流感趋势（Google Flu Trends, GFT）的经验教训，说明“大数据傲慢（Big Data Hubris）”主要体现在哪三个方面，并针对每一方面提出一条改进思路。
+\begin{answer}
+三个方面依次为：（1）混淆相关性与因果性；（2）过度依赖历史模式、缺乏对分布漂移与突发事件的泛化能力；（3）忽视领域机理模型校验。改进思路分别是引入因果/混淆因素分析、建立滚动重训练与漂移监测机制、将大数据特征与流行病学机理模型（如 SIR）结合校准。
+\end{answer}
+\begin{solution}
+\begin{enumerate}
+  \item \textbf{相关性不等于因果性}：GFT 仅依赖搜索词频与历史流感病例的统计相关性，未能区分“因患病而搜索”与“因新闻恐慌而搜索”等混淆因素。改进方式是在特征筛选与模型解释中引入混淆变量分析，并结合多维辅助信号（如医院急诊或药店销量）交叉验证。
+  \item \textbf{过度依赖历史分布}：训练数据仅反映常规冬季流感规律，当出现非典型疫情（如 H1N1）或搜索引擎自身推荐机制变化时，输入特征分布发生漂移。改进方式是建立时间滑窗验证、分布漂移监测与定期重训练机制。
+  \item \textbf{脱离领域理论校验}：完全抛弃流行病学传播机制导致误差持续累积。改进方式是将搜索引擎实时信号作为先验或观测特征，与传统流行病学机理模型（如 SIR/SEIR 模型）及 CDC 抽样报告联合校准，实现“数据驱动 + 机理约束”融合。
+\end{enumerate}
+\end{solution}
+\end{exercise}
+
+\begin{exercise}[title={第三范式与第四范式辨析},level=standard,points=12,tags={第四范式,科学方法}]
+既然科学研究的第三范式（计算仿真）与第四范式（数据密集型科学）都高度依赖计算机与数据，请从研究起点、数据角色与知识产出路径三个维度，结合赫尔斯–泰勒脉冲星观测与 LIGO 引力波探测案例，辨析二者的异同。
+\begin{answer}
+相同点：均依赖大规模计算与定量数据分析。不同点：第三范式从明确理论模型出发，数据用于验证或拟合理论（理论 $\to$ 观测验证）；第四范式从海量连续带噪数据出发，通过算法自动发现未知模式并反推新知识（数据 $\to$ 模式发现 $\to$ 理论更新）。
+\end{answer}
+\begin{solution}
+两者的共同点在于均需要现代计算设备与数值分析技术处理科学数据；核心差异体现在以下三个维度：
+\begin{enumerate}
+  \item \textbf{研究起点}：赫尔斯–泰勒脉冲星研究从广义相对论关于双星轨道衰减的明确理论预言出发；LIGO 面对的是两台干涉仪持续采集的 TB–PB 级强噪声时序流，需要在海量未知信号中实时检索潜在引力波事件。
+  \item \textbf{数据角色}：前者使用少量、高精度、长时标的计时数据来检验理论公式是否成立；后者的数据本身是发现现象的直接舞台，需借助匹配滤波模板库与并行计算主动挖掘模式。
+  \item \textbf{知识产出路径}：前者遵循“理论 $\to$ 观测验证”，提供的是引力波存在的间接证据；后者遵循“数据 $\to$ 模式发现 $\to$ 理论更新”，不仅给出直接探测证据，还通过参数反演发现了约 $36\,M_\odot$ 与 $29\,M_\odot$ 的重黑洞并合族群，拓展了天体物理认知。
+\end{enumerate}
+\end{solution}
+\end{exercise}
+
+\begin{exercise}[title={数据规模跃迁与复杂度手算},level=standard,points=15,tags={时间复杂度,大数据规模}]
+设某单机系统每秒可执行 $10^8$ 次基本运算，现需对规模为 $n$ 的数据集执行算法 $A$（精确操作次数为 $5n$）、算法 $B$（精确操作次数为 $n\log_2 n$）与算法 $C$（精确操作次数为 $\frac{1}{2}n^2$）。
+\begin{enumerate}
+  \item 分别手算当 $n = 10^3$、$n = 10^6$ 与 $n = 10^9$ 时，三个算法的近似运行时间（提示：取 $\log_2 10 \approx 3.32$，较大时间请换算为小时、天或年，按 $1\text{ 年}\approx 3.15\times 10^7\text{ s}$ 计）；
+  \item 若单机内存为 $16\text{ GB}$，每条样本记录占用 $128\text{ B}$，判断上述三个规模中哪一规模开始无法直接将全部数据一次性载入单机内存，并说明应采取的工程应对思路。
+\end{enumerate}
+\begin{answer}
+（1）$n=10^3$：$A\approx 5\times 10^{-5}\text{ s}$，$B\approx 10^{-4}\text{ s}$，$C\approx 5\times 10^{-3}\text{ s}$；$n=10^6$：$A\approx 0.05\text{ s}$，$B\approx 0.20\text{ s}$，$C\approx 5000\text{ s}\approx 1.39\text{ h}$；$n=10^9$：$A\approx 50\text{ s}$，$B\approx 300\text{ s}=5\text{ min}$，$C\approx 5\times 10^9\text{ s}\approx 158.7\text{ 年}$。（2）$n=10^9$ 时原始数据约 $128\text{ GB} > 16\text{ GB}$，无法一次性载入单机内存，需采用分块流式处理、近似算法或分布式存储计算。
+\end{answer}
+\begin{solution}
+\begin{enumerate}
+  \item 利用 $\log_2(10^k) \approx 3.32k$ 逐档计算：
+  \begin{itemize}
+    \item 当 $n = 10^3$ 时（$\log_2 n \approx 9.96 \approx 10$）：
+    \[\begin{aligned}
+      T_A &= \frac{5\times 10^3}{10^8} = 5\times 10^{-5}\text{ s}, &
+      T_B &\approx \frac{10^4}{10^8} = 10^{-4}\text{ s}, \\
+      T_C &= \frac{0.5\times 10^6}{10^8} = 5\times 10^{-3}\text{ s}.
+    \end{aligned}\]
+    \item 当 $n = 10^6$ 时（$\log_2 n \approx 19.93 \approx 20$）：
+    \[\begin{aligned}
+      T_A &= \frac{5\times 10^6}{10^8} = 0.05\text{ s}, &
+      T_B &\approx \frac{2\times 10^7}{10^8} = 0.20\text{ s}, \\
+      T_C &= \frac{0.5\times 10^{12}}{10^8} = 5000\text{ s} \approx 1.39\text{ h}.
+    \end{aligned}\]
+    \item 当 $n = 10^9$ 时（$\log_2 n \approx 29.90 \approx 30$）：
+    \[\begin{aligned}
+      T_A &= \frac{5\times 10^9}{10^8} = 50\text{ s}, &
+      T_B &\approx \frac{3\times 10^{10}}{10^8} = 300\text{ s} = 5\text{ min}, \\
+      T_C &= \frac{0.5\times 10^{18}}{10^8} = 5\times 10^9\text{ s} \approx \frac{5\times 10^9}{3.15\times 10^7} \approx 158.7\text{ 年}.
+    \end{aligned}\]
+  \end{itemize}
+  \item 计算各规模所需存储空间（按 $1\text{ GB}\approx 10^9\text{ B}$ 估算）：
+  \[
+    M(10^3) \approx 128\text{ KB},\quad
+    M(10^6) \approx 128\text{ MB},\quad
+    M(10^9) \approx 128\text{ GB}.
+  \]
+  因此从 $n = 10^9$ 开始，原始数据体积（$128\text{ GB}$）远超 $16\text{ GB}$ 单机内存。工程上需采用：（a）外存分块/流式读取与小批量（mini-batch）算法；（b）抽样或草图（sketch）等大数据近似分析技术；（c）分布式文件系统与分布式计算框架进行并行处理。
+\end{enumerate}
+\end{solution}
+\end{exercise}
+
+\begin{exercise}[title={Python 切片、字典与正则表达式手算},level=standard,points=15,tags={Python,切片,正则表达式}]
+请在不运行解释器的前提下，手算以下各小题的结果并简述理由：
+\begin{enumerate}
+  \item 设列表 \lcinline{xs = ['abcd', 789, 2.23, 'john', 70.2]}，写出表达式 \lcinline{xs[1:3]} 与 \lcinline{xs[-1:]} 的返回值；
+  \item 设字典 \lcinline{d = \{'id': 6734, 'dept': 'aux'\}}，写出表达式 \lcinline{d.get('score', 0)}、\lcinline{d['dept']} 与 \lcinline{'id' in d} 的返回值；
+  \item 判断下列三个字符串中，哪些能完整匹配正则表达式 \lcinline{\^{}(4\{5,6\})\textbackslash 1\$}，并解释原因：
+  \[
+    \text{(A) }\texttt{456},\qquad
+    \text{(B) }\texttt{44444},\qquad
+    \text{(C) }\texttt{4444444444}\text{（10 个 4）与 }\texttt{444444444444}\text{（12 个 4）}.
+  \]
+\end{enumerate}
+\begin{answer}
+（1）\lcinline{[789, 2.23]} 与 \lcinline{[70.2]}；（2）\lcinline{0}、\lcinline{'aux'} 与 \lcinline{True}；（3）仅 (C) 中的两个字符串匹配。
+\end{answer}
+\begin{solution}
+\begin{enumerate}
+  \item Python 列表下标从 $0$ 开始且切片左闭右开：\lcinline{xs[1:3]} 取索引 $1,2$ 对应的元素，得 \lcinline{[789, 2.23]}；\lcinline{xs[-1:]} 从倒数第 $1$ 个元素切到末尾，返回单元素列表 \lcinline{[70.2]}。
+  \item \lcinline{d.get('score', 0)} 因键 \lcinline{'score'} 不存在返回默认值 \lcinline{0}；\lcinline{d['dept']} 返回 \lcinline{'aux'}；\lcinline{'id' in d} 检查键是否在哈希表中，返回 \lcinline{True}。
+  \item 在正则 \lcinline{\^{}(4\{5,6\})\textbackslash 1\$} 中，捕获组 \lcinline{(4\{5,6\})} 匹配连续 $5$ 个或 $6$ 个字符 \lcinline{4}，而反向引用 \lcinline{\textbackslash 1} 要求紧随其后再次出现与第 1 捕获组\textbf{完全相同}的子串：
+  \begin{itemize}
+    \item 若第 1 组匹配 $5$ 个 \lcinline{4}，则整体匹配 $5+5=10$ 个 \lcinline{4}；
+    \item 若第 1 组匹配 $6$ 个 \lcinline{4}，则整体匹配 $6+6=12$ 个 \lcinline{4}。
+  \end{itemize}
+  注意 $11$ 个 \lcinline{4} 也无法匹配，因为 \lcinline{\textbackslash 1} 必须与第 1 组长度一致。因此仅有 (C) 中的两个字符串匹配。
+\end{enumerate}
+\end{solution}
+\end{exercise}
+
+\begin{exercise}[title={字符频次统计与文本分析扩展},level=advanced,points=18,tags={Python,文本分析,复杂度}]
+编写一个 Python 函数，接受任意字符串 \lcinline{s}，忽略大小写与空白字符后统计其中每个字符的出现频次，并按频次从高到低输出前 $k$ 个字符及其频次。
+\begin{enumerate}
+  \item 给出完整实现代码，并分析你的实现在字符串长度为 $n$、不同字符种数为 $m$ 时的时间与空间复杂度；
+  \item 若将上述思路推广到《红楼梦》全书的人物出场累积频率分析，你认为单纯按子串计数会遇到哪些数据清洗与语义歧义问题？请至少列出两点并给出应对方案。
+\end{enumerate}
+\begin{answer}
+（1）先过滤空白并转小写，再用字典或 \lcinline{Counter} 统计后排序，时间复杂度 $O(n + m\log m)$（或用堆取 Top-$k$ 为 $O(n + m\log k)$），空间复杂度 $O(m)$；（2）典型问题包括人物别名/称谓不统一（如“贾宝玉”“宝玉”“宝二爷”）、代词指代与非人名重名歧义等，需建立同义称谓词典并结合分词或命名实体识别清洗。
+\end{answer}
+\begin{solution}
+\begin{enumerate}
+  \item 使用标准库 \lcinline{Counter} 结合 \lcinline{most\_common(k)} 的简洁实现如下：
+  \begin{quote}\ttfamily\small
+    from collections import Counter\\
+    def top\_k\_chars(s: str, k: int) -> list[tuple[str, int]]:\\
+    \hspace*{2em}cleaned = (ch.lower() for ch in s if not ch.isspace())\\
+    \hspace*{2em}return Counter(cleaned).most\_common(k)
+  \end{quote}
+  \textbf{复杂度分析}：单次扫描字符串并更新哈希表计数耗时 $O(n)$；哈希表存储 $m$ 种不同字符，空间复杂度为 $O(m)$；\lcinline{most\_common(k)} 借助大小为 $k$ 的堆选取前 $k$ 项，耗时 $O(m\log k)$（当 $k$ 接近 $m$ 时退化为排序 $O(m\log m)$）。因此总时间复杂度为 $O(n + m\log k)$，总空间复杂度为 $O(m)$。
+  \item 推广到《红楼梦》人物出场统计时的典型问题与应对方案：
+  \begin{itemize}
+    \item \textbf{同一人物多种称谓}：例如“贾宝玉”“宝玉”“宝二爷”均指向同一角色，直接按字面计数会分散频次。应对方案是构建领域人物别名映射表（同义词归一化），将同一人物的不同称谓映射到统一实体编号；
+    \item \textbf{称谓歧义与跨语境误匹配}：例如“老爷”“姑娘”在不同对话语境中指代不同人物，或者普通词语恰好包含某人名用字。应对方案是先进行中文分词与命名实体识别（NER），对高歧义简称结合上下文共现或人工规则加以消歧；
+    \item \textbf{章节切分与版本差异}：不同电子文本的回目标题、换行符与标点格式不统一，需先用正则表达式规范化章节边界，再按回统计累积频率。
+  \end{itemize}
+\end{enumerate}
 \end{solution}
 \end{exercise}

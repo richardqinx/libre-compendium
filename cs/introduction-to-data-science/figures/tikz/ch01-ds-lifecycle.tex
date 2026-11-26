@@ -1,0 +1,39 @@
+\begin{tikzpicture}[
+  node distance=0.85cm and 0.65cm,
+  stage/.style={
+    rectangle,
+    rounded corners=3pt,
+    draw=lc-def,
+    fill=lc-def!8,
+    line width=0.8pt,
+    minimum width=2.25cm,
+    minimum height=1.05cm,
+    align=center,
+    font=\small\bfseries,
+    text=lc-ink
+  },
+  flow/.style={
+    lc vector,
+    rounded corners=4pt
+  },
+  feedback/.style={
+    lc aux,
+    -{Stealth},
+    rounded corners=6pt
+  }
+]
+  \node[stage] (q) {提出问题\\{\footnotesize 业务/科学目标}};
+  \node[stage, right=of q] (prep) {获取与准备\\{\footnotesize 采集/清洗}};
+  \node[stage, right=of prep] (eda) {探索与可视化\\{\footnotesize 规律/假设}};
+  \node[stage, right=of eda] (model) {建模与评估\\{\footnotesize 训练/验证}};
+  \node[stage, right=of model] (insight) {洞察与决策\\{\footnotesize 预测/解释}};
+
+  \draw[flow] (q) -- (prep);
+  \draw[flow] (prep) -- (eda);
+  \draw[flow] (eda) -- (model);
+  \draw[flow] (model) -- (insight);
+
+  \draw[feedback] (eda.north) -- ++(0,0.55) -| node[pos=0.25, above, lc label, text=lc-note] {数据驱动新问题} (q.north);
+  \draw[feedback] (model.south) -- ++(0,-0.55) -| node[pos=0.25, below, lc label, text=lc-note] {特征迭代与数据补充} (prep.south);
+  \draw[feedback] (insight.south) -- ++(0,-1.05) -| node[pos=0.25, below, lc label, text=lc-note] {闭环反馈与新周期} (q.south);
+\end{tikzpicture}

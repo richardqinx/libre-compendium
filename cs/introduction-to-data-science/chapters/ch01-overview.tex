@@ -8,39 +8,291 @@
 %   no Front-Cover Texts, and no Back-Cover Texts (see COPYING.DOC); or
 % - Creative Commons Attribution-ShareAlike 4.0 International License
 %   (see LICENSE-CC-BY-SA-4.0).
-\ProvidesFile{ch01-overview.tex}[2026/11/26 v0.1.0 第一章 数据科学概论]
+\ProvidesFile{ch01-overview.tex}[2026/11/26 v0.2.0 第一章 数据科学概论]
 \chapter{数据科学概论}\label{ch:overview}
 
-本章介绍数据科学的基本概念、数据驱动的问题求解范式以及课程工具链。
+在信息高度数字化的时代，数据已经渗透到科学研究、商业决策与日常生活的各个角落。然而，原始数据本身并不等同于知识；如何从海量、多源、带噪的数据中提炼出可验证的规律，并进一步支持预测与决策，正是数据科学试图回答的核心问题。本章围绕数据科学的“是什么（What）”“为什么兴起（Why）”以及“如何开展（How）”展开讨论，建立以数据为中心的问题求解思维，并简明介绍本课程使用的 Python 语言基础。
 
-\section{数据科学的基本范式}\label{sec:ds-paradigm}
+\section{什么是数据科学}\label{sec:what-is-ds}
+
+数据科学是一门仍在快速发展中的交叉学科，不同背景的学者与工程师对其侧重点各不相同：统计学家强调从样本推断总体的不确定性量化，计算机科学家关注大规模数据的存储、算法效率与系统实现，而领域专家则重视问题定义与结论的可解释性。综合学术界与工业界的共识，我们可以给出如下工作定义。
 
 \begin{definition}[数据科学]\label{def:data-science}
-数据科学是一门融合统计学、计算机科学与领域知识的交叉学科，核心目标是从原始数据中提取可验证的知识，并支持预测与决策。
+\textbf{数据科学}（Data Science）是一门融合统计学、计算机科学与特定领域知识的交叉学科，它综合运用科学方法、工程流程、数学模型与计算系统，从结构化与非结构化数据中提取知识与洞察，并为复杂场景下的预测与决策提供端到端的数据驱动支持。
 \end{definition}
 
-在 Python 生态中，常用 \lcinline{pandas} 与 \lcinline{numpy} 处理结构化表格数据，如 \cref{lst:pandas-preview} 所示。
+从工程范式来看，数据科学与传统软件工程的关注中心存在本质差异。\cref{tab:cs-vs-ds} 对比了两种范式的核心目标与典型生命周期。
 
-\begin{codeblock}[language=Python,caption={读取并预览表格数据},label=lst:pandas-preview]
-import pandas as pd
+\begin{table}[htbp]
+  \centering\small
+  \caption{传统软件工程与数据科学的范式对比}\label{tab:cs-vs-ds}
+  \begin{tabular}{@{}l>{\raggedright\arraybackslash}p{0.37\linewidth}>{\raggedright\arraybackslash}p{0.39\linewidth}@{}}
+    \toprule
+    对比维度 & 软件工程（以软件为中心） & 数据科学（以数据为中心） \\
+    \midrule
+    核心角色 & 软件工程师 & 数据科学家 \\
+    核心目标 & 编写可靠软件以驱动计算机完成既定功能 & 从数据中提炼洞察以回答问题、支持决策 \\
+    典型流程 & 规划 $\to$ 设计 $\to$ 开发 $\to$ 测试 $\to$ 部署 $\to$ 维护 & 采集 $\to$ 准备 $\to$ 分析 $\to$ 可视化 $\to$ 沟通与决策 \\
+    不确定性来源 & 需求变更、系统故障与并发约束 & 采样偏差、测量噪声与分布漂移 \\
+    \bottomrule
+  \end{tabular}
+\end{table}
 
-# 读取 CSV 文件并查看前 5 行
-df = pd.read_csv("iris.csv")
-print(df.head())
-\end{codeblock}
+与线性推进的软件开发不同，数据科学的问题求解天然是\textbf{循环迭代}的：既可以“问题驱动”（先提出假设或业务目标，再定向收集与分析数据），也可以“数据驱动”（先探索已有数据，从中发现异常或模式，再反过来提出值得研究的问题）。这一全流程闭环如 \cref{fig:ds-lifecycle} 所示。
 
-数据科学建模通常遵循迭代优化流程，可抽象为 \cref{alg:ds-workflow}。
+\lcfigure[caption={以数据为中心的数据科学迭代工作流。实线表示主流程推进，虚线表示探索与评估阶段触发的反馈迭代。},label=fig:ds-lifecycle]{ch01-ds-lifecycle}
 
-\begin{algorithm}[数据科学求解流程]\label{alg:ds-workflow}
-\alginput{原始数据集 $\mathcal{D}$ 与业务目标}
-\algoutput{可解释分析结论或预测模型 $f$}
+为了与后续章节的建模与优化过程衔接，我们可以将上述工作流抽象为 \cref{alg:ds-workflow}。
+
+\begin{algorithm}[数据科学迭代求解流程]\label{alg:ds-workflow}
+\alginput{业务或科学问题 $Q$，多源原始数据 $\mathcal{D}$，性能或解释目标 $\tau$}
+\algoutput{可验证的数据洞察或预测模型 $f$}
 \begin{algsteps}
-  \State 明确问题定义并确定评价指标
-  \State 数据采集、清洗与探索性分析（EDA）
-  \While{模型性能未达到目标}
-    \State 构建特征并拟合模型 $f$
-    \State 在验证集上评估泛化误差并诊断改进方向
+  \State 界定问题 $Q$，明确评价指标与约束条件
+  \State 从多源渠道采集数据并进行清洗、整合与格式规范化，得到可用数据集 $\tilde{\mathcal{D}}$
+  \State 对 $\tilde{\mathcal{D}}$ 执行探索性数据分析（EDA）与可视化，必要时修正问题 $Q$
+  \While{当前模型或结论未满足目标 $\tau$}
+    \State 构建特征并拟合候选模型 $f$
+    \State 在独立验证数据上评估泛化表现并诊断误差来源
+    \If{误差主要源于数据质量或信息不足}
+      \State 返回补充采集或重新清洗数据
+    \EndIf
   \EndWhile
-  \State \Return 最终模型 $f$ 与分析报告
+  \State \Return 最终模型 $f$ 与可解释分析结论
 \end{algsteps}
 \end{algorithm}
+
+\section{数据科学为什么兴起}\label{sec:why-ds}
+
+数据科学并非凭空出现，而是由近几十年来三个并行演进的历史趋势共同推动的：数据比以往任何时候都更容易产生与获取、科学研究与社会决策比以往任何时候都更依赖数据驱动、人类处理与理解数据的计算能力比以往任何时候都更加强大。
+
+\subsection{数据爆炸与数字痕迹}
+
+从模拟记录全面转向数字记录后，全球数据规模呈指数级增长。万维网与搜索引擎、移动互联网、社交媒体、物联网传感器以及云计算基础设施，使得人类在浏览、消费、社交与出行中持续留下海量\textbf{数字痕迹}（Digital Traces）。这些持续生成的数据构成了数据科学的原料基础，也催生了从“海量原始数据”中提炼“高价值知识”的迫切需求。
+
+\subsection{科学研究第四范式与数据驱动决策}
+
+2007 年，图灵奖得主吉姆·格雷（Jim Gray）将人类科学探索的演进总结为四个范式：
+\begin{enumerate}
+  \item \textbf{第一范式（实验归纳）}：通过直接观察与实验记录自然现象；
+  \item \textbf{第二范式（理论推演）}：利用数学模型与解析公式（如牛顿力学、麦克斯韦方程组）概括普遍规律；
+  \item \textbf{第三范式（计算仿真）}：借助计算机数值模拟难以解析求解的复杂系统；
+  \item \textbf{第四范式（数据密集型科学）}：以海量观测与实验数据为中心，通过算法在数据中自动发现模式、反演参数并推动理论更新。
+\end{enumerate}
+
+第三范式与第四范式都高度依赖计算机与数据，但二者在研究起点与知识产出路径上有本质区别。\cref{tab:paradigm-3-vs-4} 通过引力波探测历史上的两项诺贝尔物理学奖工作加以对比。
+
+\begin{table}[htbp]
+  \centering\small
+  \caption{第三范式与第四范式的典型对比：赫尔斯–泰勒脉冲星与 LIGO 引力波探测}\label{tab:paradigm-3-vs-4}
+  \begin{tabular}{@{}l>{\raggedright\arraybackslash}p{0.37\linewidth}>{\raggedright\arraybackslash}p{0.39\linewidth}@{}}
+    \toprule
+    比较维度 & 赫尔斯–泰勒脉冲星（1993 诺奖） & LIGO GW150914（2017 诺奖） \\
+    \midrule
+    研究起点 & 广义相对论的明确预言（轨道衰减） & 海量连续带噪数据中的未知信号模式 \\
+    数据形态 & 少量高精度、长时标脉冲星计时数据 & 两台干涉仪 24/7 采集的 TB–PB 级时序流 \\
+    核心方法 & 理论模型拟合与计时残差分析 & 匹配滤波模板库、实时事件触发、参数反演 \\
+    结论性质 & 间接证据，验证既有理论 & 直接探测，并揭示重黑洞族群等新知识 \\
+    知识路径 & 理论 $\to$ 观测验证 & 数据 $\to$ 模式发现 $\to$ 理论更新 \\
+    \bottomrule
+  \end{tabular}
+\end{table}
+
+在社会科学与商业决策领域，数据驱动范式同样引发了深刻变革。例如，电子商务与内容平台普遍部署\textbf{推荐系统}以缓解信息过载，其两类经典思路分别是\textbf{基于内容的推荐}（刻画物品属性与用户偏好的匹配度）与\textbf{协同过滤}（利用相似用户的历史行为推断当前用户的潜在偏好）。在社会科学研究中，研究者也可借助大规模在线行为日志或社交媒体文本，分析群体情绪的昼夜与季节周期、社交网络的极化结构等传统抽样调查难以覆盖的宏观规律。
+
+然而，纯粹依赖数据相关性而忽视机理模型也会带来严重风险。著名的\textbf{谷歌流感趋势}（Google Flu Trends, GFT）试图通过数亿条搜索引擎查询词频实时预测美国流感疫情，早期曾比疾控中心（CDC）的传统门诊报告提前 1–2 周发出预警；但在后续多个流感季中，GFT 却出现了严重的低估与高估，最终停止公开更新。
+
+\begin{pitfall}[大数据傲慢（Big Data Hubris）]\label{pit:big-data-hubris}
+GFT 的失败揭示了盲目崇拜大数据规模时的三大经典陷阱：
+\begin{enumerate}
+  \item \textbf{混淆相关性与因果性}：搜索词频与发病率在历史数据上高度相关，但模型无法区分用户是因患病搜索还是因媒体报道引发好奇而搜索；
+  \item \textbf{过度依赖历史分布}：训练集仅覆盖常规冬季流感模式，当病毒变异、媒体事件或搜索引擎自身算法调整导致数据分布漂移时，模型缺乏泛化能力；
+  \item \textbf{脱离领域理论校验}：完全放弃流行病学机理模型（如 SIR 传染病模型）的约束与校准，导致预测偏差不断放大。
+\end{enumerate}
+因此，数据规模不能替代严谨的统计思维与领域机理。
+\end{pitfall}
+
+\subsection{计算能力跃升与数智融合}
+
+数据科学的技术底座由两条主线汇聚而成：
+\begin{itemize}
+  \item \textbf{数据技术主线}：从 1960–1990 年代的关系数据库与数据仓库，发展到 2000 年代的数据挖掘，再到 2010 年代面向海量异构数据的分布式大数据技术；
+  \item \textbf{智能技术主线}：从早期的专家系统与统计学习，演进到 2000 年代的机器学习与 2010 年代的深度学习。
+\end{itemize}
+
+近年来，大语言模型（LLM）与智能体（Agent）的兴起进一步推动了\textbf{数智融合}：从早期使用预训练模型（如 BERT/GPT）提取语义向量，到通过提示工程（Prompt Engineering）完成数据清洗或代码生成等单点任务，再到构建 Agent Workflow 自动编排复杂的数据科学流水线。尽管大模型显著提升了跨模态处理与任务通用性，但其在复杂统计推断的可靠性、执行过程优化与可验证性方面仍离不开扎实的数据科学基础。
+
+\section{数据科学家的核心能力与思维转变}\label{sec:ds-skills}
+
+面对真实世界中杂乱、多源且不断增长的数据，数据科学实践要求从业者完成若干关键的思维转变，并具备相应的核心能力。
+
+\subsection{多源异构数据与开放世界假设}
+
+真实数据具有显著的\textbf{多样性}（Variety），除经典的关系表格与数值矩阵外，还广泛存在键值对、时间序列、流数据、图与网络、非结构化文本以及图像音频等多媒体数据。多源数据的融合也带来了底层逻辑假设的转变。
+
+\begin{definition}[封闭世界假设与开放世界假设]\label{def:cwa-owa}
+\begin{enumerate}
+  \item \textbf{封闭世界假设}（Closed-World Assumption, CWA）：凡是数据库或知识库中明确记载的陈述为真，\emph{凡是未记载的陈述均视为假}。传统关系数据库的 SQL 精确查询通常建立在 CWA 之上。
+  \item \textbf{开放世界假设}（Open-World Assumption, OWA）：一条陈述的真假独立于它当前是否已被系统知晓，\emph{未在已有数据中出现并不意味着它为假}。
+\end{enumerate}
+\end{definition}
+
+在数据科学中，单一数据源往往是不完整、有偏且带噪声的。秉持 OWA 意味着我们承认观测的局限性，并倾向于通过汇集多源互补数据、结合概率统计建模来逼近真实世界，而非把局部记录等同于全部事实。
+
+\subsection{两大核心任务：描述过去与预测未来}
+
+数据科学的两项基本任务相辅相成：
+\begin{itemize}
+  \item \textbf{从数据中洞见真知（理解过去）}：通过统计汇总、数据探索与可视化，将原始数据转化为直观规律（例如分析不同国家 200 年间人均收入与预期寿命的演变轨迹）；
+  \item \textbf{基于数据驱动进行决策支持（预测未来）}：通过机器学习建立输入特征与目标变量之间的映射关系，对未知样本作出预测与干预决策。
+\end{itemize}
+
+\cref{tab:describe-vs-predict} 列举了若干典型场景中两类任务的对应关系。
+
+\begin{table}[htbp]
+  \centering
+  \caption{数据描述（理解过去）与机器学习预测（面向未来）的对照}\label{tab:describe-vs-predict}
+  \begin{tabular}{@{}lll@{}}
+    \toprule
+    应用场景 & 理解过去（数据描述） & 预测未来（机器学习） \\
+    \midrule
+    消费电子 & 今年各渠道一共售出多少部手机？ & 明年各型号的销量趋势如何？ \\
+    在线广告 & 哪些历史用户点击了这条广告？ & 新访客点击该广告的概率有多高？ \\
+    保险精算 & 过去一年哪些保单发生了理赔？ & 这位新投保人的预期风险等级是多少？ \\
+    教学分析 & 往届哪些同学取得了优异成绩？ & 哪些同学本学期存在学业预警风险？ \\
+    \bottomrule
+  \end{tabular}
+\end{table}
+
+\subsection{数据规模跃迁与算法思维}
+
+数据规模的变化不仅意味着数据量变大，更意味着处理范式与算法复杂度的根本改变：
+\begin{itemize}
+  \item \textbf{千级样本}（$10^3$）：单机脚本乃至电子表格即可直接处理；
+  \item \textbf{百万级样本}（$10^6$）：必须自动化编程，且通常要求算法时间复杂度低于 $O(n^2)$，或对 $O(n^2)$ 算法进行并行化与近似加速；
+  \item \textbf{十亿级样本}（$10^9$，Web-scale）：单机内存与磁盘成为瓶颈，需要分布式存储与流式/外部算法；
+  \item \textbf{万亿级样本}（$10^{12}$）：数据物理分散，必须引入分布式容错机制，且难以获取数据全貌，采样代表性、数据偏斜与隐私保护成为突出难题。
+\end{itemize}
+
+\begin{example}[title={样本规模跃迁对算法耗时的数量级影响}]\label{eg:scale-complexity}
+假设单机处理器每秒可执行 $10^8$ 次基本运算，分别估算时间复杂度为 $n$、$n\log_2 n$ 与 $n^2$ 的算法在样本量 $n=10^3$ 与 $n=10^6$ 下的近似耗时。
+\begin{solution}
+当 $n = 10^3$ 时，$\log_2(10^3)\approx 10$：
+\[
+  T_{O(n)} \approx \frac{10^3}{10^8} = 10^{-5}\text{ s},\quad
+  T_{O(n\log n)} \approx \frac{10^4}{10^8} = 10^{-4}\text{ s},\quad
+  T_{O(n^2)} \approx \frac{10^6}{10^8} = 0.01\text{ s}.
+\]
+三者在千级数据上均在瞬间完成，几乎感受不到差异。
+
+当样本量增至 $n = 10^6$ 时，$\log_2(10^6)\approx 20$：
+\[
+  T_{O(n)} \approx \frac{10^6}{10^8} = 0.01\text{ s},\quad
+  T_{O(n\log n)} \approx \frac{2\times 10^7}{10^8} = 0.2\text{ s},\quad
+  T_{O(n^2)} \approx \frac{10^{12}}{10^8} = 10^4\text{ s} \approx 2.78\text{ h}.
+\]
+可见，样本量扩大 $10^3$ 倍后，线性与对数线性算法依然在秒级内完成，而平方复杂度算法的耗时暴增了 $10^6$ 倍。这正是“不同量级的数据需要不同算法思维”的定量体现。
+\end{solution}
+\end{example}
+
+\subsection{数据伦理与批判性人工智能}
+
+不同于物理或化学实验研究的对象（“夸克与细胞不会抗议我们窥探其秘密”），数据科学常常直接作用于人类个体与社会群体，因此必须高度重视\textbf{数据伦理}：
+\begin{itemize}
+  \item \textbf{隐私推断风险}：经典的 Target 零售案例中，分析师仅凭顾客购买无味湿纸巾与补镁剂等看似普通的消费组合，便推断出一名高中生可能怀孕并邮寄了母婴优惠券，引发了严重的个人隐私泄露争议；
+  \item \textbf{算法偏见（AI Bias）}：若训练数据在不同性别、种族或地域群体上存在采样不均，机器学习模型（如人脸检测系统）在代表性不足的群体上往往表现出显著更高的错误率。
+\end{itemize}
+\textbf{批判性人工智能}（Critical AI）提醒我们：评估一个数据科学系统不能只看准确率指标，还必须审视数据来源的公平性、模型的适用边界以及决策结果对不同群体的社会影响。
+
+\begin{example}[title={用数据思维切入人文与日常问题}]\label{eg:hlm-case}
+数据思维同样适用于人文文本与日常观察：
+\begin{enumerate}
+  \item \textbf{《红楼梦》文本探索}：围绕“前 80 回与后 40 回写作风格是否存在差异”以及“主要人物的叙事脉络”两个问题，可通过统计各回段落数（按换行符切分）与关键人物在不同章节中的累积出场频率，将文学感受转化为可检验的量化曲线；
+  \item \textbf{姓名模式探索（What's in a Name）}：通过问卷或公开统计数据收集姓名与出生年份，观察不同时期流行命名的演变与性别分布规律。
+\end{enumerate}
+这类案例表明，数据探索的第一步往往不在于复杂的模型，而在于把开放问题转化为可度量、可比较的数据指标。
+\end{example}
+
+\section{Python 数据科学基础速览}\label{sec:python-basics}
+
+Python 由吉多·范罗苏姆（Guido van Rossum）于 1989 年设计，是一种\textbf{解释型}高级程序设计语言。在数据科学领域，Python 成为事实上的主流语言，核心原因有三点：
+\begin{enumerate}
+  \item \textbf{胶水语言（Python as Glue）}：底层计算密集型内核（如线性代数与矩阵运算）由 C/C++/Fortran 实现，Python 提供简洁的高层接口，兼顾开发效率与运行速度；
+  \item \textbf{完善的数据科学生态}：围绕 \lcinline{NumPy}（数值数组）、\lcinline{Pandas}（表格数据）、\lcinline{Matplotlib} 与 \lcinline{Seaborn}（可视化）以及 \lcinline{Scikit-learn}（机器学习）形成了完整工具链；
+  \item \textbf{缓解“双语言问题”}：研究者可在同一语言环境中完成探索原型（POC）并平滑衔接至工程部署。
+\end{enumerate}
+当然，在超低延迟、超高并发的核心系统场景下，仍需借助 C++、Rust 或 Go 等编译型语言承担底层服务。
+
+\subsection{核心数据类型与内置容器}
+
+数据科学编程中高频使用的 Python 内置类型归纳如 \cref{tab:python-types} 所示。所有序列类型（\lcinline{str}、\lcinline{list}、\lcinline{tuple}）的下标均从 $0$ 开始，切片 \lcinline{s[a:b]} 采用\textbf{左闭右开}区间 $[a, b)$。
+
+\begin{table}[htbp]
+  \centering\small
+  \caption{Python 常用基础数据类型与内置容器速查}\label{tab:python-types}
+  \begin{tabular}{@{}ll>{\raggedright\arraybackslash}p{0.34\linewidth}l@{}}
+    \toprule
+    类型 & 关键字 & 核心特性 & 典型示例 \\
+    \midrule
+    布尔型 & \lcinline{bool} & 仅取 \lcinline{True} / \lcinline{False} & \lcinline{3 > 2} \\
+    整型 / 浮点型 & \lcinline{int} / \lcinline{float} & 任意精度整数 / 双精度小数 & \lcinline{42}, \lcinline{1.2e-5} \\
+    字符串 & \lcinline{str} & 不可变有序字符序列 & \lcinline{"data"}, \lcinline{'RUC'} \\
+    列表 & \lcinline{list} & 可变有序序列，支持增删改与切片 & \lcinline{[1, 2.5, "a"]} \\
+    元组 & \lcinline{tuple} & 不可变有序序列（只读，更安全） & \lcinline{(36, 29)} \\
+    字典 & \lcinline{dict} & 基于哈希表的键值对，$O(1)$ 均摊查找 & \lcinline{\{"a": 1, "b": 2\}} \\
+    \bottomrule
+  \end{tabular}
+\end{table}
+
+\subsection{控制流、函数与正则表达式精要}
+
+Python 使用缩进划分代码块，支持分支（\lcinline{if}/\lcinline{elif}/\lcinline{else}）、循环（\lcinline{for}/\lcinline{while}）、函数封装（\lcinline{def}）、面向对象（\lcinline{class}、构造函数 \lcinline{\_\_init\_\_} 与继承重写）以及异常处理（\lcinline{try}/\lcinline{except}）。\cref{lst:char-freq} 以课堂练习“字符频率统计”为例，展示了基础字典与标准库 \lcinline{collections.Counter} 两种写法。
+
+\begin{codeblock}[language=Python,caption={字符频率统计的两种 Python 实现},label=lst:char-freq]
+from collections import Counter
+
+def count_chars_dict(s: str) -> dict[str, int]:
+    """使用基础字典统计字符出现频次。"""
+    freq: dict[str, int] = {}
+    for ch in s:
+        freq[ch] = freq.get(ch, 0) + 1
+    return freq
+
+def count_chars_counter(s: str) -> dict[str, int]:
+    """使用标准库 Counter 统计字符频次。"""
+    return dict(Counter(s))
+
+print(count_chars_dict("Letter"))     # {'L': 1, 'e': 2, 't': 2, 'r': 1}
+print(count_chars_counter("Letter"))  # {'L': 1, 'e': 2, 't': 2, 'r': 1}
+\end{codeblock}
+
+在数据清洗与文本信息抽取阶段，\textbf{正则表达式}（Regular Expression）与异常处理是两项常用基础工具。\cref{lst:regex-demo} 展示了使用标准库 \lcinline{re} 校验规范格式电话号码并结合 \lcinline{try}/\lcinline{except} 防御非法输入的写法。
+
+\begin{codeblock}[language=Python,caption={使用正则表达式校验格式与异常处理示例},label=lst:regex-demo]
+import re
+
+PHONE_PATTERN = re.compile(r"^(\d{3})-(\d{3})-(\d{4})$")
+
+def parse_phone(text: str) -> tuple[str, str, str] | None:
+    match = PHONE_PATTERN.match(text.strip())
+    return match.groups() if match else None
+
+def safe_ratio(num: float, den: float) -> float | None:
+    try:
+        return num / den
+    except ZeroDivisionError:
+        return None
+\end{codeblock}
+
+\begin{method}[本课程的 Python 学习建议]\label{met:python-learning}
+对于数据科学入门而言，无需在语法细节上过度停留，应重点熟练掌握三件事：（1）列表/字典的读写、切片与推导式；（2）将重复处理逻辑封装为输入输出清晰的函数；（3）阅读报错栈并善用 Jupyter Notebook 交互式调试。从下一章起，我们将直接进入 \lcinline{NumPy} 与 \lcinline{Pandas} 的向量化表格数据处理。
+\end{method}
+
+\begin{summary}[本章要点]
+\begin{itemize}
+  \item 数据科学是以数据为中心的交叉学科，强调“提出问题 $\leftrightarrow$ 数据准备 $\leftrightarrow$ 探索可视化 $\leftrightarrow$ 建模评估 $\leftrightarrow$ 决策支持”的循环迭代闭环。
+  \item 数据爆炸、科学第四范式与数智融合推动了数据科学兴起，但必须警惕“大数据傲慢”，始终坚持统计思维与领域机理校验。
+  \item 从业者需在开放世界假设下整合多源异构数据，兼顾数据描述与机器学习预测，适应不同样本量级下的算法复杂度约束，并坚守数据伦理底线。
+  \item Python 凭借胶水语言特性与完善的数据科学生态成为本课程的主要实践工具。
+\end{itemize}
+\end{summary}
