@@ -1,0 +1,46 @@
+% libre-compendium
+%
+% Copyright (C) 2026 Richard Qin
+%
+% This document is dual-licensed under either:
+% - GNU Free Documentation License, Version 1.3 or any later version
+%   published by the Free Software Foundation; with no Invariant Sections,
+%   no Front-Cover Texts, and no Back-Cover Texts (see COPYING.DOC); or
+% - Creative Commons Attribution-ShareAlike 4.0 International License
+%   (see LICENSE-CC-BY-SA-4.0).
+\ProvidesFile{ch01-overview.tex}[2026/11/26 v0.1.0 第一章 数据科学概论]
+\chapter{数据科学概论}\label{ch:overview}
+
+本章介绍数据科学的基本概念、数据驱动的问题求解范式以及课程工具链。
+
+\section{数据科学的基本范式}\label{sec:ds-paradigm}
+
+\begin{definition}[数据科学]\label{def:data-science}
+数据科学是一门融合统计学、计算机科学与领域知识的交叉学科，核心目标是从原始数据中提取可验证的知识，并支持预测与决策。
+\end{definition}
+
+在 Python 生态中，常用 \lcinline{pandas} 与 \lcinline{numpy} 处理结构化表格数据，如 \cref{lst:pandas-preview} 所示。
+
+\begin{codeblock}[language=Python,caption={读取并预览表格数据},label=lst:pandas-preview]
+import pandas as pd
+
+# 读取 CSV 文件并查看前 5 行
+df = pd.read_csv("iris.csv")
+print(df.head())
+\end{codeblock}
+
+数据科学建模通常遵循迭代优化流程，可抽象为 \cref{alg:ds-workflow}。
+
+\begin{algorithm}[数据科学求解流程]\label{alg:ds-workflow}
+\alginput{原始数据集 $\mathcal{D}$ 与业务目标}
+\algoutput{可解释分析结论或预测模型 $f$}
+\begin{algsteps}
+  \State 明确问题定义并确定评价指标
+  \State 数据采集、清洗与探索性分析（EDA）
+  \While{模型性能未达到目标}
+    \State 构建特征并拟合模型 $f$
+    \State 在验证集上评估泛化误差并诊断改进方向
+  \EndWhile
+  \State \Return 最终模型 $f$ 与分析报告
+\end{algsteps}
+\end{algorithm}
