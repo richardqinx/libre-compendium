@@ -1,0 +1,230 @@
+% libre-compendium
+%
+% Copyright (C) 2026 Richard Qin
+%
+% This document is dual-licensed under either:
+% - GNU Free Documentation License, Version 1.3 or any later version
+%   published by the Free Software Foundation; with no Invariant Sections,
+%   no Front-Cover Texts, and no Back-Cover Texts (see COPYING.DOC); or
+% - Creative Commons Attribution-ShareAlike 4.0 International License
+%   (see LICENSE-CC-BY-SA-4.0).
+\ProvidesFile{ch06-clustering.tex}[2026/11/26 v0.2.5 第六章习题]
+\section{无监督学习与聚类模型}
+
+\begin{exercise}[title={闵可夫斯基距离手算与聚类评价指标辨析},level=basic,points=10,tags={距离度量,轮廓系数,ARI}]
+\begin{enumerate}
+  \item 给定二维平面上的两个样本点 $\bm{x} = (1, 1)$ 与 $\bm{y} = (3, 3)$，分别计算二者之间的曼哈顿距离（$L_1$）、欧几里得距离（$L_2$）与切比雪夫距离（$L_\infty$）；
+  \item 比较轮廓系数（Silhouette）与调整兰德指数（ARI）在使用信息上的核心区别，并说明将聚类输出编号整体重排（如将簇 $0,1,2$ 改记为 $2,0,1$）是否会影响这两个指标的数值。
+\end{enumerate}
+\begin{answer}
+（1）$d_1 = 4$，$d_2 = \sqrt{8} = 2\sqrt{2}\approx 2.828$，$d_\infty = 2$；（2）轮廓系数仅依赖特征空间距离与聚类标签（内部评价），ARI 依赖真实类别标签与聚类标签（外部评价）；两者均对簇编号置换保持完全不变。
+\end{answer}
+\begin{solution}
+\begin{enumerate}
+  \item 坐标差绝对值为 $\abs{1-3}=2$ 与 $\abs{1-3}=2$：
+  \[
+    d_1(\bm{x},\bm{y}) = 2 + 2 = 4,\qquad
+    d_2(\bm{x},\bm{y}) = \sqrt{2^2 + 2^2} = \sqrt{8} = 2\sqrt{2},\qquad
+    d_\infty(\bm{x},\bm{y}) = \max\{2, 2\} = 2.
+  \]
+  \item \textbf{信息差异}：轮廓系数只利用特征空间中的样本间距离和聚类分配结果，不需要任何真实类别标注，属于\textbf{内部评价}；ARI 比较聚类结果与已知真实标签在所有样本对上的同簇/异簇一致性（并扣除随机期望），属于\textbf{外部评价}。由于聚类簇编号仅仅是等价类的标识，整体重排不改变“哪些样本同属一簇”的划分结构，因此轮廓系数与 ARI 均严格保持不变。
+\end{enumerate}
+\end{solution}
+\end{exercise}
+
+\begin{exercise}[title={K-Means 单轮迭代与初始 SSE 完整手算},level=standard,points=15,tags={K-Means,SSE,手算}]
+给定 $8$ 个二维数据点：
+\[
+  (3,1),\ (3,2),\ (4,1),\ (4,2),\ (1,3),\ (1,4),\ (2,3),\ (2,4),
+\]
+设簇数 $K=2$，初始质心为 $C_0 = (0, 4)$ 与 $C_1 = (3, 3)$，采用欧几里得距离。
+\begin{enumerate}
+  \item 逐点计算每个样本到 $C_0$ 与 $C_1$ 的欧氏距离平方，完成第 $1$ 轮迭代的簇分配；
+  \item 根据上述分配结果，计算更新后的两个新质心 $C_0'$ 与 $C_1'$，并求出更新前的簇内平方和 $\mathrm{SSE}^{(0)}$。
+\end{enumerate}
+\begin{answer}
+（1）分配给 $C_0$ 的点为 $(1,3),(1,4)$，分配给 $C_1$ 的点为其余 $6$ 个点；（2）更新后质心为 $C_0'=(1, 3.5)$，$C_1'=(3, 13/6)$；初始分配下的 $\mathrm{SSE}^{(0)} = 18$。
+\end{answer}
+\begin{solution}
+\begin{enumerate}
+  \item 逐点计算欧氏距离平方 $d^2(\bm{x}, C_0)$ 与 $d^2(\bm{x}, C_1)$ 并取较小者归属：
+  \begin{center}
+    \small
+    \begin{tabular}{@{}cccc@{}}
+      \toprule
+      样本点 & 到 $C_0=(0,4)$ 距离平方 & 到 $C_1=(3,3)$ 距离平方 & 分配结果 \\
+      \midrule
+      $(3,1)$ & $9 + 9 = 18$ & $0 + 4 = 4$ & $C_1$ \\
+      $(3,2)$ & $9 + 4 = 13$ & $0 + 1 = 1$ & $C_1$ \\
+      $(4,1)$ & $16 + 9 = 25$ & $1 + 4 = 5$ & $C_1$ \\
+      $(4,2)$ & $16 + 4 = 20$ & $1 + 1 = 2$ & $C_1$ \\
+      $(1,3)$ & $1 + 1 = 2$ & $4 + 0 = 4$ & $C_0$ \\
+      $(1,4)$ & $1 + 0 = 1$ & $4 + 1 = 5$ & $C_0$ \\
+      $(2,3)$ & $4 + 1 = 5$ & $1 + 0 = 1$ & $C_1$ \\
+      $(2,4)$ & $4 + 0 = 4$ & $1 + 1 = 2$ & $C_1$ \\
+      \bottomrule
+    \end{tabular}
+  \end{center}
+  因此 $C_0$ 接收 $\{(1,3),(1,4)\}$，$C_1$ 接收其余 $6$ 个点。
+  \item 取各簇样本算术均值更新质心：
+  \[
+    C_0' = \left(\frac{1+1}{2},\ \frac{3+4}{2}\right) = (1,\ 3.5),\qquad
+    C_1' = \left(\frac{3+3+4+4+2+2}{6},\ \frac{1+2+1+2+3+4}{6}\right) = \left(3,\ \frac{13}{6}\right).
+  \]
+  更新前的簇内平方和为各点到所属初始质心的距离平方之和：
+  \[
+    \mathrm{SSE}^{(0)} = (2 + 1) + (4 + 1 + 5 + 2 + 1 + 2) = 3 + 15 = 18.
+  \]
+\end{enumerate}
+\end{solution}
+\end{exercise}
+
+\begin{exercise}[title={文档聚类外部评价：Purity 与 Entropy 手算},level=standard,points=12,tags={聚类评价,Purity,Entropy}]
+现有 $100$ 篇带真实主题标签（Science、Sports、Politics）的文档，某聚类算法将其划分为 $3$ 个簇，统计混淆表如下：
+\begin{center}
+  \small
+  \begin{tabular}{@{}lcccc@{}}
+    \toprule
+    簇编号 & Science & Sports & Politics & 簇内总数 \\
+    \midrule
+    Cluster 1 & 32 & 4  & 4  & 40 \\
+    Cluster 2 & 0  & 30 & 0  & 30 \\
+    Cluster 3 & 6  & 6  & 18 & 30 \\
+    \bottomrule
+  \end{tabular}
+\end{center}
+分别计算每个簇的纯度（Purity）与信息熵（以 $2$ 为底，保留三位小数），进而求出整体聚类的总体纯度 $\mathrm{Purity}_{\text{total}}$ 与总体熵 $H_{\text{total}}$。
+\begin{answer}
+各簇纯度依次为 $0.800,\ 1.000,\ 0.600$，总体纯度 $\mathrm{Purity}_{\text{total}} = 0.800$；各簇信息熵依次为 $0.922,\ 0.000,\ 1.371$，总体熵 $H_{\text{total}} \approx 0.780$。
+\end{answer}
+\begin{solution}
+逐簇计算类别比例、纯度与信息熵：
+\begin{itemize}
+  \item \textbf{Cluster 1}（比例 $0.8, 0.1, 0.1$）：$\mathrm{Purity}(D_1) = 0.800$，
+  \[
+    H(D_1) = -0.8\log_2 0.8 - 2\times 0.1\log_2 0.1 \approx 0.258 + 0.664 = 0.922;
+  \]
+  \item \textbf{Cluster 2}（比例 $0, 1.0, 0$）：$\mathrm{Purity}(D_2) = 1.000$，$H(D_2) = 0.000$；
+  \item \textbf{Cluster 3}（比例 $0.2, 0.2, 0.6$）：$\mathrm{Purity}(D_3) = 0.600$，
+  \[
+    H(D_3) = -0.6\log_2 0.6 - 2\times 0.2\log_2 0.2 \approx 0.442 + 0.929 = 1.371.
+  \]
+\end{itemize}
+按各簇样本占比 $(0.4, 0.3, 0.3)$ 加权求和：
+\[\begin{aligned}
+  \mathrm{Purity}_{\text{total}} &= 0.4\times 0.800 + 0.3\times 1.000 + 0.3\times 0.600 = 0.800,\\
+  H_{\text{total}} &= 0.4\times 0.922 + 0.3\times 0.000 + 0.3\times 1.371 \approx 0.780.
+\end{aligned}\]
+\end{solution}
+\end{exercise}
+
+\begin{exercise}[title={一维高斯分布参数的极大似然估计推导},level=standard,points=15,tags={高斯分布,极大似然估计,MLE}]
+设观测样本 $x_1, x_2, \dots, x_N$ 独立同分布地采样自一维高斯分布 $\mathcal{N}(\mu, \sigma^2)$（概率密度 $p(x\mid \mu, \sigma^2) = \frac{1}{\sqrt{2\pi\sigma^2}}\exp\!\left(-\frac{(x-\mu)^2}{2\sigma^2}\right)$）。
+\begin{enumerate}
+  \item 写出样本集的对数似然函数 $\ell(\mu, \sigma^2) = \ln \prod_{i=1}^{N} p(x_i \mid \mu, \sigma^2)$；
+  \item 分别对 $\mu$ 与 $\sigma^2$ 求一阶偏导并令其为 $0$，推导出极大似然估计 $\hat{\mu}_{\mathrm{ML}}$ 与 $\hat{\sigma}^2_{\mathrm{ML}}$。
+\end{enumerate}
+\begin{answer}
+（1）$\ell(\mu, \sigma^2) = -\frac{N}{2}\ln(2\pi) - \frac{N}{2}\ln\sigma^2 - \frac{1}{2\sigma^2}\sum_{i=1}^{N}(x_i-\mu)^2$；（2）$\hat{\mu}_{\mathrm{ML}} = \frac{1}{N}\sum_{i=1}^{N} x_i = \bar{x}$，$\hat{\sigma}^2_{\mathrm{ML}} = \frac{1}{N}\sum_{i=1}^{N}(x_i - \bar{x})^2$。
+\end{answer}
+\begin{solution}
+\begin{enumerate}
+  \item 对联合似然取自然对数：
+  \[
+    \ell(\mu, \sigma^2)
+    = \sum_{i=1}^{N}\ln\left[\frac{1}{\sqrt{2\pi\sigma^2}}\exp\!\left(-\frac{(x_i-\mu)^2}{2\sigma^2}\right)\right]
+    = -\frac{N}{2}\ln(2\pi) - \frac{N}{2}\ln\sigma^2 - \frac{1}{2\sigma^2}\sum_{i=1}^{N}(x_i - \mu)^2.
+  \]
+  \item 对 $\mu$ 求偏导并令其为 $0$：
+  \[
+    \frac{\partial \ell}{\partial \mu} = \frac{1}{\sigma^2}\sum_{i=1}^{N}(x_i - \mu) = 0
+    \implies \hat{\mu}_{\mathrm{ML}} = \frac{1}{N}\sum_{i=1}^{N} x_i = \bar{x}.
+  \]
+  记 $v = \sigma^2 > 0$，对 $v$ 求偏导并令其为 $0$：
+  \[
+    \frac{\partial \ell}{\partial v} = -\frac{N}{2v} + \frac{1}{2v^2}\sum_{i=1}^{N}(x_i - \mu)^2 = 0
+    \implies \hat{\sigma}^2_{\mathrm{ML}} = \frac{1}{N}\sum_{i=1}^{N}(x_i - \hat{\mu}_{\mathrm{ML}})^2.
+  \]
+  这也正是 GMM 的 M-Step 中加权均值与加权方差更新公式的理论来源。
+\end{enumerate}
+\end{solution}
+\end{exercise}
+
+\begin{exercise}[title={一维混合高斯模型 EM 算法的 E-Step 与 M-Step 手算},level=standard,points=18,tags={EM算法,GMM,软聚类,手算}]
+考虑由男生类簇 $C_1\sim\mathcal{N}(\mu_1, \sigma_1^2)$ 与女生类簇 $C_2\sim\mathcal{N}(\mu_2, \sigma_2^2)$ 构成的一维身高混合高斯模型：
+\begin{enumerate}
+  \item \textbf{E-Step 手算}：设当前迭代参数为 $\mathcal{N}(175, 10)$ 与 $\mathcal{N}(165, 10)$（两方差均为 $10$），混合权重 $\pi_1 = 0.67,\ \pi_2 = 0.33$。计算观测值 $x = 170$ 属于两簇的后验概率 $P(C_1\mid 170)$ 与 $P(C_2\mid 170)$；
+  \item \textbf{M-Step 手算}：设另一轮 E-Step 在 $5$ 名学生身高上的软分配结果如下表所示，计算下一轮 M-Step 更新后的混合比例 $\pi_1, \pi_2$、均值 $\mu_1, \mu_2$（保留两位小数），并写出方差 $\sigma_1^2, \sigma_2^2$ 的计算式。
+  \begin{center}
+    \small
+    \begin{tabular}{@{}ccc@{}}
+      \toprule
+      样本身高 $x_i$ & $P(C_1\mid x_i)$ & $P(C_2\mid x_i)$ \\
+      \midrule
+      $174$ & $0.9$ & $0.1$ \\
+      $173$ & $0.8$ & $0.2$ \\
+      $168$ & $0.4$ & $0.6$ \\
+      $167$ & $0.2$ & $0.8$ \\
+      $166$ & $0.1$ & $0.9$ \\
+      \bottomrule
+    \end{tabular}
+  \end{center}
+\end{enumerate}
+\begin{answer}
+（1）因 $x=170$ 到两均值距离相等且方差相同，似然密度相等，故后验概率恰等于先验权重：$P(C_1\mid 170)=0.67,\ P(C_2\mid 170)=0.33$；（2）$N_1=2.4,\ N_2=2.6$，故 $\pi_1 = 0.48,\ \pi_2 = 0.52$；$\mu_1 = 412.2/2.4 = 171.75$，$\mu_2 = 435.8/2.6 \approx 167.62$；方差按加权平方偏差除以 $N_1, N_2$ 给出。
+\end{answer}
+\begin{solution}
+\begin{enumerate}
+  \item 因为两分量方差均为 $\sigma^2 = 10$，且 $(170 - 175)^2 = (170 - 165)^2 = 25$，故 $p(170\mid C_1) = p(170\mid C_2) > 0$。由贝叶斯公式约去公因子：
+  \[
+    P(C_1\mid 170) = \frac{0.67\,p(170\mid C_1)}{0.67\,p(170\mid C_1) + 0.33\,p(170\mid C_2)} = \frac{0.67}{0.67+0.33} = 0.67,
+  \]
+  同理 $P(C_2\mid 170) = 0.33$。
+  \item 计算有效样本数：
+  \[
+    N_1 = 0.9 + 0.8 + 0.4 + 0.2 + 0.1 = 2.4,\qquad
+    N_2 = 0.1 + 0.2 + 0.6 + 0.8 + 0.9 = 2.6.
+  \]
+  更新混合权重：
+  \[
+    \pi_1 = \frac{2.4}{5} = 0.48,\qquad
+    \pi_2 = \frac{2.6}{5} = 0.52.
+  \]
+  更新均值：
+  \[\begin{aligned}
+    \mu_1 &= \frac{174\times 0.9 + 173\times 0.8 + 168\times 0.4 + 167\times 0.2 + 166\times 0.1}{2.4} = \frac{412.2}{2.4} = 171.75,\\
+    \mu_2 &= \frac{174\times 0.1 + 173\times 0.2 + 168\times 0.6 + 167\times 0.8 + 166\times 0.9}{2.6} = \frac{435.8}{2.6} \approx 167.62.
+  \end{aligned}\]
+  更新方差的计算式为：
+  \[\begin{aligned}
+    \sigma_1^2 &= \frac{0.9(174-\mu_1)^2 + 0.8(173-\mu_1)^2 + 0.4(168-\mu_1)^2 + 0.2(167-\mu_1)^2 + 0.1(166-\mu_1)^2}{2.4},\\
+    \sigma_2^2 &= \frac{0.1(174-\mu_2)^2 + 0.2(173-\mu_2)^2 + 0.6(168-\mu_2)^2 + 0.8(167-\mu_2)^2 + 0.9(166-\mu_2)^2}{2.6}.
+  \end{aligned}\]
+\end{enumerate}
+\end{solution}
+\end{exercise}
+
+\begin{exercise}[title={K-Means 与 GMM 的极限联系及 Iris 实验剖析},level=advanced,points=18,tags={K-Means,GMM,EM算法,轮廓系数,ARI}]
+\begin{enumerate}
+  \item 在 GMM 中令所有分量的协方差矩阵均为 $\bm{\Sigma}_k = \epsilon\bm{I}$（$\epsilon > 0$）且混合权重 $\pi_k > 0$。假设对某样本 $\bm{x}_i$，存在唯一的最近质心 $k^* = \argmin_k \norm{\bm{x}_i - \bm{\mu}_k}_2^2$。证明当 $\epsilon \to 0^+$ 时，E-Step 后验概率满足 $\gamma_{ik^*} \to 1$ 且对所有 $k \ne k^*$ 有 $\gamma_{ik} \to 0$；
+  \item 在标准化后的 Iris 数据集上分别运行 $K=3$ 的 K-Means 与 GMM，测得：K-Means 平均轮廓系数 $0.460$、$\mathrm{ARI} = 0.620$；GMM 平均轮廓系数 $0.374$、$\mathrm{ARI} = 0.904$。请解释为何两种模型在内部指标与外部指标上的排序恰好相反，且这并不矛盾。
+\end{enumerate}
+\begin{answer}
+（1）在 $\gamma_{ik^*}$ 的分子分母同除以 $\exp(-\norm{\bm{x}_i-\bm{\mu}_{k^*}}_2^2/(2\epsilon))$，因对所有 $j\ne k^*$ 有 $\Delta_j = \norm{\bm{x}_i-\bm{\mu}_j}_2^2 - \norm{\bm{x}_i-\bm{\mu}_{k^*}}_2^2 > 0$，故 $\exp(-\Delta_j/(2\epsilon))\to 0$，从而 $\gamma_{ik^*}\to 1$、其余趋于 $0$；（2）轮廓系数直接基于欧氏距离衡量球状几何紧凑度，天然偏向优化欧氏 SSE 的 K-Means；而 Iris 中 \lcinline{versicolor} 与 \lcinline{virginica} 呈倾斜椭球状分布，能拟合完整协方差矩阵的 GMM 更契合真实生物分布，故 ARI 显著更高。
+\end{answer}
+\begin{solution}
+\begin{enumerate}
+  \item 记 $d_j^2 = \norm{\bm{x}_i - \bm{\mu}_j}_2^2$，由唯一最小性知对一切 $j\ne k^*$ 有 $\Delta_j = d_j^2 - d_{k^*}^2 > 0$。将 $\bm{\Sigma}_k = \epsilon\bm{I}$ 代入 E-Step 公式，约去常数 $(2\pi\epsilon)^{-d/2}$ 后分子分母同除以 $\exp(-d_{k^*}^2 / (2\epsilon))$：
+  \[
+    \gamma_{ik^*}
+    = \frac{\pi_{k^*}}{\pi_{k^*} + \sum_{j\ne k^*} \pi_j \exp\!\left(-\frac{\Delta_j}{2\epsilon}\right)}.
+  \]
+  当 $\epsilon \to 0^+$ 时，每一项 $\frac{\Delta_j}{2\epsilon} \to +\infty$，故 $\exp(-\Delta_j / (2\epsilon)) \to 0$，由此 $\gamma_{ik^*} \to \frac{\pi_{k^*}}{\pi_{k^*}} = 1$；又因 $\sum_{k=1}^{K}\gamma_{ik} = 1$ 且 $\gamma_{ik}\ge 0$，对一切 $k\ne k^*$ 必有 $\gamma_{ik}\to 0$。这严格证明了 K-Means 硬分配是 GMM 软分配在各向同性极小方差下的极限情形。
+  \item 两个指标的评价视角不同，因此完全不矛盾：
+  \begin{itemize}
+    \item \textbf{轮廓系数（内部几何指标）}完全基于各向同性欧氏距离衡量簇内紧凑与簇间分离，K-Means 的目标函数本身就是最小化欧氏平方距离之和，因而倾向于切出欧氏意义下边界清晰、轮廓系数更高的近似球形区域；
+    \item \textbf{ARI（外部一致性指标）}衡量聚类划分与真实植物品种的吻合度。在 Iris 特征空间中，\lcinline{versicolor} 与 \lcinline{virginica} 并非正球形，而是沿特定方向拉长且协方差各异的椭球分布。GMM 允许每个分量学习独立的协方差矩阵 $\bm{\Sigma}_k$，能够更准确地贴合真实椭球簇形，尽管按欧氏距离计算的轮廓系数略低，但与真实品种的一致性（ARI $= 0.904$）远高于 K-Means（$0.620$）。
+  \end{itemize}
+\end{enumerate}
+\end{solution}
+\end{exercise}

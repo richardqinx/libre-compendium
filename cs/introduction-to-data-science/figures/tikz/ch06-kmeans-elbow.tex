@@ -1,0 +1,23 @@
+\begin{tikzpicture}[font=\small]
+  \begin{axis}[
+    width=9.0cm, height=4.8cm,
+    axis lines=left,
+    axis line style={lc axis},
+    xmin=0.5, xmax=10.5, ymin=0, ymax=290,
+    xtick={1,2,3,4,5,6,7,8,9,10},
+    xlabel={簇数目 $K$},
+    ylabel={簇内平方和 $\mathrm{SSE}$（$\times 10^3$）},
+    grid=major,
+    grid style={draw=lc-note!20, dashed}
+  ]
+    % Mall_Customers-like elbow curve (in thousands)
+    \addplot[lc curve 1, mark=*, mark size=2pt, line width=1.0pt] coordinates {
+      (1, 270.0) (2, 181.4) (3, 106.3) (4, 73.7) (5, 44.4)
+      (6, 37.2) (7, 30.6) (8, 25.0) (9, 21.9) (10, 19.7)
+    };
+    % Highlight elbow point K = 5
+    \draw[draw=lc-force, line width=0.9pt] (axis cs:5, 44.4) circle (4.5pt);
+    \draw[lc vector, draw=lc-force] (axis cs:6.8, 125) -- (axis cs:5.18, 52);
+    \node[lc label, text=lc-force, align=left, anchor=west] at (axis cs:6.8, 132) {肘部拐点 $K=5$\\{\footnotesize 下降由陡转缓}};
+  \end{axis}
+\end{tikzpicture}

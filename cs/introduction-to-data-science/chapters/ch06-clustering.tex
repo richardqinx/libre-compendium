@@ -1,0 +1,219 @@
+% libre-compendium
+%
+% Copyright (C) 2026 Richard Qin
+%
+% This document is dual-licensed under either:
+% - GNU Free Documentation License, Version 1.3 or any later version
+%   published by the Free Software Foundation; with no Invariant Sections,
+%   no Front-Cover Texts, and no Back-Cover Texts (see COPYING.DOC); or
+% - Creative Commons Attribution-ShareAlike 4.0 International License
+%   (see LICENSE-CC-BY-SA-4.0).
+\ProvidesFile{ch06-clustering.tex}[2026/11/26 v0.2.5 第六章 无监督学习与聚类模型]
+\chapter{无监督学习与聚类模型}\label{ch:clustering}
+
+前两章讨论的回归与分类均属于监督学习，其前提是训练集带有明确的目标标签 $y_i$。然而在大量现实场景中（如电商客户细分、海量网页主题发现、异常交易检测），人工标注成本高昂，甚至事先根本不知道应该划分出哪些类别。此时需要借助\textbf{无监督学习}（Unsupervised Learning），仅凭输入特征 $\bm{X}$ 自动发掘数据内在的组织结构。本章聚焦无监督学习最核心的任务——\textbf{聚类}（Clustering），依次介绍距离度量与内外部评价体系、经典硬聚类算法 K-Means（及小批量加速与肘部法），以及基于高斯混合模型（GMM）与期望最大化（EM）的软聚类算法，并揭示 K-Means 与 EM 之间的内在统一性。
+
+\section{聚类问题、距离度量与评价指标}\label{sec:clustering-basics}
+
+\textbf{聚类}的目标是将无标注数据集 $D = \{\bm{x}_1, \dots, \bm{x}_N\}$ 划分为若干个\textbf{簇}（Cluster），使得\textbf{簇内样本彼此相似}（高簇内相似度、簇内距离小），而\textbf{不同簇间样本尽可能相异}（低簇间相似度、簇间距离大）。按算法思想划分，聚类主要分为三类：\textbf{层次聚类}（自底向上凝聚或自顶向下分裂）、\textbf{划分聚类}（直接将数据划分为 $K$ 个互斥子集，如 K-Means）以及\textbf{概率/贝叶斯聚类}（假设数据由混合概率分布生成，如 GMM）。
+
+\subsection{距离度量}
+
+“相似”与“相异”的定量刻画取决于距离函数的选择。对数值特征空间 $\R^d$ 中的两点 $\bm{x}, \bm{y}$，最基础的统一框架是闵可夫斯基距离。
+
+\begin{definition}[闵可夫斯基距离及其常见特例]\label{def:minkowski-distance}
+对向量 $\bm{x}, \bm{y}\in\R^d$ 与阶数 $p \ge 1$，定义\textbf{闵可夫斯基距离}（Minkowski Distance）为
+\begin{equation}\label{eq:minkowski}
+  d_p(\bm{x}, \bm{y}) = \left(\sum_{j=1}^{d}\abs{x_j - y_j}^p\right)^{1/p}.
+\end{equation}
+常见特例包括：
+\begin{itemize}
+  \item $p = 1$：\textbf{曼哈顿距离}（Manhattan / $L_1$ 距离），$d_1(\bm{x}, \bm{y}) = \sum_{j=1}^{d}\abs{x_j - y_j}$；
+  \item $p = 2$：\textbf{欧几里得距离}（Euclidean / $L_2$ 距离），$d_2(\bm{x}, \bm{y}) = \norm{\bm{x} - \bm{y}}_2 = \sqrt{\sum_{j=1}^{d}(x_j - y_j)^2}$；
+  \item $p \to \infty$：\textbf{切比雪夫距离}（$L_\infty$ 距离），$d_\infty(\bm{x}, \bm{y}) = \max_{1\le j\le d}\abs{x_j - y_j}$。
+\end{itemize}
+\end{definition}
+
+\subsection{聚类结果评价：内部指标与外部指标}
+
+由于无监督学习没有标准答案，聚类效果评价比监督学习更具挑战性，通常分为两类：
+\begin{enumerate}
+  \item \textbf{内部评价（无需真实标签）}：仅根据特征空间中的距离与簇划分计算。除 K-Means 的簇内平方和 $\mathrm{SSE}$ 外，最常用的是\textbf{轮廓系数}（Silhouette Coefficient）：对样本 $\bm{x}_i$，记 $a(i)$ 为 $\bm{x}_i$ 到同簇其余样本的平均距离（簇内紧凑度），$b(i)$ 为 $\bm{x}_i$ 到最近其他簇所有样本的平均距离（簇间分离度），定义
+  \begin{equation}\label{eq:silhouette}
+    s(i) = \frac{b(i) - a(i)}{\max\set{a(i),\, b(i)}} \in [-1, 1].
+  \end{equation}
+  $s(i)$ 越接近 $1$ 说明簇内紧凑且簇间清晰分离；接近 $0$ 说明位于两簇交界处；为负值则提示样本可能被分入了不合适的簇。全体样本的平均轮廓系数常用于比较不同 $K$ 值或不同聚类模型的几何分离效果。
+  \item \textbf{外部评价（借助参考标签）}：当在基准数据集（如 Iris）上验证算法时，可利用隐藏的真实类别集合 $C = \{c_1, \dots, c_m\}$ 评价聚类划分 $D = \{D_1, \dots, D_K\}$：
+  \begin{itemize}
+    \item \textbf{总体熵（Entropy）与总体纯度（Purity）}：
+    \begin{equation}\label{eq:cluster-purity-entropy}
+      H_{\text{total}}(D) = \sum_{j=1}^{K}\frac{\abs{D_j}}{\abs{D}} H(D_j),\qquad
+      \mathrm{Purity}_{\text{total}}(D) = \sum_{j=1}^{K}\frac{\abs{D_j}}{\abs{D}} \max_{c\in C} P(c\mid D_j),
+    \end{equation}
+    熵越低、纯度越高，说明各簇内部类别越纯粹；
+    \item \textbf{调整兰德指数（Adjusted Rand Index, ARI）}：在样本对层面衡量聚类划分与真实分类的一致性，并对随机划分的期望一致性作了零均值校正（最大为 $1$，随机划分期望约为 $0$）。
+  \end{itemize}
+\end{enumerate}
+须注意：\textbf{聚类簇编号本身只是任意记号}，将所有簇编号整体置换（如 $0\leftrightarrow 1$）不改变任何内部或外部评价指标。
+
+\section{K-Means 硬聚类算法}\label{sec:kmeans}
+
+\textbf{K-Means} 是应用最广泛的划分聚类算法。给定预先指定的簇数 $K$，为每个簇 $k\in\{1,\dots,K\}$ 维护一个\textbf{质心}（Centroid）$\bm{\mu}_k\in\R^d$，并用指示变量 $r_{ik}\in\{0,1\}$（满足 $\sum_{k=1}^{K} r_{ik} = 1$）表示样本 $\bm{x}_i$ 是否归属第 $k$ 个簇。K-Means 的优化目标是最小化全体样本到其所属簇质心的\textbf{簇内平方和}（Sum of Squared Errors, SSE，在 \lcinline{scikit-learn} 中称为 \lcinline{inertia}）：
+\begin{equation}\label{eq:kmeans-sse}
+  J\bigl(\{r_{ik}\}, \{\bm{\mu}_k\}\bigr) = \sum_{i=1}^{N}\sum_{k=1}^{K} r_{ik}\norm{\bm{x}_i - \bm{\mu}_k}_2^2.
+\end{equation}
+
+由于 $r_{ik}$ 为离散变量，同时联合优化 $\{r_{ik}\}$ 与 $\{\bm{\mu}_k\}$ 是 NP-hard 问题。K-Means 采用经典的\textbf{交替优化}（两阶段迭代）求解。
+
+\begin{proposition}[K-Means 交替优化的两阶段最优解与收敛性]\label{prop:kmeans-alternating}
+针对目标函数 \cref{eq:kmeans-sse}：
+\begin{enumerate}
+  \item \textbf{固定质心 $\{\bm{\mu}_k\}$ 优化分配 $\{r_{ik}\}$}：最优分配是将每个样本指派给欧氏距离最近的质心，即
+  \[
+    r_{ik} =
+    \begin{cases}
+      1, & k = \argmin_{j}\norm{\bm{x}_i - \bm{\mu}_j}_2^2,\\
+      0, & \text{其他};
+    \end{cases}
+  \]
+  \item \textbf{固定分配 $\{r_{ik}\}$ 优化质心 $\{\bm{\mu}_k\}$}：最优质心恰为该簇内所有样本的算术均值，即
+  \[
+    \bm{\mu}_k = \frac{\sum_{i=1}^{N} r_{ik}\bm{x}_i}{\sum_{i=1}^{N} r_{ik}}.
+  \]
+\end{enumerate}
+每轮交替更新均保证目标函数 $J$ 单调不增，且因样本划分方案总数有限，算法必在有限步内收敛。
+\end{proposition}
+
+\begin{proof}
+当 $\{\bm{\mu}_k\}$ 固定时，$J$ 关于每个样本 $i$ 完全解耦，令 $r_{ik}=1$ 取在使 $\norm{\bm{x}_i-\bm{\mu}_k}_2^2$ 最小的 $k$ 上显然使 $J$ 最小。当 $\{r_{ik}\}$ 固定时，$J$ 是关于各 $\bm{\mu}_k$ 的二次凸函数，求梯度并令其为零：
+\[
+  \nabla_{\bm{\mu}_k} J = -2\sum_{i=1}^{N} r_{ik}(\bm{x}_i - \bm{\mu}_k) = \bm{0}
+  \implies \bm{\mu}_k = \frac{\sum_{i=1}^{N} r_{ik}\bm{x}_i}{\sum_{i=1}^{N} r_{ik}}.
+\]
+两步交替均不增加 $J$，且 $J\ge 0$、离散划分状态总数至多为 $K^N$，故算法不会陷入死循环，必在有限步内收敛（至局部最优解）。
+\end{proof}
+
+\begin{algorithm}[K-Means 聚类算法]\label{alg:kmeans}
+\alginput{数据集 $D = \{\bm{x}_1, \dots, \bm{x}_N\}\subset\R^d$，簇数目 $K$}
+\algoutput{簇分配 $\{r_{ik}\}$ 与簇质心 $\{\bm{\mu}_1, \dots, \bm{\mu}_K\}$}
+\begin{algsteps}
+  \State 随机（或使用 \lcinline{k-means++} 策略）初始化 $K$ 个簇质心 $\bm{\mu}_1, \dots, \bm{\mu}_K$
+  \Repeat
+    \For{每个样本 $\bm{x}_i \in D$}
+      \State 计算 $\bm{x}_i$ 到各质心的欧氏距离，并将其分配至最近簇 $c_i \gets \argmin_k \norm{\bm{x}_i - \bm{\mu}_k}_2^2$
+    \EndFor
+    \For{每个簇 $k = 1, \dots, K$}
+      \State 重新计算质心 $\bm{\mu}_k \gets \frac{1}{\abs{D_k}}\sum_{\bm{x}_i \in D_k} \bm{x}_i$
+    \EndFor
+  \Until{簇分配不再变化 \textbf{或} 质心偏移与 SSE 降幅小于给定阈值}
+  \State \Return $\{c_i\}$ 与 $\{\bm{\mu}_k\}$
+\end{algsteps}
+\end{algorithm}
+
+K-Means 实现简洁且计算高效，时间复杂度仅为 $O(T K N d)$（$T$ 为迭代轮数），与样本数 $N$ 呈线性关系。若数据量达到百万级以上，还可进一步采用 \textbf{Mini-Batch K-Means}：每步随机抽取小批量样本增量更新质心，大幅缩短收敛时间，而最终 SSE 通常仅略高于标准 K-Means。
+
+在实践中，确定未知的簇数 $K$ 常借助\textbf{肘部法}（Elbow Method）：绘制不同 $K$ 值对应的簇内平方和 $\mathrm{SSE}$ 曲线（如 \cref{fig:kmeans-elbow} 所示，对应商场客户细分案例 \lcinline{Mall\_Customers.csv}）。随着 $K$ 增大，SSE 必然单调下降（极端地 $K=N$ 时 $\mathrm{SSE}=0$），但当 $K$ 越过真实簇数后下降速率明显放缓，形成类似“手肘”的拐点（图中 $K=5$）。若曲线平滑、肘点模糊，则应结合平均轮廓系数与业务可解释性综合选定 $K$。
+
+\lcfigure[caption={K-Means 肘部法示意图（商场客户细分案例）。$K$ 从 $1$ 增至 $5$ 时 SSE 快速下降，超过 $K=5$ 后趋于平缓，提示 $K=5$ 为较合适的簇数。},label=fig:kmeans-elbow]{ch06-kmeans-elbow}
+
+\begin{pitfall}[K-Means 的四大局限与使用注意]\label{pit:kmeans-limits}
+\begin{enumerate}
+  \item \textbf{初值敏感与局部最优}：不同初始质心可能收敛到截然不同的局部解；工程上应默认使用 \lcinline{init="k-means++"} 并配合多次随机重启（\lcinline{n\_init}）取最小 SSE；
+  \item \textbf{依赖均值与特征尺度}：质心取算术均值，不直接适用于无序类别特征；且欧氏距离受量纲主导，聚类前应视特征含义执行 Z-score 或 Min–Max 标准化；
+  \item \textbf{对离群点敏感}：少数极端离群点会显著拉偏质心位置，可通过迭代监测或子集采样预先识别清理；
+  \item \textbf{几何形状假设}：K-Means 隐含各簇近似球状且大小相近，对非凸簇（如月牙、同心圆）或方差悬殊的椭球簇表现不佳。
+\end{enumerate}
+\end{pitfall}
+
+\section{高斯混合模型与期望最大化（EM）算法}\label{sec:gmm-em}
+
+K-Means 为每个样本分配非 $0$ 即 $1$ 的硬标签，但对落在两簇交叠边界附近的样本而言，硬归属无法表达不确定性，且无法刻画各簇不同的方差与相关性（椭球形状）。\textbf{高斯混合模型}（Gaussian Mixture Model, GMM）通过概率生成视角实现了更灵活的\textbf{软聚类}（Soft Clustering）。
+
+\subsection{高斯混合模型与极大似然瓶颈}
+
+GMM 假设每个观测样本 $\bm{x}_i\in\R^d$ 由 $K$ 个高斯分布按混合权重 $\pi_1, \dots, \pi_K$（$\pi_k\ge 0,\ \sum_{k=1}^{K}\pi_k = 1$）混合生成，其边缘概率密度为
+\begin{equation}\label{eq:gmm-density}
+  p(\bm{x}_i \mid \bm{\pi}, \bm{\mu}, \bm{\Sigma})
+  = \sum_{k=1}^{K} \pi_k\,\mathcal{N}(\bm{x}_i \mid \bm{\mu}_k, \bm{\Sigma}_k),
+\end{equation}
+其中 $d$ 维多元高斯密度为
+\[
+  \mathcal{N}(\bm{x} \mid \bm{\mu}_k, \bm{\Sigma}_k)
+  = \frac{1}{(2\pi)^{d/2}\abs{\bm{\Sigma}_k}^{1/2}}
+    \exp\!\left(-\frac{1}{2}(\bm{x}-\bm{\mu}_k)^\top \bm{\Sigma}_k^{-1}(\bm{x}-\bm{\mu}_k)\right).
+\]
+\cref{fig:gmm-soft} 展示了一维双高斯混合分布的直观几何图像：对交叠区中的样本 $x=170$，软聚类给出它分别属于两个分量的后验概率 $P(C_1\mid x)$ 与 $P(C_2\mid x)$。
+
+\lcfigure[caption={一维双高斯混合模型（GMM）软聚类示意图。交叠区样本 $x=170$ 不作非此即彼的硬切分，而是按贝叶斯公式计算属于各高斯分量的后验概率。},label=fig:gmm-soft]{ch06-gmm-soft}
+
+对于单个高斯分布，最大化对数似然 $\sum_{i=1}^{N}\ln\mathcal{N}(\bm{x}_i\mid \bm{\mu}, \bm{\Sigma})$ 可直接求导得到闭式解（样本均值与样本协方差）。但对混合高斯模型，对数似然函数
+\[
+  \ell(\bm{\pi}, \bm{\mu}, \bm{\Sigma}) = \sum_{i=1}^{N}\ln\left(\sum_{k=1}^{K}\pi_k\,\mathcal{N}(\bm{x}_i\mid \bm{\mu}_k, \bm{\Sigma}_k)\right)
+\]
+的对数内部包含求和，无法直接解析求解。对此，对 $\bm{\mu}_k$ 求偏导并令其为零可得隐式不动点方程，自然引出交替迭代的\textbf{期望最大化}（Expectation-Maximization, EM）算法。
+
+\subsection{EM 算法的 E-Step 与 M-Step}
+
+EM 算法在“推断隐变量软分配（E-Step）”与“基于软分配重估模型参数（M-Step）”之间循环迭代，如 \cref{alg:gmm-em} 所示。
+
+\begin{algorithm}[高斯混合模型的 EM 聚类算法]\label{alg:gmm-em}
+\alginput{数据集 $D = \{\bm{x}_1, \dots, \bm{x}_N\}\subset\R^d$，高斯分量数 $K$}
+\algoutput{混合权重 $\{\pi_k\}$、均值 $\{\bm{\mu}_k\}$、协方差 $\{\bm{\Sigma}_k\}$ 及各样本软分配 $\{\gamma_{ik}\}$}
+\begin{algsteps}
+  \State 初始化参数 $\{\pi_k, \bm{\mu}_k, \bm{\Sigma}_k\}_{k=1}^{K}$
+  \Repeat
+    \State \textbf{E-Step（期望步）}：固定当前参数，由贝叶斯公式计算每个样本 $\bm{x}_i$ 属于簇 $k$ 的后验概率（责任度）：
+    \[
+      \gamma_{ik} = P(C_k \mid \bm{x}_i)
+      = \frac{\pi_k\,\mathcal{N}(\bm{x}_i \mid \bm{\mu}_k, \bm{\Sigma}_k)}{\sum_{j=1}^{K}\pi_j\,\mathcal{N}(\bm{x}_i \mid \bm{\mu}_j, \bm{\Sigma}_j)}
+    \]
+    \State \textbf{M-Step（最大化步）}：固定软分配 $\{\gamma_{ik}\}$，令有效样本数 $N_k = \sum_{i=1}^{N}\gamma_{ik}$，更新各分量参数：
+    \[
+      \bm{\mu}_k \gets \frac{1}{N_k}\sum_{i=1}^{N}\gamma_{ik}\bm{x}_i,\qquad
+      \bm{\Sigma}_k \gets \frac{1}{N_k}\sum_{i=1}^{N}\gamma_{ik}(\bm{x}_i - \bm{\mu}_k)(\bm{x}_i - \bm{\mu}_k)^\top,\qquad
+      \pi_k \gets \frac{N_k}{N}
+    \]
+  \Until{对数似然 $\ell(\bm{\pi},\bm{\mu},\bm{\Sigma})$ 增量小于给定阈值}
+  \State \Return $\{\pi_k, \bm{\mu}_k, \bm{\Sigma}_k\}$ 与 $\{\gamma_{ik}\}$
+\end{algsteps}
+\end{algorithm}
+
+\begin{remark}[K-Means 是 GMM-EM 的退化特例]\label{rem:kmeans-as-em}
+将 \cref{alg:kmeans} 与 \cref{alg:gmm-em} 对照可以发现二者结构高度一致。若在 GMM 中强行限定所有高斯分量的协方差矩阵均为各向同性球形 $\bm{\Sigma}_k = \epsilon\bm{I}$（$\epsilon > 0$），则后验责任度变为
+\[
+  \gamma_{ik} = \frac{\pi_k\exp\bigl(-\norm{\bm{x}_i - \bm{\mu}_k}_2^2 / (2\epsilon)\bigr)}{\sum_{j=1}^{K}\pi_j\exp\bigl(-\norm{\bm{x}_i - \bm{\mu}_j}_2^2 / (2\epsilon)\bigr)}.
+\]
+当 $\epsilon \to 0^+$ 时，指数中距离最小项呈压倒性主导，软分配 $\gamma_{ik}$ 严格退化为 K-Means 的硬分配 $r_{ik}\in\{0,1\}$，而 M-Step 中的加权均值恰好退化为簇内算术均值，期望对数似然最大化也等价于最小化 SSE。因此，\textbf{K-Means 本质上是忽略簇协方差结构与形状差异的极限版 EM 算法}。
+\end{remark}
+
+\cref{lst:kmeans-gmm} 以 Iris 数据集为例，演示了先标准化特征，再分别拟合 K-Means 与 GMM 并用轮廓系数（内部）与 ARI（外部）进行对比评价的完整流程。
+
+\begin{codeblock}[language=Python,caption={标准化后对比 K-Means 与 GMM 的聚类内部/外部评价},label=lst:kmeans-gmm]
+import pandas as pd
+from sklearn.preprocessing import StandardScaler
+from sklearn.cluster import KMeans
+from sklearn.mixture import GaussianMixture
+from sklearn import metrics
+
+iris = pd.read_csv("Iris.csv")
+X = iris[["SepalLengthCm", "SepalWidthCm", "PetalLengthCm", "PetalWidthCm"]]
+y_true = iris["Species"]
+
+X_scaled = StandardScaler().fit_transform(X)
+
+y_km = KMeans(n_clusters=3, init="k-means++", random_state=0).fit_predict(X_scaled)
+y_gmm = GaussianMixture(n_components=3, random_state=0).fit_predict(X_scaled)
+
+for name, y_pred in [("KMeans", y_km), ("GMM", y_gmm)]:
+    sil = metrics.silhouette_score(X_scaled, y_pred)
+    ari = metrics.adjusted_rand_score(y_true, y_pred)
+    print(f"{name:6s} | Silhouette = {sil:.3f} | ARI = {ari:.3f}")
+\end{codeblock}
+
+\begin{summary}[本章要点]
+\begin{itemize}
+  \item 无监督聚类旨在无标签条件下发现“簇内紧凑、簇间分离”的数据结构，常用闵可夫斯基距离（$L_1/L_2/L_\infty$）度量相似性，并结合轮廓系数（内部）与纯度/熵/ARI（外部）综合评估。
+  \item K-Means 通过“最近中心分配 + 均值更新质心”交替最小化簇内平方和 SSE，高效且必在有限步收敛，但受初值、$K$ 值选择、离群点与球形假设制约；大规模数据可用 Mini-Batch K-Means 加速。
+  \item GMM 利用混合高斯分布建模各簇的均值、协方差与权重，通过 EM 算法的 E-Step（贝叶斯后验软分配）与 M-Step（加权参数更新）交替求解；当协方差退化为 $\epsilon\bm{I}$ 且 $\epsilon\to 0^+$ 时，EM 严格退化为 K-Means。
+\end{itemize}
+\end{summary}
